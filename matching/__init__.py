@@ -1,1 +1,1 @@
-from .algorithms import galeshapley
+from .algorithms import galeshapley, extended_galeshapley
