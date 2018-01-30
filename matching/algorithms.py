@@ -42,13 +42,11 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
     matching : dict
         The suitor-optimal (stable) matching with suitors as keys and the
         reviewer they are matched with as values
-    
-    """
-    
+    """ 
     suitors = [s for s in suitor_pref_dict]
     matching = {s: None for s in suitors}
 
-    while suitors != [])
+    while suitors != []:
         s = suitors.pop(0)
         r = suitor_pref_dict[s][0]
         if r not in matching.values():
@@ -57,8 +55,8 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
             for suitr, revwr in matching.items():
                 if revwr == r:
                     r_partner = suitr
-            if reviewer_pref_dict[r].index(s) < 
-            reviewer_pref_dict[r].index(r_partner):
+            if reviewer_pref_dict[r].index(s) \
+               < reviewer_pref_dict[r].index(r_partner):
                 matching[r_partner] = None
                 matching[s] = r
                 suitors.append(r_partner)
@@ -112,9 +110,7 @@ def extended_galeshapley(suitor_pref_dict, reviewer_pref_dict, capacities):
     -------
     matching : dict
         A stable matching with reviewers as keys and lists of suitors as values
-    
     """
-
     free_suitors = [s for s in suitor_pref_dict]
     matching = {r: [] for r in reviewer_pref_dict}
 
@@ -125,7 +121,7 @@ def extended_galeshapley(suitor_pref_dict, reviewer_pref_dict, capacities):
         s = free_suitors.pop(0)
         s_pref = suitor_prefs[s]
 
-        if len(s_pref) > 0:
+        if s_pref != []:
             r = tuple(s_pref[0])
             curr_r_matching = matching[r]
             r_pref = reviewer_pref_dict[r]
@@ -144,4 +140,3 @@ def extended_galeshapley(suitor_pref_dict, reviewer_pref_dict, capacities):
                             free_suitors.append(s)
 
     return matching
-
