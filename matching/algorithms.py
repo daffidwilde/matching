@@ -120,12 +120,10 @@ def extended_galeshapley(suitor_pref_dict, reviewer_pref_dict, capacities):
     while free_suitors:
         s = free_suitors.pop(0)
         s_pref = suitor_prefs[s]
-
         if s_pref != []:
-            r = tuple(s_pref[0])
+            r = s_pref[0]
             curr_r_matching = matching[r]
             r_pref = reviewer_pref_dict[r]
-
             if curr_r_matching == [] or len(curr_r_matching) < capacities[r]:
                 matching[r].append(s)
             else:
