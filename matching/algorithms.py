@@ -121,7 +121,7 @@ def extended_galeshapley(suitor_preferences, reviewer_preferences, capacities):
         while (not suitor_matching[s]) & (s_prefs != []):
             if s not in reviewer_preferences[s_prefs[0]]:
                 s_prefs.remove(s_prefs[0])
-            if s_prefs:
+            if s_prefs != []:
                 r = s_prefs[0]
                 r_prefs = reviewer_preferences[r]
                 capacity = capacities[r]
