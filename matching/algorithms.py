@@ -67,7 +67,7 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
     return matching
 
 
-def extended_galeshapley(suitor_pref_dict, reviewer_pref_dict, capacities):
+def extended_galeshapley(suitor_preferences, reviewer_preferences, capacities):
     """ The extended Gale-Shapley algorithm for solving a capacitated matching
     game. This implementation of the algorithm is bas)] on that used by the NRMP
     to solve the hospital-resident assignment problem.
@@ -111,30 +111,45 @@ def extended_galeshapley(suitor_pref_dict, reviewer_pref_dict, capacities):
     matching : dict
         A stable matching with reviewers as keys and lists of suitors as values
     """
-    free_suitors = [s for s in suitor_pref_dict]
-    matching = {r: [] for r in reviewer_pref_dict}
-
-    suitor_prefs = deepcopy(suitor_pref_dict)
-    review_prefs = deepcopy(reviewer_pref_dict)
+    free_suitors = list(suitor_preferences.keys())
+    suitor_matching = {s: None for s in suitor_preferences.keys()}
+    reviewer_matching = {r: [] for r in reviewer_preferences.keys()}
 
     while free_suitors:
         s = free_suitors.pop(0)
-        s_pref = suitor_prefs[s]
-        if s_pref != []:
-            r = tuple(np.array(s_pref[0]))
-            curr_r_matching = matching[r]
-            r_pref = reviewer_pref_dict[r]
-            if curr_r_matching == [] or len(curr_r_matching) < capacities[r]:
-                matching[r].append(list(s))
-            else:
-                for r_match in curr_r_matching:
-                    if list(s) not in matching[r]:
-                        if r_pref.index(list(s)) < r_pref.index(list(r_match)):
-                            matching[r].remove(r_match)
-                            free_suitors.append(tuple(r_match))
-                            matching[r].append(list(s))
-                        else:
-                            suitor_prefs[s].remove(list(r))
-                            free_suitors.append(s)
+        s_prefs = suitor_preferences[s]
+        while (not suitor_matching[s]) & (s_prefs != []):
+            if s not in reviewer_preferences[s_prefs[0]]:
+                s_prefs.remove(s_prefs[0])
+            if s_prefs != []:
+                r = s_prefs[0]
+                r_prefs = reviewer_preferences[r]
+                capacity = capacities[r]
+                r_matches = reviewer_matching[r]
+                if len(r_matches) < capacity:
+                    suitor_matching[s] = r
+                    reviewer_matching[r] += [s]
+                else:
+                    s_idx = r_prefs.index(s)
+                    worst_idx = np.max([r_prefs.index(s_curr) \
+                                        for s_curr in r_prefs \
+                                        if s_curr in r_matches])
+                    worst_match = r_prefs[worst_idx]
+                    if s_idx < worst_idx:
+                        suitor_matching[worst_match] = None
+                        r_matches.remove(worst_match)
+                        suitor_preferences[worst_match].remove(r)
+                        free_suitors.append(worst_match)
 
-    return matching
+                        suitor_matching[s] = r
+                        r_matches += [s]
+                    else:
+                        r_prefs.remove(s)
+                        s_prefs.remove(r)
+
+    for reviewer, matches in reviewer_matching.items():
+        reviewer_pref = reviewer_preferences[reviewer]
+        sorted_matches = sorted(matches, key=lambda x: reviewer_pref.index(x))
+        reviewer_matching[reviewer] = sorted_matches
+
+    return reviewer_matching
