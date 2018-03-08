@@ -24,7 +24,7 @@ exactly one reviewer, and so our matching is bijective.
 
 It is known that instances of the stable matching problem can be solved to give
 a unique, stable and suitor-optimal matching using an algorithm developed by
-David Gale and Lloyd Shapley. The algorithm is as follows::
+David Gale and Lloyd Shapley. The algorithm is as follows:
 
     1. Take any unmatched suitor, s, and their most preferred reviewer, r.
     If all suitors are matched, end.
