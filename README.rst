@@ -28,14 +28,16 @@ David Gale and Lloyd Shapley. The algorithm is as follows:
 
 0. Assign all suitors and reviewers to be unmatched.
 
-1. Take any unmatched suitor, s, and their most preferred reviewer, r. If all
-   suitors are matched, end.
+1. Take any unmatched suitor, **s**, and their most preferred reviewer, **r**.
+   If all suitors are matched, end.
     
-2. If r is unmatched, then match s to r, and go to 1. Otherwise, go to 3.
+2. If **r** is unmatched, then match **s** to **r**, and go to 1. Otherwise, go
+   to 3.
     
-3. Consider r's current match, s'. If r prefers s to s', then unmatch s' from r
-   and match s to r. Otherwise, leave s unmatched and remove r from the
-   preference list of s. In either case, go to 1.
+3. Consider **r**'s current match, **s'**. If **r** prefers **s** to **s'**,
+   then unmatch **s'** from **r** and match **s** to **r**. Otherwise, leave
+   **s** unmatched and remove **r** from the preference list of **s**. In either
+   case, go to 1.
 
 By unique, we mean that the result of this algorithm is invariant of which order
 unmatched suitors are considered. Stability is the concept that the pairings in
