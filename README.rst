@@ -26,13 +26,13 @@ It is known that instances of the stable matching problem can be solved to give
 a unique, stable and suitor-optimal matching using an algorithm developed by
 David Gale and Lloyd Shapley. The algorithm is as follows:
 
-    1. Take any unmatched suitor, s, and their most preferred reviewer, r.
+1. Take any unmatched suitor, s, and their most preferred reviewer, r.
     If all suitors are matched, end.
     
-    2. If r is unmatched, then match s to r, and go to 1. Otherwise, go
+2. If r is unmatched, then match s to r, and go to 1. Otherwise, go
     to 3.
     
-    3. Consider r's current match, s'. If r prefers s to s', then
+3. Consider r's current match, s'. If r prefers s to s', then
     unmatch s' from r and match s to r. Otherwise, leave s unmatched
     and remove r from the preference list of s. In either case, go to 1.
 
@@ -58,6 +58,8 @@ associated with it a capacity. This capacity is the maximum number of suitors
 that may be matched to it at any given time.
 
 The algorithm which solves this problem is famously utilised in the USA by the
-`National Resident Matching Program <http://www.nrmp.org/>`_ hence the nickname.
-In fact, research surrounding this algorithm won the Nobel Prize for Economics
-(2012).
+`National Resident Matching Program <http://www.nrmp.org/>`_, hence the
+nickname. In fact, research surrounding this algorithm won Shapley, along with
+Alvin Roth, the `Nobel Prize for Economics <http://www.nytimes.com/2012/10/16/
+business/economy/
+alvin-roth-and-lloyd-shapley-win-nobel-in-economic-science.html>`_ in 2012.
