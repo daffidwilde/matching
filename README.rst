@@ -22,7 +22,7 @@ reviewer) to rank all members of the other set. In this way, we obtain a
 matching between our suitors and reviewers where each suitor is matched to
 exactly one reviewer, and so our matching is bijective.
 
-It is known that instances of the stable matching problem can be solved to give
+It is known that instances of the stable marriage problem can be solved to give
 a unique, stable and suitor-optimal matching using an algorithm developed by
 David Gale and Lloyd Shapley. The algorithm is as follows:
 
@@ -47,6 +47,40 @@ The final matching being suitor-optimal means that every suitor has their best
 possible matching without making the matching unstable. A corollary of this is
 that, in fact, every reviewer has their worst possible matching after the
 algorithm terminates.
+
+Usage
+^^^^^
+
+With both forms of matching game, ``matching`` uses standard dictionaries to
+construct and solve a given instance. In particular, for instances of the stable
+marriage problem, we require a dictionary detailing the preference lists of each
+suitor (and reviewer).
+
+Consider the following stable marriage problem which is represented on a
+bipartite graph.
+
+.. image:: ./img/bipartite-matching.png
+   :align: center
+   :width: 10cm
+
+We convey the information above in the following way:
+
+>>> suitor_prefs = {'A': ['D', 'E', 'F'],
+...                 'B': ['D', 'F', 'E'],
+...                 'C': ['F', 'D', 'E']}
+>>> reviewer_prefs = {'D': ['B', 'C', 'A'],
+...                   'E': ['A', 'C', 'B'],
+...                   'F': ['C', 'B', 'A']}
+
+Then to solve this matching game, we make use of the ``algorithms`` submodule,
+like so:
+
+>>> from matching.algorithms import galeshapley
+>>> matching = galeshapley(suitor_prefs, reviewer_prefs)
+>>> matching
+{'A': 'E', 'B': 'D', 'C': 'F'}
+
+It is easily checked - on paper or mentally - that this is the correct solution.
 
 
 The hospital-resident assignment problem
@@ -91,3 +125,44 @@ The algorithm is as follows:
    **s'** from **r**, match **s** to **r**, and go to 1. Otherwise, leave **s**
    unmatched, remove **s** from the preference list of **r** and **r** from the
    preference list of **s**, and go to 2.
+
+Usage
+^^^^^
+
+In a similar fashion to the stable marriage problem, we interpret
+hospital-resident assignment problems using dictionaries. In addition to the
+suitor and reviewer preference dictionaries, however, we have a capacity
+dictionary which takes reviewers as keys and integer capacities as values.
+
+Consider the following example. We have five medical residents - Arthur, Sunny,
+Joseph, Latha and Darrius - and three hospitals, each with 2 positions
+available: Mercy, City and General. We display their preferences in a similar
+fashion to before:
+
+.. image:: ./img/hospital-resident.png
+   :align: center
+   :width: 10cm
+
+In ``matching`` we summarise this problem in the following way:
+
+>>> suitor_prefs = {'A': ['C'],
+...                 'S': ['C', 'M'],
+...                 'J': ['C', 'G', 'M'],
+...                 'L': ['M', 'C', 'G'],
+...                 'D': ['C', 'M', 'G']}
+>>> reviewer_prefs = {'M': ['D', 'J'],
+...                   'C': ['D', 'A', 'S', 'L', 'J'],
+...                   'G': ['D', 'A', 'J', 'L']}
+>>> capacities = {r: 2 for r in reviewer_prefs.keys()}
+
+We then solve this problem using the ``extended_galeshapley`` algorithm:
+
+>>> from matching.algorithms import extended_galeshapley
+>>> suitor_match, reviewer_match = extended_galeshapley(suitor_prefs,
+...                                                     reviewer_prefs,
+...                                                     capacities)
+>>> suitor_match
+{'A': 'C', 'S': None, 'J': 'G', 'L': 'G', 'D': 'C'}
+
+Again, though less likely to be done in your head, you can verify that this
+matching is correct according to our algorithm.
