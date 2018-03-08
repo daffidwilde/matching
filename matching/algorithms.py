@@ -1,15 +1,12 @@
-""" 
-This script contains both the standard and extended Gale-Shapley algorithms for 
-solving matching games. 
+""" This script contains both the standard and extended Gale-Shapley algorithms
+for solving matching games.
 
 A matching game is defined by two sets called suitors and reviewers. Each suitor
 (and reviewer) has associated with it an ordered preference of the elements of
 the corresponding set. A solution to a matching game is any mapping between the
 set of suitors and reviewers.
-
 """
 
-from copy import deepcopy
 import numpy as np
 
 
@@ -42,7 +39,7 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
     matching : dict
         The suitor-optimal (stable) matching with suitors as keys and the
         reviewer they are matched with as values
-    """ 
+    """
     suitors = [s for s in suitor_pref_dict]
     matching = {s: None for s in suitors}
 
@@ -69,7 +66,7 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
 
 def extended_galeshapley(suitor_preferences, reviewer_preferences, capacities):
     """ The extended Gale-Shapley algorithm for solving a capacitated matching
-    game. This implementation of the algorithm is bas)] on that used by the NRMP
+    game. This implementation of the algorithm is based on that used by the NRMP
     to solve the hospital-resident assignment problem.
 
     The algorithm is as follows:
@@ -124,9 +121,8 @@ def extended_galeshapley(suitor_preferences, reviewer_preferences, capacities):
             if s_prefs != []:
                 r = s_prefs[0]
                 r_prefs = reviewer_preferences[r]
-                capacity = capacities[r]
                 r_matches = reviewer_matching[r]
-                if len(r_matches) < capacity:
+                if len(r_matches) < capacities[r]:
                     suitor_matching[s] = r
                     reviewer_matching[r] += [s]
                 else:
@@ -152,4 +148,4 @@ def extended_galeshapley(suitor_preferences, reviewer_preferences, capacities):
         sorted_matches = sorted(matches, key=lambda x: reviewer_pref.index(x))
         reviewer_matching[reviewer] = sorted_matches
 
-    return reviewer_matching
+    return suitor_matching, reviewer_matching
