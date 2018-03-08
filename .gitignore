@@ -3,3 +3,6 @@ __pycache__
 *egg-info*
 *.DS_Store
 .coverage
+img/*.aux
+img/*.log
+img/*.pdf
