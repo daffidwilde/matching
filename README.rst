@@ -26,6 +26,8 @@ It is known that instances of the stable matching problem can be solved to give
 a unique, stable and suitor-optimal matching using an algorithm developed by
 David Gale and Lloyd Shapley. The algorithm is as follows:
 
+0. Assign all suitors and reviewers to be unmatched.
+
 1. Take any unmatched suitor, s, and their most preferred reviewer, r. If all
    suitors are matched, end.
     
@@ -41,7 +43,7 @@ the matching are such that nobody could be matched to someone they prefer more
 without their new partner then being able to be with someone better.
 The final matching being suitor-optimal means that every suitor has their best
 possible matching without making the matching unstable. A corollary of this is
-that in fact, every reviewer has their worst possible matching after the
+that, in fact, every reviewer has their worst possible matching after the
 algorithm terminates.
 
 
@@ -61,4 +63,27 @@ The algorithm which solves this problem is famously utilised in the USA by the
 nickname. In fact, research surrounding this algorithm won Shapley, along with
 Alvin Roth, the `Nobel Prize for Economics <http://www.nytimes.com/2012/10/16/
 business/economy/
-alvin-roth-and-lloyd-shapley-win-nobel-in-economic-science.html>`_ in 2012.
+alvin-roth-and-lloyd-shapley-win-nobel-in-economic-science.html>`_ in 2012. In
+this package we refer to this algorithm as the Extended Gale-Shapley algorithm.
+However, it has several synonyms including: 'The Match', 'the Capacitated
+Gale-Shapley algorithm', 'the Roth-Shapley algorithm', and 'the deferred
+acceptance algorithm'. This algorithm has also been used to develop donor chains
+for kidney transplants saving thousands of lives in the process.
+
+The algorithm is as follows:
+
+0. Assign all suitors and reviewers to be unmatched.
+
+1. Take any unmatched suitor, s, that is still up for consideration, and go to
+   2. If there are no such suitors, end. 
+
+2. If the preference list of s is empty, remove them from consideration and go
+   to 1. Otherwise, consider their most preferred reviewer, r. Go to 3.
+
+3. If s is not ranked by r, remove r from the preference list of s and go to 2.
+   Otherwise, if r has space, match s to r and go to 1. If not, go to 4.
+
+4. Consider r's current matching, and particular their least preferable current
+   matching, s'. If r prefers s to s', then unmatch s' from r, match s to r, and
+   go to 1. Otherwise, leave s unmatched, remove s from the preference list of r
+   and r from the preference list of s, and go to 2.
