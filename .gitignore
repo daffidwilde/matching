@@ -1,2 +1,5 @@
-matching/__pycache__/
-matching.egg-info/
+__pycache__
+*pyc
+*egg-info*
+*.DS_Store
+.coverage
