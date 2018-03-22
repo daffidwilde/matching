@@ -134,7 +134,7 @@ hospital-resident assignment problems using dictionaries. In addition to the
 suitor and reviewer preference dictionaries, however, we have a capacity
 dictionary which takes reviewers as keys and integer capacities as values.
 
-Consider the following example. We have five medical residents - Arthur, Sunny,
+Consider the following `example <http://www.nrmp.org/matching-algorithm/>`_. We have five medical residents - Arthur, Sunny,
 Joseph, Latha and Darrius - and three hospitals, each with 2 positions
 available: Mercy, City and General. We display their preferences in a similar
 fashion to before:
