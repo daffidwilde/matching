@@ -166,3 +166,9 @@ We then solve this problem using the ``extended_galeshapley`` algorithm:
 
 Again, though less likely to be done in your head, you can verify that this
 matching is correct according to our algorithm.
+
+
+Get in contact!
+---------------
+
+I hope this package is useful, and please feel free to ping me here (or on Twitter: `@daffidwilde <https://twitter.com/daffidwilde>`_) with any issues or recommendations. PRs always welcome!
