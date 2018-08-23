@@ -8,6 +8,7 @@ set of suitors and reviewers.
 """
 
 from collections import Counter
+from copy import deepcopy
 
 import numpy as np
 
@@ -67,49 +68,60 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
     return matching
 
 
+def get_free_residents(resident_prefs, matching):
+    """ Return a list of all residents who are currently unmatched but have a
+    non-empty preference list. """
+
+    return [
+        resident
+        for resident in resident_prefs
+        if resident_prefs[resident]
+        and not any([resident in match for match in matching.values()])
+    ]
+
+
+def get_worst_idx(hospital, hospital_prefs, matching):
+    """ Find the index of the worst resident currently assigned to `hospital`
+    according to their preferences. """
+
+    return max(
+        [
+            hospital_prefs[hospital].index(resident)
+            for resident in hospital_prefs[hospital]
+            if resident in matching[hospital]
+        ]
+    )
+
+
 def resident_hospital(resident_prefs, hospital_prefs, capacities):
     """ Provide a stable, resident-optimal matching for the given instance of
     HR using the algorithm set out in [Gale, Shapley 1962]. """
 
-    matching = {h: [] for h in hospital_prefs.keys()}
-    free_residents = [r for r in resident_prefs.keys() if resident_prefs[r]]
+    matching = {hospital: [] for hospital in hospital_prefs}
+    free_residents = get_free_residents(resident_prefs, matching)
     while free_residents:
-        r = free_residents.pop(0)
-        h = resident_prefs[r][0]
-        matching[h].append(r)
+        resident = free_residents[0]
+        hospital = resident_prefs[resident][0]
+        matching[hospital].append(resident)
 
-        if len(matching[h]) > capacities[h]:
-            worst = max(
-                [
-                    hospital_prefs[h].index(res)
-                    for res in hospital_prefs[h]
-                    if res in matching[h]
-                ]
-            )
+        if len(matching[hospital]) > capacities[hospital]:
+            worst = get_worst_idx(hospital, hospital_prefs, matching)
+            resident = hospital_prefs[hospital][worst]
+            matching[hospital].remove(resident)
 
-            r_worst = hospital_prefs[h][worst]
+        if len(matching[hospital]) == capacities[hospital]:
+            worst = get_worst_idx(hospital, hospital_prefs, matching)
+            successors = hospital_prefs[hospital][worst + 1 :]
 
-            matching[h].remove(r_worst)
-            free_residents.append(r_worst)
-
-        if len(matching[h]) == capacities[h]:
-            worst = max(
-                [
-                    hospital_prefs[h].index(res)
-                    for res in hospital_prefs[h]
-                    if res in matching[h]
-                ]
-            )
-
-            successors = hospital_prefs[h][worst + 1 :]
             if successors:
-                for res in successors:
-                    hospital_prefs[h].remove(res)
-                    resident_prefs[res].remove(h)
+                for resident in successors:
+                    hospital_prefs[hospital].remove(resident)
+                    if hospital in resident_prefs[resident]:
+                        resident_prefs[resident].remove(hospital)
 
-        free_residents = [r for r in free_residents if resident_prefs[r]]
+            free_residents = get_free_residents(resident_prefs, matching)
 
-    return matching
+        return matching
 
 
 def hrt_super_res(resident_prefs, hospital_prefs, capacities):
@@ -153,7 +165,6 @@ def hrt_super_res(resident_prefs, hospital_prefs, capacities):
                     hospital_prefs[h_best].remove(resident)
                     resident_prefs[resident].remove(h_best)
 
-    print(matching)
     resident_match_counts = Counter([tuple(res) for res in matching.values()])
     if np.any(
         [count > 1 for count in resident_match_counts.values()]
@@ -161,94 +172,3 @@ def hrt_super_res(resident_prefs, hospital_prefs, capacities):
         raise ValueError("No super-stable matching exists.")
 
     return matching
-
-
-def extended_galeshapley(suitor_preferences, reviewer_preferences, capacities):
-    """ The extended Gale-Shapley algorithm for solving a capacitated matching
-    game. This implementation of the algorithm is based on that used by the NRMP
-    to solve the hospital-resident assignment problem.
-
-    The algorithm is as follows:
-
-    (1) Assign all suitors and reviewers to be unmatched.
-
-    (2) Take any unmatched suitor up for consideration, s.
-            - If their preference list is empty, remove them from consideration
-              and go to (2).)
-            - Otherwise, consider their most preferred reviewer, r.
-            - If r currently has space for another suitor, match s to r.
-            - Otherwise, if r has no space currently:)
-                - For each suitor currently matched to r, r_match:
-                    - If r prefers s to r_match and s is not yet matched to r,
-                      unmatch r_match from r and match r to s.
-                    - Otherwise, remove r from s's preference list and leave s
-                      unmatched.
-
-    (3) Go to (2) until there are no unmatched candidates up for consideration,
-        then end.
-
-    NB: This implementation requires all reviewers to have ranked all suitors,
-        but not the other way around. That is, some suitors may end up without
-        any matches.
-
-    Parameters
-    ----------
-    suitor_pref_dict : dict
-        A dictionary with suitors as keys and their respective preference lists
-        as values
-    review_pref_dict : dict
-        A dictionary with reviewers as keys and their respective preference
-        lists as values
-    capacities : dict
-        A dictionary with reviewers as keys and their capacities as values
-
-    Returns
-    -------
-    matching : dict
-        A stable matching with reviewers as keys and lists of suitors as values
-    """
-    free_suitors = list(suitor_preferences.keys())
-    suitor_matching = {s: None for s in suitor_preferences.keys()}
-    reviewer_matching = {r: [] for r in reviewer_preferences.keys()}
-
-    while free_suitors:
-        s = free_suitors.pop(0)
-        s_prefs = suitor_preferences[s]
-        while (not suitor_matching[s]) & (s_prefs != []):
-            if s not in reviewer_preferences[s_prefs[0]]:
-                s_prefs.remove(s_prefs[0])
-            if s_prefs != []:
-                r = s_prefs[0]
-                r_prefs = reviewer_preferences[r]
-                r_matches = reviewer_matching[r]
-                if len(r_matches) < capacities[r]:
-                    suitor_matching[s] = r
-                    reviewer_matching[r] += [s]
-                else:
-                    s_idx = r_prefs.index(s)
-                    worst_idx = np.max(
-                        [
-                            r_prefs.index(s_curr)
-                            for s_curr in r_prefs
-                            if s_curr in r_matches
-                        ]
-                    )
-                    worst_match = r_prefs[worst_idx]
-                    if s_idx < worst_idx:
-                        suitor_matching[worst_match] = None
-                        r_matches.remove(worst_match)
-                        suitor_preferences[worst_match].remove(r)
-                        free_suitors.append(worst_match)
-
-                        suitor_matching[s] = r
-                        r_matches += [s]
-                    else:
-                        r_prefs.remove(s)
-                        s_prefs.remove(r)
-
-    for reviewer, matches in reviewer_matching.items():
-        reviewer_pref = reviewer_preferences[reviewer]
-        sorted_matches = sorted(matches, key=lambda x: reviewer_pref.index(x))
-        reviewer_matching[reviewer] = sorted_matches
-
-    return suitor_matching, reviewer_matching

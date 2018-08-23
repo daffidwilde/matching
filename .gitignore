@@ -4,8 +4,10 @@ build/
 dist/
 *.DS_Store
 *egg-info*
+.hypothesis
 img/*.aux
 img/*.log
 img/*.pdf
 __pycache__
 *pyc
+*.swp
