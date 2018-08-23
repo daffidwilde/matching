@@ -1,13 +1,8 @@
-build/
-.cache
-.coverage
-dist/
-*.DS_Store
+__pycache__
+*pyc
 *egg-info*
-.hypothesis
+*.DS_Store
+.coverage
 img/*.aux
 img/*.log
 img/*.pdf
-__pycache__
-*pyc
-*.swp
