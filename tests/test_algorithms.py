@@ -106,7 +106,12 @@ def test_extended_galeshapley(resident_preferences, capacities, seed):
             resident_preferences, hospital_preferences, capacities
         )
 
-        # assert set(resident_preferences.keys()) == set(matching.values())
         assert set(hospital_preferences.keys()) == set(matching.keys())
+        for hospital, matches in matching.items():
+            old_idx = -np.infty
+            for resident in matches:
+                idx = hospital_preferences[hospital].index(resident)
+                assert idx >= old_idx
+                old_idx = idx
     else:
         pass

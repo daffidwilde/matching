@@ -121,6 +121,10 @@ def resident_hospital(resident_prefs, hospital_prefs, capacities):
 
             free_residents = get_free_residents(resident_prefs, matching)
 
+    for hospital, matches in matching.items():
+        sorted_matches = sorted(matches, key=hospital_prefs[hospital].index)
+        matching[hospital] = sorted_matches
+
     return matching
 
 
