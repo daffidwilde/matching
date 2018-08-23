@@ -1,1 +1,1 @@
-from .algorithms import galeshapley, extended_galeshapley
+from .algorithms import galeshapley, resident_hospital

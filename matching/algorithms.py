@@ -121,7 +121,7 @@ def resident_hospital(resident_prefs, hospital_prefs, capacities):
 
             free_residents = get_free_residents(resident_prefs, matching)
 
-        return matching
+    return matching
 
 
 def hrt_super_res(resident_prefs, hospital_prefs, capacities):

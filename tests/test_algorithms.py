@@ -3,7 +3,7 @@
 import itertools
 import numpy as np
 
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.strategies import (
     dictionaries,
     integers,
@@ -93,6 +93,7 @@ def _make_hospital_prefs(resident_prefs):
     ),
     seed=integers(min_value=0),
 )
+@settings(deadline=None)
 def test_extended_galeshapley(resident_preferences, capacities, seed):
     """ Example used on the NRMP website for the capacitated Gale-Shapley
     algorithm. Again, this example is easily solved on paper. """
