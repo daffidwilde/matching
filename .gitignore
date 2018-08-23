@@ -1,6 +1,7 @@
-build/*
-dist*
+build/
+.cache
 .coverage
+dist/
 *.DS_Store
 *egg-info*
 img/*.aux
