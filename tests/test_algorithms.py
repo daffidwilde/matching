@@ -3,7 +3,7 @@
 import itertools
 import numpy as np
 
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.strategies import (
     dictionaries,
     integers,
@@ -93,6 +93,7 @@ def _make_hospital_prefs(resident_prefs):
     ),
     seed=integers(min_value=0),
 )
+@settings(deadline=None)
 def test_extended_galeshapley(resident_preferences, capacities, seed):
     """ Example used on the NRMP website for the capacitated Gale-Shapley
     algorithm. Again, this example is easily solved on paper. """
@@ -105,7 +106,12 @@ def test_extended_galeshapley(resident_preferences, capacities, seed):
             resident_preferences, hospital_preferences, capacities
         )
 
-        # assert set(resident_preferences.keys()) == set(matching.values())
         assert set(hospital_preferences.keys()) == set(matching.keys())
+        for hospital, matches in matching.items():
+            old_idx = -np.infty
+            for resident in matches:
+                idx = hospital_preferences[hospital].index(resident)
+                assert idx >= old_idx
+                old_idx = idx
     else:
         pass
