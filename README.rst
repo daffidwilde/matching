@@ -153,12 +153,12 @@ In ``matching`` we summarise this problem in the following way:
 >>> hospital_prefs = {'M': ['D', 'J', 'S', 'L'],
 ...                   'C': ['D', 'A', 'S', 'L', 'J'],
 ...                   'G': ['D', 'A', 'J', 'L']}
->>> capacities = {r: 2 for r in hospital_prefs.keys()}
+>>> capacities = {h: 2 for h in hospital_prefs.keys()}
 
 We then solve this problem using the ``hospital_resident`` algorithm:
 
 >>> from matching.algorithms import hospital_resident
->>> matching = hospital_resident(hospital_prefs, reviewer_prefs, capacities)
+>>> matching = hospital_resident(hospital_prefs, resident_prefs, capacities)
 >>> matching
 {'M': ['S', 'L'], 'C': ['D', 'A'], 'G': ['J']}
 
