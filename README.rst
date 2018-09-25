@@ -1,6 +1,9 @@
 Matching
 ========
 
+.. image:: https://img.shields.io/pypi/v/matching.svg
+   :target: https://pypi.org/project/matching/
+
 A package for solving matching games.
 -------------------------------------
 
