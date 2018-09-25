@@ -14,19 +14,21 @@ import numpy as np
 
 
 def galeshapley(suitor_pref_dict, reviewer_pref_dict):
-    """ The Gale-Shapley algorithm. This is known to provide a unique, stable
-    suitor-optimal matching. The algorithm is as follows:
+    """ The Gale-Shapley algorithm as set out in [Gale, Shapley 1962]. This
+    algorithm is known to provide a unique, stable suitor-optimal matching. If a
+    reviewer-optimal matching is required, then their roles can be reversed. The
+    algorithm is as follows:
 
-    (1) Assign all suitors and reviewers to be unmatched.
+    1. Assign all suitors and reviewers to be unmatched.
 
-    (2) Take any unmatched suitor, s, and their most preferred reviewer, r.
-            - If r is unmatched, match s to r.
-            - Else, if r is matched, consider their current partner, r_partner.
-                - If r prefers s to r_partner, unmatch r_partner from r and 
-                  match s to r.
-                - Else, leave s unmatched and remove r from their preference
-                  list.
-    (3) Go to (2) until all suitors are matched, then end.
+    2. Take any unmatched suitor, s, and their most preferred reviewer, r.
+        - If r is unmatched, match s to r.
+        - Else, if r is matched, consider their current partner, r_partner.
+         - If r prefers s to r_partner, unmatch r_partner from r and match s to
+           r.
+         - Else, leave s unmatched and remove r from their preference list.
+
+    3. Go to 2 until all suitors are matched, then end.
 
     Parameters
     ----------
@@ -68,6 +70,18 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
     return matching
 
 
+def check_inputs(resident_prefs, hospital_prefs):
+    """ Reduce as necessary the preference list of all residents and hospitals
+    so that no player ranks another player that they are not also ranked by. """
+
+    for resident in resident_prefs.keys():
+        for hospital in resident_prefs[resident]:
+            if resident not in hospital_prefs[hospital]:
+                raise ValueError(
+                    'Hospitals must rank all residents who rank them.'
+                )
+
+
 def get_free_residents(resident_prefs, matching):
     """ Return a list of all residents who are currently unmatched but have a
     non-empty preference list. """
@@ -93,9 +107,11 @@ def get_worst_idx(hospital, hospital_prefs, matching):
     )
 
 
-def resident_hospital(resident_prefs, hospital_prefs, capacities):
+def hospital_resident(hospital_prefs, resident_prefs, capacities):
     """ Provide a stable, resident-optimal matching for the given instance of
-    HR using the algorithm set out in [Gale, Shapley 1962]. """
+    HR using the algorithm set out in [Dubins, Freeman 1981]. """
+
+    check_inputs(hospital_prefs, resident_prefs)
 
     matching = {hospital: [] for hospital in hospital_prefs}
     free_residents = get_free_residents(resident_prefs, matching)
@@ -111,15 +127,14 @@ def resident_hospital(resident_prefs, hospital_prefs, capacities):
 
         if len(matching[hospital]) == capacities[hospital]:
             worst = get_worst_idx(hospital, hospital_prefs, matching)
-            successors = hospital_prefs[hospital][worst + 1 :]
+            successors = hospital_prefs[hospital][worst + 1:]
 
             if successors:
                 for resident in successors:
                     hospital_prefs[hospital].remove(resident)
-                    if hospital in resident_prefs[resident]:
-                        resident_prefs[resident].remove(hospital)
+                    resident_prefs[resident].remove(hospital)
 
-            free_residents = get_free_residents(resident_prefs, matching)
+        free_residents = get_free_residents(resident_prefs, matching)
 
     for hospital, matches in matching.items():
         sorted_matches = sorted(matches, key=hospital_prefs[hospital].index)

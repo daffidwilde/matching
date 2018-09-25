@@ -1,6 +1,9 @@
 Matching
 ========
 
+.. image:: https://img.shields.io/pypi/v/matching.svg
+   :target: https://pypi.org/project/matching/
+
 A package for solving matching games.
 -------------------------------------
 
@@ -134,7 +137,7 @@ hospital-resident assignment problems using dictionaries. In addition to the
 suitor and reviewer preference dictionaries, however, we have a capacity
 dictionary which takes reviewers as keys and integer capacities as values.
 
-Consider the following `example <http://www.nrmp.org/matching-algorithm/>`_. We have five medical residents - Arthur, Sunny,
+Consider the following example. We have five medical residents - Arthur, Sunny,
 Joseph, Latha and Darrius - and three hospitals, each with 2 positions
 available: Mercy, City and General. We display their preferences in a similar
 fashion to before:
@@ -145,24 +148,22 @@ fashion to before:
 
 In ``matching`` we summarise this problem in the following way:
 
->>> suitor_prefs = {'A': ['C'],
-...                 'S': ['C', 'M'],
-...                 'J': ['C', 'G', 'M'],
-...                 'L': ['M', 'C', 'G'],
-...                 'D': ['C', 'M', 'G']}
->>> reviewer_prefs = {'M': ['D', 'J'],
+>>> resident_prefs = {'A': ['C'],
+...                   'S': ['C', 'M'],
+...                   'J': ['C', 'G', 'M'],
+...                   'L': ['M', 'C', 'G'],
+...                   'D': ['C', 'M', 'G']}
+>>> hospital_prefs = {'M': ['D', 'J', 'S', 'L'],
 ...                   'C': ['D', 'A', 'S', 'L', 'J'],
 ...                   'G': ['D', 'A', 'J', 'L']}
->>> capacities = {r: 2 for r in reviewer_prefs.keys()}
+>>> capacities = {r: 2 for r in hospital_prefs.keys()}
 
-We then solve this problem using the ``extended_galeshapley`` algorithm:
+We then solve this problem using the ``hospital_resident`` algorithm:
 
->>> from matching.algorithms import extended_galeshapley
->>> suitor_match, reviewer_match = extended_galeshapley(suitor_prefs,
-...                                                     reviewer_prefs,
-...                                                     capacities)
->>> suitor_match
-{'A': 'C', 'S': None, 'J': 'G', 'L': 'G', 'D': 'C'}
+>>> from matching.algorithms import hospital_resident
+>>> matching = hospital_resident(hospital_prefs, reviewer_prefs, capacities)
+>>> matching
+{'M': ['S', 'L'], 'C': ['D', 'A'], 'G': ['J']}
 
 Again, though less likely to be done in your head, you can verify that this
 matching is correct according to our algorithm.
