@@ -117,6 +117,7 @@ def test_hospital_resident(resident_preferences, capacities, seed):
     else:
         pass
 
+
 def test_hospital_resident_raises_error():
     """ Verify that a ValueError is raised when a hospital does not rank all the
     residents that rank it. """
