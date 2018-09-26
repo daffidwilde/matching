@@ -1,5 +1,4 @@
 numpy
 numpydoc
 
-hypothesis
 sphinx==1.6.7
