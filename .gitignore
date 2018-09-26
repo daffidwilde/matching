@@ -1,6 +1,6 @@
 _build/
 .cache
-.coverage
+*cov*
 dist/
 *.DS_Store
 *egg-info*
