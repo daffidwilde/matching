@@ -9,7 +9,7 @@ generally.
 .. toctree::
    :maxdepth: 2
 
-   stable_marriage.rst
-   resident_hospital.rst
+   stable_marriage/index.rst
+   hospital_resident/index.rst
    game_theory.rst
    other_packages.rst
