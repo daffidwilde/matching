@@ -1,5 +1,6 @@
 """ Tests for each algorithm on small example cases. """
 
+import pytest
 import itertools
 import numpy as np
 
@@ -11,7 +12,7 @@ from hypothesis.strategies import (
     sampled_from,
 )
 
-from matching.algorithms import galeshapley, resident_hospital
+from matching.algorithms import galeshapley, hospital_resident 
 
 
 @given(
@@ -94,16 +95,16 @@ def _make_hospital_prefs(resident_prefs):
     seed=integers(min_value=0),
 )
 @settings(deadline=None)
-def test_extended_galeshapley(resident_preferences, capacities, seed):
-    """ Example used on the NRMP website for the capacitated Gale-Shapley
-    algorithm. Again, this example is easily solved on paper. """
+def test_hospital_resident(resident_preferences, capacities, seed):
+    """ Verify that the resident-optimal, hospital-resident algorithm produces a
+    valid matching. """
 
     if all(resident_preferences.values()):
         np.random.seed(seed)
 
         hospital_preferences = _make_hospital_prefs(resident_preferences)
-        matching = resident_hospital(
-            resident_preferences, hospital_preferences, capacities
+        matching = hospital_resident(
+            hospital_preferences, resident_preferences, capacities
         )
 
         assert set(hospital_preferences.keys()) == set(matching.keys())
@@ -115,3 +116,31 @@ def test_extended_galeshapley(resident_preferences, capacities, seed):
                 old_idx = idx
     else:
         pass
+
+
+def test_hospital_resident_raises_error():
+    """ Verify that a ValueError is raised when a hospital does not rank all the
+    residents that rank it. """
+
+    resident_preferences = {
+        'A': ['C'],
+        'S': ['C', 'M'],
+        'J': ['C', 'G', 'M'],
+        'L': ['M', 'C', 'G'],
+        'D': ['C', 'M', 'G']
+    }
+
+    hospital_preferences = {
+        'M': ['D', 'J'], # M should rank S and L as well.
+        'C': ['D', 'A', 'S', 'L', 'J'],
+        'G': ['D', 'A', 'J', 'L']
+    }
+
+    capacities = {
+        hospital: 2 for hospital in hospital_preferences.keys()
+    }
+
+    with pytest.raises(ValueError):
+        hospital_resident(
+            hospital_preferences, resident_preferences, capacities
+        )
