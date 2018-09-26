@@ -95,9 +95,9 @@ def _make_hospital_prefs(resident_prefs):
     seed=integers(min_value=0),
 )
 @settings(deadline=None)
-def test_resident_hospital(resident_preferences, capacities, seed):
-    """ Example used on the NRMP website for the resident-optimal,
-    resident-hospital algorithm. """
+def test_hospital_resident(resident_preferences, capacities, seed):
+    """ Verify that the resident-optimal, hospital-resident algorithm produces a
+    valid matching. """
 
     if all(resident_preferences.values()):
         np.random.seed(seed)
@@ -117,7 +117,8 @@ def test_resident_hospital(resident_preferences, capacities, seed):
     else:
         pass
 
-def test_resident_hospital_raises_error():
+
+def test_hospital_resident_raises_error():
     """ Verify that a ValueError is raised when a hospital does not rank all the
     residents that rank it. """
 

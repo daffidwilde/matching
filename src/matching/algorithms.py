@@ -70,7 +70,7 @@ def galeshapley(suitor_pref_dict, reviewer_pref_dict):
     return matching
 
 
-def check_inputs(resident_prefs, hospital_prefs):
+def check_inputs(hospital_prefs, resident_prefs):
     """ Reduce as necessary the preference list of all residents and hospitals
     so that no player ranks another player that they are not also ranked by. """
 
@@ -132,7 +132,8 @@ def hospital_resident(hospital_prefs, resident_prefs, capacities):
             if successors:
                 for resident in successors:
                     hospital_prefs[hospital].remove(resident)
-                    resident_prefs[resident].remove(hospital)
+                    if hospital in resident_prefs[resident]:
+                        resident_prefs[resident].remove(hospital)
 
         free_residents = get_free_residents(resident_prefs, matching)
 

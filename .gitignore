@@ -1,6 +1,6 @@
 docs/_build/*
 .cache
-*coverage*
+*cov*
 dist/
 docs/tex/*.aux
 docs/tex/*.log
