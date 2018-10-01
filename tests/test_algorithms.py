@@ -1,7 +1,8 @@
 """ Tests for each algorithm on small example cases. """
 
-import pytest
 import itertools
+
+import pytest
 import numpy as np
 
 from hypothesis import given, settings
@@ -12,7 +13,7 @@ from hypothesis.strategies import (
     sampled_from,
 )
 
-from matching.algorithms import galeshapley, hospital_resident 
+from matching.algorithms import stable_marriage, hospital_resident
 
 
 @given(
@@ -29,17 +30,25 @@ from matching.algorithms import galeshapley, hospital_resident
         max_size=3,
     ),
 )
-def test_galeshapley(suitor_preferences, reviewer_preferences):
+def test_stable_marriage(suitor_preferences, reviewer_preferences):
     """ Assert that the Gale-Shapley algorithm produces a valid solution to an
     uncapacitated matching game. """
 
-    matching = galeshapley(suitor_preferences, reviewer_preferences)
+    for party in ['suitor', 'reviewer']:
+        matching = stable_marriage(
+            suitor_preferences, reviewer_preferences, optimal=party
+        )
 
-    assert set(suitor_preferences.keys()) == set(matching.keys())
-    assert set(reviewer_preferences.keys()) == set(matching.values())
+        if party == 'suitor':
+            assert set(suitor_preferences.keys()) == set(matching.keys())
+            assert set(reviewer_preferences.keys()) == set(matching.values())
 
-    for suitor, reviewer in matching.items():
-        assert suitor and reviewer
+        else:
+            assert set(suitor_preferences.keys()) == set(matching.values())
+            assert set(reviewer_preferences.keys()) == set(matching.keys())
+
+        for player, partner in matching.items():
+            assert player and partner
 
 
 def _get_inputs(values):
@@ -137,7 +146,7 @@ def test_hospital_resident_raises_error():
     }
 
     capacities = {
-        hospital: 2 for hospital in hospital_preferences.keys()
+        hospital: 2 for hospital in hospital_preferences
     }
 
     with pytest.raises(ValueError):
