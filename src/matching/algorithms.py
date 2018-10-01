@@ -7,11 +7,12 @@
 .. mapping between the set of suitors and reviewers.
 """
 
-def galeshapley(suitor_prefs, reviewer_prefs):
-    """ The Gale-Shapley algorithm as set out in [Gale, Shapley 1962]. This
-    algorithm is known to provide a unique, stable, suitor-optimal matching. If
-    a reviewer-optimal matching is required, then the roles of suitors and
-    reviewers should be reversed. The algorithm is as follows:
+def stable_marriage(suitor_prefs, reviewer_prefs, optimal='suitor'):
+    """ Set out in [Gale, Shapley 1962] and commonly known as the
+    Extended Gale-Shapley algorithm, this algorithm is known to provide a
+    unique, stable, suitor-optimal matching to any instance of the stable
+    marriage problem. If a reviewer-optimal matching is required, then the roles
+    of suitors and reviewers should be reversed. The algorithm is as follows:
 
         1. Assign all suitors and reviewers to be unmatched.
 
@@ -36,17 +37,23 @@ def galeshapley(suitor_prefs, reviewer_prefs):
     ----------
     suitor_prefs : dict
         A dictionary with suitors as keys and their respective preference lists
-        as values
+        as values.
     review_prefs : dict
         A dictionary with reviewers as keys and their respective preference
-        lists as values
+        lists as values.
+    optimal : str
+        An indicator for which party the matching should be optimal. Defaults to
+        :code:`'suitor'` but can also be :code:`'reviewer'`.
 
     Returns
     -------
     matching : dict
-        The suitor-optimal (stable) matching with suitors as keys and the
-        reviewer they are matched with as values
+        The stable matching with the optimal party members as keys and the
+        players they are matched with as values.
     """
+    if optimal == 'reviewer':
+        suitor_prefs, reviewer_prefs = reviewer_prefs, suitor_prefs
+
     suitors = [s for s in suitor_prefs]
     matching = {s: None for s in suitors}
 
