@@ -12,7 +12,7 @@ from hypothesis.strategies import (
     sampled_from,
 )
 
-from matching.algorithms import galeshapley, hospital_resident 
+from matching.algorithms import galeshapley, hospital_resident
 
 
 @given(
@@ -123,22 +123,20 @@ def test_hospital_resident_raises_error():
     residents that rank it. """
 
     resident_preferences = {
-        'A': ['C'],
-        'S': ['C', 'M'],
-        'J': ['C', 'G', 'M'],
-        'L': ['M', 'C', 'G'],
-        'D': ['C', 'M', 'G']
+        "A": ["C"],
+        "S": ["C", "M"],
+        "J": ["C", "G", "M"],
+        "L": ["M", "C", "G"],
+        "D": ["C", "M", "G"],
     }
 
     hospital_preferences = {
-        'M': ['D', 'J'], # M should rank S and L as well.
-        'C': ['D', 'A', 'S', 'L', 'J'],
-        'G': ['D', 'A', 'J', 'L']
+        "M": ["D", "J"],  # M should rank S and L as well.
+        "C": ["D", "A", "S", "L", "J"],
+        "G": ["D", "A", "J", "L"],
     }
 
-    capacities = {
-        hospital: 2 for hospital in hospital_preferences.keys()
-    }
+    capacities = {hospital: 2 for hospital in hospital_preferences.keys()}
 
     with pytest.raises(ValueError):
         hospital_resident(
