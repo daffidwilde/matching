@@ -1,194 +1,147 @@
-""" This script contains both the standard and extended Gale-Shapley algorithms
-for solving matching games.
-
-A matching game is defined by two sets called suitors and reviewers. Each suitor
-(and reviewer) has associated with it an ordered preference of the elements of
-the corresponding set. A solution to a matching game is any mapping between the
-set of suitors and reviewers.
-"""
-
-from collections import Counter
-from copy import deepcopy
-
-import numpy as np
+""" All the core algorithms for solving matching game instances. """
 
 
-def galeshapley(suitor_pref_dict, reviewer_pref_dict):
-    """ The Gale-Shapley algorithm as set out in [Gale, Shapley 1962]. This
-    algorithm is known to provide a unique, stable suitor-optimal matching. If a
-    reviewer-optimal matching is required, then their roles can be reversed. The
-    algorithm is as follows:
+def unmatch_pair(suitor, reviewer):
+    """ Unmatch the players given by `suitor` and `reviewer`. """
 
-    1. Assign all suitors and reviewers to be unmatched.
+    suitor.match = None
 
-    2. Take any unmatched suitor, s, and their most preferred reviewer, r.
-        - If r is unmatched, match s to r.
-        - Else, if r is matched, consider their current partner, r_partner.
-         - If r prefers s to r_partner, unmatch r_partner from r and match s to
-           r.
-         - Else, leave s unmatched and remove r from their preference list.
-
-    3. Go to 2 until all suitors are matched, then end.
-
-    Parameters
-    ----------
-    suitor_pref_dict : dict
-        A dictionary with suitors as keys and their respective preference lists
-        as values
-    review_pref_dict : dict
-        A dictionary with reviewers as keys and their respective preference
-        lists as values
-
-    Returns
-    -------
-    matching : dict
-        The suitor-optimal (stable) matching with suitors as keys and the
-        reviewer they are matched with as values
-    """
-    suitors = [s for s in suitor_pref_dict]
-    matching = {s: None for s in suitors}
-
-    while suitors != []:
-        s = suitors.pop(0)
-        r = suitor_pref_dict[s][0]
-        if r not in matching.values():
-            matching[s] = r
-        else:
-            for suitr, revwr in matching.items():
-                if revwr == r:
-                    r_partner = suitr
-            if reviewer_pref_dict[r].index(s) < reviewer_pref_dict[r].index(
-                r_partner
-            ):
-                matching[r_partner] = None
-                matching[s] = r
-                suitors.append(r_partner)
-            else:
-                suitor_pref_dict[s].remove(r)
-                suitors.append(s)
-
-    return matching
+    try:
+        reviewer.match.remove(suitor)
+    except AttributeError:
+        reviewer.match = None
 
 
-def check_inputs(hospital_prefs, resident_prefs):
-    """ Reduce as necessary the preference list of all residents and hospitals
-    so that no player ranks another player that they are not also ranked by. """
+def match_pair(suitor, reviewer):
+    """ Match the players given by `suitor` and `reviewer`. """
 
-    for resident in resident_prefs.keys():
-        for hospital in resident_prefs[resident]:
-            if resident not in hospital_prefs[hospital]:
-                raise ValueError(
-                    'Hospitals must rank all residents who rank them.'
-                )
+    suitor.match = reviewer
 
-
-def get_free_residents(resident_prefs, matching):
-    """ Return a list of all residents who are currently unmatched but have a
-    non-empty preference list. """
-
-    return [
-        resident
-        for resident in resident_prefs
-        if resident_prefs[resident]
-        and not any([resident in match for match in matching.values()])
-    ]
+    try:
+        reviewer.match.append(suitor)
+    except AttributeError:
+        reviewer.match = suitor
 
 
-def get_worst_idx(hospital, hospital_prefs, matching):
-    """ Find the index of the worst resident currently assigned to `hospital`
-    according to their preferences. """
+def delete_pair(successor, reviewer):
+    """ Make the players `successor` and `reviewer` forget one another,
+    effectively 'deleting' the pair from the game. """
 
-    return max(
-        [
-            hospital_prefs[hospital].index(resident)
-            for resident in hospital_prefs[hospital]
-            if resident in matching[hospital]
-        ]
-    )
+    successor.forget(reviewer)
+    reviewer.forget(successor)
 
 
-def hospital_resident(hospital_prefs, resident_prefs, capacities):
-    """ Provide a stable, resident-optimal matching for the given instance of
-    HR using the algorithm set out in [Dubins, Freeman 1981]. """
+def galeshapley(suitors, reviewers, optimal="suitor", verbose=False):
 
-    check_inputs(hospital_prefs, resident_prefs)
+    if optimal.lower() == "reviewer":
+        suitors, reviewers = reviewers, suitors
 
-    matching = {hospital: [] for hospital in hospital_prefs}
-    free_residents = get_free_residents(resident_prefs, matching)
-    while free_residents:
-        resident = free_residents[0]
-        hospital = resident_prefs[resident][0]
-        matching[hospital].append(resident)
+    free_suitors = [s for s in suitors if not s.match]
+    while free_suitors:
 
-        if len(matching[hospital]) > capacities[hospital]:
-            worst = get_worst_idx(hospital, hospital_prefs, matching)
-            resident = hospital_prefs[hospital][worst]
-            matching[hospital].remove(resident)
+        suitor = free_suitors.pop()
+        reviewer = suitor.get_favourite(reviewers)
 
-        if len(matching[hospital]) == capacities[hospital]:
-            worst = get_worst_idx(hospital, hospital_prefs, matching)
-            successors = hospital_prefs[hospital][worst + 1:]
+        if reviewer.match:
+            curr_match = reviewer.match
+            unmatch_pair(curr_match, reviewer)
+            free_suitors.append(curr_match)
 
-            if successors:
-                for resident in successors:
-                    hospital_prefs[hospital].remove(resident)
-                    if hospital in resident_prefs[resident]:
-                        resident_prefs[resident].remove(hospital)
+        match_pair(suitor, reviewer)
 
-        free_residents = get_free_residents(resident_prefs, matching)
+        successors = reviewer.get_successors(suitors)
+        for successor in successors:
+            delete_pair(successor, reviewer)
 
-    for hospital, matches in matching.items():
-        sorted_matches = sorted(matches, key=hospital_prefs[hospital].index)
-        matching[hospital] = sorted_matches
+    if optimal.lower() in ["r", "reviewer"]:
+        suitors, reviewers = reviewers, suitors
 
-    return matching
+    return {s: s.match for s in suitors}
 
 
-def hrt_super_res(resident_prefs, hospital_prefs, capacities):
-    """ Determine whether a super-stable, resident-optimal matching exists for
-    the given instance of HR. If so, return the matching. """
+def hospitalresident(suitors, reviewers, optimal="suitor", verbose=False):
+    """ Solve a standard capacitated matching game, i.e. an instance of the
+    hospital-resident assignment problem (HR). """
 
-    # ==================================
-    # Needs adjusting for ties in prefs.
-    # ==================================
+    if optimal == "suitor":
+        return resident_optimal(suitors, reviewers, verbose)
+    if optimal == "reviewer":
+        return hospital_optimal(suitors, reviewers, verbose)
 
-    matching = {h: [] for h in hospital_prefs.keys()}
-    fulls = {h: False for h in hospital_prefs.keys()}
-    free_residents = [r for r in resident_prefs.keys()]
-    while [r for r in free_residents if resident_prefs[r]]:
 
-        r = free_residents.pop(0)
-        r_prefs = resident_prefs[r]
-        h_best = r_prefs[0]
-        matching[h_best] += [r]
+def get_matching(reviewers):
+    """ Make a dictionary of reviewers and their final matches such that the
+    matches are correctly ordered according to the reviewer's preferences. """
 
-        if len(matching[h_best]) > capacities[h_best]:
-            r_worst = hospital_prefs[h_best][-1]
-            if r_worst in matching[h_best]:
-                matching[h_best].remove(r_worst)
-            resident_prefs[r_worst].remove(h_best)
-            hospital_prefs[h_best].remove(r_worst)
-
-        if len(matching[h_best]) == capacities[h_best]:
-            fulls[h_best] = True
-            worst_idx = np.max(
-                [
-                    hospital_prefs[h_best].index(resident)
-                    for resident in hospital_prefs[h_best]
-                    if resident in matching[h_best]
-                ]
+    return {
+        r: tuple(
+            sorted(
+                r.match, key=lambda x: r.pref_names.index(x.name)
             )
+        )
+        for r in reviewers
+    }
 
-            successors = hospital_prefs[h_best][worst_idx + 1 :]
-            if successors:
-                for resident in successors:
-                    hospital_prefs[h_best].remove(resident)
-                    resident_prefs[resident].remove(h_best)
 
-    resident_match_counts = Counter([tuple(res) for res in matching.values()])
-    if np.any(
-        [count > 1 for count in resident_match_counts.values()]
-    ) or np.any(fulls.values()):
-        raise ValueError("No super-stable matching exists.")
+def resident_optimal(suitors, reviewers, verbose):
+    """ Solve the instance of HR to be suitor- (resident-) optimal. """
+
+    free_suitors = suitors[:]
+    while free_suitors:
+
+        suitor = free_suitors.pop()
+        reviewer = suitor.get_favourite(reviewers)
+
+        match_pair(suitor, reviewer)
+
+        if len(reviewer.match) > reviewer.capacity:
+            idx = reviewer.get_worst_match_idx()
+            worst = [
+                s for s in suitors
+                if s.name == reviewer.pref_names[idx]
+            ][0]
+            unmatch_pair(worst, reviewer)
+
+        if len(reviewer.match) == reviewer.capacity:
+            idx = reviewer.get_worst_match_idx()
+            successors = reviewer.get_successors(suitors, idx)
+            for successor in successors:
+                delete_pair(reviewer, successor)
+
+        free_suitors = [
+            s for s in suitors if not s.match and s.pref_names
+        ]
+
+    matching = get_matching(reviewers)
+
+    return matching
+
+
+def hospital_optimal(suitors, reviewers, verbose):
+    """ Solve the instance of HR to be reviewer- (hospital-) optimal. """
+
+    free_reviewers = reviewers[:]
+    while free_reviewers:
+
+        reviewer = free_reviewers.pop()
+        suitor = reviewer.get_favourite(suitors)
+
+        if suitor.match:
+            curr_match = suitor.match
+            unmatch_pair(curr_match, reviewer)
+
+        match_pair(suitor, reviewer)
+
+        successors = suitor.get_successors(reviewers)
+        for successor in successors:
+            delete_pair(reviewer, successor)
+
+        free_reviewers = [
+            r for r in reviewers
+            if len(r.match) < r.capacity
+            and [s for s in r.pref_names if s not in r.match]
+        ]
+
+    matching = get_matching(reviewers)
 
     return matching
