@@ -91,7 +91,7 @@ def resident_optimal(suitors, reviewers, verbose):
             idx = reviewer.get_worst_match_idx()
             successors = reviewer.get_successors(suitors, idx)
             for successor in successors:
-                delete_pair(successor, reviewer)
+                delete_pair(reviewer, successor)
 
         free_suitors = [s for s in suitors if not s.match and s.pref_names]
 
@@ -129,19 +129,19 @@ def hospital_optimal(suitors, reviewers, verbose):
 
         if suitor.match:
             curr_match = suitor.match
-            unmatch_pair(curr_match, reviewer)
+            unmatch_pair(suitor, curr_match)
 
         match_pair(suitor, reviewer)
 
         successors = suitor.get_successors(reviewers)
         for successor in successors:
-            delete_pair(successor, reviewer)
+            delete_pair(suitor, successor)
 
         free_reviewers = [
             r
             for r in reviewers
             if len(r.match) < r.capacity
-            and [s for s in r.pref_names if s not in r.match]
+            and [s for s in r.pref_names if s not in [m.name for m in r.match]]
         ]
 
     matching = get_matching(reviewers)

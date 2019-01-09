@@ -6,9 +6,9 @@ def unmatch_pair(suitor, reviewer):
 
     suitor.match = None
 
-    try:
+    if isinstance(reviewer.match, list):
         reviewer.match.remove(suitor)
-    except AttributeError:
+    else:
         reviewer.match = None
 
 
@@ -17,15 +17,15 @@ def match_pair(suitor, reviewer):
 
     suitor.match = reviewer
 
-    try:
+    if isinstance(reviewer.match, list):
         reviewer.match.append(suitor)
-    except AttributeError:
+    else:
         reviewer.match = suitor
 
 
-def delete_pair(successor, reviewer):
-    """ Make the players `successor` and `reviewer` forget one another,
-    effectively 'deleting' the pair from the game. """
+def delete_pair(player, successor):
+    """ Make a player forget one its "successors", effectively deleting the pair
+    from further further consideration in the game. """
 
-    successor.forget(reviewer)
-    reviewer.forget(successor)
+    player.forget(successor)
+    successor.forget(player)

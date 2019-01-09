@@ -38,9 +38,12 @@ class Player:
     def get_favourite(self, others):
         """ Get the player's favourite member of the other party. """
 
-        preferred_name = self.pref_names[0]
-
         if isinstance(self.match, list):
+            preferred_name = [
+                n
+                for n in self.pref_names
+                if n not in [m.name for m in self.match]
+            ][0]
             preferred = [
                 other
                 for other in others
@@ -48,6 +51,7 @@ class Player:
             ]
 
         elif isinstance(self.match, (Player, type(None))):
+            preferred_name = self.pref_names[0]
             preferred = [
                 other for other in others if other.name == preferred_name
             ]
@@ -64,7 +68,7 @@ class Player:
         """ Forget another player by removing them from the player's preference
         list. """
 
-        self.pref_names.remove(other.name)
+        self.pref_names = [p for p in self.pref_names if p != other.name]
 
     def get_successors(self, others, idx=None):
         """ Get all the successors either to the current match (for simple
@@ -73,10 +77,10 @@ class Player:
 
         if not idx:
             idx = self.pref_names.index(self.match.name)
-            return (
+            return [
                 other
                 for other in others
                 if other.name in self.pref_names[idx + 1 :]
-            )
+            ]
 
-        return (p for p in others if p.name in self.pref_names[idx + 1 :])
+        return [p for p in others if p.name in self.pref_names[idx + 1 :]]
