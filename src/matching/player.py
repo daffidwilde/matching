@@ -38,22 +38,22 @@ class Player:
     def get_favourite(self, others):
         """ Get the player's favourite member of the other party. """
 
-        if isinstance(self.match, list):
+        if not self.match or isinstance(self.match, Player):
+            preferred_name = self.pref_names[0]
+            preferred = [
+                other for other in others if other.name == preferred_name
+            ]
+
+        else:
             preferred_name = [
-                n
-                for n in self.pref_names
-                if n not in [m.name for m in self.match]
+                name
+                for name in self.pref_names
+                if name not in [match.name for match in self.match]
             ][0]
             preferred = [
                 other
                 for other in others
                 if other.name == preferred_name and other not in self.match
-            ]
-
-        elif isinstance(self.match, (Player, type(None))):
-            preferred_name = self.pref_names[0]
-            preferred = [
-                other for other in others if other.name == preferred_name
             ]
 
         return preferred[0]
