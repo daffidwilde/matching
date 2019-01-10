@@ -47,6 +47,8 @@ class Player:
         elif isinstance(self.match, (Player, type(None))):
             return self.pref_names[0]
 
+        return None
+
     def get_favourite(self, others):
         """ Get the player's favourite member of the other party. """
 
@@ -60,6 +62,8 @@ class Player:
         for other in others:
             if other.name == fave_name and other not in self.match:
                 return other
+
+        return None
 
     def get_worst_match_idx(self):
         """ Get the preference list index of the player's worst current match.
