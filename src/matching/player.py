@@ -44,7 +44,7 @@ class Player:
                 if name not in (match.name for match in self.match):
                     return name
 
-        elif isinstance(self.match, (Player, type(None))):
+        if isinstance(self.match, (Player, type(None))):
             return self.pref_names[0]
 
         return None
