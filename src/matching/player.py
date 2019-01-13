@@ -77,8 +77,8 @@ class Player:
         return self.pref_names.index(self.match.name)
 
     def forget(self, other):
-        """ Forget another player by removing them from the player's preference
-        list. """
+        """ Forget another player by removing their name from the player's
+        preference list. """
 
         self.pref_names = [
             name for name in self.pref_names if name != other.name
