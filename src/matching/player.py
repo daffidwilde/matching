@@ -80,7 +80,9 @@ class Player:
         """ Forget another player by removing them from the player's preference
         list. """
 
-        self.pref_names.remove(other.name)
+        self.pref_names = [
+            name for name in self.pref_names if name != other.name
+        ]
 
     def get_successors(self, others, idx=None):
         """ Get all the successors either to the current match (for simple
