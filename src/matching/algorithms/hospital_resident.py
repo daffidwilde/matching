@@ -1,23 +1,23 @@
-""" The core algorithm for solving capacitated matching games. """
+""" The core algorithm for solving hospital-resident assignment games. """
 
 from .util import delete_pair, match_pair, unmatch_pair
 
 
-def hospitalresident(suitors, reviewers, optimal="suitor", verbose=False):
-    """ Solve a capacitated matching game, i.e. an instance of the
-    hospital-resident assignment problem (HR). A unique, stable and optimal
-    matching is found for the given set of suitors (residents) and reviewers
-    (hospitals). The optimality of the matching is with respect to one party is
+def hospital_resident(suitors, reviewers, optimal="suitor", verbose=False):
+    """ Solve an instance of HR matching game by treating it as a stable
+    matching game with capacities. A unique, stable and optimal matching is
+    found for the given set of suitors (residents) and reviewers (hospitals).
+    The optimality of the matching is found with respect to one party and is
     subsequently the worst stable matching for the other.
 
     Parameters
     ==========
     suitors : `list` of `Player` instances
-        The suitors (residents) in the game. Each suitor must be a valid
-        instance of the `Player` class that ranks elements of `reviewers`.
+        The suitors (residents) in the game. Each suitor must rank the names of
+        a subset of the elements of `reviewers`.
     reviewers : `list` of `Player` instances
-        The reviewers (hospitals) in the game. Each reviewer must be a valid
-        instance of the `Player` class that ranks elements of `reviewers`.
+        The reviewers (hospitals) in the game. Each reviewer must all the names
+        of those elements of `reviewers` that rank them.
     optimal : `str`, optional
         Which party the matching should be optimised for. Must be one of
         `"suitor"` and `"reviewer"` (or `"resident"` and `"hospital"`

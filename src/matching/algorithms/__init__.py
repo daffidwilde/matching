@@ -1,2 +1,2 @@
-from .galeshapley import galeshapley
-from .hospitalresident import hospitalresident
+from .hospital_resident import hospital_resident
+from .stable_matching import stable_matching

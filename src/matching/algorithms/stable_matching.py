@@ -1,12 +1,12 @@
-""" The core algorithm for solving simple matching games. """
+""" The core algorithm for solving simple stable matching games. """
 
 from .util import delete_pair, match_pair, unmatch_pair
 
 
-def galeshapley(suitors, reviewers, optimal="suitor", verbose=False):
+def stable_matching(suitors, reviewers, optimal="suitor", verbose=False):
     """ An extended version of the original Gale-Shapley algorithm which makes
     use of the inherent structures of matching games. A unique, stable and
-    optimal matching is found for any set of suitors and reviewers. The
+    optimal matching is found for any valid set of suitors and reviewers. The
     optimality of the matching is with respect to one party and is subsequently
     the worst stable matching for the other.
 

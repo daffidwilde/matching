@@ -5,7 +5,7 @@ import itertools as it
 import numpy as np
 
 from matching import Player
-from matching.algorithms import hospitalresident
+from matching.algorithms import hospital_resident
 
 from .params import HOSPITAL_RESIDENT
 
@@ -68,7 +68,7 @@ def test_resident_optimal(resident_names, hospital_names, capacities, seed):
     np.random.seed(seed)
     residents = _make_residents(resident_names, hospital_names)
     hospitals = _make_hospitals(residents, capacities)
-    matching = hospitalresident(residents, hospitals, optimal="resident")
+    matching = hospital_resident(residents, hospitals, optimal="resident")
 
     assert set(hospitals) == set(matching.keys())
     assert all(
@@ -97,7 +97,7 @@ def test_hospital_optimal(resident_names, hospital_names, capacities, seed):
     np.random.seed(seed)
     residents = _make_residents(resident_names, hospital_names)
     hospitals = _make_hospitals(residents, capacities)
-    matching = hospitalresident(residents, hospitals, optimal="hospital")
+    matching = hospital_resident(residents, hospitals, optimal="hospital")
 
     assert set(hospitals) == set(matching.keys())
 

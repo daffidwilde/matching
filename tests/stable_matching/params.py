@@ -1,15 +1,11 @@
-""" Useful functions and decorators for the SM tests. """
+""" Hypothesis decorators for SM tests. """
 
 import numpy as np
 
 from hypothesis import given
-from hypothesis.strategies import (
-    composite,
-    dictionaries,
-    integers,
-    lists,
-    sampled_from,
-)
+from hypothesis.strategies import composite, integers, lists, sampled_from
+
+from matching import Player
 
 
 @composite
@@ -38,32 +34,24 @@ def _get_player_names(draw, suitor_pool, reviewer_pool):
     return suitor_names, reviewer_names
 
 
-GALE_SHAPLEY = given(
+def _make_players(suitor_names, reviewer_names, seed):
+    """ Given some names, make a valid set each of suitors and reviewers. """
+
+    np.random.seed(seed)
+    suitors, reviewers = (
+        [Player(name, np.random.permutation(others).tolist()) for name in names]
+        for names, others in [
+            (suitor_names, reviewer_names),
+            (reviewer_names, suitor_names),
+        ]
+    )
+
+    return suitors, reviewers
+
+
+STABLE_MATCHING = given(
     player_names=_get_player_names(
         suitor_pool=["A", "B", "C"], reviewer_pool=["X", "Y", "Z"]
-    ),
-    seed=integers(min_value=0),
-)
-
-
-HOSPITAL_RESIDENT = given(
-    resident_names=lists(
-        elements=sampled_from(["A", "B", "C", "D"]),
-        min_size=1,
-        max_size=4,
-        unique=True,
-    ),
-    hospital_names=lists(
-        elements=sampled_from(["X", "Y", "Z"]),
-        min_size=1,
-        max_size=3,
-        unique=True,
-    ),
-    capacities=dictionaries(
-        keys=sampled_from(["X", "Y", "Z"]),
-        values=integers(min_value=2),
-        min_size=3,
-        max_size=3,
     ),
     seed=integers(min_value=0),
 )
