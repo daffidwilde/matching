@@ -2,8 +2,24 @@
 
 import numpy as np
 
+from matching import Player
 from matching.algorithms import galeshapley
-from .params import GALE_SHAPLEY, make_players
+
+from .params import GALE_SHAPLEY
+
+
+def _make_players(suitor_names, reviewer_names):
+    """ Given some names, make a valid set each of suitors and reviewers. """
+
+    suitors, reviewers = (
+        [Player(name, np.random.permutation(others).tolist()) for name in names]
+        for names, others in [
+            (suitor_names, reviewer_names),
+            (reviewer_names, suitor_names),
+        ]
+    )
+
+    return suitors, reviewers
 
 
 @GALE_SHAPLEY
@@ -13,7 +29,7 @@ def test_suitor_optimal(player_names, seed):
 
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names
-    suitors, reviewers = make_players(suitor_names, reviewer_names)
+    suitors, reviewers = _make_players(suitor_names, reviewer_names)
     matching = galeshapley(suitors, reviewers, optimal="suitor")
 
     assert set(suitors) == set(matching.keys())
@@ -36,7 +52,7 @@ def test_reviewer_optimal(player_names, seed):
 
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names
-    suitors, reviewers = make_players(suitor_names, reviewer_names)
+    suitors, reviewers = _make_players(suitor_names, reviewer_names)
     matching = galeshapley(suitors, reviewers, optimal="reviewer")
 
     assert set(suitors) == set(matching.keys())
