@@ -38,7 +38,7 @@ class Matcher:
         )
         self.matching = None
 
-    def solve(self, optimal="s", verbose=False):
+    def solve(self, optimal="suitor", verbose=False):
         """ Solve the game instance and give the final matching. The algorithm
         used is determined by the `capacitated` attribute and the `optimal`
         parameter indicates which party's matches should be optimised. """
