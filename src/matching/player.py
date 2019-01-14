@@ -65,6 +65,22 @@ class Player:
 
         return None
 
+    def match_with(self, other):
+        """ Assign other to be matched to the player. """
+
+        if isinstance(self.match, list):
+            self.match.append(other)
+        else:
+            self.match = other
+
+    def unmatch(self, other):
+        """ Remove other from the player's current matching. """
+
+        if isinstance(self.match, list):
+            self.match.remove(other)
+        else:
+            self.match = None
+
     def get_worst_match_idx(self):
         """ Get the preference list index of the player's worst current match.
         """

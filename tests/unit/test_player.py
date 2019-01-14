@@ -83,9 +83,32 @@ def test_get_favourite(name, pref_names, capacity):
 
 
 @PLAYER
+def test_match_with(name, pref_names, capacity):
+    """ Check that a player can match to another player correctly. """
+
+    player = Player(name, pref_names, capacity)
+    other = Player(pref_names[0], [name])
+
+    player.match_with(other)
+    assert player.match == other if capacity == 1 else player.match == [other]
+
+
+@PLAYER
+def test_unmatch(name, pref_names, capacity):
+    """ Check that a player can unmatch from another player correctly. """
+
+    player = Player(name, pref_names, capacity)
+    other = Player(pref_names[0], [name])
+
+    player.match = other if capacity == 1 else [other]
+    player.unmatch(other)
+    assert player.match is None if capacity == 1 else player.match == []
+
+
+@PLAYER
 def test_get_worst_match_idx(name, pref_names, capacity):
-    """ Check that the preference index of the worst current match to a
-    capacitated player can be found correctly. """
+    """ Check that the preference index of the worst current match to a player
+    can be found correctly. """
 
     player = Player(name, pref_names, capacity)
     others = sorted(

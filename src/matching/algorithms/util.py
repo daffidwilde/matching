@@ -4,23 +4,15 @@
 def unmatch_pair(suitor, reviewer):
     """ Unmatch the players given by `suitor` and `reviewer`. """
 
-    suitor.match = None
-
-    if isinstance(reviewer.match, list):
-        reviewer.match.remove(suitor)
-    else:
-        reviewer.match = None
+    suitor.unmatch(reviewer)
+    reviewer.unmatch(suitor)
 
 
 def match_pair(suitor, reviewer):
     """ Match the players given by `suitor` and `reviewer`. """
 
-    suitor.match = reviewer
-
-    if isinstance(reviewer.match, list):
-        reviewer.match.append(suitor)
-    else:
-        reviewer.match = suitor
+    suitor.match_with(reviewer)
+    reviewer.match_with(suitor)
 
 
 def delete_pair(player, successor):
