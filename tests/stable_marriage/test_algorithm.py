@@ -21,7 +21,7 @@ def test_suitor_optimal(player_names, seed):
         idx = suitor.pref_names.index(reviewer.name)
         preferred = [r for r in reviewers if r.name in suitor.pref_names[:idx]]
         for rev in preferred:
-            partner = rev.match
+            partner = rev.matching
             assert rev.pref_names.index(suitor.name) > rev.pref_names.index(
                 partner.name
             )
@@ -43,7 +43,7 @@ def test_reviewer_optimal(player_names, seed):
         idx = reviewer.pref_names.index(suitor.name)
         preferred = [s for s in suitors if s.name in reviewer.pref_names[:idx]]
         for sui in preferred:
-            partner = sui.match
+            partner = sui.matching
             assert sui.pref_names.index(reviewer.name) > sui.pref_names.index(
                 partner.name
             )

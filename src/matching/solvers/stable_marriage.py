@@ -32,7 +32,7 @@ class StableMarriage(BaseSolver):
     def __init__(self, suitors, reviewers):
 
         for player in suitors + reviewers:
-            player.match = None
+            player.matching = None
 
         self.suitors = suitors
         self.reviewers = reviewers
@@ -43,7 +43,7 @@ class StableMarriage(BaseSolver):
         """ Solve the instance of SM using either the suitor- or
         reviewer-oriented Gale-Shapley algorithm. Return the matching. """
 
-        self.matching = stable_marriage(self.suitors, self.reviewers, optimal)
+        self._matching = stable_marriage(self.suitors, self.reviewers, optimal)
         return self.matching
 
     def check_stability(self):
@@ -51,20 +51,16 @@ class StableMarriage(BaseSolver):
         matching, thus determining the stability of the matching. """
 
         blocking_pairs = []
-        for suitor, reviewer in self.matching.items():
-            idx = suitor.pref_names.index(reviewer.name)
-            preferred = [
-                r for r in self.reviewers if r.name in suitor.pref_names[:idx]
-            ]
-            for rev in preferred:
-                partner = rev.match
-                if rev.pref_names.index(suitor.name) > rev.pref_names.index(
-                    partner.name
+        for suitor in self.suitors:
+            for reviewer in self.reviewers:
+                if (
+                    suitor.prefers(reviewer, suitor.matching)
+                    and reviewer.prefers(suitor, reviewer.matching)
                 ):
                     blocking_pairs.append((suitor, reviewer))
 
         self.blocking_pairs = blocking_pairs
-        return any(blocking_pairs)
+        return not any(blocking_pairs)
 
 
 def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
@@ -98,14 +94,14 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     if optimal.lower() == "reviewer":
         suitors, reviewers = reviewers, suitors
 
-    free_suitors = [s for s in suitors if not s.match]
+    free_suitors = [s for s in suitors if not s.matching]
     while free_suitors:
 
         suitor = free_suitors.pop()
         reviewer = suitor.get_favourite(reviewers)
 
-        if reviewer.match:
-            curr_match = reviewer.match
+        if reviewer.matching:
+            curr_match = reviewer.matching
             unmatch_pair(curr_match, reviewer)
             free_suitors.append(curr_match)
 
@@ -118,4 +114,4 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     if optimal.lower() == "reviewer":
         suitors, reviewers = reviewers, suitors
 
-    return {s: s.match for s in suitors}
+    return {s: s.matching for s in suitors}

@@ -4,6 +4,7 @@ from matching import StableMarriage
 
 from tests.stable_marriage.params import STABLE_MARRIAGE, _make_players
 
+
 @STABLE_MARRIAGE
 def test_init(player_names, seed):
     """ Test that an instance of the GaleShapley solver can be created. """
@@ -15,6 +16,6 @@ def test_init(player_names, seed):
     assert match.suitors == suitors
     assert match.reviewers == reviewers
     assert all(
-        [player.match is None for player in match.suitors + match.reviewers]
+        [player.matching is None for player in match.suitors + match.reviewers]
     )
     assert match.matching is None

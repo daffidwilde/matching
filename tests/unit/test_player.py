@@ -22,7 +22,9 @@ def test_init(name, pref_names, capacity):
     assert player.name == name
     assert player.pref_names == pref_names
     assert player.capacity == capacity
-    assert player.match is None if player.capacity == 1 else player.match == []
+    assert (
+        player.matching is None if player.capacity == 1 else player.matching == []
+    )
 
 
 @PLAYER
@@ -45,10 +47,10 @@ def test_get_favourite_name(name, pref_names, capacity):
 
     other = Player(player.pref_names[0], pref_names=[player.name])
 
-    player.match = other
+    player.matching = other
     assert player.get_favourite_name() == other.name
 
-    player.match = [other]
+    player.matching = [other]
     if len(player.pref_names) > 1:
         assert player.get_favourite_name() == player.pref_names[1]
     else:
@@ -67,15 +69,18 @@ def test_get_favourite(name, pref_names, capacity):
     ][0]
     assert player.get_favourite(others) == favourite
 
-    player.match = favourite
+    player.matching = favourite
     assert player.get_favourite(others) == favourite
 
-    player.match = [favourite]
+    player.matching = [favourite]
     if len(player.pref_names) > 1:
         favourite = [
             other
             for other in others
-            if other.name == player.pref_names[1] and other not in player.match
+            if (
+                other.name == player.pref_names[1]
+                and other not in player.matching
+            )
         ][0]
         assert player.get_favourite(others) == favourite
     else:
@@ -83,14 +88,14 @@ def test_get_favourite(name, pref_names, capacity):
 
 
 @PLAYER
-def test_match_with(name, pref_names, capacity):
+def test_match(name, pref_names, capacity):
     """ Check that a player can match to another player correctly. """
 
     player = Player(name, pref_names, capacity)
     other = Player(pref_names[0], [name])
 
-    player.match_with(other)
-    assert player.match == other if capacity == 1 else player.match == [other]
+    player.match(other)
+    assert player.matching == other if capacity == 1 else player.matching == [other]
 
 
 @PLAYER
@@ -100,9 +105,9 @@ def test_unmatch(name, pref_names, capacity):
     player = Player(name, pref_names, capacity)
     other = Player(pref_names[0], [name])
 
-    player.match = other if capacity == 1 else [other]
+    player.matching = other if capacity == 1 else [other]
     player.unmatch(other)
-    assert player.match is None if capacity == 1 else player.match == []
+    assert player.matching is None if capacity == 1 else player.matching == []
 
 
 @PLAYER
@@ -118,9 +123,9 @@ def test_get_worst_match_idx(name, pref_names, capacity):
 
     for i, other in enumerate(others):
         if player.capacity == 1:
-            player.match = other
+            player.matching = other
         else:
-            player.match.append(other)
+            player.matching.append(other)
         assert player.get_worst_match_idx() == i
 
 
@@ -153,7 +158,7 @@ def test_get_successors(name, pref_names, capacity):
     )
     favourite = player.get_favourite(others)
 
-    player.match = favourite
+    player.matching = favourite
     if len(player.pref_names) > 1:
         successors = others[1:]
         assert player.get_successors(others) == successors

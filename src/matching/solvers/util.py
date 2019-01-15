@@ -11,8 +11,8 @@ def unmatch_pair(suitor, reviewer):
 def match_pair(suitor, reviewer):
     """ Match the players given by `suitor` and `reviewer`. """
 
-    suitor.match_with(reviewer)
-    reviewer.match_with(suitor)
+    suitor.match(reviewer)
+    reviewer.match(suitor)
 
 
 def delete_pair(player, successor):

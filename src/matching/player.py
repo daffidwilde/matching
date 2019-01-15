@@ -11,9 +11,8 @@ class Player:
     pref_names : `list`
         A list ranking the elements of the other set by their names.
     capacity : `int`, optional
-        The maximum number of matches the player can have at once. In the case
-        of hospital-resident assignment problems, a hospital should have an
-        integer capacity. If not specified, defaults to 1.
+        The maximum number of matches the player can have at once. If not
+        specified, defaults to 1.
 
     Attributes
     ==========
@@ -27,10 +26,11 @@ class Player:
 
         self.name = name
         self.pref_names = pref_names
+        self._pref_names = tuple(pref_names)
         self.capacity = capacity
-        self.match = None
+        self.matching = None
         if self.capacity > 1:
-            self.match = []
+            self.matching = []
 
     def __repr__(self):
 
@@ -39,12 +39,12 @@ class Player:
     def get_favourite_name(self):
         """ Get the player's favourite name. """
 
-        if isinstance(self.match, list):
+        if isinstance(self.matching, list):
             for name in self.pref_names:
-                if name not in (match.name for match in self.match):
+                if name not in (match.name for match in self.matching):
                     return name
 
-        if isinstance(self.match, (Player, type(None))):
+        if isinstance(self.matching, (Player, type(None))):
             return self.pref_names[0]
 
         return None
@@ -54,43 +54,43 @@ class Player:
 
         fave_name = self.get_favourite_name()
 
-        if not self.match or isinstance(self.match, Player):
+        if not self.matching or isinstance(self.matching, Player):
             for other in others:
                 if other.name == fave_name:
                     return other
 
         for other in others:
-            if other.name == fave_name and other not in self.match:
+            if other.name == fave_name and other not in self.matching:
                 return other
 
         return None
 
-    def match_with(self, other):
+    def match(self, other):
         """ Assign other to be matched to the player. """
 
-        if isinstance(self.match, list):
-            self.match.append(other)
+        if isinstance(self.matching, list):
+            self.matching.append(other)
         else:
-            self.match = other
+            self.matching = other
 
     def unmatch(self, other):
         """ Remove other from the player's current matching. """
 
-        if isinstance(self.match, list):
-            self.match.remove(other)
+        if isinstance(self.matching, list):
+            self.matching.remove(other)
         else:
-            self.match = None
+            self.matching = None
 
     def get_worst_match_idx(self):
         """ Get the preference list index of the player's worst current match.
         """
 
-        if isinstance(self.match, list):
+        if isinstance(self.matching, list):
             return max(
-                (self.pref_names.index(other.name) for other in self.match)
+                (self.pref_names.index(other.name) for other in self.matching)
             )
 
-        return self.pref_names.index(self.match.name)
+        return self.pref_names.index(self.matching.name)
 
     def forget(self, other):
         """ Forget another player by removing their name from the player's
@@ -111,3 +111,10 @@ class Player:
             for other in others
             if other.name in self.pref_names[idx + 1 :]
         ]
+
+    def prefers(self, player, other):
+        """ Determines whether the player prefers a player over some other
+        player. """
+
+        prefs = self._pref_names
+        return prefs.index(player.name) < prefs.index(other.name)

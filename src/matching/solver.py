@@ -29,7 +29,7 @@ class BaseSolver:
 
         self.suitors = suitors
         self.reviewers = reviewers
-        self.matching = None
+        self._matching = None
         self.blocking_pairs = None
 
     def solve(self, optimal=None):
@@ -42,5 +42,15 @@ class BaseSolver:
 
         raise NotImplementedError()
 
+    @property
+    def matching(self):
+        """ Property method to allow for matching.setter method. """
 
+        return self._matching
 
+    @matching.setter
+    def matching(self, player, new_match):
+
+        player.matching = new_match
+        new_match.matching = player
+        self._matching[player] = new_match

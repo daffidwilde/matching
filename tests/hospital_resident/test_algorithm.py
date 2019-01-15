@@ -5,7 +5,7 @@ import itertools as it
 import numpy as np
 
 from matching import Player
-from matching.algorithms import hospital_resident
+from matching.solvers import hospital_resident
 
 from .params import HOSPITAL_RESIDENT
 
@@ -85,8 +85,8 @@ def test_resident_optimal(resident_names, hospital_names, capacities, seed):
     )
 
     for resident in residents:
-        if resident.match:
-            assert resident.pref_names.index(resident.match.name) == 0
+        if resident.matching:
+            assert resident.pref_names.index(resident.matching.name) == 0
 
 
 @HOSPITAL_RESIDENT
