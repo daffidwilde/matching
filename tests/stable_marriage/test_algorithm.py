@@ -1,21 +1,18 @@
 """ Tests for the Gale-Shapley algorithm. """
 
-import numpy as np
+from matching.solvers import stable_marriage
 
-from matching import Player
-from matching.algorithms import stable_matching
-
-from .params import STABLE_MATCHING, _make_players
+from .params import STABLE_MARRIAGE, _make_players
 
 
-@STABLE_MATCHING
+@STABLE_MARRIAGE
 def test_suitor_optimal(player_names, seed):
     """ Verify that the suitor-oriented Gale-Shapley algorithm produces a valid,
     suitor-optimal matching for an instance of SM. """
 
     suitor_names, reviewer_names = player_names
     suitors, reviewers = _make_players(suitor_names, reviewer_names, seed)
-    matching = stable_matching(suitors, reviewers, optimal="suitor")
+    matching = stable_marriage(suitors, reviewers, optimal="suitor")
 
     assert set(suitors) == set(matching.keys())
     assert set(reviewers) == set(matching.values())
@@ -30,14 +27,14 @@ def test_suitor_optimal(player_names, seed):
             )
 
 
-@STABLE_MATCHING
+@STABLE_MARRIAGE
 def test_reviewer_optimal(player_names, seed):
     """ Verify that the reviewer-oriented Gale-Shapley algorithm produces a
     valid, reviewer-optimal matching for an instance of SM. """
 
     suitor_names, reviewer_names = player_names
     suitors, reviewers = _make_players(suitor_names, reviewer_names, seed)
-    matching = stable_matching(suitors, reviewers, optimal="reviewer")
+    matching = stable_marriage(suitors, reviewers, optimal="reviewer")
 
     assert set(suitors) == set(matching.keys())
     assert set(reviewers) == set(matching.values())

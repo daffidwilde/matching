@@ -1,0 +1,34 @@
+""" Tests for the BaseSolver class. """
+
+import pytest
+
+from matching import BaseSolver
+
+
+def test_init():
+    """ Test the default parameters makes a valid instance of BaseSolver. """
+
+    match = BaseSolver()
+
+    assert match.suitors is None
+    assert match.reviewers is None
+    assert match.matching is None
+    assert match.blocking_pairs is None
+
+
+def test_no_solve():
+    """ Verify an instance of BaseSolver raises a NotImplementedError when
+    attempting to call the `solve` method. """
+
+    with pytest.raises(NotImplementedError):
+        match = BaseSolver()
+        match.solve()
+
+
+def test_no_check_stability():
+    """ Verify an instance of BaseSolver raises a NotImplementedError when
+    attempting to call the `check_stability` method. """
+
+    with pytest.raises(NotImplementedError):
+        match = BaseSolver()
+        match.check_stability()

@@ -49,7 +49,7 @@ def _make_players(suitor_names, reviewer_names, seed):
     return suitors, reviewers
 
 
-STABLE_MATCHING = given(
+STABLE_MARRIAGE = given(
     player_names=_get_player_names(
         suitor_pool=["A", "B", "C"], reviewer_pool=["X", "Y", "Z"]
     ),

@@ -1,7 +1,7 @@
 """ The base matchmaker class for facilitating and solving matching games. """
 
 
-class Matcher:
+class BaseSolver:
     """ A class to store information about, and facilitate the solving of, a
     matching game.
 
