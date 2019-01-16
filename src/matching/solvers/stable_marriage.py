@@ -37,6 +37,8 @@ class StableMarriage(BaseSolver):
         self.suitors = suitors
         self.reviewers = reviewers
 
+        self.__check_inputs()
+
         super().__init__(suitors, reviewers)
 
     def solve(self, optimal="suitor"):
@@ -53,14 +55,91 @@ class StableMarriage(BaseSolver):
         blocking_pairs = []
         for suitor in self.suitors:
             for reviewer in self.reviewers:
-                if (
-                    suitor.prefers(reviewer, suitor.matching)
-                    and reviewer.prefers(suitor, reviewer.matching)
-                ):
+                if suitor.prefers(
+                    reviewer, suitor.matching
+                ) and reviewer.prefers(suitor, reviewer.matching):
                     blocking_pairs.append((suitor, reviewer))
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
+
+    def check_validity(self):
+        """ Check whether the current matching is valid. """
+
+        self.__check_all_matched()
+        self.__check_matching_consistent()
+
+    def __check_all_matched(self):
+        """ Check everyone has a match. """
+
+        errors = []
+        for player in self.suitors + self.reviewers:
+            if player.matching is None:
+                errors.append(ValueError(f"Player: {player} is unmatched."))
+
+        for suitor, reviewer in self._matching.items():
+            if reviewer is None:
+                errors.append(ValueError(f"Game: {suitor} has no match."))
+
+        if errors:
+            raise Exception(errors)
+
+    def __check_matching_consistent(self):
+        """ Check that the game matching is consistent with the players. """
+
+        errors = []
+        for suit, rev in self._matching.items():
+            if suit.matching != rev:
+                errors.append(
+                    ValueError(
+                        f"{suit} is matched to {suit.matching}, not {rev}."
+                    )
+                )
+            if rev.matching != suit:
+                errors.append(
+                    ValueError(f"{rev} matched to {rev.matching}, not {suit}.")
+                )
+
+        if errors:
+            raise Exception(errors)
+
+    def update_matching(self, suitor, new_match):
+        """ Update the matching so that suitor and reviewer are now matched to
+        one another. This does not undo any previously standing matchings. """
+
+        suitor.match(new_match)
+        new_match.match(suitor)
+        self._matching[suitor] = new_match
+
+    def __check_inputs(self):
+        """ Raise an error if any of the conditions of the game have been
+        broken. """
+
+        self.__check_num_players()
+        for suitor in self.suitors:
+            self.__check_player_ranks(suitor)
+        for reviewer in self.reviewers:
+            self.__check_player_ranks(reviewer)
+
+    def __check_num_players(self):
+        """ Check that the number of suitors and reviewers are equal. """
+
+        if len(self.suitors) != len(self.reviewers):
+            raise ValueError(
+                "There must be an equal number of suitors and reviewers."
+            )
+
+    def __check_player_ranks(self, player):
+        """ Check that a player has ranked all of the other group. """
+
+        others = self.reviewers if player in self.suitors else self.suitors
+        names = set([other.name for other in others])
+        prefs = set(player.pref_names)
+        if prefs != names:
+            raise ValueError(
+                "Every player must rank each name from the other group. "
+                f"{player}: {prefs} != {names}"
+            )
 
 
 def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
@@ -73,11 +152,11 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     Parameters
     ==========
     suitors : `list` of `Player` instances
-        The suitors (applicants) in the game. Each suitor must be a valid
-        instance of the `Player` class that ranks elements of `reviewers`.
+        The suitors in the game. Must rank all the names of those in
+        `reviewers`.
     reviewers : `list` of `Player` instances
-        The reviewers in the game. Each reviewer should be a valid instance of
-        the `Player` class that ranks elements of `suitors`.
+        The reviewers in the game. Must rank all the names of those in
+        `suitors`.
     optimal : `str`, optional
         Which party the matching should be optimised for. Must be one of
         `"suitor"` and `"reviewer"`. Defaults to the former.

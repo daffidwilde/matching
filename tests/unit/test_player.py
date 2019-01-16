@@ -1,16 +1,8 @@
 """ Tests for the Player class. """
 
-from hypothesis import given
-from hypothesis.strategies import integers, lists, text
-
 from matching import Player
 
-
-PLAYER = given(
-    name=text(),
-    pref_names=lists(text(), min_size=1, unique=True),
-    capacity=integers(min_value=1),
-)
+from .params import PLAYER
 
 
 @PLAYER
@@ -184,4 +176,4 @@ def test_prefers(name, pref_names, capacity):
     )
 
     for i, other in enumerate(others[:-1]):
-        assert player.prefers(other, others[i+1])
+        assert player.prefers(other, others[i + 1])
