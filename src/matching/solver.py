@@ -1,5 +1,6 @@
 """ The base matchmaker class for facilitating and solving matching games. """
 
+from .match import Matching
 
 class BaseSolver:
     """ A class to store information about, and facilitate the solving of, a
@@ -37,7 +38,7 @@ class BaseSolver:
     def matching(self):
         """ Property method to deny direct write access to the matching. """
 
-        return self._matching
+        return Matching(self._matching)
 
     def solve(self):
         """ Placeholder for solving the given matching game. """

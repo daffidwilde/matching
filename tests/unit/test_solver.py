@@ -12,7 +12,7 @@ def test_init():
 
     assert match.suitors is None
     assert match.reviewers is None
-    assert match.matching is None
+    assert match.matching == {}
     assert match.blocking_pairs is None
 
 

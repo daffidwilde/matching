@@ -2,7 +2,7 @@
 
 import pytest
 
-from matching import StableMarriage
+from matching import StableMarriage, Matching
 
 from .params import STABLE_MARRIAGE, _make_players
 
@@ -20,7 +20,7 @@ def test_init(player_names, seed):
     assert all(
         [player.matching is None for player in match.suitors + match.reviewers]
     )
-    assert match.matching is None
+    assert match.matching == {}
 
 
 @STABLE_MARRIAGE
@@ -61,7 +61,7 @@ def test_solve(player_names, seed):
 
     for optimal in ["suitor", "reviewer"]:
         matching = match.solve(optimal)
-        assert isinstance(matching, dict)
+        assert isinstance(matching, Matching)
         assert set(matching.keys()) == set(suitors)
         assert set(matching.values()) == set(reviewers)
 
