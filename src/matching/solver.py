@@ -1,5 +1,7 @@
 """ The base matchmaker class for facilitating and solving matching games. """
 
+from matching import Player
+
 
 class BaseSolver:
     """ A class to store information about, and facilitate the solving of, a
@@ -29,28 +31,33 @@ class BaseSolver:
 
         self.suitors = suitors
         self.reviewers = reviewers
+
         self._matching = None
         self.blocking_pairs = None
 
-    def solve(self, optimal=None):
-        """ A placeholder method for solving the given matching game. """
+    @property
+    def matching(self):
+        """ Property method to deny direct write access to the matching. """
+
+        return self._matching
+
+    def solve(self):
+        """ Placeholder for solving the given matching game. """
 
         raise NotImplementedError()
 
     def check_stability(self):
-        """ Check whether the matching found is stable or not. """
+        """ Placeholder for checking the stability of the current matching. """
 
         raise NotImplementedError()
 
-    @property
-    def matching(self):
-        """ Property method to allow for matching.setter method. """
+    def check_validity(self):
+        """ Placeholder for checking the validity of the current matching. """
 
-        return self._matching
+        raise NotImplementedError()
 
-    @matching.setter
-    def matching(self, player, new_match):
+    def update_matching(self):
+        """ Placeholder for how to update the current matching and the players'
+        matchings as well. """
 
-        player.matching = new_match
-        new_match.matching = player
-        self._matching[player] = new_match
+        raise NotImplementedError()

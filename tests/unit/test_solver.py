@@ -17,8 +17,8 @@ def test_init():
 
 
 def test_no_solve():
-    """ Verify an instance of BaseSolver raises a NotImplementedError when
-    attempting to call the `solve` method. """
+    """ Verify BaseSolver raises a NotImplementedError when calling the `solve`
+    method. """
 
     with pytest.raises(NotImplementedError):
         match = BaseSolver()
@@ -26,9 +26,27 @@ def test_no_solve():
 
 
 def test_no_check_stability():
-    """ Verify an instance of BaseSolver raises a NotImplementedError when
-    attempting to call the `check_stability` method. """
+    """ Verify BaseSolver raises a NotImplementedError when calling the
+    `check_stability` method. """
 
     with pytest.raises(NotImplementedError):
         match = BaseSolver()
         match.check_stability()
+
+
+def test_no_check_validity():
+    """ Verify BaseSolver raises a NotImplementError when calling the
+    `check_validity` method. """
+
+    with pytest.raises(NotImplementedError):
+        match = BaseSolver()
+        match.check_validity()
+
+
+def test_no_update_matching():
+    """ Verify BaseSolver raises a NotImplementedError when calling the
+    `update_matching` method. """
+
+    with pytest.raises(NotImplementedError):
+        match = BaseSolver()
+        match.update_matching()

@@ -170,3 +170,18 @@ def test_get_successors(name, pref_names, capacity):
         assert player.get_successors(others) == successors
     else:
         assert player.get_successors(others) == []
+
+
+@PLAYER
+def test_prefers(name, pref_names, capacity):
+    """ Test that a comparison of preference between two other players can be
+    found for a player. """
+
+    player = Player(name, pref_names, capacity)
+    others = sorted(
+        [Player(other, pref_names=[name]) for other in pref_names],
+        key=lambda other: player.pref_names.index(other.name),
+    )
+
+    for i, other in enumerate(others[:-1]):
+        assert player.prefers(other, others[i+1])

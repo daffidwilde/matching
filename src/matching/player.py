@@ -8,8 +8,9 @@ class Player:
     ==========
     name : `object`
         An identifier. This should be unique and descriptive.
-    pref_names : `list`
-        A list ranking the elements of the other set by their names.
+    pref_names : `list` or `tuple`
+        A list, or tuple, ranking the elements of the other set by
+        their names.
     capacity : `int`, optional
         The maximum number of matches the player can have at once. If not
         specified, defaults to 1.
@@ -25,8 +26,8 @@ class Player:
     def __init__(self, name, pref_names, capacity=1):
 
         self.name = name
-        self.pref_names = pref_names
-        self._pref_names = tuple(pref_names)
+        self.pref_names = list(pref_names)
+        self._pref_names = pref_names
         self.capacity = capacity
         self.matching = None
         if self.capacity > 1:
