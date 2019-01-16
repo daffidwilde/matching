@@ -23,7 +23,9 @@ def test_init(name, pref_names, capacity):
     assert player.pref_names == pref_names
     assert player.capacity == capacity
     assert (
-        player.matching is None if player.capacity == 1 else player.matching == []
+        player.matching is None
+        if player.capacity == 1
+        else player.matching == []
     )
 
 
@@ -95,7 +97,11 @@ def test_match(name, pref_names, capacity):
     other = Player(pref_names[0], [name])
 
     player.match(other)
-    assert player.matching == other if capacity == 1 else player.matching == [other]
+    assert (
+        player.matching == other
+        if capacity == 1
+        else player.matching == [other]
+    )
 
 
 @PLAYER

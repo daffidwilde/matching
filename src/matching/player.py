@@ -16,10 +16,10 @@ class Player:
 
     Attributes
     ==========
-    match : `Player` or `list` of `Player` instances
-        The current match to the player. This is initialised as `None` or an
-        empty list (depending on the type of game) and will remain that way
-        until the player's game is solved.
+    matching : `Player` or `list` of `Player` instances
+        The current match(es) to the player. This is initialised as `None` or an
+        empty list (depending on the type of game) and will remain that way at
+        least until the player's game is solved.
     """
 
     def __init__(self, name, pref_names, capacity=1):
