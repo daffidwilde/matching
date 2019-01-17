@@ -28,13 +28,17 @@ class Matching(dict):
         if player not in self.__data.keys():
             raise ValueError(f"{player} is not a key in this matching.")
 
-        if isinstance(new_match, (list, tuple)):
+        if isinstance(new_match, Player):
+            new_match.matching = player
+            player.matching = new_match
 
-            assert (
-                all([isinstance(new, Player) for new in new_match])
-                or new_match == []
-            )
+        elif new_match is None:
+            player.matching = new_match
 
+        elif (
+            isinstance(new_match, (list, tuple))
+            and all([isinstance(new, Player) for new in new_match])
+        ):
             if new_match:
                 new_match = sorted(
                     list(new_match),
@@ -45,13 +49,6 @@ class Matching(dict):
             player.matching = new_match
             for new in new_match:
                 new.matching = player
-
-        elif isinstance(new_match, Player):
-            new_match.matching = player
-            player.matching = new_match
-
-        elif new_match is None:
-            player.matching = new_match
 
         else:
             raise ValueError(f"{new_match} is not a valid match.")
