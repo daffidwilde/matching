@@ -1,4 +1,4 @@
-""" Unit tests for the SM solvers. """
+""" Unit tests for the SM solver. """
 
 import pytest
 
@@ -30,6 +30,9 @@ def test_inputs_num_players(player_names, seed):
 
     suitor_names, reviewer_names = player_names
     suitors, reviewers = _make_players(suitor_names, reviewer_names, seed)
+    match = StableMarriage(suitors, reviewers)
+
+    assert match._check_num_players()
 
     suitors = suitors[:-1]
 
@@ -44,6 +47,10 @@ def test_inputs_player_ranks(player_names, seed):
 
     suitor_names, reviewer_names = player_names
     suitors, reviewers = _make_players(suitor_names, reviewer_names, seed)
+    match = StableMarriage(suitors, reviewers)
+
+    for player in match.suitors + match.reviewers:
+        assert match._check_player_ranks(player)
 
     suitors[0].pref_names = suitors[0].pref_names[:-1]
 

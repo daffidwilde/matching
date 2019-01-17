@@ -38,13 +38,6 @@ class Matching(dict):
         elif isinstance(new_match, (list, tuple)) and all(
             [isinstance(new, Player) for new in new_match]
         ):
-            if new_match:
-                new_match = sorted(
-                    list(new_match),
-                    key=lambda new: player._pref_names.index(new.name),
-                )
-
-            new_match = tuple(new_match)
             player.matching = new_match
             for new in new_match:
                 new.matching = player

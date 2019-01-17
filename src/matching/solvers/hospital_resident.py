@@ -1,6 +1,6 @@
 """ The Hospital-Resident Assignment Problem solver and core algorithm. """
 
-from matching import BaseSolver
+from matching import BaseSolver, Matching
 
 from .util import delete_pair, match_pair, unmatch_pair
 
@@ -44,14 +44,16 @@ class HospitalResident(BaseSolver):
         self.suitors = suitors
         self.reviewers = reviewers
 
+        self._check_inputs()
+
         super().__init__(suitors, reviewers)
 
     def solve(self, optimal="resident"):
         """ Solve the instance of HR using either the resident- (suitor-) or
         hospital- (reviewer-) oriented algorithm. Return the matching. """
 
-        self._matching = hospital_resident(
-            self.suitors, self.reviewers, optimal
+        self._matching = Matching(
+            hospital_resident(self.suitors, self.reviewers, optimal)
         )
         return self.matching
 
@@ -71,6 +73,74 @@ class HospitalResident(BaseSolver):
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
+
+    def check_validity(self):
+        """ Check whether the current matching is valid. """
+
+        errors = []
+        for reviewer in self.reviewers:
+            if len(reviewer.matching) > reviewer.capacity:
+                errors.append(
+                    ValueError(
+                        f"{reviewer} is over their capacity of "
+                        f"{reviewer.capacity}."
+                    )
+                )
+
+        if errors:
+            raise Exception(errors)
+
+        return True
+
+    def _check_inputs(self):
+        """ Raise an error if any of the conditions of the game have been
+        broken. """
+
+        self._check_suitor_prefs()
+        self._check_reviewer_prefs()
+
+    def _check_suitor_prefs(self):
+        """ Make sure that the suitors' preferences are all subsets of the
+        available reviewer names. Otherwise, raise an error. """
+
+        errors = []
+        reviewer_names = [r.name for r in self.reviewers]
+        for suitor in self.suitors:
+            if not set(suitor.pref_names).issubset(set(reviewer_names)):
+                errors.append(
+                    ValueError(
+                        f"{suitor} has ranked a non-reviewer: "
+                        f"{set(suitor.pref_names)} != {set(reviewer_names)}"
+                    )
+                )
+
+        if errors:
+            raise Exception(errors)
+
+        return True
+
+    def _check_reviewer_prefs(self):
+        """ Make sure that every reviewer ranks all and only those suitors that
+        have ranked it. Otherwise, raise an error. """
+
+        errors = []
+        for reviewer in self.reviewers:
+            suitors_that_ranked_names = [
+                s.name for s in self.suitors if reviewer.name in s.pref_names
+            ]
+            if set(reviewer.pref_names) != set(suitors_that_ranked_names):
+                errors.append(
+                    ValueError(
+                        f"{reviewer} has not ranked all the suitors that ranked"
+                        f" it: {set(reviewer.pref_names)} != "
+                        f"{set(suitors_that_ranked_names)}."
+                    )
+                )
+
+        if errors:
+            raise Exception(errors)
+
+        return True
 
 
 def _check_mutual_preference(suitor, reviewer):
@@ -134,16 +204,6 @@ def hospital_resident(suitors, reviewers, optimal="suitor", verbose=False):
         return hospital_optimal(suitors, reviewers, verbose)
 
 
-def _get_matching(reviewers):
-    """ Make a dictionary of reviewers and their final matches such that the
-    matches are correctly ordered according to the reviewer's preferences. """
-
-    return {
-        r: tuple(sorted(r.matching, key=lambda x: r.pref_names.index(x.name)))
-        for r in reviewers
-    }
-
-
 def resident_optimal(suitors, reviewers, verbose):
     """ Solve the instance of HR to be suitor- (resident-) optimal. The
     algorithm (set out in `DubinsFreedman1981`_) is as follows:
@@ -191,9 +251,7 @@ def resident_optimal(suitors, reviewers, verbose):
 
         free_suitors = [s for s in suitors if not s.matching and s.pref_names]
 
-    matching = _get_matching(reviewers)
-
-    return matching
+    return {r: r.matching for r in reviewers}
 
 
 def hospital_optimal(suitors, reviewers, verbose):
@@ -242,6 +300,4 @@ def hospital_optimal(suitors, reviewers, verbose):
             ]
         ]
 
-    matching = _get_matching(reviewers)
-
-    return matching
+    return {r: r.matching for r in reviewers}

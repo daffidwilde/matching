@@ -151,6 +151,8 @@ class StableMarriage(BaseSolver):
                 "There must be an equal number of suitors and reviewers."
             )
 
+        return True
+
     def _check_player_ranks(self, player):
         """ Check that a player has ranked all of the other group. """
 
@@ -163,6 +165,7 @@ class StableMarriage(BaseSolver):
                 f"{player}: {prefs} != {names}"
             )
 
+        return True
 
 def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     """ An extended version of the original Gale-Shapley algorithm which makes
