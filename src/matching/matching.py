@@ -35,9 +35,8 @@ class Matching(dict):
         elif new_match is None:
             player.matching = new_match
 
-        elif (
-            isinstance(new_match, (list, tuple))
-            and all([isinstance(new, Player) for new in new_match])
+        elif isinstance(new_match, (list, tuple)) and all(
+            [isinstance(new, Player) for new in new_match]
         ):
             if new_match:
                 new_match = sorted(

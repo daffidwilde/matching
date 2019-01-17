@@ -2,6 +2,7 @@
 
 from .matching import Matching
 
+
 class BaseSolver:
     """ A class to store information about, and facilitate the solving of, a
     matching game.

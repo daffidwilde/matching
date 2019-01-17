@@ -6,7 +6,9 @@ from matching import Matching, Player
 
 
 suitors = [
-    Player("A", [1, 2, 3]), Player("B", [2, 1, 3]), Player("C", [1, 3, 2])
+    Player("A", [1, 2, 3]),
+    Player("B", [2, 1, 3]),
+    Player("C", [1, 3, 2]),
 ]
 
 reviewers = [
@@ -16,6 +18,7 @@ reviewers = [
 ]
 
 dictionary = dict(zip(suitors, reviewers))
+
 
 def test_init():
     """ Make an instance of the Matching class and check their attributes are

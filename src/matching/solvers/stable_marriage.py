@@ -91,8 +91,8 @@ class StableMarriage(BaseSolver):
         for player in self.suitors + self.reviewers:
             if player.matching is None:
                 errors.append(ValueError(f"{player} is unmatched."))
-            if (
-                player not in list(self.matching.keys()) + list(self.matching.values())
+            if player not in list(self.matching.keys()) + list(
+                self.matching.values()
             ):
                 errors.append(
                     ValueError(f"{player} does not appear in matching.")
@@ -123,7 +123,8 @@ class StableMarriage(BaseSolver):
                 errors.append(
                     ValueError(
                         f"{reviewer} is matched to {reviewer.matching} but "
-                        f"matching says {suitor}.")
+                        f"matching says {suitor}."
+                    )
                 )
 
         if errors:
