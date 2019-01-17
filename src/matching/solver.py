@@ -38,13 +38,13 @@ class BaseSolver:
     def matching(self):
         """ Property method to stop direct write access. """
 
-        return Matching(self._matching)
+        return self._matching
 
     @matching.getter
     def matching(self):
         """ Property getter. """
 
-        return Matching(self._matching)
+        return self._matching
 
     def solve(self):
         """ Placeholder for solving the given matching game. """

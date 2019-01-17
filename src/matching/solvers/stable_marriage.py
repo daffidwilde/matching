@@ -1,6 +1,6 @@
 """ The Stable Marriage Problem solver and algorithm. """
 
-from matching import BaseSolver
+from matching import BaseSolver, Matching
 
 from .util import delete_pair, match_pair, unmatch_pair
 
@@ -37,15 +37,29 @@ class StableMarriage(BaseSolver):
         self.suitors = suitors
         self.reviewers = reviewers
 
-        self.__check_inputs()
+        self._check_inputs()
 
         super().__init__(suitors, reviewers)
+
+    @property
+    def matching(self):
+        """ Matching property. """
+
+        return self._matching
+
+    @matching.getter
+    def matching(self):
+        """ Matching getter. """
+
+        return self._matching
 
     def solve(self, optimal="suitor"):
         """ Solve the instance of SM using either the suitor- or
         reviewer-oriented Gale-Shapley algorithm. Return the matching. """
 
-        self._matching = stable_marriage(self.suitors, self.reviewers, optimal)
+        self._matching = Matching(
+            stable_marriage(self.suitors, self.reviewers, optimal)
+        )
         return self.matching
 
     def check_stability(self):
@@ -66,50 +80,69 @@ class StableMarriage(BaseSolver):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        self.__check_all_matched()
-        self.__check_matching_consistent()
+        self._check_all_matched()
+        self._check_matching_consistent()
+        return True
 
-    def __check_all_matched(self):
+    def _check_all_matched(self):
         """ Check everyone has a match. """
 
         errors = []
         for player in self.suitors + self.reviewers:
             if player.matching is None:
                 errors.append(ValueError(f"{player} is unmatched."))
+            if (
+                player not in list(self.matching.keys()) + list(self.matching.values())
+            ):
+                errors.append(
+                    ValueError(f"{player} does not appear in matching.")
+                )
 
         if errors:
             raise Exception(errors)
 
-    def __check_matching_consistent(self):
+        return True
+
+    def _check_matching_consistent(self):
         """ Check that the game matching is consistent with the players. """
 
         errors = []
-        for suit, rev in self.matching.items():
-            if suit.matching != rev:
+        matching = self.matching
+        for suitor in self.suitors:
+            if suitor.matching != matching[suitor]:
                 errors.append(
                     ValueError(
-                        f"{suit} is matched to {suit.matching}, not {rev}."
+                        f"{suitor} is matched to {suitor.matching} but matching"
+                        f" says {matching[suitor]}."
                     )
                 )
-            if rev.matching != suit:
+
+        for reviewer in self.reviewers:
+            suitor = [s for s in matching if matching[s] == reviewer][0]
+            if reviewer.matching != suitor:
                 errors.append(
-                    ValueError(f"{rev} matched to {rev.matching}, not {suit}.")
+                    ValueError(
+                        f"{reviewer} is matched to {reviewer.matching} but "
+                        f"matching says {suitor}.")
                 )
 
         if errors:
+            print(self.matching)
             raise Exception(errors)
 
-    def __check_inputs(self):
+        return True
+
+    def _check_inputs(self):
         """ Raise an error if any of the conditions of the game have been
         broken. """
 
-        self.__check_num_players()
+        self._check_num_players()
         for suitor in self.suitors:
-            self.__check_player_ranks(suitor)
+            self._check_player_ranks(suitor)
         for reviewer in self.reviewers:
-            self.__check_player_ranks(reviewer)
+            self._check_player_ranks(reviewer)
 
-    def __check_num_players(self):
+    def _check_num_players(self):
         """ Check that the number of suitors and reviewers are equal. """
 
         if len(self.suitors) != len(self.reviewers):
@@ -117,7 +150,7 @@ class StableMarriage(BaseSolver):
                 "There must be an equal number of suitors and reviewers."
             )
 
-    def __check_player_ranks(self, player):
+    def _check_player_ranks(self, player):
         """ Check that a player has ranked all of the other group. """
 
         others = self.reviewers if player in self.suitors else self.suitors

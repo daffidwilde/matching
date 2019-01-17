@@ -54,3 +54,11 @@ class Matching(dict):
             raise ValueError(f"{new_match} is not a valid match.")
 
         self.__data[player] = new_match
+
+    def keys(self):
+
+        return self.__data.keys()
+
+    def values(self):
+
+        return self.__data.values()

@@ -20,7 +20,7 @@ def test_init(player_names, seed):
     assert all(
         [player.matching is None for player in match.suitors + match.reviewers]
     )
-    assert match.matching == {}
+    assert match.matching is None
 
 
 @STABLE_MARRIAGE
@@ -75,11 +75,11 @@ def test_check_validity(player_names, seed):
     match = StableMarriage(suitors, reviewers)
 
     match.solve()
-    assert not match.check_validity()
+    assert match.check_validity()
 
 
 @STABLE_MARRIAGE
-def test_validity_all_matched_game(player_names, seed):
+def test_all_matched(player_names, seed):
     """ Test that StableMarriage recognises a valid matching requires all
     players to be matched as players and as part of the game. """
 
@@ -89,26 +89,28 @@ def test_validity_all_matched_game(player_names, seed):
 
     matching = match.solve()
     matching[match.suitors[0]].matching = None
+    match.matching[match.suitors[0]] = None
 
     with pytest.raises(Exception):
-        match.check_validity()
+        match._check_all_matched()
 
 
 @STABLE_MARRIAGE
-def test_validity_consistent(player_names, seed):
+def test_matching_consistent(player_names, seed):
     """ Test that StableMarriage recognises a valid matching requires there to
     be consistency between the game's matching and its players'. """
 
     suitor_names, reviewer_names = player_names
     suitors, reviewers = _make_players(suitor_names, reviewer_names, seed)
-    match = StableMarriage(suitors, reviewers)
 
-    matching = match.solve()
-    matching[match.suitors[0]].matching = matching[match.suitors[-1]]
-    list(matching.keys())[0].matching = list(matching.values())[-1]
+    match = StableMarriage(suitors, reviewers)
+    match.solve()
+
+    match.suitors[0].matching = None
+    match.reviewers[0].matching = None
 
     with pytest.raises(Exception):
-        match.check_validity()
+        match._check_matching_consistent()
 
 
 def test_check_stability():
