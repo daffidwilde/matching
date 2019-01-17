@@ -75,11 +75,7 @@ class StableMarriage(BaseSolver):
         errors = []
         for player in self.suitors + self.reviewers:
             if player.matching is None:
-                errors.append(ValueError(f"Player: {player} is unmatched."))
-
-        for suitor, reviewer in self._matching.items():
-            if reviewer is None:
-                errors.append(ValueError(f"Game: {suitor} has no match."))
+                errors.append(ValueError(f"{player} is unmatched."))
 
         if errors:
             raise Exception(errors)
@@ -88,7 +84,7 @@ class StableMarriage(BaseSolver):
         """ Check that the game matching is consistent with the players. """
 
         errors = []
-        for suit, rev in self._matching.items():
+        for suit, rev in self.matching.items():
             if suit.matching != rev:
                 errors.append(
                     ValueError(
@@ -102,14 +98,6 @@ class StableMarriage(BaseSolver):
 
         if errors:
             raise Exception(errors)
-
-    def update_matching(self, suitor, new_match):
-        """ Update the matching so that suitor and reviewer are now matched to
-        one another. This does not undo any previously standing matchings. """
-
-        suitor.match(new_match)
-        new_match.match(suitor)
-        self._matching[suitor] = new_match
 
     def __check_inputs(self):
         """ Raise an error if any of the conditions of the game have been

@@ -40,6 +40,12 @@ class BaseSolver:
 
         return Matching(self._matching)
 
+    @matching.getter
+    def matching(self):
+        """ Property getter. """
+
+        return Matching(self._matching)
+
     def solve(self):
         """ Placeholder for solving the given matching game. """
 
@@ -52,11 +58,5 @@ class BaseSolver:
 
     def check_validity(self):
         """ Placeholder for checking the validity of the current matching. """
-
-        raise NotImplementedError()
-
-    def update_matching(self):
-        """ Placeholder for how to update the current matching and the players'
-        matchings as well. """
 
         raise NotImplementedError()
