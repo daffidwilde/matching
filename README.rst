@@ -91,10 +91,21 @@ like so:
 
 It is easily checked - on paper or mentally - that this is the correct solution.
 
-.. note::
-   The keys and values in this dictionary are the Player instances, not the
-   names. They will need to be extracted as necessary.
+Note
+^^^^
 
+This matching is not a standard Python dictionary, though it does largely look
+and behave like one. It is in fact an instance of the ``Matching`` class:
+
+>>> match.matching.__class__
+matching.matching.Matching
+
+This dictionary-like object is primarily useful as a teaching device that eases
+the process of manipulating a matching after a solution has been found. 
+
+Note also that the keys and values in this ``Matching`` are the ``Player``
+instances that are passed to the game, and not the player names. If you require
+the names, they will need to be extracted as necessary.
 
 The hospital-resident assignment problem
 ----------------------------------------
