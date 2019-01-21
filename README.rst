@@ -107,6 +107,7 @@ Note also that the keys and values in this ``Matching`` are the ``Player``
 instances that are passed to the game, and not the player names. If you require
 the names, they will need to be extracted as necessary.
 
+
 The hospital-resident assignment problem
 ----------------------------------------
 
