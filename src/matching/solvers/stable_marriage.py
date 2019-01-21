@@ -42,18 +42,6 @@ class StableMarriage(BaseSolver):
 
         super().__init__(suitors, reviewers)
 
-    @property
-    def matching(self):
-        """ Matching property. """
-
-        return self._matching
-
-    @matching.getter
-    def matching(self):
-        """ Matching getter. """
-
-        return self._matching
-
     def solve(self, optimal="suitor"):
         """ Solve the instance of SM using either the suitor- or
         reviewer-oriented Gale-Shapley algorithm. Return the matching. """
@@ -100,7 +88,7 @@ class StableMarriage(BaseSolver):
                 )
 
         if errors:
-            raise Exception(errors)
+            raise Exception(*errors)
 
         return True
 
@@ -129,8 +117,7 @@ class StableMarriage(BaseSolver):
                 )
 
         if errors:
-            print(self.matching)
-            raise Exception(errors)
+            raise Exception(*errors)
 
         return True
 
@@ -167,6 +154,7 @@ class StableMarriage(BaseSolver):
             )
 
         return True
+
 
 def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     """ An extended version of the original Gale-Shapley algorithm which makes

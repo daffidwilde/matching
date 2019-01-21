@@ -78,18 +78,69 @@ class HospitalResident(BaseSolver):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
+        self._check_suitor_matching()
+        self._check_reviewer_capacity()
+        self._check_reviewer_matching()
+
+        return True
+
+    def _check_suitor_matching(self):
+        """ Check that no suitor is matched to an unacceptable reviewer. """
+
+        errors = []
+        for suitor in self.suitors:
+            if (
+                suitor.matching
+                and suitor.matching.name not in suitor.pref_names
+            ):
+                errors.append(
+                    ValueError(
+                        f"{suitor} is matched to {suitor.matching} but they do "
+                        "not appear in their preference list: "
+                        f"{suitor.pref_names}."
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_reviewer_capacity(self):
+        """ Check that no reviewer is over-subscribed. """
+
         errors = []
         for reviewer in self.reviewers:
             if len(reviewer.matching) > reviewer.capacity:
                 errors.append(
                     ValueError(
-                        f"{reviewer} is over their capacity of "
-                        f"{reviewer.capacity}."
+                        f"{reviewer} is matched to {reviewer.matching} which is"
+                        f"over their capacity of {reviewer.capacity}."
                     )
                 )
 
         if errors:
-            raise Exception(errors)
+            raise Exception(*errors)
+
+        return True
+
+    def _check_reviewer_matching(self):
+        """ Check that no reviewer is matched to an unacceptable suitor. """
+
+        errors = []
+        for reviewer in self.reviewers:
+            for suitor in reviewer.matching:
+                if suitor.name not in reviewer.pref_names:
+                    errors.append(
+                        ValueError(
+                            f"{reviewer} has {suitor} in their matching but "
+                            "they do not appear in their preference list: "
+                            f"{reviewer.pref_names}."
+                        )
+                    )
+
+        if errors:
+            raise Exception(*errors)
 
         return True
 
@@ -116,7 +167,7 @@ class HospitalResident(BaseSolver):
                 )
 
         if errors:
-            raise Exception(errors)
+            raise Exception(*errors)
 
         return True
 
@@ -139,7 +190,7 @@ class HospitalResident(BaseSolver):
                 )
 
         if errors:
-            raise Exception(errors)
+            raise Exception(*errors)
 
         return True
 

@@ -7,7 +7,7 @@ import numpy as np
 from hypothesis import given
 from hypothesis.strategies import dictionaries, integers, lists, sampled_from
 
-from matching import Player
+from matching import Player, HospitalResident
 
 
 def _get_possible_prefs(names):
@@ -58,6 +58,17 @@ def _make_hospitals(residents, capacities):
     ]
 
     return sorted(hospitals, key=lambda hosp: hosp.name)
+
+
+def _make_match(resident_names, hospital_names, capacities, seed):
+    """ Make all of the residents and hospitals, and the match itself. """
+
+    np.random.seed(seed)
+    residents = _make_residents(resident_names, hospital_names)
+    hospitals = _make_hospitals(residents, capacities)
+    match = HospitalResident(residents, hospitals)
+
+    return residents, hospitals, match
 
 
 HOSPITAL_RESIDENT = given(
