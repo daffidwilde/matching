@@ -20,10 +20,11 @@ class HospitalResident(BaseSolver):
 
     Attributes
     ==========
-    matching : `dict`
-        Once the game is solved, a matching is available as a dictionary. This
-        uses the reviewers as keys and a ranked tuple of their suitor matches as
-        values. Initialises as `None`.
+    matching : `Matching` (`dict`-like)
+        Once the game is solved, a matching is available as a `Matching` object.
+        This resembles and behaves much like a standard Python dictionary that
+        uses the reviewers as keys and their suitor matches as values.
+        Initialises as `None`.
     blocking_pairs : `list` of (`suitor`, `reviewer`)-tuples
         The suitor-reviewer pairs that satisfy the following conditions:
             - They are present in each other's preference lists;
@@ -193,9 +194,9 @@ def hospital_resident(suitors, reviewers, optimal="suitor", verbose=False):
 
     Returns
     =======
-    matching : `dict`
-        A dictionary of `Player` instances. The keys are the members of
-        `reviewers`, and the values are their matches ranked by preference.
+    matching : `Matching` (`dict`-like)
+        A dictionary-like object of `Player` instances. The keys are the members
+        of `reviewers`, and the values are their matches ranked by preference.
     """
 
     if optimal in ["suitor", "resident"]:

@@ -20,9 +20,10 @@ class StableMarriage(BaseSolver):
 
     Attributes
     ==========
-    matching : `dict`
+    matching : `Matching` (`dict`-like)
         Once the game is solved, a matching is available. This uses the suitors
-        and reviewers as keys and values in a dictionary, respectively.
+        and reviewers as keys and values, respectively, in a `Matching` object;
+        something that closely resembles a standard Python dictionary.
         Initialises as `None`.
     blocking_pairs : `list` of (`suitor`, `reviewer`)-tuples
         The suitor-reviewer pairs that both prefer one another to their current
@@ -190,9 +191,9 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
 
     Returns
     =======
-    matching : `dict`
-        A dictionary of `Player` instances. The keys are given by the members of
-        `suitors`, and the values are their match in `reviewers`.
+    matching : `Matching` (`dict`-like)
+        A dictionary-like object of `Player` instances. The keys are given by
+        the members of `suitors`, and the values are their match in `reviewers`.
     """
 
     if optimal.lower() == "reviewer":
