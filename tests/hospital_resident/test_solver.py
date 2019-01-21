@@ -70,12 +70,12 @@ def test_inputs_reviewer_prefs(
 def test_solve(resident_names, hospital_names, capacities, seed):
     """ Test that HospitalResident can solve games correctly. """
 
-    np.random.seed(seed)
-    residents = _make_residents(resident_names, hospital_names)
-    hospitals = _make_hospitals(residents, capacities)
-    match = HospitalResident(residents, hospitals)
-
     for optimal in ["suitor", "resident", "reviewer", "hospital"]:
+        np.random.seed(seed)
+        residents = _make_residents(resident_names, hospital_names)
+        hospitals = _make_hospitals(residents, capacities)
+        match = HospitalResident(residents, hospitals)
+
         matching = match.solve(optimal)
         assert isinstance(matching, Matching)
         assert set(matching.keys()) == set(hospitals)
