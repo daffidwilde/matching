@@ -63,7 +63,7 @@ for suitors should be comprised of the names of the reviewers, and vice versa.
 Consider the following stable marriage problem which is represented on a
 bipartite graph.
 
-.. image:: ./img/stable_marriage.svg
+.. image:: ./img/stable_marriage.png
    :align: center
    :width: 10cm
 
@@ -158,7 +158,7 @@ Jo, Lucy and David - and three hospitals, each with 2 positions available:
 Mercy, City and General. We display their preferences in a similar fashion to
 before:
 
-.. image:: ./img/hospital_resident.svg
+.. image:: ./img/hospital_resident.png
    :align: center
    :width: 10cm
 
