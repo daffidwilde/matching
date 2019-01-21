@@ -10,7 +10,7 @@ A package for solving matching games.
 A matching game is defined by two sets, called suitors and reviewers. Each
 suitor has a ranked preference list of the reviewers and vice versa. The
 objective of a matching game is to find a mapping between the two sets such that
-no pair in the mapping can do better without destablising the other matchings.
+no pair in the mapping can do better without destabilising the other matchings.
 
 In ``matching``, we divide matching games into two general problems; these are
 known colloquially as stable marriage problems and hospital-resident assignment
@@ -27,7 +27,7 @@ exactly one reviewer, and so our matching is bijective.
 
 It is known that instances of the stable marriage problem can be solved to give
 a unique, stable and suitor-optimal matching using an algorithm developed by
-David Gale and Lloyd Shapley. The algorithm is as follows:
+David Gale and Lloyd Shapley. The suitor-oriented algorithm is as follows:
 
 0. Assign all suitors and reviewers to be unmatched.
 
@@ -54,122 +54,156 @@ algorithm terminates.
 Usage
 ^^^^^
 
-With both forms of matching game, ``matching`` uses standard dictionaries to
-construct and solve a given instance. In particular, for instances of the stable
-marriage problem, we require a dictionary detailing the preference lists of each
-suitor (and reviewer).
+With both forms of matching game, ``matching`` uses a ``Player`` class to
+represent the members of each party. In particular, for instances of the stable
+marriage problem, we require a list of ``Player`` instances from each party
+(suitors and reviewers) detailing their preferences lists. The preference lists
+for suitors should be comprised of the names of the reviewers, and vice versa.
 
 Consider the following stable marriage problem which is represented on a
 bipartite graph.
 
-.. image:: ./img/bipartite-matching.png
+.. image:: ./img/stable_marriage.png
    :align: center
    :width: 10cm
 
 We convey the information above in the following way:
 
->>> suitor_prefs = {'A': ['D', 'E', 'F'],
-...                 'B': ['D', 'F', 'E'],
-...                 'C': ['F', 'D', 'E']}
->>> reviewer_prefs = {'D': ['B', 'C', 'A'],
-...                   'E': ['A', 'C', 'B'],
-...                   'F': ['C', 'B', 'A']}
+>>> from matching import Player
+>>> suitors = [
+...     Player(name="A", pref_names=["D", "E", "F"]),
+...     Player(name="B", pref_names=["D", "F", "E"]),
+...     Player(name="C", pref_names=["F", "D", "E"]),
+... ]
+>>> reviewers = [
+...     Player(name="D", pref_names=["B", "C", "A"]),
+...     Player(name="E", pref_names=["A", "C", "B"]),
+...     Player(name="F", pref_names=["C", "B", "A"]),
+... ]
 
-Then to solve this matching game, we make use of the ``algorithms`` submodule,
+Then to solve this matching game, we make use of the ``StableMarriage`` class,
 like so:
 
->>> from matching.algorithms import galeshapley
->>> matching = galeshapley(suitor_prefs, reviewer_prefs)
->>> matching
-{'A': 'E', 'B': 'D', 'C': 'F'}
+>>> from matching import StableMarriage
+>>> sm = StableMarriage(suitors, reviewers)
+>>> sm.solve()
+{A: E, B: D, C: F}
 
 It is easily checked - on paper or mentally - that this is the correct solution.
+
+Note
+^^^^
+
+This matching is not a standard Python dictionary, though it does largely look
+and behave like one. It is in fact an instance of the ``Matching`` class:
+
+>>> match.matching.__class__
+matching.matching.Matching
+
+This dictionary-like object is primarily useful as a teaching device that eases
+the process of manipulating a matching after a solution has been found. 
+
+Note also that the keys and values in this ``Matching`` are the ``Player``
+instances that are passed to the game, and not the player names. If you require
+the names, they will need to be extracted as necessary.
 
 
 The hospital-resident assignment problem
 ----------------------------------------
 
 For this family of problems, we have a set of suitors (residents) and reviewers
-(hospitals), and ranked preferences associated with each element of these sets,
-as in the stable marriage problem. However, we do not require these sets to be
-of the same size, nor do we require any given suitor (or reviewer) to rank all
-elements of the other set. In addition to these sets, each reviewer has
-associated with it a capacity. This capacity is the maximum number of suitors
-that may be matched to it at any given time.
+(hospitals), and ranked preferences associated with the elements of these sets,
+as in the stable marriage problem. In this case, we do not require these sets to
+be of the same size, nor do we require any given suitor (or reviewer) to rank
+all elements of the other set.
 
-The algorithm which solves this problem is famously utilised in the USA by the
+However, there are conditions on these lists which are necessary for a valid
+instance of this problem: every hospital must rank all residents who rank them,
+and no hospital may rank a resident who has not been ranked by them.
+
+In addition to these lists, each hospital has associated with it an integer
+capacity. This capacity is the maximum number of residents that may be matched
+to it at any given time.
+
+An algorithm which solves this problem is famously utilised in the USA by the
 `National Resident Matching Program <http://www.nrmp.org/>`_, hence the
 nickname. In fact, research surrounding this algorithm won Shapley, along with
 Alvin Roth, the `Nobel Prize for Economics <http://www.nytimes.com/2012/10/16/
 business/economy/
 alvin-roth-and-lloyd-shapley-win-nobel-in-economic-science.html>`_ in 2012. In
-this package we refer to this algorithm as the Extended Gale-Shapley algorithm.
+this package we refer to this algorithm as the Hospital-Resident algorithm.
 However, it has several synonyms including: 'The Match', 'the Capacitated
 Gale-Shapley algorithm', 'the Roth-Shapley algorithm', and 'the deferred
 acceptance algorithm'. This algorithm has also been used to develop donor chains
 for kidney transplants saving thousands of lives in the process.
 
-The algorithm is as follows:
+The suitor- (resident-) oriented algorithm is as follows:
 
-0. Assign all suitors and reviewers to be unmatched.
+0. Assign all residents to be unmatched, and all hospitals to be totally
+   unsubscribed.
 
-1. Take any unmatched suitor, **s**, that is still up for consideration, and go
-   to 2. If there are no such suitors, end. 
+1. Take any unmatched resident with a non-empty preference list, :math:`r`, and
+   consider their most preferred hospital, :math:`h`. Match them to one another.
+   
+2. If, as a result of this new matching, :math:`h` is now over-subscribed, find
+   the worst resident currently assigned to :math:`h`, :math:`r'`. Set
+   :math:`r'` to be unmatched and remove them from the hospital's matching. Go
+   to 3.
 
-2. If the preference list of **s** is empty, remove them from consideration, and
-   go to 1. Otherwise, consider their most preferred reviewer, **r**. Go to 3.
+3. If :math:`h` is at capacity (fully subscribed) then find their worst current
+   match :math:`r'`. Then, for each successor, :math:`s`, to :math:`r'` in the
+   preference list of :math:`h`, delete the pair :math:`(s, h)` from the game.
+   Go to 4.
 
-3. If **s** is not ranked by **r**, remove **r** from the preference list of
-   **s** and go to 2. Otherwise, if **r** has space, match **s** to **r** and go
-   to 1. If not, go to 4.
-
-4. Consider **r**'s current matching, and particular their least preferable
-   current matching, **s'**. If **r** prefers **s** to **s'**, then unmatch
-   **s'** from **r**, match **s** to **r**, and go to 1. Otherwise, leave **s**
-   unmatched, remove **s** from the preference list of **r** and **r** from the
-   preference list of **s**, and go to 2.
+4. Go to 1 until there are no such residents left, then end.
 
 Usage
 ^^^^^
 
 In a similar fashion to the stable marriage problem, we interpret
-hospital-resident assignment problems using dictionaries. In addition to the
-suitor and reviewer preference dictionaries, however, we have a capacity
-dictionary which takes reviewers as keys and integer capacities as values.
+hospital-resident assignment problems using the ``Player`` class and a solver
+class specific to HR. In addition to the preference lists of either party,
+however, we pass a capacity to each hospital (reviewer).
 
-Consider the following example. We have five medical residents - Arthur, Sunny,
-Joseph, Latha and Darrius - and three hospitals, each with 2 positions
-available: Mercy, City and General. We display their preferences in a similar
-fashion to before:
+Consider the following example. We have five medical residents - Alec, Sammy,
+Jo, Lucy and David - and three hospitals, each with 2 positions available:
+Mercy, City and General. We display their preferences in a similar fashion to
+before:
 
-.. image:: ./img/hospital-resident.png
+.. image:: ./img/hospital_resident.png
    :align: center
    :width: 10cm
 
 In ``matching`` we summarise this problem in the following way:
 
->>> resident_prefs = {'A': ['C'],
-...                   'S': ['C', 'M'],
-...                   'J': ['C', 'G', 'M'],
-...                   'L': ['M', 'C', 'G'],
-...                   'D': ['C', 'M', 'G']}
->>> hospital_prefs = {'M': ['D', 'J', 'S', 'L'],
-...                   'C': ['D', 'A', 'S', 'L', 'J'],
-...                   'G': ['D', 'A', 'J', 'L']}
->>> capacities = {h: 2 for h in hospital_prefs.keys()}
+>>> from matching import Player
+>>> residents = [
+...     Player("A", ["C"]),
+...     Player("S", ["C", "M"]),
+...     Player("D", ["C", "M", "G"]),
+...     Player("L", ["M", "C", "G"]),
+...     Player("J", ["C", "G", "M"]),
+... ]
+>>> hospitals = [
+...     Player("M", ["D", "L", "J", "S"], capacity=2),
+...     Player("C", ["D", "A", "S", "L", "J"], capacity=2),
+...     Player("G", ["D", "J", "L"], capacity=2),
+... ]
 
-We then solve this problem using the ``hospital_resident`` algorithm:
+We then solve this problem using the ``HospitalResident`` class:
 
->>> from matching.algorithms import hospital_resident
->>> matching = hospital_resident(hospital_prefs, resident_prefs, capacities)
->>> matching
-{'M': ['S', 'L'], 'C': ['D', 'A'], 'G': ['J']}
+>>> from matching import HospitalResident
+>>> hr = HospitalResident(suitors=residents, reviewers=hospitals)
+>>> hr.solve()
+{M: [L, S], C: [D, A], G: [J]}
 
 Again, though less likely to be done in your head, you can verify that this
-matching is correct according to our algorithm.
+matching is correct according to the algorithm stated above.
 
 
 Get in contact!
 ---------------
 
-I hope this package is useful, and please feel free to ping me here (or on Twitter: `@daffidwilde <https://twitter.com/daffidwilde>`_) with any issues or recommendations. PRs always welcome!
+I hope this package is useful, and feel free to contact me here (or on Twitter:
+`@daffidwilde <https://twitter.com/daffidwilde>`_) with any issues or
+recommendations. PRs always welcome!

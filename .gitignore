@@ -2,12 +2,13 @@ docs/_build/*
 .cache
 *cov*
 dist/
-docs/tex/*.aux
-docs/tex/*.log
-docs/tex/*.pdf
+*.aux
+*.log
+*.pdf
 *.DS_Store
 *egg-info*
 htmlcov/
 *.hypothesis/*
 *pyc
 *.swp
+
