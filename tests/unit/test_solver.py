@@ -41,12 +41,3 @@ def test_no_check_validity():
     with pytest.raises(NotImplementedError):
         match = BaseSolver()
         match.check_validity()
-
-
-def test_no_update_matching():
-    """ Verify BaseSolver raises a NotImplementedError when calling the
-    `update_matching` method. """
-
-    with pytest.raises(NotImplementedError):
-        match = BaseSolver()
-        match.update_matching()

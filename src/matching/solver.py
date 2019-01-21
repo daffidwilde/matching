@@ -1,6 +1,6 @@
 """ The base matchmaker class for facilitating and solving matching games. """
 
-from matching import Player
+from .matching import Matching
 
 
 class BaseSolver:
@@ -37,7 +37,13 @@ class BaseSolver:
 
     @property
     def matching(self):
-        """ Property method to deny direct write access to the matching. """
+        """ Property method to stop direct write access. """
+
+        return self._matching
+
+    @matching.getter
+    def matching(self):
+        """ Property getter. """
 
         return self._matching
 
@@ -53,11 +59,5 @@ class BaseSolver:
 
     def check_validity(self):
         """ Placeholder for checking the validity of the current matching. """
-
-        raise NotImplementedError()
-
-    def update_matching(self):
-        """ Placeholder for how to update the current matching and the players'
-        matchings as well. """
 
         raise NotImplementedError()
