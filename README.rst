@@ -63,7 +63,7 @@ for suitors should be comprised of the names of the reviewers, and vice versa.
 Consider the following stable marriage problem which is represented on a
 bipartite graph.
 
-.. image:: ./img/bipartite-matching.png
+.. image:: ./img/stable_marriage.svg
    :align: center
    :width: 10cm
 
@@ -81,11 +81,12 @@ We convey the information above in the following way:
 ...     Player(name="F", pref_names=["C", "B", "A"]),
 ... ]
 
-Then to solve this matching game, we make use of the ``Matcher`` class, like so:
+Then to solve this matching game, we make use of the ``StableMarriage`` class,
+like so:
 
->>> from matching import Matcher
->>> match = Matcher(suitors, reviewers)
->>> match.solve()
+>>> from matching import StableMarriage
+>>> sm = StableMarriage(suitors, reviewers)
+>>> sm.solve()
 {A: E, B: D, C: F}
 
 It is easily checked - on paper or mentally - that this is the correct solution.
@@ -148,16 +149,16 @@ Usage
 ^^^^^
 
 In a similar fashion to the stable marriage problem, we interpret
-hospital-resident assignment problems using the ``Player`` and ``Matcher``
-classes. In addition to the preference lists of either party, however, we pass a
-capacity to each hospital (reviewer).
+hospital-resident assignment problems using the ``Player`` class and a solver
+class specific to HR. In addition to the preference lists of either party,
+however, we pass a capacity to each hospital (reviewer).
 
 Consider the following example. We have five medical residents - Alec, Sammy,
 Jo, Lucy and David - and three hospitals, each with 2 positions available:
 Mercy, City and General. We display their preferences in a similar fashion to
 before:
 
-.. image:: ./img/hospital-resident.png
+.. image:: ./img/hospital_resident.svg
    :align: center
    :width: 10cm
 
@@ -167,22 +168,22 @@ In ``matching`` we summarise this problem in the following way:
 >>> residents = [
 ...     Player("A", ["C"]),
 ...     Player("S", ["C", "M"]),
-...     Player("J", ["C", "G", "M"]),
-...     Player("L", ["M", "C", "G"]),
 ...     Player("D", ["C", "M", "G"]),
+...     Player("L", ["M", "C", "G"]),
+...     Player("J", ["C", "G", "M"]),
 ... ]
 >>> hospitals = [
-...     Player("M", ["D", "J", "S", "L"], capacity=2),
+...     Player("M", ["D", "L", "J", "S"], capacity=2),
 ...     Player("C", ["D", "A", "S", "L", "J"], capacity=2),
-...     Player("G", ["D", "J", "L"], capacity=2)
+...     Player("G", ["D", "J", "L"], capacity=2),
 ... ]
 
-We then solve this problem using the ``Matcher`` class:
+We then solve this problem using the ``HospitalResident`` class:
 
->>> from matching import Matcher
->>> match = Matcher(suitors=residents, reviewers=hospitals)
->>> match.solve()
-{M: (S, L), C: (D, A), G: (J,)}
+>>> from matching import HospitalResident
+>>> hr = HospitalResident(suitors=residents, reviewers=hospitals)
+>>> hr.solve()
+{M: [L, S], C: [D, A], G: [J]}
 
 Again, though less likely to be done in your head, you can verify that this
 matching is correct according to the algorithm stated above.
