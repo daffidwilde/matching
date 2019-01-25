@@ -90,5 +90,5 @@ HOSPITAL_RESIDENT = given(
         min_size=3,
         max_size=3,
     ),
-    seed=integers(min_value=0),
+    seed=integers(min_value=0, max_value=2**32-1),
 )
