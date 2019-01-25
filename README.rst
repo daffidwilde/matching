@@ -4,6 +4,10 @@ Matching
 .. image:: https://img.shields.io/pypi/v/matching.svg
    :target: https://pypi.org/project/matching/
 
+.. image:: https://coveralls.io/repos/github/daffidwilde/matching/badge.svg?branch=master
+   :target: https://coveralls.io/github/daffidwilde/matching?branch=master
+
+
 A package for solving matching games.
 -------------------------------------
 
