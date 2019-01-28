@@ -1,7 +1,5 @@
 language: python
 python:
-  - 3.4
-  - 3.5
   - 3.6
 
 cache:
@@ -11,7 +9,8 @@ cache:
 install:
   - pip install -r requirements.txt
   - python setup.py develop
-  - pip install coveralls==1.1 hypothesis pytest pytest-cov
+  - pip install --upgrade pytest
+  - pip install coveralls==1.1 hypothesis pytest-cov
   - pip install sphinx sphinx_rtd_theme
 script:
     #  - cd docs; make html

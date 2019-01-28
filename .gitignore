@@ -1,4 +1,4 @@
-docs/_build/*
+*build*
 .cache
 *cov*
 dist/
