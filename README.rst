@@ -7,6 +7,12 @@ Matching
 .. image:: https://coveralls.io/repos/github/daffidwilde/matching/badge.svg?branch=master
    :target: https://coveralls.io/github/daffidwilde/matching?branch=master
 
+.. image:: https://travis-ci.com/daffidwilde/matching.svg?branch=master
+   :target: https://travis-ci.com/daffidwilde/matching
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/ambv/black
+
 
 A package for solving matching games.
 -------------------------------------
