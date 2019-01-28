@@ -5,9 +5,11 @@ from setuptools import setup, find_packages
 with open("README.rst", "r") as readme_file:
     README = readme_file.read()
 
+exec(open("src/matching/version.py", "r").read())
+
 setup(
     name="matching",
-    version="1.0",
+    version=__version__,
     description="A package for solving matching games.",
     long_description=README,
     url="https://github.com/daffidwilde/matching",
