@@ -53,5 +53,5 @@ STABLE_MARRIAGE = given(
     player_names=_get_player_names(
         suitor_pool=["A", "B", "C"], reviewer_pool=["X", "Y", "Z"]
     ),
-    seed=integers(min_value=0, max_value=2**32-1),
+    seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )
