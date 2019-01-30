@@ -2,7 +2,7 @@
 
 import pytest
 
-from matching import StableMarriage, Matching
+from matching import Matching, StableMarriage
 
 from .params import STABLE_MARRIAGE, _make_players
 

@@ -1,7 +1,6 @@
 """ Hypothesis decorators for SM tests. """
 
 import numpy as np
-
 from hypothesis import given
 from hypothesis.strategies import composite, integers, lists, sampled_from
 

@@ -4,7 +4,6 @@ import pytest
 
 from matching import Matching, Player
 
-
 suitors = [
     Player("A", [1, 2, 3]),
     Player("B", [2, 1, 3]),

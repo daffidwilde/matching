@@ -3,11 +3,10 @@
 import itertools as it
 
 import numpy as np
-
 from hypothesis import given
 from hypothesis.strategies import dictionaries, integers, lists, sampled_from
 
-from matching import Player, HospitalResident
+from matching import HospitalResident, Player
 
 
 def _get_possible_prefs(names):
