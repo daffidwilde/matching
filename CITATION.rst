@@ -1,6 +1,6 @@
 Please use the following to cite the latest version of the Matching library::
 
-   @misc{edo-project,
+   @misc{matching-project,
       author        = {{ {The Matching library developers} }},
       title         = {Matching: <RELEASE TITLE>},
       year          = 2018,
@@ -12,3 +12,6 @@ To check the details (RELEASE TITLE, DOI INFORMATION and DOI NUMBER) please view
 the Zenodo page for the project.
 
 Click on the badge/link below:
+
+.. image:: https://zenodo.org/badge/119597240.svg
+   :target: https://zenodo.org/badge/latestdoi/119597240
