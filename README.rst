@@ -13,6 +13,9 @@ Matching
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
 
+.. image:: https://zenodo.org/badge/119597240.svg
+   :target: https://zenodo.org/badge/latestdoi/119597240
+
 
 A package for solving matching games.
 -------------------------------------
