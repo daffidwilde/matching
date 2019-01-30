@@ -1,6 +1,13 @@
 History
 =======
 
+v1.0.2 - 2019-01-30
+-------------------
+
+- Individuals forget the names of others one at a time rather than all instances
+  at once as previously.
+- Add citation file.
+
 v1.0.1 - 2019-01-28
 -------------------
 
