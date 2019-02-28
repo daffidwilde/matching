@@ -289,19 +289,16 @@ def resident_optimal(suitors, reviewers, verbose):
         match_pair(suitor, reviewer)
 
         if len(reviewer.matching) > reviewer.capacity:
-            idx = reviewer.get_worst_match_idx()
-            worst = [s for s in suitors if s.name == reviewer.pref_names[idx]][
-                0
-            ]
+            worst = reviewer.get_worst_match()
             unmatch_pair(worst, reviewer)
+            free_suitors.append(worst)
 
         if len(reviewer.matching) == reviewer.capacity:
-            idx = reviewer.get_worst_match_idx()
-            successors = reviewer.get_successors(suitors, idx)
+            successors = reviewer.get_successors(suitors)
             for successor in successors:
                 delete_pair(reviewer, successor)
-
-        free_suitors = [s for s in suitors if not s.matching and s.pref_names]
+                if not successor.pref_names:
+                    free_suitors.remove(successor)
 
     return {r: r.matching for r in reviewers}
 
@@ -336,20 +333,30 @@ def hospital_optimal(suitors, reviewers, verbose):
         if suitor.matching:
             curr_match = suitor.matching
             unmatch_pair(suitor, curr_match)
+            if curr_match not in free_reviewers:
+                free_reviewers.append(curr_match)
 
         match_pair(suitor, reviewer)
+        reviewer_match_names = [m.name for m in reviewer.matching]
+        if len(reviewer.matching) < reviewer.capacity and [
+            name
+            for name in reviewer.pref_names
+            if name not in reviewer_match_names
+        ]:
+            free_reviewers.append(reviewer)
 
         successors = suitor.get_successors(reviewers)
         for successor in successors:
             delete_pair(suitor, successor)
-
-        free_reviewers = [
-            r
-            for r in reviewers
-            if len(r.matching) < r.capacity
-            and [
-                s for s in r.pref_names if s not in [m.name for m in r.matching]
-            ]
-        ]
+            successor_match_names = [m.name for m in successor.matching]
+            if (
+                not [
+                    name
+                    for name in successor.pref_names
+                    if name not in successor_match_names
+                ]
+                and successor in free_reviewers
+            ):
+                free_reviewers.remove(successor)
 
     return {r: r.matching for r in reviewers}
