@@ -28,6 +28,8 @@ def test_match_pair(name, pref_names, capacity):
 
     for other in others:
         player = Player(name, pref_names, capacity)
+        if player.capacity > 1:
+            player.matching = []
         match_pair(player, other)
 
         assert (

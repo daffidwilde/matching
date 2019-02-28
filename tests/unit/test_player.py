@@ -14,6 +14,7 @@ def test_init(name, pref_names, capacity):
     assert player.name == name
     assert player.pref_names == pref_names
     assert player.capacity == capacity
+    assert player.matching is None
 
 
 @PLAYER
@@ -83,6 +84,9 @@ def test_match(name, pref_names, capacity):
     player = Player(name, pref_names, capacity)
     other = Player(pref_names[0], [name])
 
+    if player.capacity > 1:
+        player.matching = []
+
     player.match(other)
     assert (
         player.matching == other
@@ -114,6 +118,9 @@ def test_get_worst_match_idx(name, pref_names, capacity):
         key=lambda other: player.pref_names.index(other.name),
     )
 
+    if player.capacity > 1:
+        player.matching = []
+
     for i, other in enumerate(others):
         if player.capacity == 1:
             player.matching = other
@@ -121,6 +128,26 @@ def test_get_worst_match_idx(name, pref_names, capacity):
             player.matching.append(other)
         assert player.get_worst_match_idx() == i
 
+
+@PLAYER
+def test_get_worst_match(name, pref_names, capacity):
+    """ Check that the worst current match can be obtained correctly. """
+
+    player = Player(name, pref_names, capacity)
+    others = sorted(
+        [Player(other, pref_names=[name]) for other in pref_names],
+        key=lambda other: player.pref_names.index(other.name),
+    )
+
+    if player.capacity > 1:
+        player.matching = []
+
+    for other in others:
+        if player.capacity == 1:
+            player.matching = other
+        else:
+            player.matching.append(other)
+        assert player.get_worst_match() == other
 
 @PLAYER
 def test_forget(name, pref_names, capacity):
