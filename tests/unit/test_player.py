@@ -14,12 +14,6 @@ def test_init(name, pref_names, capacity):
     assert player.name == name
     assert player.pref_names == pref_names
     assert player.capacity == capacity
-    assert player.game == None
-    assert (
-        player.matching is None
-        if player.capacity == 1
-        else player.matching == []
-    )
 
 
 @PLAYER
