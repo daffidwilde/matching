@@ -39,6 +39,7 @@ def test_repr():
     matching = Matching(dictionary)
     assert repr(matching) == str(dictionary)
 
+
 def test_keys():
     """ Check a Matching can have its `keys` accessed. """
 
@@ -48,6 +49,7 @@ def test_keys():
     matching = Matching(dictionary)
     assert list(matching.keys()) == suitors
 
+
 def test_values():
     """ Check a Matching can have its `values` accessed. """
 
@@ -56,6 +58,7 @@ def test_values():
 
     matching = Matching(dictionary)
     assert list(matching.values()) == reviewers
+
 
 def test_getitem():
     """ Check that you can access items in a Matching correctly. """

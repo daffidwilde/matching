@@ -149,6 +149,7 @@ def test_get_worst_match(name, pref_names, capacity):
             player.matching.append(other)
         assert player.get_worst_match() == other
 
+
 @PLAYER
 def test_forget(name, pref_names, capacity):
     """ Test that a player can forget somebody. """
