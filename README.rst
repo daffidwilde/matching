@@ -206,7 +206,7 @@ In ``matching`` we summarise this problem in the following way:
 We then solve this problem using the ``HospitalResident`` class:
 
 >>> from matching import HospitalResident
->>> hr = HospitalResident(suitors=residents, reviewers=hospitals)
+>>> hr = HospitalResident(residents=residents, hospitals=hospitals)
 >>> hr.solve()
 {M: [L, S], C: [D, A], G: [J]}
 
