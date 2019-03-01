@@ -44,12 +44,14 @@ def _make_lecturers(students, proj_lect_dict, capacities):
     """ Given some students, relations between projects and lecturers, and
     capacities, make a valid set of lecturers. """
 
-    available_lecturer_names = {
-        l
-        for s in students
-        for l, p in proj_lect_dict.items()
-        if p in s.pref_names
-    }
+    available_lecturer_names = []
+    for student in students:
+        for lect_name, proj_names in proj_lect_dict.item():
+            for proj_name in proj_names:
+                if proj_name in student.pref_names:
+                    available_lecturer_names.append(lect_name)
+
+    available_lecturer_names = set(available_lecturer_names)
 
     lect_stud_dict = {}
     for lect_name, proj_name in proj_lect_dict.items():

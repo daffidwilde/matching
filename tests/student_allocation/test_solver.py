@@ -2,24 +2,22 @@
 
 from matching import StudentAllocation
 
-from .params import STUDENT_ALLOCATION
+from .params import STUDENT_ALLOCATION, _make_game
 
 
 @STUDENT_ALLOCATION
 def test_init(
     student_names,
-    project_names,
-    lecturer_names,
+    proj_lect_dict,
     project_capacities,
     lecturer_capacities,
     seed,
 ):
     """ Test that an instance of StudentAllocation is created correctly. """
 
-    students, projects, lecturers, match = _make_game(
+    students, projects, lecturers, game = _make_game(
         student_names,
-        project_names,
-        lecturer_names,
+        proj_lect_dict,
         project_capacities,
         lecturer_capacities,
         seed,
