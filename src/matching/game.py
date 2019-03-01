@@ -3,18 +3,11 @@
 from .matching import Matching
 
 
-class BaseSolver:
+class Game:
     """ A class to store information about, and facilitate the solving of, a
     matching game.
 
     This is a base class and is not intended for uses other than inheritance.
-
-    Parameters
-    ==========
-    suitors : `list` of `Player` instances
-        The suitors (applicants) in a matching game.
-    reviewers : `list` of `Player` instances
-        The reviewers in a matching game.
 
     Attributes
     ==========
@@ -27,10 +20,7 @@ class BaseSolver:
         matching.
     """
 
-    def __init__(self, suitors=None, reviewers=None):
-
-        self.suitors = suitors
-        self.reviewers = reviewers
+    def __init__(self):
 
         self._matching = None
         self.blocking_pairs = None

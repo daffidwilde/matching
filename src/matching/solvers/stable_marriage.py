@@ -1,11 +1,11 @@
 """ The Stable Marriage Problem solver and algorithm. """
 
-from matching import BaseSolver, Matching
+from matching import Game, Matching
 
 from .util import delete_pair, match_pair, unmatch_pair
 
 
-class StableMarriage(BaseSolver):
+class StableMarriage(Game):
     """ A class for solving instances of the Stable Marriage Problem (SM) using
     the extended Gale-Shapley algorithm.
 
@@ -40,7 +40,7 @@ class StableMarriage(BaseSolver):
 
         self._check_inputs()
 
-        super().__init__(suitors, reviewers)
+        super().__init__()
 
     def solve(self, optimal="suitor"):
         """ Solve the instance of SM using either the suitor- or
