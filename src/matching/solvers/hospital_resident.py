@@ -11,50 +11,50 @@ class HospitalResident(Game):
 
     Parameters
     ==========
-    suitors : `list` of `Player` instances
-        The suitors (residents) in the matching game. Each suitor must rank a
-        subset of the names in `reviewers`.
-    reviewers : `list` of `Player` instances
-        The reviewers (hospitals) in the matching game. Each reviewer must rank
-        all of (and only) the names of the suitors which rank it.
+    residents : `list` of `Player` instances
+        The residents (residents) in the matching game. Each resident must rank
+        a subset of the names in `hospitals`.
+    hospitals : `list` of `Player` instances
+        The hospitals (hospitals) in the matching game. Each hospital must rank
+        all of (and only) the names of the residents which rank it.
 
     Attributes
     ==========
     matching : `Matching` (`dict`-like)
         Once the game is solved, a matching is available as a `Matching` object.
         This resembles and behaves much like a standard Python dictionary that
-        uses the reviewers as keys and their suitor matches as values.
+        uses the hospitals as keys and their resident matches as values.
         Initialises as `None`.
-    blocking_pairs : `list` of (`suitor`, `reviewer`)-tuples
-        The suitor-reviewer pairs that satisfy the following conditions:
+    blocking_pairs : `list` of (`resident`, `hospital`)-tuples
+        The resident-hospital pairs that satisfy the following conditions:
             - They are present in each other's preference lists;
-            - either the suitor is unmatched, or they prefer the reviewer to
+            - either the resident is unmatched, or they prefer the hospital to
               their current match;
-            - either the reviewer is under-subscribed, or they prefer the suitor
-              to at least one of their current matches.
+            - either the hospital is under-subscribed, or they prefer the
+              resident to at least one of their current matches.
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
-    def __init__(self, suitors, reviewers):
+    def __init__(self, residents, hospitals):
 
-        for suitor in suitors:
-            suitor.matching = None
-        for reviewer in reviewers:
-            reviewer.matching = []
+        for resident in residents:
+            resident.matching = None
+        for hospital in hospitals:
+            hospital.matching = []
 
-        self.suitors = suitors
-        self.reviewers = reviewers
+        self.residents = residents
+        self.hospitals = hospitals
 
         self._check_inputs()
 
         super().__init__()
 
     def solve(self, optimal="resident"):
-        """ Solve the instance of HR using either the resident- (suitor-) or
-        hospital- (reviewer-) oriented algorithm. Return the matching. """
+        """ Solve the instance of HR using either the resident- (resident-) or
+        hospital- (hospital-) oriented algorithm. Return the matching. """
 
         self._matching = Matching(
-            hospital_resident(self.suitors, self.reviewers, optimal)
+            hospital_resident(self.residents, self.hospitals, optimal)
         )
         return self.matching
 
@@ -63,14 +63,14 @@ class HospitalResident(Game):
         matching, thus determining the stability of the matching. """
 
         blocking_pairs = []
-        for suitor in self.suitors:
-            for reviewer in self.reviewers:
+        for resident in self.residents:
+            for hospital in self.hospitals:
                 if (
-                    _check_mutual_preference(suitor, reviewer)
-                    and _check_suitor_unhappy(suitor, reviewer)
-                    and _check_reviewer_unhappy(suitor, reviewer)
+                    _check_mutual_preference(resident, hospital)
+                    and _check_resident_unhappy(resident, hospital)
+                    and _check_hospital_unhappy(resident, hospital)
                 ):
-                    blocking_pairs.append((suitor, reviewer))
+                    blocking_pairs.append((resident, hospital))
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
@@ -78,26 +78,26 @@ class HospitalResident(Game):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        self._check_suitor_matching()
-        self._check_reviewer_capacity()
-        self._check_reviewer_matching()
+        self._check_resident_matching()
+        self._check_hospital_capacity()
+        self._check_hospital_matching()
 
         return True
 
-    def _check_suitor_matching(self):
-        """ Check that no suitor is matched to an unacceptable reviewer. """
+    def _check_resident_matching(self):
+        """ Check that no resident is matched to an unacceptable hospital. """
 
         errors = []
-        for suitor in self.suitors:
+        for resident in self.residents:
             if (
-                suitor.matching
-                and suitor.matching.name not in suitor.pref_names
+                resident.matching
+                and resident.matching.name not in resident.pref_names
             ):
                 errors.append(
                     ValueError(
-                        f"{suitor} is matched to {suitor.matching} but they do "
-                        "not appear in their preference list: "
-                        f"{suitor.pref_names}."
+                        f"{resident} is matched to {resident.matching} but "
+                        "they do not appear in their preference list: "
+                        f"{resident.pref_names}."
                     )
                 )
 
@@ -106,16 +106,16 @@ class HospitalResident(Game):
 
         return True
 
-    def _check_reviewer_capacity(self):
-        """ Check that no reviewer is over-subscribed. """
+    def _check_hospital_capacity(self):
+        """ Check that no hospital is over-subscribed. """
 
         errors = []
-        for reviewer in self.reviewers:
-            if len(reviewer.matching) > reviewer.capacity:
+        for hospital in self.hospitals:
+            if len(hospital.matching) > hospital.capacity:
                 errors.append(
                     ValueError(
-                        f"{reviewer} is matched to {reviewer.matching} which is"
-                        f"over their capacity of {reviewer.capacity}."
+                        f"{hospital} is matched to {hospital.matching} which "
+                        f"is over their capacity of {hospital.capacity}."
                     )
                 )
 
@@ -124,18 +124,18 @@ class HospitalResident(Game):
 
         return True
 
-    def _check_reviewer_matching(self):
-        """ Check that no reviewer is matched to an unacceptable suitor. """
+    def _check_hospital_matching(self):
+        """ Check that no hospital is matched to an unacceptable resident. """
 
         errors = []
-        for reviewer in self.reviewers:
-            for suitor in reviewer.matching:
-                if suitor.name not in reviewer.pref_names:
+        for hospital in self.hospitals:
+            for resident in hospital.matching:
+                if resident.name not in hospital.pref_names:
                     errors.append(
                         ValueError(
-                            f"{reviewer} has {suitor} in their matching but "
+                            f"{hospital} has {resident} in their matching but "
                             "they do not appear in their preference list: "
-                            f"{reviewer.pref_names}."
+                            f"{hospital.pref_names}."
                         )
                     )
 
@@ -148,21 +148,21 @@ class HospitalResident(Game):
         """ Raise an error if any of the conditions of the game have been
         broken. """
 
-        self._check_suitor_prefs()
-        self._check_reviewer_prefs()
+        self._check_resident_prefs()
+        self._check_hospital_prefs()
 
-    def _check_suitor_prefs(self):
-        """ Make sure that the suitors' preferences are all subsets of the
-        available reviewer names. Otherwise, raise an error. """
+    def _check_resident_prefs(self):
+        """ Make sure that the residents' preferences are all subsets of the
+        available hospital names. Otherwise, raise an error. """
 
         errors = []
-        reviewer_names = [r.name for r in self.reviewers]
-        for suitor in self.suitors:
-            if not set(suitor.pref_names).issubset(set(reviewer_names)):
+        hospital_names = [r.name for r in self.hospitals]
+        for resident in self.residents:
+            if not set(resident.pref_names).issubset(set(hospital_names)):
                 errors.append(
                     ValueError(
-                        f"{suitor} has ranked a non-reviewer: "
-                        f"{set(suitor.pref_names)} != {set(reviewer_names)}"
+                        f"{resident} has ranked a non-hospital: "
+                        f"{set(resident.pref_names)} != {set(hospital_names)}"
                     )
                 )
 
@@ -171,21 +171,21 @@ class HospitalResident(Game):
 
         return True
 
-    def _check_reviewer_prefs(self):
-        """ Make sure that every reviewer ranks all and only those suitors that
-        have ranked it. Otherwise, raise an error. """
+    def _check_hospital_prefs(self):
+        """ Make sure that every hospital ranks all and only those residents
+        that have ranked it. Otherwise, raise an error. """
 
         errors = []
-        for reviewer in self.reviewers:
-            suitors_that_ranked_names = [
-                s.name for s in self.suitors if reviewer.name in s.pref_names
+        for hospital in self.hospitals:
+            residents_that_ranked_names = [
+                s.name for s in self.residents if hospital.name in s.pref_names
             ]
-            if set(reviewer.pref_names) != set(suitors_that_ranked_names):
+            if set(hospital.pref_names) != set(residents_that_ranked_names):
                 errors.append(
                     ValueError(
-                        f"{reviewer} has not ranked all the suitors that ranked"
-                        f" it: {set(reviewer.pref_names)} != "
-                        f"{set(suitors_that_ranked_names)}."
+                        f"{hospital} has not ranked all the residents that "
+                        f"ranked it: {set(hospital.pref_names)} != "
+                        f"{set(residents_that_ranked_names)}."
                     )
                 )
 
@@ -195,51 +195,51 @@ class HospitalResident(Game):
         return True
 
 
-def _check_mutual_preference(suitor, reviewer):
+def _check_mutual_preference(resident, hospital):
     """ Determine whether two players each have a preference of the other. """
 
     return (
-        suitor.name in reviewer.pref_names
-        and reviewer.name in suitor.pref_names
+        resident.name in hospital.pref_names
+        and hospital.name in resident.pref_names
     )
 
 
-def _check_suitor_unhappy(suitor, reviewer):
-    """ Determine whether a suitor is unhappy because they are unmatched, or
-    they prefer the reviewer to their current match. """
+def _check_resident_unhappy(resident, hospital):
+    """ Determine whether a resident is unhappy because they are unmatched, or
+    they prefer the hospital to their current match. """
 
-    return suitor.matching is None or suitor.prefers(reviewer, suitor.matching)
+    return resident.matching is None or resident.prefers(hospital, resident.matching)
 
 
-def _check_reviewer_unhappy(suitor, reviewer):
-    """ Determine whether a reviewer is unhappy because they are
-    under-subscribed, or they prefer the suitor to at least one of their current
-    matches. """
+def _check_hospital_unhappy(resident, hospital):
+    """ Determine whether a hospital is unhappy because they are
+    under-subscribed, or they prefer the resident to at least one of their 
+    current matches. """
 
-    return len(reviewer.matching) < reviewer.capacity or any(
-        [reviewer.prefers(suitor, match) for match in reviewer.matching]
+    return len(hospital.matching) < hospital.capacity or any(
+        [hospital.prefers(resident, match) for match in hospital.matching]
     )
 
 
-def hospital_resident(suitors, reviewers, optimal="suitor", verbose=False):
+def hospital_resident(residents, hospitals, optimal="resident", verbose=False):
     """ Solve an instance of HR matching game by treating it as a stable
-    marriage game with reviewer capacities. A unique, stable and optimal
-    matching is found for the given set of suitors (residents) and reviewers
+    marriage game with hospital capacities. A unique, stable and optimal
+    matching is found for the given set of residents (residents) and hospitals
     (hospitals). The optimality of the matching is found with respect to one
     party and is subsequently the worst stable matching for the other.
 
     Parameters
     ==========
-    suitors : `list` of `Player` instances
-        The suitors (residents) in the game. Each suitor must rank the names of
-        a subset of the elements of `reviewers`.
-    reviewers : `list` of `Player` instances
-        The reviewers (hospitals) in the game. Each reviewer must all the names
-        of those elements of `reviewers` that rank them.
+    residents : `list` of `Player` instances
+        The residents in the game. Each resident must rank the names of a subset
+        of the elements of `hospitals`.
+    hospitals : `list` of `Player` instances
+        The hospitals in the game. Each hospital must all the names of those
+        elements of `hospitals` that rank them.
     optimal : `str`, optional
         Which party the matching should be optimised for. Must be one of
-        `"suitor"` and `"reviewer"` (or `"resident"` and `"hospital"`
-        respectively). Defaults to `"suitor"`.
+        `"resident"` and `"hospital"` (or `"resident"` and `"hospital"`
+        respectively). Defaults to `"resident"`.
     verbose : `bool`, optional
         Whether or not to log the progress of the algorithm. Default is to not.
 
@@ -247,17 +247,17 @@ def hospital_resident(suitors, reviewers, optimal="suitor", verbose=False):
     =======
     matching : `Matching` (`dict`-like)
         A dictionary-like object of `Player` instances. The keys are the members
-        of `reviewers`, and the values are their matches ranked by preference.
+        of `hospitals`, and the values are their matches ranked by preference.
     """
 
-    if optimal in ["suitor", "resident"]:
-        return resident_optimal(suitors, reviewers, verbose)
-    if optimal in ["reviewer", "hospital"]:
-        return hospital_optimal(suitors, reviewers, verbose)
+    if optimal in ["resident", "resident"]:
+        return resident_optimal(residents, hospitals, verbose)
+    if optimal in ["hospital", "hospital"]:
+        return hospital_optimal(residents, hospitals, verbose)
 
 
-def resident_optimal(suitors, reviewers, verbose):
-    """ Solve the instance of HR to be suitor- (resident-) optimal. The
+def resident_optimal(residents, hospitals, verbose):
+    """ Solve the instance of HR to be resident- (resident-) optimal. The
     algorithm (set out in `DubinsFreedman1981`_) is as follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -280,34 +280,34 @@ def resident_optimal(suitors, reviewers, verbose):
         4. Go to 1 until there are no such residents left, then end.
     """
 
-    free_suitors = suitors[:]
-    while free_suitors:
+    free_residents = residents[:]
+    while free_residents:
 
-        suitor = free_suitors.pop()
-        reviewer = suitor.get_favourite(reviewers)
+        resident = free_residents.pop()
+        hospital = resident.get_favourite(hospitals)
 
-        match_pair(suitor, reviewer)
+        match_pair(resident, hospital)
 
-        if len(reviewer.matching) > reviewer.capacity:
-            idx = reviewer.get_worst_match_idx()
-            worst = [s for s in suitors if s.name == reviewer.pref_names[idx]][
+        if len(hospital.matching) > hospital.capacity:
+            idx = hospital.get_worst_match_idx()
+            worst = [s for s in residents if s.name == hospital.pref_names[idx]][
                 0
             ]
-            unmatch_pair(worst, reviewer)
+            unmatch_pair(worst, hospital)
 
-        if len(reviewer.matching) == reviewer.capacity:
-            idx = reviewer.get_worst_match_idx()
-            successors = reviewer.get_successors(suitors, idx)
+        if len(hospital.matching) == hospital.capacity:
+            idx = hospital.get_worst_match_idx()
+            successors = hospital.get_successors(residents, idx)
             for successor in successors:
-                delete_pair(reviewer, successor)
+                delete_pair(hospital, successor)
 
-        free_suitors = [s for s in suitors if not s.matching and s.pref_names]
+        free_residents = [s for s in residents if not s.matching and s.pref_names]
 
-    return {r: r.matching for r in reviewers}
+    return {r: r.matching for r in hospitals}
 
 
-def hospital_optimal(suitors, reviewers, verbose):
-    """ Solve the instance of HR to be reviewer- (hospital-) optimal. The
+def hospital_optimal(residents, hospitals, verbose):
+    """ Solve the instance of HR to be hospital- (hospital-) optimal. The
     algorithm (originally described in `Roth1984`_) is as follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -327,29 +327,29 @@ def hospital_optimal(suitors, reviewers, verbose):
         4. Go to 1 until there are no such hospitals left, then end.
     """
 
-    free_reviewers = reviewers[:]
-    while free_reviewers:
+    free_hospitals = hospitals[:]
+    while free_hospitals:
 
-        reviewer = free_reviewers.pop()
-        suitor = reviewer.get_favourite(suitors)
+        hospital = free_hospitals.pop()
+        resident = hospital.get_favourite(residents)
 
-        if suitor.matching:
-            curr_match = suitor.matching
-            unmatch_pair(suitor, curr_match)
+        if resident.matching:
+            curr_match = resident.matching
+            unmatch_pair(resident, curr_match)
 
-        match_pair(suitor, reviewer)
+        match_pair(resident, hospital)
 
-        successors = suitor.get_successors(reviewers)
+        successors = resident.get_successors(hospitals)
         for successor in successors:
-            delete_pair(suitor, successor)
+            delete_pair(resident, successor)
 
-        free_reviewers = [
+        free_hospitals = [
             r
-            for r in reviewers
+            for r in hospitals
             if len(r.matching) < r.capacity
             and [
                 s for s in r.pref_names if s not in [m.name for m in r.matching]
             ]
         ]
 
-    return {r: r.matching for r in reviewers}
+    return {r: r.matching for r in hospitals}
