@@ -13,9 +13,9 @@ def _get_possible_prefs(names):
     """ Generate the list of all possible non-empty preference lists made from a
     list of names. """
 
-    all_ordered_subsets = set(
-        [tuple(set(sub)) for sub in it.product(names, repeat=len(names))]
-    )
+    all_ordered_subsets = {
+        tuple(set(sub)) for sub in it.product(names, repeat=len(names))
+    }
 
     possible_prefs = [
         list(perm)
@@ -43,7 +43,7 @@ def _make_residents(resident_names, hospital_names):
 def _make_hospitals(residents, capacities):
     """ Given some residents and capacities, make a valid set of hospitals. """
 
-    available_hospital_names = set([h for r in residents for h in r.pref_names])
+    available_hospital_names = {h for r in residents for h in r.pref_names}
 
     hospitals = [
         Player(
@@ -55,6 +55,9 @@ def _make_hospitals(residents, capacities):
         )
         for name in available_hospital_names
     ]
+
+    for hospital in hospitals:
+        hospital.matching = []
 
     return sorted(hospitals, key=lambda hosp: hosp.name)
 

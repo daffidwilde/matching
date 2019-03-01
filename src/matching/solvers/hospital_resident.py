@@ -215,7 +215,7 @@ def _check_resident_unhappy(resident, hospital):
 
 def _check_hospital_unhappy(resident, hospital):
     """ Determine whether a hospital is unhappy because they are
-    under-subscribed, or they prefer the resident to at least one of their 
+    under-subscribed, or they prefer the resident to at least one of their
     current matches. """
 
     return len(hospital.matching) < hospital.capacity or any(
@@ -223,7 +223,7 @@ def _check_hospital_unhappy(resident, hospital):
     )
 
 
-def hospital_resident(residents, hospitals, optimal="resident", verbose=False):
+def hospital_resident(residents, hospitals, optimal="resident"):
     """ Solve an instance of HR matching game by treating it as a stable
     marriage game with hospital capacities. A unique, stable and optimal
     matching is found for the given set of residents (residents) and hospitals
@@ -252,13 +252,13 @@ def hospital_resident(residents, hospitals, optimal="resident", verbose=False):
         of `hospitals`, and the values are their matches ranked by preference.
     """
 
-    if optimal in ["resident", "resident"]:
-        return resident_optimal(residents, hospitals, verbose)
-    if optimal in ["hospital", "hospital"]:
-        return hospital_optimal(residents, hospitals, verbose)
+    if optimal == "resident":
+        return resident_optimal(residents, hospitals)
+    if optimal == "hospital":
+        return hospital_optimal(residents, hospitals)
 
 
-def resident_optimal(residents, hospitals, verbose):
+def resident_optimal(residents, hospitals):
     """ Solve the instance of HR to be resident- (resident-) optimal. The
     algorithm (set out in `DubinsFreedman1981`_) is as follows:
 
@@ -291,26 +291,21 @@ def resident_optimal(residents, hospitals, verbose):
         match_pair(resident, hospital)
 
         if len(hospital.matching) > hospital.capacity:
-            idx = hospital.get_worst_match_idx()
-            worst = [
-                s for s in residents if s.name == hospital.pref_names[idx]
-            ][0]
+            worst = hospital.get_worst_match()
             unmatch_pair(worst, hospital)
+            free_residents.append(worst)
 
         if len(hospital.matching) == hospital.capacity:
-            idx = hospital.get_worst_match_idx()
-            successors = hospital.get_successors(residents, idx)
+            successors = hospital.get_successors(residents)
             for successor in successors:
                 delete_pair(hospital, successor)
-
-        free_residents = [
-            s for s in residents if not s.matching and s.pref_names
-        ]
+                if not successor.pref_names:
+                    free_residents.remove(successor)
 
     return {r: r.matching for r in hospitals}
 
 
-def hospital_optimal(residents, hospitals, verbose):
+def hospital_optimal(residents, hospitals):
     """ Solve the instance of HR to be hospital- (hospital-) optimal. The
     algorithm (originally described in `Roth1984`_) is as follows:
 
@@ -340,20 +335,30 @@ def hospital_optimal(residents, hospitals, verbose):
         if resident.matching:
             curr_match = resident.matching
             unmatch_pair(resident, curr_match)
+            if curr_match not in free_hospitals:
+                free_hospitals.append(curr_match)
 
         match_pair(resident, hospital)
+        hospital_match_names = [m.name for m in hospital.matching]
+        if len(hospital.matching) < hospital.capacity and [
+            name
+            for name in hospital.pref_names
+            if name not in hospital_match_names
+        ]:
+            free_hospitals.append(hospital)
 
         successors = resident.get_successors(hospitals)
         for successor in successors:
             delete_pair(resident, successor)
-
-        free_hospitals = [
-            r
-            for r in hospitals
-            if len(r.matching) < r.capacity
-            and [
-                s for s in r.pref_names if s not in [m.name for m in r.matching]
-            ]
-        ]
+            successor_match_names = [m.name for m in successor.matching]
+            if (
+                not [
+                    name
+                    for name in successor.pref_names
+                    if name not in successor_match_names
+                ]
+                and successor in free_hospitals
+            ):
+                free_hospitals.remove(successor)
 
     return {r: r.matching for r in hospitals}
