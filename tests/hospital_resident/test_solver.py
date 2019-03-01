@@ -1,6 +1,5 @@
 """ Unit tests for the HR solver. """
 
-import numpy as np
 import pytest
 
 from matching import HospitalResident, Matching, Player
@@ -24,7 +23,9 @@ def test_init(resident_names, hospital_names, capacities, seed):
 
 
 @HOSPITAL_RESIDENT
-def test_inputs_resident_prefs(resident_names, hospital_names, capacities, seed):
+def test_inputs_resident_prefs(
+    resident_names, hospital_names, capacities, seed
+):
     """ Test that each resident's preference list is a subset of the available
     hospital names, and check that an Exception is raised if not. """
 

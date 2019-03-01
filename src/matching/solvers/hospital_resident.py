@@ -208,7 +208,9 @@ def _check_resident_unhappy(resident, hospital):
     """ Determine whether a resident is unhappy because they are unmatched, or
     they prefer the hospital to their current match. """
 
-    return resident.matching is None or resident.prefers(hospital, resident.matching)
+    return resident.matching is None or resident.prefers(
+        hospital, resident.matching
+    )
 
 
 def _check_hospital_unhappy(resident, hospital):
@@ -290,9 +292,9 @@ def resident_optimal(residents, hospitals, verbose):
 
         if len(hospital.matching) > hospital.capacity:
             idx = hospital.get_worst_match_idx()
-            worst = [s for s in residents if s.name == hospital.pref_names[idx]][
-                0
-            ]
+            worst = [
+                s for s in residents if s.name == hospital.pref_names[idx]
+            ][0]
             unmatch_pair(worst, hospital)
 
         if len(hospital.matching) == hospital.capacity:
@@ -301,7 +303,9 @@ def resident_optimal(residents, hospitals, verbose):
             for successor in successors:
                 delete_pair(hospital, successor)
 
-        free_residents = [s for s in residents if not s.matching and s.pref_names]
+        free_residents = [
+            s for s in residents if not s.matching and s.pref_names
+        ]
 
     return {r: r.matching for r in hospitals}
 
