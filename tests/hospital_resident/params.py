@@ -56,6 +56,9 @@ def _make_hospitals(residents, capacities):
         for name in available_hospital_names
     ]
 
+    for hospital in hospitals:
+        hospital.matching = []
+
     return sorted(hospitals, key=lambda hosp: hosp.name)
 
 
