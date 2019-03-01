@@ -1,11 +1,11 @@
 """ The Hospital-Resident Assignment Problem solver and core algorithm. """
 
-from matching import BaseSolver, Matching
+from matching import Game, Matching
 
 from .util import delete_pair, match_pair, unmatch_pair
 
 
-class HospitalResident(BaseSolver):
+class HospitalResident(Game):
     """ A class for solving instances of the Hospital-Resident Assignment
     Problem (HR) using an adapted Gale-Shapley algorithm.
 
@@ -47,7 +47,7 @@ class HospitalResident(BaseSolver):
 
         self._check_inputs()
 
-        super().__init__(suitors, reviewers)
+        super().__init__()
 
     def solve(self, optimal="resident"):
         """ Solve the instance of HR using either the resident- (suitor-) or
