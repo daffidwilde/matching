@@ -2,7 +2,7 @@
 
 from matching import Game, Matching
 
-from .util import delete_pair, match_pair, unmatch_pair
+from .util import delete_pair, match_pair
 
 
 class HospitalResident(Game):
@@ -37,11 +37,6 @@ class HospitalResident(Game):
 
     def __init__(self, residents, hospitals):
 
-        for resident in residents:
-            resident.matching = None
-        for hospital in hospitals:
-            hospital.matching = []
-
         self.residents = residents
         self.hospitals = hospitals
 
@@ -57,6 +52,15 @@ class HospitalResident(Game):
             hospital_resident(self.residents, self.hospitals, optimal)
         )
         return self.matching
+
+    def check_validity(self):
+        """ Check whether the current matching is valid. """
+
+        self._check_resident_matching()
+        self._check_hospital_capacity()
+        self._check_hospital_matching()
+
+        return True
 
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
@@ -75,29 +79,20 @@ class HospitalResident(Game):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def check_validity(self):
-        """ Check whether the current matching is valid. """
-
-        self._check_resident_matching()
-        self._check_hospital_capacity()
-        self._check_hospital_matching()
-
-        return True
-
     def _check_resident_matching(self):
         """ Check that no resident is matched to an unacceptable hospital. """
 
         errors = []
         for resident in self.residents:
             if (
-                resident.matching
-                and resident.matching.name not in resident.pref_names
+                resident.matching is not None
+                and resident.matching not in resident.prefs
             ):
                 errors.append(
                     ValueError(
                         f"{resident} is matched to {resident.matching} but "
                         "they do not appear in their preference list: "
-                        f"{resident.pref_names}."
+                        f"{resident.prefs}."
                     )
                 )
 
@@ -130,12 +125,12 @@ class HospitalResident(Game):
         errors = []
         for hospital in self.hospitals:
             for resident in hospital.matching:
-                if resident.name not in hospital.pref_names:
+                if resident not in hospital.prefs:
                     errors.append(
                         ValueError(
                             f"{hospital} has {resident} in their matching but "
                             "they do not appear in their preference list: "
-                            f"{hospital.pref_names}."
+                            f"{hospital.prefs}."
                         )
                     )
 
@@ -156,13 +151,12 @@ class HospitalResident(Game):
         available hospital names. Otherwise, raise an error. """
 
         errors = []
-        hospital_names = [r.name for r in self.hospitals]
         for resident in self.residents:
-            if not set(resident.pref_names).issubset(set(hospital_names)):
+            if not set(resident.prefs).issubset(set(self.hospitals)):
                 errors.append(
                     ValueError(
                         f"{resident} has ranked a non-hospital: "
-                        f"{set(resident.pref_names)} != {set(hospital_names)}"
+                        f"{set(resident.prefs)} != {set(hospitals)}"
                     )
                 )
 
@@ -177,15 +171,15 @@ class HospitalResident(Game):
 
         errors = []
         for hospital in self.hospitals:
-            residents_that_ranked_names = [
-                s.name for s in self.residents if hospital.name in s.pref_names
+            residents_that_ranked = [
+                res for res in self.residents if hospital in res.prefs
             ]
-            if set(hospital.pref_names) != set(residents_that_ranked_names):
+            if set(hospital.prefs) != set(residents_that_ranked):
                 errors.append(
                     ValueError(
                         f"{hospital} has not ranked all the residents that "
-                        f"ranked it: {set(hospital.pref_names)} != "
-                        f"{set(residents_that_ranked_names)}."
+                        f"ranked it: {set(hospital.prefs)} != "
+                        f"{set(residents_that_ranked)}."
                     )
                 )
 
@@ -198,10 +192,7 @@ class HospitalResident(Game):
 def _check_mutual_preference(resident, hospital):
     """ Determine whether two players each have a preference of the other. """
 
-    return (
-        resident.name in hospital.pref_names
-        and hospital.name in resident.pref_names
-    )
+    return resident in hospital.prefs and hospital in resident.prefs
 
 
 def _check_resident_unhappy(resident, hospital):
@@ -221,6 +212,13 @@ def _check_hospital_unhappy(resident, hospital):
     return len(hospital.matching) < hospital.capacity or any(
         [hospital.prefers(resident, match) for match in hospital.matching]
     )
+
+
+def unmatch_pair(resident, hospital):
+    """ Unmatch a (resident, hospital)-pair. """
+
+    resident.unmatch()
+    hospital.unmatch(resident)
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):
@@ -255,7 +253,7 @@ def hospital_resident(residents, hospitals, optimal="resident"):
     if optimal == "resident":
         return resident_optimal(residents, hospitals)
     if optimal == "hospital":
-        return hospital_optimal(residents, hospitals)
+        return hospital_optimal(hospitals)
 
 
 def resident_optimal(residents, hospitals):
@@ -286,7 +284,7 @@ def resident_optimal(residents, hospitals):
     while free_residents:
 
         resident = free_residents.pop()
-        hospital = resident.get_favourite(hospitals)
+        hospital = resident.get_favourite()
 
         match_pair(resident, hospital)
 
@@ -296,16 +294,16 @@ def resident_optimal(residents, hospitals):
             free_residents.append(worst)
 
         if len(hospital.matching) == hospital.capacity:
-            successors = hospital.get_successors(residents)
+            successors = hospital.get_successors()
             for successor in successors:
                 delete_pair(hospital, successor)
-                if not successor.pref_names:
+                if not successor.prefs:
                     free_residents.remove(successor)
 
     return {r: r.matching for r in hospitals}
 
 
-def hospital_optimal(residents, hospitals):
+def hospital_optimal(hospitals):
     """ Solve the instance of HR to be hospital- (hospital-) optimal. The
     algorithm (originally described in `Roth1984`_) is as follows:
 
@@ -330,7 +328,7 @@ def hospital_optimal(residents, hospitals):
     while free_hospitals:
 
         hospital = free_hospitals.pop()
-        resident = hospital.get_favourite(residents)
+        resident = hospital.get_favourite()
 
         if resident.matching:
             curr_match = resident.matching
@@ -339,23 +337,19 @@ def hospital_optimal(residents, hospitals):
                 free_hospitals.append(curr_match)
 
         match_pair(resident, hospital)
-        hospital_match_names = [m.name for m in hospital.matching]
         if len(hospital.matching) < hospital.capacity and [
-            name
-            for name in hospital.pref_names
-            if name not in hospital_match_names
+            res for res in hospital.prefs if res not in hospital.matching
         ]:
             free_hospitals.append(hospital)
 
-        successors = resident.get_successors(hospitals)
+        successors = resident.get_successors()
         for successor in successors:
             delete_pair(resident, successor)
-            successor_match_names = [m.name for m in successor.matching]
             if (
                 not [
-                    name
-                    for name in successor.pref_names
-                    if name not in successor_match_names
+                    res
+                    for res in successor.prefs
+                    if res not in successor.matching
                 ]
                 and successor in free_hospitals
             ):
