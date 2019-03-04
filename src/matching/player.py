@@ -1,5 +1,6 @@
 """ Player classes for various types of player. """
 
+
 class Player:
     """ A class to represent a player within the matching game.
 

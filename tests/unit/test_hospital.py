@@ -78,6 +78,7 @@ def test_get_worst_match(name, capacity, pref_names):
     hospital.matching = others
     assert hospital.get_worst_match() == others[-1]
 
+
 @given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
 def test_get_successors(name, capacity, pref_names):
     """ Check that a hospital can get the successors to its worst current match.
