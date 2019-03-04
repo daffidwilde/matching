@@ -13,6 +13,7 @@ class Player:
 
         self.name = name
         self.prefs = None
+        self.pref_names = None
         self.matching = None
 
     def __repr__(self):
@@ -24,6 +25,7 @@ class Player:
         `Player` instances. """
 
         self.prefs = players
+        self.pref_names = [player.name for player in players]
 
     def get_favourite(self):
         """ Get the player's favourite member of another party. """
@@ -40,44 +42,32 @@ class Player:
 
         self.matching = None
 
-    def get_worst_match_idx(self):
-        """ Get the preference list index of the player's worst current match.
-        """
-
-        try:
-            return self.pref_names.index(self.matching[-1].name)
-
-        except TypeError:
-            return self.pref_names.index(self.matching.name)
-
-    def get_worst_match(self):
-        """ Get the worst current match to a player. """
-
-        try:
-            return self.matching[-1]
-
-        except TypeError:
-            return self.matching
-
     def forget(self, other):
         """ Forget another player by removing their name from the player's
         preference list. """
 
-        self.pref_names.remove(other.name)
+        prefs = list(self.prefs)
+        prefs.remove(other)
+        self.prefs = prefs
+
+    def get_match_idx(self):
+        """ Return the preference index of the player's current match. """
+
+        return self.prefs.index(self.matching)
 
     def get_successors(self, others):
-        """ Get all the successors to the worst current match of a player. """
+        """ Get all the successors to the current match of the player. """
 
-        idx = self.get_worst_match_idx()
+        idx = self.get_match_idx()
         return [
             other
             for other in others
-            if other.name in self.pref_names[idx + 1 :]
+            if other in self.prefs[idx + 1 :]
         ]
 
     def prefers(self, player, other):
         """ Determines whether the player prefers a player over some other
         player. """
 
-        prefs = self._pref_names
+        prefs = self.pref_names
         return prefs.index(player.name) < prefs.index(other.name)
