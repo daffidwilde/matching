@@ -2,7 +2,7 @@
 
 from matching import Game, Matching
 
-from .util import delete_pair, match_pair, unmatch_pair
+from .util import delete_pair, match_pair
 
 
 class StableMarriage(Game):
@@ -31,9 +31,6 @@ class StableMarriage(Game):
     """
 
     def __init__(self, suitors, reviewers):
-
-        for player in suitors + reviewers:
-            player.matching = None
 
         self.suitors = suitors
         self.reviewers = reviewers
@@ -145,18 +142,23 @@ class StableMarriage(Game):
         """ Check that a player has ranked all of the other group. """
 
         others = self.reviewers if player in self.suitors else self.suitors
-        names = set([other.name for other in others])
-        prefs = set(player.pref_names)
-        if prefs != names:
+        if set(player.prefs) != set(others):
             raise ValueError(
                 "Every player must rank each name from the other group. "
-                f"{player}: {prefs} != {names}"
+                f"{player}: {player.prefs} != {others}"
             )
 
         return True
 
 
-def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
+def unmatch_pair(suitor, reviewer):
+    """ Unmatch a (suitor, reviewer) pair. """
+
+    suitor.unmatch()
+    reviewer.unmatch()
+
+
+def stable_marriage(suitors, reviewers, optimal="suitor"):
     """ An extended version of the original Gale-Shapley algorithm which makes
     use of the inherent structures of matching games. A unique, stable and
     optimal matching is found for any valid set of suitors and reviewers. The
@@ -174,8 +176,6 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     optimal : `str`, optional
         Which party the matching should be optimised for. Must be one of
         `"suitor"` and `"reviewer"`. Defaults to the former.
-    verbose : `bool`, optional
-        Whether or not to log the progress of the algorithm. Default is to not.
 
     Returns
     =======
@@ -191,7 +191,7 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
     while free_suitors:
 
         suitor = free_suitors.pop()
-        reviewer = suitor.get_favourite(reviewers)
+        reviewer = suitor.get_favourite()
 
         if reviewer.matching:
             curr_match = reviewer.matching
@@ -200,7 +200,7 @@ def stable_marriage(suitors, reviewers, optimal="suitor", verbose=False):
 
         match_pair(suitor, reviewer)
 
-        successors = reviewer.get_successors(suitors)
+        successors = reviewer.get_successors()
         for successor in successors:
             delete_pair(successor, reviewer)
 
