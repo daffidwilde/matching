@@ -1,185 +1,121 @@
 """ Tests for the Player class. """
 
+from hypothesis import given
+from hypothesis.strategies import text
 from matching import Player
 
 from .params import PLAYER
 
 
-@PLAYER
-def test_init(name, pref_names, capacity):
+@given(name=text())
+def test_init(name):
     """ Make an instance of Player and check their attributes are correct. """
 
-    player = Player(name, pref_names, capacity)
+    player = Player(name)
 
     assert player.name == name
-    assert player.pref_names == pref_names
-    assert player.capacity == capacity
+    assert player.prefs is None
+    assert player.pref_names is None
     assert player.matching is None
 
 
-@PLAYER
-def test_repr(name, pref_names, capacity):
+@given(name=text())
+def test_repr(name):
     """ Verify that a Player instance is represented by their name. """
 
-    player = Player(name, pref_names, capacity)
+    player = Player(name)
 
     assert repr(player) == name
 
 
 @PLAYER
-def test_get_favourite_name(name, pref_names, capacity):
-    """ Check the correct name is returned as the favourite of a player. """
+def test_set_prefs(name, pref_names):
+    """ Verify a Player can set its preferences correctly. """
 
-    player = Player(name, pref_names, capacity)
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
 
-    favourite_name = player.pref_names[0]
-    assert player.get_favourite_name() == favourite_name
-
-    other = Player(player.pref_names[0], pref_names=[player.name])
-
-    player.matching = other
-    assert player.get_favourite_name() == other.name
-
-    player.matching = [other]
-    if len(player.pref_names) > 1:
-        assert player.get_favourite_name() == player.pref_names[1]
-    else:
-        assert player.get_favourite_name() is None
+    player.set_prefs(others)
+    assert player.prefs == others
+    assert player.pref_names == [other.name for other in others]
 
 
 @PLAYER
-def test_get_favourite(name, pref_names, capacity):
+def test_get_favourite(name, pref_names):
     """ Check the correct player is returned as the favourite of a player. """
 
-    player = Player(name, pref_names, capacity)
-    others = [Player(other, pref_names=[name]) for other in pref_names]
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
 
-    favourite = [
-        other for other in others if other.name == player.pref_names[0]
-    ][0]
-    assert player.get_favourite(others) == favourite
-
-    player.matching = favourite
-    assert player.get_favourite(others) == favourite
-
-    player.matching = [favourite]
-    if len(player.pref_names) > 1:
-        favourite = [
-            other
-            for other in others
-            if (
-                other.name == player.pref_names[1]
-                and other not in player.matching
-            )
-        ][0]
-        assert player.get_favourite(others) == favourite
-    else:
-        assert player.get_favourite(others) is None
+    player.set_prefs(others)
+    favourite = others[0]
+    assert player.get_favourite() == favourite
 
 
 @PLAYER
-def test_match(name, pref_names, capacity):
+def test_match(name, pref_names):
     """ Check that a player can match to another player correctly. """
 
-    player = Player(name, pref_names, capacity)
-    other = Player(pref_names[0], [name])
-
-    if player.capacity > 1:
-        player.matching = []
+    player = Player(name)
+    other = Player(pref_names[0])
 
     player.match(other)
-    assert (
-        player.matching == other
-        if capacity == 1
-        else player.matching == [other]
-    )
+    assert player.matching == other
 
 
 @PLAYER
-def test_unmatch(name, pref_names, capacity):
+def test_unmatch(name, pref_names):
     """ Check that a player can unmatch from another player correctly. """
 
-    player = Player(name, pref_names, capacity)
-    other = Player(pref_names[0], [name])
+    player = Player(name)
+    other = Player(pref_names[0])
 
-    player.matching = other if capacity == 1 else [other]
-    player.unmatch(other)
-    assert player.matching is None if capacity == 1 else player.matching == []
+    player.matching = other
+    player.unmatch()
+    assert player.matching is None
 
 
 @PLAYER
-def test_get_worst_match_idx(name, pref_names, capacity):
-    """ Check that the preference index of the worst current match to a player
-    can be found correctly. """
+def test_get_match_idx(name, pref_names):
+    """ Check that the preference index of the current match to a player can be
+    found correctly. """
 
-    player = Player(name, pref_names, capacity)
-    others = sorted(
-        [Player(other, pref_names=[name]) for other in pref_names],
-        key=lambda other: player.pref_names.index(other.name),
-    )
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
 
-    if player.capacity > 1:
-        player.matching = []
-
+    player.set_prefs(others)
     for i, other in enumerate(others):
-        if player.capacity == 1:
-            player.matching = other
-        else:
-            player.matching.append(other)
-        assert player.get_worst_match_idx() == i
+        player.matching = other
+        assert player.get_match_idx() == i
 
 
 @PLAYER
-def test_get_worst_match(name, pref_names, capacity):
-    """ Check that the worst current match can be obtained correctly. """
-
-    player = Player(name, pref_names, capacity)
-    others = sorted(
-        [Player(other, pref_names=[name]) for other in pref_names],
-        key=lambda other: player.pref_names.index(other.name),
-    )
-
-    if player.capacity > 1:
-        player.matching = []
-
-    for other in others:
-        if player.capacity == 1:
-            player.matching = other
-        else:
-            player.matching.append(other)
-        assert player.get_worst_match() == other
-
-
-@PLAYER
-def test_forget(name, pref_names, capacity):
+def test_forget(name, pref_names):
     """ Test that a player can forget somebody. """
 
-    player = Player(name, pref_names, capacity)
-    others = [Player(other, pref_names=[name]) for other in pref_names]
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
 
-    for other in others[:-1]:
+    player.set_prefs(others)
+    for i, other in enumerate(others[:-1]):
         player.forget(other)
-        assert set(player.pref_names) == set(player.pref_names) - set(
-            [other.name]
-        )
+        assert player.prefs == others[i+1:]
 
     player.forget(others[-1])
-    assert player.pref_names == []
+    assert player.prefs == []
+    assert player.pref_names == pref_names
 
 
 @PLAYER
-def test_get_successors(name, pref_names, capacity):
+def test_get_successors(name, pref_names):
     """ Test that the correct successors to another player in a player's
-    preference list are found with or without an index to look at. """
+    preference list are found. """
 
-    player = Player(name, pref_names, capacity)
-    others = sorted(
-        [Player(other, pref_names=[name]) for other in pref_names],
-        key=lambda other: player.pref_names.index(other.name),
-    )
-    favourite = player.get_favourite(others)
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
 
-    player.matching = favourite
+    player.set_prefs(others)
+    player.matching = others[0]
     if len(player.pref_names) > 1:
         successors = others[1:]
         assert player.get_successors(others) == successors
@@ -188,15 +124,13 @@ def test_get_successors(name, pref_names, capacity):
 
 
 @PLAYER
-def test_prefers(name, pref_names, capacity):
+def test_prefers(name, pref_names):
     """ Test that a comparison of preference between two other players can be
     found for a player. """
 
-    player = Player(name, pref_names, capacity)
-    others = sorted(
-        [Player(other, pref_names=[name]) for other in pref_names],
-        key=lambda other: player.pref_names.index(other.name),
-    )
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
 
+    player.set_prefs(others)
     for i, other in enumerate(others[:-1]):
         assert player.prefers(other, others[i + 1])
