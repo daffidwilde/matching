@@ -32,6 +32,13 @@ class Project(Hospital):
         super().__init__(name, capacity)
         self.faculty = None
 
+    def set_faculty(self, faculty):
+        """ Set the project's faculty member and add the project to their list
+        of active projects. """
+
+        self.faculty = faculty
+        faculty.projects.append(self)
+
     def match(self, other):
         """ Match the project to a student, and update the project's faculty's
         matching, too. """

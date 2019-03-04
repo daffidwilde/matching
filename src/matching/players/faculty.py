@@ -16,7 +16,7 @@ class Faculty(Hospital):
     Attributes
     ==========
     projects : `list`
-        The projects that the faculty member runs. Defaults to `None`.
+        The projects that the faculty member runs. Defaults to an empty list.
     prefs : `list`
         A list of `Player` instances in the order of preference.
     pref_names : `list`
@@ -29,4 +29,4 @@ class Faculty(Hospital):
     def __init__(self, name, capacity):
 
         super().__init__(name, capacity)
-        self.projects = None
+        self.projects = []
