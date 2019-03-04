@@ -1,11 +1,9 @@
 """ Tests for the Player class. """
 
 from hypothesis import given
-from hypothesis.strategies import text
+from hypothesis.strategies import lists, text
 
 from matching import Player
-
-from .params import PLAYER
 
 
 @given(name=text())
@@ -29,7 +27,7 @@ def test_repr(name):
     assert repr(player) == name
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_set_prefs(name, pref_names):
     """ Verify a Player can set its preferences correctly. """
 
@@ -41,7 +39,7 @@ def test_set_prefs(name, pref_names):
     assert player.pref_names == [other.name for other in others]
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_favourite(name, pref_names):
     """ Check the correct player is returned as the favourite of a player. """
 
@@ -53,7 +51,7 @@ def test_get_favourite(name, pref_names):
     assert player.get_favourite() == favourite
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_match(name, pref_names):
     """ Check that a player can match to another player correctly. """
 
@@ -64,7 +62,7 @@ def test_match(name, pref_names):
     assert player.matching == other
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_unmatch(name, pref_names):
     """ Check that a player can unmatch from another player correctly. """
 
@@ -76,7 +74,7 @@ def test_unmatch(name, pref_names):
     assert player.matching is None
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_forget(name, pref_names):
     """ Test that a player can forget somebody. """
 
@@ -93,7 +91,7 @@ def test_forget(name, pref_names):
     assert player.pref_names == pref_names
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_successors(name, pref_names):
     """ Test that the correct successors to another player in a player's
     preference list are found. """
@@ -110,7 +108,7 @@ def test_get_successors(name, pref_names):
         assert player.get_successors() == []
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_prefers(name, pref_names):
     """ Test that a comparison of preference between two other players can be
     found for a player. """

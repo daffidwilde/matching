@@ -30,3 +30,16 @@ class Faculty(Hospital):
 
         super().__init__(name, capacity)
         self.projects = []
+
+    def set_prefs(self, students):
+        """ Set the preference of the faculty member, and pass those on to the
+        projects. """
+
+        self.prefs = students
+        self.pref_names = [student.name for student in students]
+
+        for project in self.projects:
+            acceptable = [
+                student for student in students if project in student.prefs
+            ]
+            project.set_prefs(acceptable)

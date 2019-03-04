@@ -50,7 +50,7 @@ class Hospital(Player):
     def unmatch(self, other):
         """ Remove another player from the player's matching. """
 
-        matching = list(self.matching)
+        matching = self.matching[:]
         matching.remove(other)
         self.matching = matching
 

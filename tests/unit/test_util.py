@@ -1,12 +1,13 @@
 """ Unit tests for the solvers.util functions. """
 
+from hypothesis import given
+from hypothesis.strategies import lists, text
+
 from matching import Player
 from matching.games.util import delete_pair, match_pair
 
-from .params import PLAYER
 
-
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_delete_pair(name, pref_names):
     """ Verify that two players can forget each other. """
 
@@ -22,7 +23,7 @@ def test_delete_pair(name, pref_names):
         assert other.prefs == []
 
 
-@PLAYER
+@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_match_pair(name, pref_names):
     """ Verify that two players can be matched to one another. """
 

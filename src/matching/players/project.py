@@ -39,9 +39,18 @@ class Project(Hospital):
         self.faculty = faculty
         faculty.projects.append(self)
 
-    def match(self, other):
+    def match(self, student):
         """ Match the project to a student, and update the project's faculty's
         matching, too. """
 
-        self.matching.append(other)
-        self.faculty.matching.append(other)
+        self.matching.append(student)
+        self.faculty.match(student)
+
+    def unmatch(self, student):
+        """ Break the matching between a project and some student, and the
+        matching between them and the faculty member. """
+
+        matching = self.matching[:]
+        matching.remove(student)
+        self.matching = matching
+        self.faculty.unmatch(student)

@@ -56,7 +56,7 @@ class Player:
         """ Forget another player by removing them from the player's preference
         list. """
 
-        prefs = list(self.prefs)
+        prefs = self.prefs[:]
         prefs.remove(other)
         self.prefs = prefs
 
