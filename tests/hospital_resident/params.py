@@ -4,15 +4,17 @@ import itertools as it
 
 import numpy as np
 from hypothesis import given
-from hypothesis.strategies import dictionaries, integers, lists, sampled_from
+from hypothesis.strategies import integers, lists, sampled_from
 
-from matching import Hospital, HospitalResident, Player
+from matching import Player as Resident
+from matching.games import HospitalResident
+from matching.players import Hospital
 
 
 def make_players(resident_names, hospital_names, capacities):
     """ Given some names and capacities, make a set of players for HR. """
 
-    residents = [Player(name) for name in resident_names]
+    residents = [Resident(name) for name in resident_names]
     hospitals = [
         Hospital(name, capacity)
         for name, capacity in zip(hospital_names, capacities)

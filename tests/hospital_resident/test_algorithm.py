@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from matching.solvers import hospital_resident
+from matching.games import hospital_resident
 
 from .params import HOSPITAL_RESIDENT, make_players
 

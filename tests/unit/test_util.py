@@ -1,7 +1,7 @@
 """ Unit tests for the solvers.util functions. """
 
 from matching import Player
-from matching.solvers.util import delete_pair, match_pair
+from matching.games.util import delete_pair, match_pair
 
 from .params import PLAYER
 

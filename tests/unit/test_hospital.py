@@ -3,7 +3,8 @@
 from hypothesis import given
 from hypothesis.strategies import integers, lists, text
 
-from matching import Hospital, Player
+from matching import Player as Resident
+from matching.players import Hospital
 
 
 @given(name=text(), capacity=integers())
@@ -24,7 +25,7 @@ def test_get_favourite(name, capacity, pref_names):
     """ Check the correct player is returned as the hospital's favourite. """
 
     hospital = Hospital(name, capacity)
-    others = [Player(other) for other in pref_names]
+    others = [Resident(other) for other in pref_names]
 
     hospital.set_prefs(others)
     assert hospital.get_favourite() == others[0]
@@ -38,7 +39,7 @@ def test_match(name, capacity, pref_names):
     """ Check that a hospital can match to a player correctly. """
 
     hospital = Hospital(name, capacity)
-    others = [Player(other) for other in pref_names]
+    others = [Resident(other) for other in pref_names]
 
     hospital.set_prefs(others)
     for i, other in enumerate(others[:-1]):
@@ -54,7 +55,7 @@ def test_unmatch(name, capacity, pref_names):
     """ Check that a hospital can unmatch from a player correctly. """
 
     hospital = Hospital(name, capacity)
-    others = [Player(other) for other in pref_names]
+    others = [Resident(other) for other in pref_names]
 
     hospital.matching = others
     for i, other in enumerate(others[:-1]):
@@ -70,7 +71,7 @@ def test_get_worst_match(name, capacity, pref_names):
     """ Check that a hospital can return its worst match. """
 
     hospital = Hospital(name, capacity)
-    others = [Player(other) for other in pref_names]
+    others = [Resident(other) for other in pref_names]
 
     hospital.matching = [others[0]]
     assert hospital.get_worst_match() == others[0]
@@ -85,7 +86,7 @@ def test_get_successors(name, capacity, pref_names):
     """
 
     hospital = Hospital(name, capacity)
-    others = [Player(other) for other in pref_names]
+    others = [Resident(other) for other in pref_names]
 
     hospital.set_prefs(others)
     hospital.matching = [others[0]]

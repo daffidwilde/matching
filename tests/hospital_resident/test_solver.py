@@ -2,7 +2,10 @@
 
 import pytest
 
-from matching import Hospital, HospitalResident, Matching, Player
+from matching import Matching
+from matching import Player as Resident
+from matching.games import HospitalResident
+from matching.players import Hospital
 
 from .params import HOSPITAL_RESIDENT, make_game
 
@@ -33,7 +36,7 @@ def test_inputs_resident_prefs(
 
     assert game._check_resident_prefs()
 
-    game.residents[0].prefs = [Player("foo")]
+    game.residents[0].prefs = [Resident("foo")]
 
     with pytest.raises(Exception):
         game._check_resident_prefs()
@@ -98,7 +101,7 @@ def test_resident_matching(resident_names, hospital_names, capacities, seed):
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
     game.solve()
-    game.residents[0].matching = Player(name="foo")
+    game.residents[0].matching = Resident(name="foo")
 
     with pytest.raises(Exception):
         game._check_resident_matching()
@@ -112,7 +115,7 @@ def test_hospital_matching(resident_names, hospital_names, capacities, seed):
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
     game.solve()
-    game.hospitals[0].matching.append(Player(name="foo"))
+    game.hospitals[0].matching.append(Resident(name="foo"))
 
     with pytest.raises(Exception):
         game._check_hospital_matching()
@@ -136,7 +139,7 @@ def test_check_stability():
     """ Test that HospitalResident can recognise whether a matching is stable or
     not. """
 
-    residents = [Player("A"), Player("B"), Player("C")]
+    residents = [Resident("A"), Resident("B"), Resident("C")]
     hospitals = [Hospital(1, 3), Hospital(2, 3)]
 
     r_a, r_b, r_c = residents

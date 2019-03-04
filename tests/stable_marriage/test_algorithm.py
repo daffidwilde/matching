@@ -1,6 +1,6 @@
 """ Integration tests for the Stable Marriage Problem algorithm. """
 
-from matching.solvers import stable_marriage
+from matching.games import stable_marriage
 
 from .params import STABLE_MARRIAGE, make_players
 
