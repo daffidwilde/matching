@@ -156,7 +156,7 @@ class HospitalResident(Game):
                 errors.append(
                     ValueError(
                         f"{resident} has ranked a non-hospital: "
-                        f"{set(resident.prefs)} != {set(hospitals)}"
+                        f"{set(resident.prefs)} != {set(self.hospitals)}"
                     )
                 )
 
@@ -240,8 +240,6 @@ def hospital_resident(residents, hospitals, optimal="resident"):
         Which party the matching should be optimised for. Must be one of
         `"resident"` and `"hospital"` (or `"resident"` and `"hospital"`
         respectively). Defaults to `"resident"`.
-    verbose : `bool`, optional
-        Whether or not to log the progress of the algorithm. Default is to not.
 
     Returns
     =======
