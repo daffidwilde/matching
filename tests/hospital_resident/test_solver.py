@@ -33,7 +33,7 @@ def test_inputs_resident_prefs(
 
     assert game._check_resident_prefs()
 
-    game.residents[0].prefs = [1, 2, 3]
+    game.residents[0].prefs = [Player("foo")]
 
     with pytest.raises(Exception):
         game._check_resident_prefs()
