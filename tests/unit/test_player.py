@@ -2,6 +2,7 @@
 
 from hypothesis import given
 from hypothesis.strategies import text
+
 from matching import Player
 
 from .params import PLAYER
@@ -76,20 +77,6 @@ def test_unmatch(name, pref_names):
 
 
 @PLAYER
-def test_get_match_idx(name, pref_names):
-    """ Check that the preference index of the current match to a player can be
-    found correctly. """
-
-    player = Player(name)
-    others = [Player(other) for other in pref_names]
-
-    player.set_prefs(others)
-    for i, other in enumerate(others):
-        player.matching = other
-        assert player.get_match_idx() == i
-
-
-@PLAYER
 def test_forget(name, pref_names):
     """ Test that a player can forget somebody. """
 
@@ -118,9 +105,9 @@ def test_get_successors(name, pref_names):
     player.matching = others[0]
     if len(player.pref_names) > 1:
         successors = others[1:]
-        assert player.get_successors(others) == successors
+        assert player.get_successors() == successors
     else:
-        assert player.get_successors(others) == []
+        assert player.get_successors() == []
 
 
 @PLAYER
