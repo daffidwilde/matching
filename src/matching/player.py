@@ -90,7 +90,7 @@ class Hospital(Player):
         A list of `Player` instances in order of the hospital's preferences.
         Defaults to `None` and is updated using the `set_prefs` method.
     pref_names : `list`
-        A list the names in `prefs`. Updates with `prefs`.
+        A list of the names in `prefs`. Updates with `prefs`.
     matching : `list`
         The current matches of the hospital. An empty list if currently
         unsubscribed.
@@ -98,10 +98,8 @@ class Hospital(Player):
 
     def __init__(self, name, capacity):
 
-        self.name = name
+        super().__init__(name)
         self.capacity = capacity
-        self.prefs = None
-        self.pref_names = None
         self.matching = []
 
     def get_favourite(self):
@@ -138,3 +136,33 @@ class Hospital(Player):
 
         idx = self.prefs.index(self.get_worst_match())
         return self.prefs[idx + 1 :]
+
+
+class Project(Hospital):
+    """ A class to represent a project in an instance of SA.
+
+    Parameters
+    ==========
+    name : `object`
+        An identifier. This should be unique and descriptive.
+    capacity : `int`
+        The maximum number of matches the project can have.
+
+    Attributes
+    ==========
+    faculty : `Faculty`
+        The faculty player that runs the project. Defaults to `None`.
+    prefs : `list`
+        A list of `Player` instances in the order of the project's faculty
+        preferences.
+    pref_names : `list`
+        A list of the names in `prefs`. Updates with `prefs`.
+    matching : `list`
+        The current matches of the project. An empty list if currently
+        unsubscribed.
+    """
+
+    def __init__(self, name, capacity):
+
+        super().__init__(name, capacity)
+        self.faculty = None
