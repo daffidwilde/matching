@@ -108,7 +108,7 @@ def test_get_successors(name, pref_names):
         assert player.get_successors() == []
 
 
-@given(name=text(), pref_names=lists(text(), min_size=1))
+@given(name=text(), pref_names=lists(text(), min_size=1, unique=True))
 def test_prefers(name, pref_names):
     """ Test that a comparison of preference between two other players can be
     found for a player. """
