@@ -21,19 +21,18 @@ class Player:
         return str(self.name)
 
     def set_prefs(self, players):
-        """ Set the player's preferences to be an ordered list of another set of
-        `Player` instances. """
+        """ Set the player's preferences to be a list of players. """
 
         self.prefs = players
         self.pref_names = [player.name for player in players]
 
     def get_favourite(self):
-        """ Get the player's favourite member of another party. """
+        """ Get the player's favourite player. """
 
         return self.prefs[0]
 
     def match(self, other):
-        """ Assign other to be matched to the player. """
+        """ Assign the player to be matched to some other player. """
 
         self.matching = other
 
@@ -43,8 +42,8 @@ class Player:
         self.matching = None
 
     def forget(self, other):
-        """ Forget another player by removing their name from the player's
-        preference list. """
+        """ Forget another player by removing them from the player's preference
+        list. """
 
         prefs = list(self.prefs)
         prefs.remove(other)
