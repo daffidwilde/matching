@@ -14,10 +14,3 @@ def match_pair(suitor, reviewer):
 
     suitor.match(reviewer)
     reviewer.match(suitor)
-
-
-def unmatch_pair(suitor, reviewer):
-    """ Unmatch the players given by `suitor` and `reviewer`. """
-
-    suitor.unmatch(reviewer)
-    reviewer.unmatch(suitor)
