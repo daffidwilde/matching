@@ -39,10 +39,9 @@ class HospitalResident(Game):
 
         self.residents = residents
         self.hospitals = hospitals
+        super().__init__()
 
         self._check_inputs()
-
-        super().__init__()
 
     def solve(self, optimal="resident"):
         """ Solve the instance of HR using either the resident- (resident-) or

@@ -26,9 +26,9 @@ class Faculty(Hospital):
         unsubscribed, and updated through its project matching updates.
     """
 
-    def __init__(self, name, capacity):
+    def __init__(self, name):
 
-        super().__init__(name, capacity)
+        super().__init__(name, capacity=None)
         self.projects = []
 
     def set_prefs(self, students):
@@ -43,3 +43,46 @@ class Faculty(Hospital):
                 student for student in students if project in student.prefs
             ]
             project.set_prefs(acceptable)
+
+    def get_undersubbed_projects(self):
+        """ Get a list of all the faculty's projects that are currently
+        under-subscribed. """
+
+        return [
+            project
+            for project in self.projects
+            if len(project.matching) < project.capacity
+        ]
+
+    def get_potential_students(self):
+        """ Get a list of all those students that are currently not matched to
+        but have a preference of at least one under-subscribed project offered
+        by the faculty. """
+
+        return [
+            student
+            for student in self.prefs
+            if any(
+                [
+                    project in student.prefs
+                    for project in self.get_undersubbed_projects()
+                    if student.matching != project
+                ]
+            )
+        ]
+
+
+    def get_favourite(self):
+        """ Find the faculty member's favourite student that is not currently
+        matched to, but has a preference of, one of the faculty's
+        under-subscribed projects. Also return the student's favourite
+        under-subscribed project. """
+
+        student = self.get_potential_students()[0]
+        project = [
+            project
+            for project in student.prefs
+            if project in self.get_undersubbed_projects()
+        ][0]
+
+        return student, project

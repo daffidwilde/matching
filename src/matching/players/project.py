@@ -33,11 +33,16 @@ class Project(Hospital):
         self.faculty = None
 
     def set_faculty(self, faculty):
-        """ Set the project's faculty member and add the project to their list
-        of active projects. """
+        """ Set the project's faculty member, add the project to their list
+        of active projects and increment their capacity. """
 
         self.faculty = faculty
-        faculty.projects.append(self)
+        if self not in faculty.projects:
+            faculty.projects.append(self)
+            try:
+                faculty.capacity += self.capacity
+            except TypeError:
+                faculty.capacity = self.capacity
 
     def match(self, student):
         """ Match the project to a student, and update the project's faculty's
@@ -54,3 +59,12 @@ class Project(Hospital):
         matching.remove(student)
         self.matching = matching
         self.faculty.unmatch(student)
+
+    def forget(self, student):
+        """ Remove a student from the preference list of the project and its
+        faculty member. """
+
+        prefs = self.prefs[:]
+        prefs.remove(student)
+        self.prefs = prefs
+        self.faculty.forget(student)
