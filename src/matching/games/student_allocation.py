@@ -152,7 +152,7 @@ def student_optimal(students, projects):
 
         elif len(faculty.matching) > faculty.capacity:
             worst = faculty.get_worst_match()
-            worst_project = worst.project
+            worst_project = worst.matching
             unmatch_pair(worst, worst_project)
             free_students.append(worst)
 
@@ -214,17 +214,13 @@ def faculty_optimal(projects, faculty):
         if student.matching:
             curr_match = student.matching
             unmatch_pair(student, curr_match)
-            if len(curr_match.matching) < curr_match.capacity:
-                free_faculty.append(facult)
 
         match_pair(student, project)
-        if facult.get_potential_students():
-            free_faculty.append(facult)
 
         successors = student.get_successors()
         for successor in successors:
             delete_pair(student, successor)
-        if not facult.get_potential_students():
-            free_faculty.remove(facult)
+
+        free_faculty = [f for f in faculty if f.get_favourite() is not None]
 
     return {p: p.matching for p in projects}
