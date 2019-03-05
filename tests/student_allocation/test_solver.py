@@ -11,7 +11,6 @@ def test_init(
     project_names,
     faculty_names,
     project_capacities,
-    faculty_capacities,
     seed,
 ):
     """ Test that an instance of StudentAllocation is created correctly. """
@@ -21,7 +20,6 @@ def test_init(
         project_names,
         faculty_names,
         project_capacities,
-        faculty_capacities,
         seed,
     )
 

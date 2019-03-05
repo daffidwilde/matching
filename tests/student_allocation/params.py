@@ -33,7 +33,6 @@ def make_players(
     project_names,
     faculty_names,
     project_capacities,
-    faculty_capacities,
 ):
     """ Given some names and capacities, make a set of players for SA. """
 
@@ -42,10 +41,7 @@ def make_players(
         Project(name, cap)
         for name, cap in zip(project_names, project_capacities)
     ]
-    faculty = [
-        Faculty(name, cap)
-        for name, cap in zip(faculty_names, faculty_capacities)
-    ]
+    faculty = [Faculty(name) for name in faculty_names]
 
     for project in projects:
         project.set_faculty(np.random.choice(faculty))
@@ -75,7 +71,6 @@ def make_game(
     project_names,
     faculty_names,
     project_capacities,
-    faculty_capacities,
     seed,
 ):
     """ Make all of the players and the game itself. """
@@ -86,7 +81,6 @@ def make_game(
         project_names,
         faculty_names,
         project_capacities,
-        faculty_capacities,
     )
     game = StudentAllocation(students, projects, faculty)
 
@@ -102,7 +96,7 @@ STUDENT_ALLOCATION = given(
     ),
     project_names=lists(
         elements=sampled_from(["J", "K", "L", "M", "N"]),
-        min_size=1,
+        min_size=5,
         max_size=5,
         unique=True,
     ),
@@ -113,6 +107,5 @@ STUDENT_ALLOCATION = given(
         unique=True,
     ),
     project_capacities=lists(integers(min_value=4), min_size=1, max_size=5),
-    faculty_capacities=lists(integers(min_value=4), min_size=1, max_size=3),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )
