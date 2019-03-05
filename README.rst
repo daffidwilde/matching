@@ -83,21 +83,23 @@ bipartite graph.
 We convey the information above in the following way:
 
 >>> from matching import Player
->>> suitors = [
-...     Player(name="A", pref_names=["D", "E", "F"]),
-...     Player(name="B", pref_names=["D", "F", "E"]),
-...     Player(name="C", pref_names=["F", "D", "E"]),
-... ]
->>> reviewers = [
-...     Player(name="D", pref_names=["B", "C", "A"]),
-...     Player(name="E", pref_names=["A", "C", "B"]),
-...     Player(name="F", pref_names=["C", "B", "A"]),
-... ]
+
+>>> suitors = [Player(name="A"), Player(name="B"), Player(name="C")]
+>>> reviewers = [Player(name="D"), Player(name="E"), Player(name="F")]
+>>> (A, B, C), (D, E, F) = suitors, reviewers
+
+>>> A.set_prefs([D, E, F])
+>>> B.set_prefs([D, F, E])
+>>> C.set_prefs([F, D, E])
+
+>>> D.set_prefs([B, C, A])
+>>> E.set_prefs([A, C, B])
+>>> F.set_prefs([C, B, A])
 
 Then to solve this matching game, we make use of the ``StableMarriage`` class,
 like so:
 
->>> from matching import StableMarriage
+>>> from matching.games import StableMarriage
 >>> sm = StableMarriage(suitors, reviewers)
 >>> sm.solve()
 {A: E, B: D, C: F}
@@ -189,24 +191,38 @@ before:
 
 In ``matching`` we summarise this problem in the following way:
 
->>> from matching import Player
+>>> from matching import Player as Resident
+>>> from matching.players import Hospital
+
 >>> residents = [
-...     Player("A", ["C"]),
-...     Player("S", ["C", "M"]),
-...     Player("D", ["C", "M", "G"]),
-...     Player("L", ["M", "C", "G"]),
-...     Player("J", ["C", "G", "M"]),
+...     Resident("A"),
+...     Resident("S"),
+...     Resident("D"),
+...     Resident("L"),
+...     Resident("J")
 ... ]
 >>> hospitals = [
-...     Player("M", ["D", "L", "J", "S"], capacity=2),
-...     Player("C", ["D", "A", "S", "L", "J"], capacity=2),
-...     Player("G", ["D", "J", "L"], capacity=2),
+...     Hospital("M", capacity=2),
+...     Hospital("C", capacity=2),
+...     Hospital("G", capacity=2)
 ... ]
+
+>>> (A, S, D, L, J), (M, C, G) = residents, hospitals
+
+>>> A.set_prefs([C])
+>>> S.set_prefs([C, M])
+>>> D.set_prefs([C, M, G])
+>>> L.set_prefs([M, C, G])
+>>> J.set_prefs([C, G, M])
+
+>>> M.set_prefs([D, L, J, S])
+>>> C.set_prefs([D, A, S, L, J])
+>>> G.set_prefs([D, J, L])
 
 We then solve this problem using the ``HospitalResident`` class:
 
->>> from matching import HospitalResident
->>> hr = HospitalResident(residents=residents, hospitals=hospitals)
+>>> from matching.games import HospitalResident
+>>> hr = HospitalResident(residents, hospitals)
 >>> hr.solve()
 {M: [L, S], C: [D, A], G: [J]}
 
