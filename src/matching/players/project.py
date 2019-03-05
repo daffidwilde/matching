@@ -39,16 +39,13 @@ class Project(Hospital):
         self.faculty = faculty
         if self not in faculty.projects:
             faculty.projects.append(self)
-            try:
-                faculty.capacity += self.capacity
-            except TypeError:
-                faculty.capacity = self.capacity
 
     def match(self, student):
         """ Match the project to a student, and update the project's faculty's
         matching, too. """
 
         self.matching.append(student)
+        self.matching.sort(key=self.prefs.index)
         self.faculty.match(student)
 
     def unmatch(self, student):

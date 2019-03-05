@@ -32,8 +32,8 @@ class Hospital(Player):
         self.matching = []
 
     def get_favourite(self):
-        """ Get the favourite player who is not currently in the player's
-        matching. """
+        """ Get the hospital's favourite resident whom they are not currently
+        matched to. """
 
         for player in self.prefs:
             if player not in self.matching:
@@ -41,17 +41,17 @@ class Hospital(Player):
 
         return None
 
-    def match(self, other):
-        """ Add another player to the player's matching, and then sort it. """
+    def match(self, resident):
+        """ Add a resident to the hospital's matching, and then sort it. """
 
-        self.matching.append(other)
+        self.matching.append(resident)
         self.matching.sort(key=self.prefs.index)
 
-    def unmatch(self, other):
-        """ Remove another player from the player's matching. """
+    def unmatch(self, resident):
+        """ Remove a resident from the hospital's matching. """
 
         matching = self.matching[:]
-        matching.remove(other)
+        matching.remove(resident)
         self.matching = matching
 
     def get_worst_match(self):
@@ -61,7 +61,7 @@ class Hospital(Player):
         return self.matching[-1]
 
     def get_successors(self):
-        """ Get the )uccessors to the player's worst current match. """
+        """ Get the successors to the player's worst current match. """
 
         idx = self.prefs.index(self.get_worst_match())
         return self.prefs[idx + 1 :]
