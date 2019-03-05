@@ -27,12 +27,11 @@ def test_set_faculty(name, capacity):
     to the faculty's project list. """
 
     project = Project(name, capacity)
-    faculty = Faculty("foo")
+    faculty = Faculty("foo", capacity)
 
     project.set_faculty(faculty)
     assert project.faculty == faculty
     assert faculty.projects == [project]
-    assert faculty.capacity == capacity
 
 
 @given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
@@ -41,7 +40,7 @@ def test_match(name, capacity, pref_names):
     them, too. """
 
     project = Project(name, capacity)
-    faculty = Faculty("foo")
+    faculty = Faculty("foo", capacity)
     project.faculty = faculty
     students = [Student(student) for student in pref_names]
 
@@ -63,7 +62,7 @@ def test_unmatch(name, capacity, pref_names):
     matching for their faculty member, too. """
 
     project = Project(name, capacity)
-    faculty = Faculty("foo")
+    faculty = Faculty("foo", capacity)
     project.faculty = faculty
     students = [Student(student) for student in pref_names]
 
