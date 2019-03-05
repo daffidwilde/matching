@@ -7,14 +7,14 @@ from matching import Player as Student
 from matching.players import Faculty, Project
 
 
-@given(name=text(), capacity=integers())
-def test_init(name, capacity):
+@given(name=text())
+def test_init(name):
     """ Make an instance of Faculty and check their attributes are correct. """
 
-    faculty = Faculty(name, capacity)
+    faculty = Faculty(name)
 
     assert faculty.name == name
-    assert faculty.capacity == capacity
+    assert faculty.capacity is None
     assert faculty.projects == []
     assert faculty.prefs is None
     assert faculty.pref_names is None
@@ -26,11 +26,11 @@ def test_set_prefs(name, capacity, pref_names):
     """ Test that a Faculty can set its preferences correctly, and the
     preferences of its project(s). """
 
-    faculty = Faculty(name, capacity)
+    faculty = Faculty(name)
     projects = [Project(i, capacity) for i in range(3)]
     students = []
-    for name in pref_names:
-        student = Student(name)
+    for sname in pref_names:
+        student = Student(sname)
         student.prefs = projects
         students.append(student)
 
