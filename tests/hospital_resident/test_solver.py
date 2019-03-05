@@ -2,8 +2,7 @@
 
 import pytest
 
-from matching import Matching
-from matching import Player as Resident
+from matching import Matching, Player as Resident
 from matching.games import HospitalResident
 from matching.players import Hospital
 

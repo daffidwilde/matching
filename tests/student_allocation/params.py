@@ -41,27 +41,37 @@ def make_players(
         Project(name, cap)
         for name, cap in zip(project_names, project_capacities)
     ]
-    faculty = [Faculty(name) for name in faculty_names]
+    faculty = [
+        Faculty(name, capacity=None) for name in faculty_names
+    ]
+
+    if len(students) > len(projects):
+        students = students[:len(projects)]
 
     for project in projects:
         project.set_faculty(np.random.choice(faculty))
 
-    faculty = [f for f in faculty if f.projects != []]
+    faculty = [facult for facult in faculty if facult.projects]
+    for facult in faculty:
+        capacities = [proj.capacity for proj in facult.projects]
+        min_cap, max_cap = max(capacities), sum(capacities)
+        facult.capacity = np.random.randint(min_cap, max_cap + 1)
 
     possible_prefs = get_possible_prefs(projects)
-    logged_prefs = {}
+    logged_prefs = {facult: [] for facult in faculty}
     for student in students:
         prefs = possible_prefs[np.random.choice(range(len(possible_prefs)))]
         student.set_prefs(prefs)
         for project in prefs:
             facult = project.faculty
-            try:
-                logged_prefs[facult] += [student]
-            except KeyError:
-                logged_prefs[facult] = [student]
+            if student not in logged_prefs[facult]:
+                logged_prefs[facult].append(student)
 
     for facult, studs in logged_prefs.items():
         facult.set_prefs(np.random.permutation(studs).tolist())
+
+    projects = [p for p in projects if p.prefs]
+    faculty = [f for f in faculty if f.prefs]
 
     return students, projects, faculty
 
@@ -106,6 +116,6 @@ STUDENT_ALLOCATION = given(
         max_size=3,
         unique=True,
     ),
-    project_capacities=lists(integers(min_value=4), min_size=1, max_size=5),
+    project_capacities=lists(integers(min_value=1, max_value=2), min_size=1, max_size=5),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )
