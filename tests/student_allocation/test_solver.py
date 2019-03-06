@@ -90,7 +90,28 @@ def test_inputs_faculty_prefs(
 
 
 @STUDENT_ALLOCATION
-def test_inputs_capacities(
+def test_inputs_project_capacities(
+    student_names, project_names, faculty_names, capacities, seed
+):
+    """ Test that each project has at least one space but no more than its
+    faculty member can offer. Otherwise, raise an Exception. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    assert game._check_project_capacities()
+
+    game.projects[0].capacity = -1
+    with pytest.raises(Exception):
+        game._check_project_capacities()
+
+    game.projects[0].capacity = game.projects[0].faculty.capacity + 1
+    with pytest.raises(Exception):
+        game._check_project_capacities()
+
+
+@STUDENT_ALLOCATION
+def test_inputs_faculty_capacities(
     student_names, project_names, faculty_names, capacities, seed
 ):
     """ Test that each faculty member has enough space to accommodate their
@@ -100,15 +121,15 @@ def test_inputs_capacities(
     _, _, _, game = make_game(student_names, project_names, faculty_names,
             capacities, seed)
 
-    assert game._check_capacities()
+    assert game._check_faculty_capacities()
 
     game.faculty[0].capacity = 0
     with pytest.raises(Exception):
-        game._check_capacities()
+        game._check_faculty_capacities()
 
     game.faculty[0].capacity = 1e6
     with pytest.raises(Exception):
-        game._check_capacities()
+        game._check_faculty_capacities()
 
 
 @STUDENT_ALLOCATION

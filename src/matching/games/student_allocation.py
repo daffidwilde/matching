@@ -71,7 +71,8 @@ class StudentAllocation(Game):
         self._check_project_prefs()
         self._check_faculty_prefs()
 
-        self._check_capacities()
+        self._check_project_capacities()
+        self._check_faculty_capacities()
 
     def _check_student_prefs(self):
         """ Make sure that each student's preference list is a subset of the
@@ -142,7 +143,29 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_capacities(self):
+    def _check_project_capacities(self):
+        """ Check that each project has at least one space but no more than
+        their faculty member. """
+
+        errors = []
+        for project in self.projects:
+            if (
+                project.capacity < 1
+                or project.capacity > project.faculty.capacity
+            ):
+                errors.append(
+                    ValueError(
+                        f"{project} does not have a valid capacity: "
+                        f"{project.capacity}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_faculty_capacities(self):
         """ Check that each faculty member has sufficient spaces for their
         projects. """
 
