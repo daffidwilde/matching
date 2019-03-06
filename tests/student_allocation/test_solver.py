@@ -54,6 +54,23 @@ def test_inputs_student_prefs(
 
 
 @STUDENT_ALLOCATION
+def test_inputs_project_prefs(
+    student_names, project_names, faculty_names, capacities, seed
+):
+    """ Test that each project's preference list is a permutation of the
+    students that have ranked it. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    assert game._check_project_prefs()
+
+    game.projects[0].prefs = [Student("foo")]
+    with pytest.raises(Exception):
+        game._check_project_prefs()
+
+
+@STUDENT_ALLOCATION
 def test_inputs_faculty_prefs(
     student_names, project_names, faculty_names, capacities, seed
 ):

@@ -80,6 +80,29 @@ class StudentAllocation(Game):
 
         return True
 
+    def _check_project_prefs(self):
+        """ Make sure that each project ranks all and only those students that
+        ranked it. """
+
+        errors = []
+        for project in self.projects:
+            students_that_ranked = [
+                student for student in self.students if project in student.prefs
+            ]
+            if set(project.prefs) != set(students_that_ranked):
+                errors.append(
+                    ValueError(
+                        f"{project} has not ranked the students that ranked "
+                        f"it: {set(project.prefs)} != "
+                        f"{set(students_that_ranked)}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
     def _check_faculty_prefs(self):
         """ Make sure that each faculty member ranks all and only those students
         that ranked at least one project that they offer. """
