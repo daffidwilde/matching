@@ -32,14 +32,14 @@ def make_players(
     student_names,
     project_names,
     faculty_names,
-    project_capacities,
+    capacities,
 ):
     """ Given some names and capacities, make a set of players for SA. """
 
     students = [Student(name) for name in student_names]
     projects = [
         Project(name, cap)
-        for name, cap in zip(project_names, project_capacities)
+        for name, cap in zip(project_names, capacities)
     ]
     faculty = [
         Faculty(name, capacity=None) for name in faculty_names
@@ -80,7 +80,7 @@ def make_game(
     student_names,
     project_names,
     faculty_names,
-    project_capacities,
+    capacities,
     seed,
 ):
     """ Make all of the players and the game itself. """
@@ -90,7 +90,7 @@ def make_game(
         student_names,
         project_names,
         faculty_names,
-        project_capacities,
+        capacities,
     )
     game = StudentAllocation(students, projects, faculty)
 
@@ -116,6 +116,6 @@ STUDENT_ALLOCATION = given(
         max_size=3,
         unique=True,
     ),
-    project_capacities=lists(integers(min_value=1, max_value=2), min_size=1, max_size=5),
+    capacities=lists(integers(min_value=1, max_value=2), min_size=1, max_size=5),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )
