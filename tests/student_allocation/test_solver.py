@@ -58,7 +58,8 @@ def test_inputs_project_prefs(
     student_names, project_names, faculty_names, capacities, seed
 ):
     """ Test that each project's preference list is a permutation of the
-    students that have ranked it. """
+    students that have ranked it, and check that an Exception is raised if not.
+    """
 
     _, _, _, game = make_game(student_names, project_names, faculty_names,
             capacities, seed)
@@ -75,7 +76,8 @@ def test_inputs_faculty_prefs(
     student_names, project_names, faculty_names, capacities, seed
 ):
     """ Test that each faculty member's preference list is a permutation of the
-    students that have ranked at least one project that they provide. """
+    students that have ranked at least one project that they provide. Otherwise,
+    check that an Exception is raised. """
 
     _, _, _, game = make_game(student_names, project_names, faculty_names,
             capacities, seed)
@@ -85,6 +87,28 @@ def test_inputs_faculty_prefs(
     game.faculty[0].prefs = [Student("foo")]
     with pytest.raises(Exception):
         game._check_faculty_prefs()
+
+
+@STUDENT_ALLOCATION
+def test_inputs_capacities(
+    student_names, project_names, faculty_names, capacities, seed
+):
+    """ Test that each faculty member has enough space to accommodate their
+    largest project, but does not offer a surplus of spaces from their projects.
+    Otherwise, raise an Exception. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    assert game._check_capacities()
+
+    game.faculty[0].capacity = 0
+    with pytest.raises(Exception):
+        game._check_capacities()
+
+    game.faculty[0].capacity = 1e6
+    with pytest.raises(Exception):
+        game._check_capacities()
 
 
 @STUDENT_ALLOCATION
