@@ -3,6 +3,7 @@
 import pytest
 
 from matching import Matching, Player as Student
+from matching.players import Project
 
 from .params import STUDENT_ALLOCATION, make_game
 
@@ -47,9 +48,26 @@ def test_inputs_student_prefs(
 
     assert game._check_student_prefs()
 
-    game.students[0].prefs = [Student("foo")]
+    game.students[0].prefs = [Project("foo", None)]
     with pytest.raises(Exception):
         game._check_student_prefs()
+
+
+@STUDENT_ALLOCATION
+def test_inputs_faculty_prefs(
+    student_names, project_names, faculty_names, capacities, seed
+):
+    """ Test that each faculty member's preference list is a permutation of the
+    students that have ranked at least one project that they provide. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    assert game._check_faculty_prefs()
+
+    game.faculty[0].prefs = [Student("foo")]
+    with pytest.raises(Exception):
+        game._check_faculty_prefs()
 
 
 @STUDENT_ALLOCATION
