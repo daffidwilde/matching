@@ -61,6 +61,25 @@ class StudentAllocation(Game):
         )
         return self.matching
 
+    def _check_student_prefs(self):
+        """ Make sure that each student's preference list is a subset of the
+        available projects. Otherwise, raise an error. """
+
+        errors = []
+        for student in self.students:
+            if not set(student.prefs).issubset(set(self.projects)):
+                errors.append(
+                    ValueError(
+                        f"{student} has ranked a non-project: "
+                        f"{set(student.prefs)} != {set(self.projects)}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
 
 def unmatch_pair(student, project):
     """ Unmatch a student-project pair. """

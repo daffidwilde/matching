@@ -1,6 +1,8 @@
 """ Unit tests for the SA solver. """
 
-from matching import Matching
+import pytest
+
+from matching import Matching, Player as Student
 
 from .params import STUDENT_ALLOCATION, make_game
 
@@ -10,7 +12,7 @@ def test_init(
     student_names,
     project_names,
     faculty_names,
-    project_capacities,
+    capacities,
     seed,
 ):
     """ Test that an instance of StudentAllocation is created correctly. """
@@ -19,7 +21,7 @@ def test_init(
         student_names,
         project_names,
         faculty_names,
-        project_capacities,
+        capacities,
         seed,
     )
 
@@ -34,12 +36,29 @@ def test_init(
 
 
 @STUDENT_ALLOCATION
-def test_solve(student_names, project_names, faculty_names, project_capacities, seed):
+def test_inputs_student_prefs(
+    student_names, project_names, faculty_names, capacities, seed
+):
+    """ Test that each student's preference list is a subset of the available
+    projects, and check that an Exception is raised if not. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    assert game._check_student_prefs()
+
+    game.students[0].prefs = [Student("foo")]
+    with pytest.raises(Exception):
+        game._check_student_prefs()
+
+
+@STUDENT_ALLOCATION
+def test_solve(student_names, project_names, faculty_names, capacities, seed):
     """ Test that StudentAllocation can solve games correctly. """
 
     for optimal in ["student", "faculty"]:
         students, projects, _, game = make_game(
-            student_names, project_names, faculty_names, project_capacities, seed
+            student_names, project_names, faculty_names, capacities, seed
         )
 
         matching = game.solve(optimal)
