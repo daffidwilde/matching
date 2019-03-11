@@ -51,6 +51,8 @@ class StudentAllocation(Game):
         self.faculty = faculty
         super().__init__()
 
+        self._check_inputs()
+
     def solve(self, optimal="student"):
         """ Solve the instance of SA using either the student- or
         faculty-optimal algorithm. """
@@ -60,6 +62,135 @@ class StudentAllocation(Game):
                 optimal)
         )
         return self.matching
+
+    def _check_inputs(self):
+        """ Check that the players in the game have valid preferences, and in
+        the case of projects and faculty: capacities. """
+
+        self._check_student_prefs()
+        self._check_project_prefs()
+        self._check_faculty_prefs()
+
+        self._check_project_capacities()
+        self._check_faculty_capacities()
+
+    def _check_student_prefs(self):
+        """ Make sure that each student's preference list is a subset of the
+        available projects. Otherwise, raise an error. """
+
+        errors = []
+        for student in self.students:
+            if not set(student.prefs).issubset(set(self.projects)):
+                errors.append(
+                    ValueError(
+                        f"{student} has ranked a non-project: "
+                        f"{set(student.prefs)} != {set(self.projects)}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_project_prefs(self):
+        """ Make sure that each project ranks all and only those students that
+        ranked it. """
+
+        errors = []
+        for project in self.projects:
+            students_that_ranked = [
+                student for student in self.students if project in student.prefs
+            ]
+            if set(project.prefs) != set(students_that_ranked):
+                errors.append(
+                    ValueError(
+                        f"{project} has not ranked the students that ranked "
+                        f"it: {set(project.prefs)} != "
+                        f"{set(students_that_ranked)}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_faculty_prefs(self):
+        """ Make sure that each faculty member ranks all and only those students
+        that ranked at least one project that they offer. """
+
+        errors = []
+        for faculty in self.faculty:
+            students_that_ranked = [
+                student
+                for student in self.students
+                if any(
+                    [project in student.prefs for project in faculty.projects]
+                )
+            ]
+            if set(faculty.prefs) != set(students_that_ranked):
+                errors.append(
+                    ValueError(
+                        f"{faculty} has not ranked the students that ranked at "
+                        f"least one of its projects: {set(faculty.prefs)} != "
+                        f"{set(students_that_ranked)}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_project_capacities(self):
+        """ Check that each project has at least one space but no more than
+        their faculty member. """
+
+        errors = []
+        for project in self.projects:
+            if (
+                project.capacity < 1
+                or project.capacity > project.faculty.capacity
+            ):
+                errors.append(
+                    ValueError(
+                        f"{project} does not have a valid capacity: "
+                        f"{project.capacity}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_faculty_capacities(self):
+        """ Check that each faculty member has sufficient spaces for their
+        projects. """
+
+        errors = []
+        for faculty in self.faculty:
+            project_capacities = [proj.capacity for proj in faculty.projects]
+            if faculty.capacity < max(project_capacities):
+                errors.append(
+                    ValueError(
+                        f"{faculty} does not have enough space to provide for "
+                        "their largest project"
+                    )
+                )
+            elif faculty.capacity > sum(project_capacities):
+                errors.append(
+                    ValueError(
+                        f"{faculty} can offer more spaces than their projects "
+                        "can provide"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
 
 
 def unmatch_pair(student, project):
