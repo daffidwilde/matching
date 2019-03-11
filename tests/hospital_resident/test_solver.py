@@ -29,7 +29,7 @@ def test_inputs_resident_prefs(
     resident_names, hospital_names, capacities, seed
 ):
     """ Test that each resident's preference list is a subset of the available
-    hospital names, and check that an Exception is raised if not. """
+    hospitals, and check that an Exception is raised if not. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
