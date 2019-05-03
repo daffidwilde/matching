@@ -3,7 +3,8 @@
 import pytest
 
 from matching import Matching, Player as Student
-from matching.players import Project
+from matching.games import StudentAllocation
+from matching.players import Faculty, Project
 
 from .params import STUDENT_ALLOCATION, make_game
 
@@ -48,7 +49,8 @@ def test_inputs_student_prefs(
 
     assert game._check_student_prefs()
 
-    game.students[0].prefs = [Project("foo", None)]
+    student = game.students[0]
+    student.prefs = [Project("foo", None)]
     with pytest.raises(Exception):
         game._check_student_prefs()
 
@@ -57,7 +59,7 @@ def test_inputs_student_prefs(
 def test_inputs_project_prefs(
     student_names, project_names, faculty_names, capacities, seed
 ):
-    """ Test that each project's preference list is a permutation of the
+    """ Test th]t each project's preference list is a permutation of the
     students that have ranked it, and check that an Exception is raised if not.
     """
 
@@ -66,7 +68,8 @@ def test_inputs_project_prefs(
 
     assert game._check_project_prefs()
 
-    game.projects[0].prefs = [Student("foo")]
+    project = game.projects[0]
+    project.prefs = [Student("foo")]
     with pytest.raises(Exception):
         game._check_project_prefs()
 
@@ -84,7 +87,8 @@ def test_inputs_faculty_prefs(
 
     assert game._check_faculty_prefs()
 
-    game.faculty[0].prefs = [Student("foo")]
+    faculty = game.faculty[0]
+    faculty.prefs = [Student("foo")]
     with pytest.raises(Exception):
         game._check_faculty_prefs()
 
@@ -99,15 +103,16 @@ def test_inputs_project_capacities(
     _, _, _, game = make_game(student_names, project_names, faculty_names,
             capacities, seed)
 
-    assert game._check_project_capacities()
+    assert game._check_init_project_capacities()
 
-    game.projects[0].capacity = -1
+    project = game.projects[0]
+    project.capacity = -1
     with pytest.raises(Exception):
-        game._check_project_capacities()
+        game._check_init_project_capacities()
 
-    game.projects[0].capacity = game.projects[0].faculty.capacity + 1
+    project.capacity = project.faculty.capacity + 1
     with pytest.raises(Exception):
-        game._check_project_capacities()
+        game._check_init_project_capacities()
 
 
 @STUDENT_ALLOCATION
@@ -121,15 +126,16 @@ def test_inputs_faculty_capacities(
     _, _, _, game = make_game(student_names, project_names, faculty_names,
             capacities, seed)
 
-    assert game._check_faculty_capacities()
+    assert game._check_init_faculty_capacities()
 
-    game.faculty[0].capacity = 0
+    faculty = game.faculty[0]
+    faculty.capacity = 0
     with pytest.raises(Exception):
-        game._check_faculty_capacities()
+        game._check_init_faculty_capacities()
 
-    game.faculty[0].capacity = 1e6
+    faculty.capacity = 1e6
     with pytest.raises(Exception):
-        game._check_faculty_capacities()
+        game._check_init_faculty_capacities()
 
 
 @STUDENT_ALLOCATION
@@ -152,8 +158,146 @@ def test_solve(student_names, project_names, faculty_names, capacities, seed):
         )
 
         for student in matched_students:
-            facult = student.matching.faculty
-            assert student in facult.matching
+            faculty = student.matching.faculty
+            assert student in faculty.matching
 
         for student in set(students) - set(matched_students):
             assert student.matching is None
+
+
+@STUDENT_ALLOCATION
+def test_check_validity(student_names, project_names, faculty_names, capacities,
+        seed):
+    """ Test that StudentAllocation finds a valid matching when the game is
+    solved. """
+
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
+
+    game.solve()
+    assert game.check_validity()
+
+
+@STUDENT_ALLOCATION
+def test_check_student_matching(student_names, project_names, faculty_names,
+        capacities, seed):
+    """ Test that StudentAllocation recognises a valid matching requires a
+    student to have a preference of their match, if they have one. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    game.solve()
+    assert game._check_student_matching()
+
+    student = game.students[0]
+    student.matching = Project(name="foo", capacity=0)
+    with pytest.raises(Exception):
+        game._check_student_matching()
+
+
+@STUDENT_ALLOCATION
+def test_check_project_matching(student_names, project_names, faculty_names,
+        capacities, seed):
+    """ Test that StudentAllocation recognises a valid matching requires a
+    project to have a preference of each of their matches, if they have any. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    game.solve()
+    assert game._check_project_matching()
+
+    project = game.projects[0]
+    project.matching.append(Student(name="foo"))
+    with pytest.raises(Exception):
+        game._check_project_matching()
+
+
+@STUDENT_ALLOCATION
+def test_check_faculty_matching(student_names, project_names, faculty_names,
+        capacities, seed):
+    """ Test that StudentAllocation recognises a valid matching requires a
+    faculty member to have a preference of each of their matches, if they have
+    any. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    game.solve()
+    assert game._check_faculty_matching()
+
+    faculty = game.faculty[0]
+    faculty.matching.append(Student(name="foo"))
+    with pytest.raises(Exception):
+        game._check_faculty_matching()
+
+
+@STUDENT_ALLOCATION
+def test_check_project_capacity(student_names, project_names, faculty_names,
+        capacities, seed):
+    """ Test that StudentAllocation recognises a valid matching requires all
+    projects to not be over-subscribed. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    game.solve()
+    assert game._check_project_capacity()
+
+    project = game.projects[0]
+    project.matching = range(project.capacity + 1)
+    with pytest.raises(Exception):
+        game._check_project_capacity()
+
+
+@STUDENT_ALLOCATION
+def test_check_faculty_capacity(student_names, project_names, faculty_names,
+        capacities, seed):
+    """ Test that StudentAllocation recognises a valid matching requires all
+    faculty members to not be over-subscribed. """
+
+    _, _, _, game = make_game(student_names, project_names, faculty_names,
+            capacities, seed)
+
+    game.solve()
+    assert game._check_faculty_capacity()
+
+    faculty = game.faculty[0]
+    faculty.matching = range(faculty.capacity + 1)
+    with pytest.raises(Exception):
+        game._check_faculty_capacity()
+
+
+def test_check_stability():
+    """ Test that StudentAllocation can recognise whether a matching is stable
+    or not. """
+
+    students = [Student("A"), Student("B"), Student("C")]
+    projects = [Project("P", 2), Project("Q", 2)]
+    faculty = [Faculty("X", 2), Faculty("Y", 2)]
+
+    a, b, c = students
+    p, q = projects
+    x, y = faculty
+
+    p.set_faculty(x)
+    q.set_faculty(y)
+
+    a.set_prefs([p, q])
+    b.set_prefs([q])
+    c.set_prefs([q, p])
+
+    x.set_prefs([c, a])
+    y.set_prefs([a, b, c])
+
+    game = StudentAllocation(students, projects, faculty)
+
+    matching = game.solve()
+    assert game.check_stability()
+
+    matching[p] = [c]
+    matching[q] = [a, b]
+
+    assert not game.check_stability()
