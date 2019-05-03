@@ -20,7 +20,7 @@ class HospitalResident(Game):
 
     Attributes
     ==========
-    matching : `Matching` (`dict`-like)
+    matching : `matching.matching.Matching`
         Once the game is solved, a matching is available as a `Matching` object.
         This resembles and behaves much like a standard Python dictionary that
         uses the hospitals as keys and their resident matches as values.
@@ -39,10 +39,9 @@ class HospitalResident(Game):
 
         self.residents = residents
         self.hospitals = hospitals
+        super().__init__()
 
         self._check_inputs()
-
-        super().__init__()
 
     def solve(self, optimal="resident"):
         """ Solve the instance of HR using either the resident- (resident-) or

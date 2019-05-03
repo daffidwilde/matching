@@ -20,7 +20,7 @@ class StableMarriage(Game):
 
     Attributes
     ==========
-    matching : `Matching` (`dict`-like)
+    matching : `matching.matching.Matching`
         Once the game is solved, a matching is available. This uses the suitors
         and reviewers as keys and values, respectively, in a `Matching` object;
         something that closely resembles a standard Python dictionary.

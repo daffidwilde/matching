@@ -30,7 +30,7 @@ def test_inputs_resident_prefs(
     resident_names, hospital_names, capacities, seed
 ):
     """ Test that each resident's preference list is a subset of the available
-    hospital names, and check that an Exception is raised if not. """
+    hospitals, and check that an Exception is raised if not. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
@@ -140,24 +140,24 @@ def test_check_stability():
     not. """
 
     residents = [Resident("A"), Resident("B"), Resident("C")]
-    hospitals = [Hospital(1, 3), Hospital(2, 3)]
+    hospitals = [Hospital("X", 2), Hospital("Y", 2)]
 
-    r_a, r_b, r_c = residents
-    h_1, h_2 = hospitals
+    a, b, c = residents
+    x, y = hospitals
 
-    r_a.set_prefs([h_1, h_2])
-    r_b.set_prefs([h_2])
-    r_c.set_prefs([h_2, h_1])
+    a.set_prefs([x, y])
+    b.set_prefs([y])
+    c.set_prefs([y, x])
 
-    h_1.set_prefs([r_c, r_a])
-    h_2.set_prefs([r_a, r_b, r_c])
+    x.set_prefs([c, a])
+    y.set_prefs([a, b, c])
 
     game = HospitalResident(residents, hospitals)
 
     matching = game.solve()
     assert game.check_stability()
 
-    matching[h_1] = [r_c]
-    matching[h_2] = [r_a, r_b]
+    matching[x] = [c]
+    matching[y] = [a, b]
 
     assert not game.check_stability()
