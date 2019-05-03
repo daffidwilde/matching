@@ -20,7 +20,7 @@ class HospitalResident(Game):
 
     Attributes
     ==========
-    matching : `Matching` (`dict`-like)
+    matching : `matching.matching.Matching`
         Once the game is solved, a matching is available as a `Matching` object.
         This resembles and behaves much like a standard Python dictionary that
         uses the hospitals as keys and their resident matches as values.
