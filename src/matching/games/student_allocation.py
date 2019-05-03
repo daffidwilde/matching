@@ -24,12 +24,12 @@ class StudentAllocation(Game):
 
     Attributes
     ==========
-    matching : `Matching`
+    matching : `matching.matching.Matching`
         Once the game is solved, a matching is available. This `Matching` object
         behaves much like a dictionary that uses projects as keys and their
         student matches as values. Initialises as `None`.
-    blocking_pairs : `list`
-        The project-student pairs that satisfy the following conditions:
+    blocking_pairs : `list` of (`student`, `project`)-tuples
+        The student-project pairs that satisfy the following conditions:
             - The student has a preference of the project;
             - either the student is unmatched, or they prefer the project to
               their current project;
@@ -63,6 +63,134 @@ class StudentAllocation(Game):
         )
         return self.matching
 
+    def check_validity(self):
+        """ Check whether the current matching is valid. """
+
+        self._check_student_matching()
+        self._check_project_capacity()
+        self._check_project_matching()
+        self._check_faculty_capacity()
+        self._check_faculty_matching()
+
+        return True
+
+    def check_stability(self):
+        """ Check for the existence of any blocking pairs in the current
+        matching, thus determining the stability of the matching. """
+
+        blocking_pairs = []
+        for student in self.students:
+            for project in self.projects:
+                if project in student.prefs:
+                    if (
+                        _check_student_unhappy(student, project)
+                        and _check_project_unhappy(project, student)
+                    ):
+                        blocking_pairs.append((student, project))
+
+        return not any(blocking_pairs)
+
+    def _check_student_matching(self):
+        """ Check that no student is matched to an unacceptable project. """
+
+        errors = []
+        for student in self.students:
+            if (
+                student.matching is not None
+                and student.matching not in student.prefs
+                ):
+                errors.append(
+                    ValueError(
+                        f"{student} is matched to {student.matching} but "
+                        "they do not appear in their preference list: "
+                        f"{student.prefs}."
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_project_capacity(self):
+        """ Check that no projects are over-subscribed. """
+
+        errors = []
+        for project in self.projects:
+            if len(project.matching) > project.capacity:
+                errors.append(
+                    ValueError(
+                        f"{project} is matched to {project.matching} which "
+                        f"if over their capacity of {project.capacity}."
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_project_matching(self):
+        """ Check that no project is matched to an unacceptable student. """
+
+        errors = []
+        for project in self.projects:
+            for student in project.matching:
+                if student not in project.prefs:
+                    errors.append(
+                        ValueError(
+                            f"{project} has {student} in their matching but "
+                            "they do not appear in their preference list: "
+                            f"{project.prefs}."
+                        )
+                    )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_faculty_capacity(self):
+        """ Check that no faculty member is over-subscribed. """
+
+        errors = []
+
+        for faculty in self.faculty:
+            if len(faculty.matching) > faculty.capacity:
+                errors.append(
+                    ValueError(
+                        f"{faculty} is matched to {faculty.matching} which "
+                        f"if over their capacity of {faculty.capacity}."
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_faculty_matching(self):
+        """ Check that no faculty member is matched to an unacceptable student.
+        """
+
+        errors = []
+        for faculty in self.faculty:
+            for student in faculty.matching:
+                if student not in faculty.prefs:
+                    errors.append(
+                        ValueError(
+                            f"{faculty} has {student} in their matching but "
+                            "they do not appear in their preference list: "
+                            f"{faculty.prefs}."
+                        )
+                    )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+
     def _check_inputs(self):
         """ Check that the players in the game have valid preferences, and in
         the case of projects and faculty: capacities. """
@@ -71,8 +199,8 @@ class StudentAllocation(Game):
         self._check_project_prefs()
         self._check_faculty_prefs()
 
-        self._check_project_capacities()
-        self._check_faculty_capacities()
+        self._check_init_project_capacities()
+        self._check_init_faculty_capacities()
 
     def _check_student_prefs(self):
         """ Make sure that each student's preference list is a subset of the
@@ -143,7 +271,7 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_project_capacities(self):
+    def _check_init_project_capacities(self):
         """ Check that each project has at least one space but no more than
         their faculty member. """
 
@@ -165,7 +293,7 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_faculty_capacities(self):
+    def _check_init_faculty_capacities(self):
         """ Check that each faculty member has sufficient spaces for their
         projects. """
 
@@ -191,6 +319,50 @@ class StudentAllocation(Game):
             raise Exception(*errors)
 
         return True
+
+
+def _check_student_unhappy(student, project):
+    """ Determine whether `student` is unhappy either because they are unmatched
+    or because they prefer `project` to their current matching. """
+
+    return student.matching is None or student.prefers(project,
+            student.matching)
+
+
+def _check_project_unhappy(project, student):
+    """ Determine whether `project` is unhappy because either:
+            - they and their faculty are under-subscribed;
+            - they are under-subscribed, their faculty is full, and either
+              `student` is in the faculty's matching or the faculty prefers
+              `student` to their worst current matching;
+            - `project` is full and their faculty prefers `student` to the worst
+              student in the matching of `project`.
+    """
+
+    faculty = project.faculty
+
+    project_undersubscribed = len(project.matching) < project.capacity
+    both_undersubscribed = (
+        project_undersubscribed and len(faculty.matching) < faculty.capacity
+    )
+
+    faculty_full = len(faculty.matching) == faculty.capacity
+    swap_available = (
+        student in faculty.matching or faculty.prefers(
+            student, faculty.get_worst_match()
+        )
+    )
+    
+    project_upsetting_faculty = (
+        len(project.matching) == project.capacity
+        and faculty.prefers(student, project.get_worst_match())
+    )
+
+    return (
+        both_undersubscribed
+        or (project_undersubscribed and faculty_full and swap_available)
+        or project_upsetting_faculty
+    )
 
 
 def unmatch_pair(student, project):
