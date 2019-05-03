@@ -2,7 +2,8 @@
 
 import pytest
 
-from matching import Matching, Player as Student
+from matching import Matching
+from matching import Player as Student
 from matching.games import StudentAllocation
 from matching.players import Faculty, Project
 
@@ -10,21 +11,11 @@ from .params import STUDENT_ALLOCATION, make_game
 
 
 @STUDENT_ALLOCATION
-def test_init(
-    student_names,
-    project_names,
-    faculty_names,
-    capacities,
-    seed,
-):
+def test_init(student_names, project_names, faculty_names, capacities, seed):
     """ Test that an instance of StudentAllocation is created correctly. """
 
     students, projects, faculty, game = make_game(
-        student_names,
-        project_names,
-        faculty_names,
-        capacities,
-        seed,
+        student_names, project_names, faculty_names, capacities, seed
     )
 
     assert game.students == students
@@ -44,8 +35,9 @@ def test_inputs_student_prefs(
     """ Test that each student's preference list is a subset of the available
     projects, and check that an Exception is raised if not. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     assert game._check_student_prefs()
 
@@ -63,8 +55,9 @@ def test_inputs_project_prefs(
     students that have ranked it, and check that an Exception is raised if not.
     """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     assert game._check_project_prefs()
 
@@ -82,8 +75,9 @@ def test_inputs_faculty_prefs(
     students that have ranked at least one project that they provide. Otherwise,
     check that an Exception is raised. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     assert game._check_faculty_prefs()
 
@@ -100,8 +94,9 @@ def test_inputs_project_capacities(
     """ Test that each project has at least one space but no more than its
     faculty member can offer. Otherwise, raise an Exception. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     assert game._check_init_project_capacities()
 
@@ -123,8 +118,9 @@ def test_inputs_faculty_capacities(
     largest project, but does not offer a surplus of spaces from their projects.
     Otherwise, raise an Exception. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     assert game._check_init_faculty_capacities()
 
@@ -166,8 +162,9 @@ def test_solve(student_names, project_names, faculty_names, capacities, seed):
 
 
 @STUDENT_ALLOCATION
-def test_check_validity(student_names, project_names, faculty_names, capacities,
-        seed):
+def test_check_validity(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Test that StudentAllocation finds a valid matching when the game is
     solved. """
 
@@ -180,13 +177,15 @@ def test_check_validity(student_names, project_names, faculty_names, capacities,
 
 
 @STUDENT_ALLOCATION
-def test_check_student_matching(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_check_student_matching(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Test that StudentAllocation recognises a valid matching requires a
     student to have a preference of their match, if they have one. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     game.solve()
     assert game._check_student_matching()
@@ -198,13 +197,15 @@ def test_check_student_matching(student_names, project_names, faculty_names,
 
 
 @STUDENT_ALLOCATION
-def test_check_project_matching(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_check_project_matching(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Test that StudentAllocation recognises a valid matching requires a
     project to have a preference of each of their matches, if they have any. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     game.solve()
     assert game._check_project_matching()
@@ -216,14 +217,16 @@ def test_check_project_matching(student_names, project_names, faculty_names,
 
 
 @STUDENT_ALLOCATION
-def test_check_faculty_matching(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_check_faculty_matching(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Test that StudentAllocation recognises a valid matching requires a
     faculty member to have a preference of each of their matches, if they have
     any. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     game.solve()
     assert game._check_faculty_matching()
@@ -235,13 +238,15 @@ def test_check_faculty_matching(student_names, project_names, faculty_names,
 
 
 @STUDENT_ALLOCATION
-def test_check_project_capacity(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_check_project_capacity(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Test that StudentAllocation recognises a valid matching requires all
     projects to not be over-subscribed. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     game.solve()
     assert game._check_project_capacity()
@@ -253,13 +258,15 @@ def test_check_project_capacity(student_names, project_names, faculty_names,
 
 
 @STUDENT_ALLOCATION
-def test_check_faculty_capacity(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_check_faculty_capacity(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Test that StudentAllocation recognises a valid matching requires all
     faculty members to not be over-subscribed. """
 
-    _, _, _, game = make_game(student_names, project_names, faculty_names,
-            capacities, seed)
+    _, _, _, game = make_game(
+        student_names, project_names, faculty_names, capacities, seed
+    )
 
     game.solve()
     assert game._check_faculty_capacity()

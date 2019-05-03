@@ -28,25 +28,17 @@ def get_possible_prefs(players):
     return possible_prefs
 
 
-def make_players(
-    student_names,
-    project_names,
-    faculty_names,
-    capacities,
-):
+def make_players(student_names, project_names, faculty_names, capacities):
     """ Given some names and capacities, make a set of players for SA. """
 
     students = [Student(name) for name in student_names]
     projects = [
-        Project(name, cap)
-        for name, cap in zip(project_names, capacities)
+        Project(name, cap) for name, cap in zip(project_names, capacities)
     ]
-    faculty = [
-        Faculty(name, capacity=None) for name in faculty_names
-    ]
+    faculty = [Faculty(name, capacity=None) for name in faculty_names]
 
     if len(students) > len(projects):
-        students = students[:len(projects)]
+        students = students[: len(projects)]
 
     for project in projects:
         project.set_faculty(np.random.choice(faculty))
@@ -76,21 +68,12 @@ def make_players(
     return students, projects, faculty
 
 
-def make_game(
-    student_names,
-    project_names,
-    faculty_names,
-    capacities,
-    seed,
-):
+def make_game(student_names, project_names, faculty_names, capacities, seed):
     """ Make all of the players and the game itself. """
 
     np.random.seed(seed)
     students, projects, faculty = make_players(
-        student_names,
-        project_names,
-        faculty_names,
-        capacities,
+        student_names, project_names, faculty_names, capacities
     )
     game = StudentAllocation(students, projects, faculty)
 
@@ -116,6 +99,8 @@ STUDENT_ALLOCATION = given(
         max_size=3,
         unique=True,
     ),
-    capacities=lists(integers(min_value=1, max_value=2), min_size=1, max_size=5),
+    capacities=lists(
+        integers(min_value=1, max_value=2), min_size=1, max_size=5
+    ),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )

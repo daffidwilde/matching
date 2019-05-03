@@ -58,8 +58,9 @@ class StudentAllocation(Game):
         faculty-optimal algorithm. """
 
         self._matching = Matching(
-            student_allocation(self.students, self.projects, self.faculty,
-                optimal)
+            student_allocation(
+                self.students, self.projects, self.faculty, optimal
+            )
         )
         return self.matching
 
@@ -82,10 +83,9 @@ class StudentAllocation(Game):
         for student in self.students:
             for project in self.projects:
                 if project in student.prefs:
-                    if (
-                        _check_student_unhappy(student, project)
-                        and _check_project_unhappy(project, student)
-                    ):
+                    if _check_student_unhappy(
+                        student, project
+                    ) and _check_project_unhappy(project, student):
                         blocking_pairs.append((student, project))
 
         return not any(blocking_pairs)
@@ -98,7 +98,7 @@ class StudentAllocation(Game):
             if (
                 student.matching is not None
                 and student.matching not in student.prefs
-                ):
+            ):
                 errors.append(
                     ValueError(
                         f"{student} is matched to {student.matching} but "
@@ -189,7 +189,6 @@ class StudentAllocation(Game):
             raise Exception(*errors)
 
         return True
-
 
     def _check_inputs(self):
         """ Check that the players in the game have valid preferences, and in
@@ -325,8 +324,9 @@ def _check_student_unhappy(student, project):
     """ Determine whether `student` is unhappy either because they are unmatched
     or because they prefer `project` to their current matching. """
 
-    return student.matching is None or student.prefers(project,
-            student.matching)
+    return student.matching is None or student.prefers(
+        project, student.matching
+    )
 
 
 def _check_project_unhappy(project, student):
@@ -347,15 +347,14 @@ def _check_project_unhappy(project, student):
     )
 
     faculty_full = len(faculty.matching) == faculty.capacity
-    swap_available = (
-        student in faculty.matching or faculty.prefers(
-            student, faculty.get_worst_match()
-        )
+    swap_available = student in faculty.matching or faculty.prefers(
+        student, faculty.get_worst_match()
     )
-    
-    project_upsetting_faculty = (
-        len(project.matching) == project.capacity
-        and faculty.prefers(student, project.get_worst_match())
+
+    project_upsetting_faculty = len(
+        project.matching
+    ) == project.capacity and faculty.prefers(
+        student, project.get_worst_match()
     )
 
     return (

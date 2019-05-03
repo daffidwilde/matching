@@ -6,17 +6,21 @@ from matching.games import student_allocation
 
 from .params import STUDENT_ALLOCATION, make_players
 
+
 @STUDENT_ALLOCATION
-def test_student_optimal(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_student_optimal(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Verify that the student allocation algorithm produces a valid,
     student-optimal solution to an instance of SA. """
 
     np.random.seed(seed)
-    students, projects, faculty = make_players(student_names, project_names,
-            faculty_names, capacities)
-    matching = student_allocation(students, projects, faculty,
-            optimal="student")
+    students, projects, faculty = make_players(
+        student_names, project_names, faculty_names, capacities
+    )
+    matching = student_allocation(
+        students, projects, faculty, optimal="student"
+    )
 
     assert set(projects) == set(matching.keys())
     assert all(
@@ -34,16 +38,19 @@ def test_student_optimal(student_names, project_names, faculty_names,
 
 
 @STUDENT_ALLOCATION
-def test_faculty_optimal(student_names, project_names, faculty_names,
-        capacities, seed):
+def test_faculty_optimal(
+    student_names, project_names, faculty_names, capacities, seed
+):
     """ Verify that the student allocation algorithm produces a valid,
     faculty-optimal solution to an instance of SA. """
 
     np.random.seed(seed)
-    students, projects, faculty = make_players(student_names, project_names,
-            faculty_names, capacities)
-    matching = student_allocation(students, projects, faculty,
-            optimal="faculty")
+    students, projects, faculty = make_players(
+        student_names, project_names, faculty_names, capacities
+    )
+    matching = student_allocation(
+        students, projects, faculty, optimal="faculty"
+    )
 
     assert set(projects) == set(matching.keys())
     assert all(
