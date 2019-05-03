@@ -15,10 +15,10 @@ class Project(Hospital):
 
     Attributes
     ==========
-    faculty : `Faculty`
-        The faculty player that runs the project. Defaults to `None`.
+    supervisor : `Supervisor`
+        The Supervisor player that runs the project. Defaults to `None`.
     prefs : `list`
-        A list of `Player` instances in the order of the project's faculty
+        A list of `Player` instances in the order of the project's supervisor
         preferences.
     pref_names : `list`
         A list of the names in `prefs`. Updates with `prefs`.
@@ -30,38 +30,38 @@ class Project(Hospital):
     def __init__(self, name, capacity):
 
         super().__init__(name, capacity)
-        self.faculty = None
+        self.supervisor = None
 
-    def set_faculty(self, faculty):
-        """ Set the project's faculty member, add the project to their list
+    def set_supervisor(self, supervisor):
+        """ Set the project's supervisor member, add the project to their list
         of active projects and increment their capacity. """
 
-        self.faculty = faculty
-        if self not in faculty.projects:
-            faculty.projects.append(self)
+        self.supervisor = supervisor
+        if self not in supervisor.projects:
+            supervisor.projects.append(self)
 
     def match(self, student):
-        """ Match the project to a student, and update the project's faculty's
+        """ Match the project to a student, and update the project's supervisor's
         matching, too. """
 
         self.matching.append(student)
         self.matching.sort(key=self.prefs.index)
-        self.faculty.match(student)
+        self.supervisor.match(student)
 
     def unmatch(self, student):
         """ Break the matching between a project and some student, and the
-        matching between them and the faculty member. """
+        matching between them and the supervisor member. """
 
         matching = self.matching[:]
         matching.remove(student)
         self.matching = matching
-        self.faculty.unmatch(student)
+        self.supervisor.unmatch(student)
 
     def forget(self, student):
         """ Remove a student from the preference list of the project and its
-        faculty member. """
+        supervisor member. """
 
         prefs = self.prefs[:]
         prefs.remove(student)
         self.prefs = prefs
-        self.faculty.forget(student)
+        self.supervisor.forget(student)

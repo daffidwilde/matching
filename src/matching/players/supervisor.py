@@ -1,28 +1,28 @@
-""" The Faculty class for instances of SA. """
+""" The supervisor class for instances of SA. """
 
 from .hospital import Hospital
 
 
-class Faculty(Hospital):
-    """ A class to represent a faculty member in an instance of SA.
+class Supervisor(Hospital):
+    """ A class to represent a supervisor in an instance of SA.
 
     Parameters
     ==========
     name : `object`
         An identifier. This should be unique and descriptive.
     capacity : `int`
-        The maximum number of matches the faculty member can have.
+        The maximum number of matches the supervisor can have.
 
     Attributes
     ==========
     projects : `list`
-        The projects that the faculty member runs. Defaults to an empty list.
+        The projects that the supervisor runs. Defaults to an empty list.
     prefs : `list`
         A list of `Player` instances in the order of preference.
     pref_names : `list`
         A list of the names in `prefs`. Updates with `prefs`.
     matching : `list`
-        The current matches of the faculty member. An empty list if currently
+        The current matches of the supervisor. An empty list if currently
         unsubscribed, and updated through its project matching updates.
     """
 
@@ -32,7 +32,7 @@ class Faculty(Hospital):
         self.projects = []
 
     def set_prefs(self, students):
-        """ Set the preference of the faculty member, and pass those on to the
+        """ Set the preference of the supervisor, and pass those on to the
         projects. """
 
         self.prefs = students
@@ -45,7 +45,7 @@ class Faculty(Hospital):
             project.set_prefs(acceptable)
 
     def forget(self, student):
-        """ Only forget a student if it is not ranked by any of the faculty's
+        """ Only forget a student if it is not ranked by any of the supervisor's
         projects. """
 
         if not any([student in project.prefs for project in self.projects]):
@@ -54,8 +54,8 @@ class Faculty(Hospital):
             self.prefs = prefs
 
     def get_favourite(self):
-        """ Find the faculty member's favourite student that it is not currently
-        matched to, but has a preference of, one of the faculty's
+        """ Find the supervisor's favourite student that it is not currently
+        matched to, but has a preference of, one of the supervisor's
         under-subscribed projects. Also return the student's favourite
         under-subscribed project. """
 
@@ -63,7 +63,7 @@ class Faculty(Hospital):
             for student in self.prefs:
                 for project in student.prefs:
                     if (
-                        project.faculty == self
+                        project.supervisor == self
                         and student not in project.matching
                         and len(project.matching) < project.capacity
                     ):

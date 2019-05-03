@@ -8,7 +8,7 @@ from hypothesis.strategies import integers, lists, sampled_from
 
 from matching import Player as Student
 from matching.games import StudentAllocation
-from matching.players import Faculty, Project
+from matching.players import Project, Supervisor
 
 
 def get_possible_prefs(players):
@@ -28,56 +28,58 @@ def get_possible_prefs(players):
     return possible_prefs
 
 
-def make_players(student_names, project_names, faculty_names, capacities):
+def make_players(student_names, project_names, supervisor_names, capacities):
     """ Given some names and capacities, make a set of players for SA. """
 
     students = [Student(name) for name in student_names]
     projects = [
         Project(name, cap) for name, cap in zip(project_names, capacities)
     ]
-    faculty = [Faculty(name, capacity=None) for name in faculty_names]
+    supervisors = [Supervisor(name, capacity=None) for name in supervisor_names]
 
     if len(students) > len(projects):
         students = students[: len(projects)]
 
     for project in projects:
-        project.set_faculty(np.random.choice(faculty))
+        project.set_supervisor(np.random.choice(supervisors))
 
-    faculty = [facult for facult in faculty if facult.projects]
-    for facult in faculty:
-        capacities = [proj.capacity for proj in facult.projects]
+    supervisors = [
+        supervisor for supervisor in supervisors if supervisor.projects
+    ]
+    for supervisor in supervisors:
+        capacities = [proj.capacity for proj in supervisor.projects]
         min_cap, max_cap = max(capacities), sum(capacities)
-        facult.capacity = np.random.randint(min_cap, max_cap + 1)
+        supervisor.capacity = np.random.randint(min_cap, max_cap + 1)
 
     possible_prefs = get_possible_prefs(projects)
-    logged_prefs = {facult: [] for facult in faculty}
+    logged_prefs = {supervisor: [] for supervisor in supervisors}
     for student in students:
         prefs = possible_prefs[np.random.choice(range(len(possible_prefs)))]
         student.set_prefs(prefs)
         for project in prefs:
-            facult = project.faculty
-            if student not in logged_prefs[facult]:
-                logged_prefs[facult].append(student)
+            supervisor = project.supervisor
+            if student not in logged_prefs[supervisor]:
+                logged_prefs[supervisor].append(student)
 
-    for facult, studs in logged_prefs.items():
-        facult.set_prefs(np.random.permutation(studs).tolist())
+    for supervisor, studs in logged_prefs.items():
+        supervisor.set_prefs(np.random.permutation(studs).tolist())
 
     projects = [p for p in projects if p.prefs]
-    faculty = [f for f in faculty if f.prefs]
+    supervisors = [f for f in supervisors if f.prefs]
 
-    return students, projects, faculty
+    return students, projects, supervisors
 
 
-def make_game(student_names, project_names, faculty_names, capacities, seed):
+def make_game(student_names, project_names, supervisor_names, capacities, seed):
     """ Make all of the players and the game itself. """
 
     np.random.seed(seed)
-    students, projects, faculty = make_players(
-        student_names, project_names, faculty_names, capacities
+    students, projects, supervisors = make_players(
+        student_names, project_names, supervisor_names, capacities
     )
-    game = StudentAllocation(students, projects, faculty)
+    game = StudentAllocation(students, projects, supervisors)
 
-    return students, projects, faculty, game
+    return students, projects, supervisors, game
 
 
 STUDENT_ALLOCATION = given(
@@ -88,12 +90,12 @@ STUDENT_ALLOCATION = given(
         unique=True,
     ),
     project_names=lists(
-        elements=sampled_from(["J", "K", "L", "M", "N"]),
+        elements=sampled_from(["P", "Q", "R", "S", "T"]),
         min_size=5,
         max_size=5,
         unique=True,
     ),
-    faculty_names=lists(
+    supervisor_names=lists(
         elements=sampled_from(["X", "Y", "Z"]),
         min_size=1,
         max_size=3,

@@ -5,38 +5,38 @@ import pytest
 from matching import Matching
 from matching import Player as Student
 from matching.games import StudentAllocation
-from matching.players import Faculty, Project
+from matching.players import Project, Supervisor
 
 from .params import STUDENT_ALLOCATION, make_game
 
 
 @STUDENT_ALLOCATION
-def test_init(student_names, project_names, faculty_names, capacities, seed):
+def test_init(student_names, project_names, supervisor_names, capacities, seed):
     """ Test that an instance of StudentAllocation is created correctly. """
 
-    students, projects, faculty, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+    students, projects, supervisors, game = make_game(
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     assert game.students == students
     assert game.projects == projects
-    assert game.faculty == faculty
+    assert game.supervisors == supervisors
     assert all([student.matching is None for student in game.students])
     assert all([project.matching == [] for project in game.projects])
-    assert all([facult.matching == [] for facult in game.faculty])
+    assert all([supervisor.matching == [] for supervisor in game.supervisors])
     assert game.matching is None
     assert game.blocking_pairs is None
 
 
 @STUDENT_ALLOCATION
 def test_inputs_student_prefs(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that each student's preference list is a subset of the available
     projects, and check that an Exception is raised if not. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     assert game._check_student_prefs()
@@ -49,14 +49,14 @@ def test_inputs_student_prefs(
 
 @STUDENT_ALLOCATION
 def test_inputs_project_prefs(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test th]t each project's preference list is a permutation of the
+    """ Test that each project's preference list is a permutation of the
     students that have ranked it, and check that an Exception is raised if not.
     """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     assert game._check_project_prefs()
@@ -68,34 +68,34 @@ def test_inputs_project_prefs(
 
 
 @STUDENT_ALLOCATION
-def test_inputs_faculty_prefs(
-    student_names, project_names, faculty_names, capacities, seed
+def test_inputs_supervisor_prefs(
+    student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that each faculty member's preference list is a permutation of the
+    """ Test that each supervisor's preference list is a permutation of the
     students that have ranked at least one project that they provide. Otherwise,
     check that an Exception is raised. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
-    assert game._check_faculty_prefs()
+    assert game._check_supervisor_prefs()
 
-    faculty = game.faculty[0]
-    faculty.prefs = [Student("foo")]
+    supervisor = game.supervisors[0]
+    supervisor.prefs = [Student("foo")]
     with pytest.raises(Exception):
-        game._check_faculty_prefs()
+        game._check_supervisor_prefs()
 
 
 @STUDENT_ALLOCATION
 def test_inputs_project_capacities(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that each project has at least one space but no more than its
-    faculty member can offer. Otherwise, raise an Exception. """
+    supervisor can offer. Otherwise, raise an Exception. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     assert game._check_init_project_capacities()
@@ -105,42 +105,44 @@ def test_inputs_project_capacities(
     with pytest.raises(Exception):
         game._check_init_project_capacities()
 
-    project.capacity = project.faculty.capacity + 1
+    project.capacity = project.supervisor.capacity + 1
     with pytest.raises(Exception):
         game._check_init_project_capacities()
 
 
 @STUDENT_ALLOCATION
-def test_inputs_faculty_capacities(
-    student_names, project_names, faculty_names, capacities, seed
+def test_inputs_supervisor_capacities(
+    student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that each faculty member has enough space to accommodate their
-    largest project, but does not offer a surplus of spaces from their projects.
+    """ Test that each supervisor has enough space to accommodate their largest
+    project, but does not offer a surplus of spaces from their projects.
     Otherwise, raise an Exception. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
-    assert game._check_init_faculty_capacities()
+    assert game._check_init_supervisor_capacities()
 
-    faculty = game.faculty[0]
-    faculty.capacity = 0
+    supervisor = game.supervisors[0]
+    supervisor.capacity = 0
     with pytest.raises(Exception):
-        game._check_init_faculty_capacities()
+        game._check_init_supervisor_capacities()
 
-    faculty.capacity = 1e6
+    supervisor.capacity = 1e6
     with pytest.raises(Exception):
-        game._check_init_faculty_capacities()
+        game._check_init_supervisor_capacities()
 
 
 @STUDENT_ALLOCATION
-def test_solve(student_names, project_names, faculty_names, capacities, seed):
+def test_solve(
+    student_names, project_names, supervisor_names, capacities, seed
+):
     """ Test that StudentAllocation can solve games correctly. """
 
-    for optimal in ["student", "faculty"]:
+    for optimal in ["student", "supervisor"]:
         students, projects, _, game = make_game(
-            student_names, project_names, faculty_names, capacities, seed
+            student_names, project_names, supervisor_names, capacities, seed
         )
 
         matching = game.solve(optimal)
@@ -154,8 +156,8 @@ def test_solve(student_names, project_names, faculty_names, capacities, seed):
         )
 
         for student in matched_students:
-            faculty = student.matching.faculty
-            assert student in faculty.matching
+            supervisor = student.matching.supervisor
+            assert student in supervisor.matching
 
         for student in set(students) - set(matched_students):
             assert student.matching is None
@@ -163,13 +165,13 @@ def test_solve(student_names, project_names, faculty_names, capacities, seed):
 
 @STUDENT_ALLOCATION
 def test_check_validity(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation finds a valid matching when the game is
     solved. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     game.solve()
@@ -178,13 +180,13 @@ def test_check_validity(
 
 @STUDENT_ALLOCATION
 def test_check_student_matching(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires a
     student to have a preference of their match, if they have one. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     game.solve()
@@ -198,13 +200,13 @@ def test_check_student_matching(
 
 @STUDENT_ALLOCATION
 def test_check_project_matching(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires a
     project to have a preference of each of their matches, if they have any. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     game.solve()
@@ -217,35 +219,35 @@ def test_check_project_matching(
 
 
 @STUDENT_ALLOCATION
-def test_check_faculty_matching(
-    student_names, project_names, faculty_names, capacities, seed
+def test_check_supervisor_matching(
+    student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation recognises a valid matching requires a
-    faculty member to have a preference of each of their matches, if they have
+    """ Test that StudentAllocation recognises a valid matching requires each
+    supervisor to have a preference of each of their matches, if they have
     any. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     game.solve()
-    assert game._check_faculty_matching()
+    assert game._check_supervisor_matching()
 
-    faculty = game.faculty[0]
-    faculty.matching.append(Student(name="foo"))
+    supervisor = game.supervisors[0]
+    supervisor.matching.append(Student(name="foo"))
     with pytest.raises(Exception):
-        game._check_faculty_matching()
+        game._check_supervisor_matching()
 
 
 @STUDENT_ALLOCATION
 def test_check_project_capacity(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires all
     projects to not be over-subscribed. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     game.solve()
@@ -258,23 +260,23 @@ def test_check_project_capacity(
 
 
 @STUDENT_ALLOCATION
-def test_check_faculty_capacity(
-    student_names, project_names, faculty_names, capacities, seed
+def test_check_supervisor_capacity(
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires all
-    faculty members to not be over-subscribed. """
+    supervisors to not be over-subscribed. """
 
     _, _, _, game = make_game(
-        student_names, project_names, faculty_names, capacities, seed
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
     game.solve()
-    assert game._check_faculty_capacity()
+    assert game._check_supervisor_capacity()
 
-    faculty = game.faculty[0]
-    faculty.matching = range(faculty.capacity + 1)
+    supervisor = game.supervisors[0]
+    supervisor.matching = range(supervisor.capacity + 1)
     with pytest.raises(Exception):
-        game._check_faculty_capacity()
+        game._check_supervisor_capacity()
 
 
 def test_check_stability():
@@ -283,14 +285,14 @@ def test_check_stability():
 
     students = [Student("A"), Student("B"), Student("C")]
     projects = [Project("P", 2), Project("Q", 2)]
-    faculty = [Faculty("X", 2), Faculty("Y", 2)]
+    supervisors = [Supervisor("X", 2), Supervisor("Y", 2)]
 
     a, b, c = students
     p, q = projects
-    x, y = faculty
+    x, y = supervisors
 
-    p.set_faculty(x)
-    q.set_faculty(y)
+    p.set_supervisor(x)
+    q.set_supervisor(y)
 
     a.set_prefs([p, q])
     b.set_prefs([q])
@@ -299,7 +301,7 @@ def test_check_stability():
     x.set_prefs([c, a])
     y.set_prefs([a, b, c])
 
-    game = StudentAllocation(students, projects, faculty)
+    game = StudentAllocation(students, projects, supervisors)
 
     matching = game.solve()
     assert game.check_stability()

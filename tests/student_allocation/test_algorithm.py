@@ -9,17 +9,17 @@ from .params import STUDENT_ALLOCATION, make_players
 
 @STUDENT_ALLOCATION
 def test_student_optimal(
-    student_names, project_names, faculty_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Verify that the student allocation algorithm produces a valid,
     student-optimal solution to an instance of SA. """
 
     np.random.seed(seed)
-    students, projects, faculty = make_players(
-        student_names, project_names, faculty_names, capacities
+    students, projects, supervisors = make_players(
+        student_names, project_names, supervisor_names, capacities
     )
     matching = student_allocation(
-        students, projects, faculty, optimal="student"
+        students, projects, supervisors, optimal="student"
     )
 
     assert set(projects) == set(matching.keys())
@@ -38,18 +38,18 @@ def test_student_optimal(
 
 
 @STUDENT_ALLOCATION
-def test_faculty_optimal(
-    student_names, project_names, faculty_names, capacities, seed
+def test_supervisor_optimal(
+    student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Verify that the student allocation algorithm produces a valid,
-    faculty-optimal solution to an instance of SA. """
+    supervisor-optimal solution to an instance of SA. """
 
     np.random.seed(seed)
-    students, projects, faculty = make_players(
-        student_names, project_names, faculty_names, capacities
+    students, projects, supervisors = make_players(
+        student_names, project_names, supervisor_names, capacities
     )
     matching = student_allocation(
-        students, projects, faculty, optimal="faculty"
+        students, projects, supervisors, optimal="supervisor"
     )
 
     assert set(projects) == set(matching.keys())
@@ -62,9 +62,9 @@ def test_faculty_optimal(
         ]
     )
 
-    for facult in faculty:
+    for supervisor in supervisors:
         old_idx = -np.infty
-        for student in facult.matching:
-            idx = facult.prefs.index(student)
+        for student in supervisor.matching:
+            idx = supervisor.prefs.index(student)
             assert idx >= old_idx
             old_idx = idx

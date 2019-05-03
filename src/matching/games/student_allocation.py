@@ -15,12 +15,12 @@ class StudentAllocation(Game):
         The students in the game. Each student must rank a subset of the
         projects.
     projects : `list`
-        The projects in the game. Each project has a faculty member associated
+        The projects in the game. Each project has a supervisor associated
         with it that governs its preferences.
-    faculty : `list`
-        The faculty members in the game. Each faculty member oversees a distinct
-        subset of projects and ranks all of those students that have ranked at
-        least one of its projects.
+    supervisors : `list`
+        The supervisor in the game. Each supervisor oversees a distinct subset
+        of projects and ranks all of those students that have ranked at least
+        one of its projects.
 
     Attributes
     ==========
@@ -34,32 +34,32 @@ class StudentAllocation(Game):
             - either the student is unmatched, or they prefer the project to
               their current project;
             - either:
-                - the project or its faculty is under-subscribed, or
-                - the project is under-subscribed and the faculty is at
+                - the project or its supervisor is under-subscribed, or
+                - the project is under-subscribed and the supervisor is at
                   capacity, and the student is matched to a project offered by
-                  the faculty or the faculty prefers the student to its worst
+                  the supervisor or the supervisor prefers the student to its worst
                   currently matched student, or
-                - the project is at capacity and its faculty prefers the student
+                - the project is at capacity and its supervisor prefers the student
                   to its worst currently matched student.
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
-    def __init__(self, students, projects, faculty):
+    def __init__(self, students, projects, supervisors):
 
         self.students = students
         self.projects = projects
-        self.faculty = faculty
+        self.supervisors = supervisors
         super().__init__()
 
         self._check_inputs()
 
     def solve(self, optimal="student"):
         """ Solve the instance of SA using either the student- or
-        faculty-optimal algorithm. """
+        supervisor-optimal algorithm. """
 
         self._matching = Matching(
             student_allocation(
-                self.students, self.projects, self.faculty, optimal
+                self.students, self.projects, self.supervisors, optimal
             )
         )
         return self.matching
@@ -70,8 +70,8 @@ class StudentAllocation(Game):
         self._check_student_matching()
         self._check_project_capacity()
         self._check_project_matching()
-        self._check_faculty_capacity()
-        self._check_faculty_matching()
+        self._check_supervisor_capacity()
+        self._check_supervisor_matching()
 
         return True
 
@@ -150,17 +150,17 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_faculty_capacity(self):
-        """ Check that no faculty member is over-subscribed. """
+    def _check_supervisor_capacity(self):
+        """ Check that no supervisor is over-subscribed. """
 
         errors = []
 
-        for faculty in self.faculty:
-            if len(faculty.matching) > faculty.capacity:
+        for supervisor in self.supervisors:
+            if len(supervisor.matching) > supervisor.capacity:
                 errors.append(
                     ValueError(
-                        f"{faculty} is matched to {faculty.matching} which "
-                        f"if over their capacity of {faculty.capacity}."
+                        f"{supervisor} is matched to {supervisor.matching} which "
+                        f"if over their capacity of {supervisor.capacity}."
                     )
                 )
 
@@ -169,19 +169,19 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_faculty_matching(self):
-        """ Check that no faculty member is matched to an unacceptable student.
+    def _check_supervisor_matching(self):
+        """ Check that no supervisor is matched to an unacceptable student.
         """
 
         errors = []
-        for faculty in self.faculty:
-            for student in faculty.matching:
-                if student not in faculty.prefs:
+        for supervisor in self.supervisors:
+            for student in supervisor.matching:
+                if student not in supervisor.prefs:
                     errors.append(
                         ValueError(
-                            f"{faculty} has {student} in their matching but "
+                            f"{supervisor} has {student} in their matching but "
                             "they do not appear in their preference list: "
-                            f"{faculty.prefs}."
+                            f"{supervisor.prefs}."
                         )
                     )
 
@@ -192,14 +192,14 @@ class StudentAllocation(Game):
 
     def _check_inputs(self):
         """ Check that the players in the game have valid preferences, and in
-        the case of projects and faculty: capacities. """
+        the case of projects and supervisor: capacities. """
 
         self._check_student_prefs()
         self._check_project_prefs()
-        self._check_faculty_prefs()
+        self._check_supervisor_prefs()
 
         self._check_init_project_capacities()
-        self._check_init_faculty_capacities()
+        self._check_init_supervisor_capacities()
 
     def _check_student_prefs(self):
         """ Make sure that each student's preference list is a subset of the
@@ -243,24 +243,27 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_faculty_prefs(self):
-        """ Make sure that each faculty member ranks all and only those students
+    def _check_supervisor_prefs(self):
+        """ Make sure that each supervisor ranks all and only those students
         that ranked at least one project that they offer. """
 
         errors = []
-        for faculty in self.faculty:
+        for supervisor in self.supervisors:
             students_that_ranked = [
                 student
                 for student in self.students
                 if any(
-                    [project in student.prefs for project in faculty.projects]
+                    [
+                        project in student.prefs
+                        for project in supervisor.projects
+                    ]
                 )
             ]
-            if set(faculty.prefs) != set(students_that_ranked):
+            if set(supervisor.prefs) != set(students_that_ranked):
                 errors.append(
                     ValueError(
-                        f"{faculty} has not ranked the students that ranked at "
-                        f"least one of its projects: {set(faculty.prefs)} != "
+                        f"{supervisor} has not ranked the students that ranked at "
+                        f"least one of its projects: {set(supervisor.prefs)} != "
                         f"{set(students_that_ranked)}"
                     )
                 )
@@ -272,13 +275,13 @@ class StudentAllocation(Game):
 
     def _check_init_project_capacities(self):
         """ Check that each project has at least one space but no more than
-        their faculty member. """
+        their supervisor member. """
 
         errors = []
         for project in self.projects:
             if (
                 project.capacity < 1
-                or project.capacity > project.faculty.capacity
+                or project.capacity > project.supervisor.capacity
             ):
                 errors.append(
                     ValueError(
@@ -292,24 +295,24 @@ class StudentAllocation(Game):
 
         return True
 
-    def _check_init_faculty_capacities(self):
-        """ Check that each faculty member has sufficient spaces for their
+    def _check_init_supervisor_capacities(self):
+        """ Check that each supervisor has sufficient spaces for their
         projects. """
 
         errors = []
-        for faculty in self.faculty:
-            project_capacities = [proj.capacity for proj in faculty.projects]
-            if faculty.capacity < max(project_capacities):
+        for supervisor in self.supervisors:
+            project_capacities = [proj.capacity for proj in supervisor.projects]
+            if supervisor.capacity < max(project_capacities):
                 errors.append(
                     ValueError(
-                        f"{faculty} does not have enough space to provide for "
+                        f"{supervisor} does not have enough space to provide for "
                         "their largest project"
                     )
                 )
-            elif faculty.capacity > sum(project_capacities):
+            elif supervisor.capacity > sum(project_capacities):
                 errors.append(
                     ValueError(
-                        f"{faculty} can offer more spaces than their projects "
+                        f"{supervisor} can offer more spaces than their projects "
                         "can provide"
                     )
                 )
@@ -331,36 +334,37 @@ def _check_student_unhappy(student, project):
 
 def _check_project_unhappy(project, student):
     """ Determine whether `project` is unhappy because either:
-            - they and their faculty are under-subscribed;
-            - they are under-subscribed, their faculty is full, and either
-              `student` is in the faculty's matching or the faculty prefers
+            - they and their supervisor are under-subscribed;
+            - they are under-subscribed, their supervisor is full, and either
+              `student` is in the supervisor's matching or the supervisor prefers
               `student` to their worst current matching;
-            - `project` is full and their faculty prefers `student` to the worst
+            - `project` is full and their supervisor prefers `student` to the worst
               student in the matching of `project`.
     """
 
-    faculty = project.faculty
+    supervisor = project.supervisor
 
     project_undersubscribed = len(project.matching) < project.capacity
     both_undersubscribed = (
-        project_undersubscribed and len(faculty.matching) < faculty.capacity
+        project_undersubscribed
+        and len(supervisor.matching) < supervisor.capacity
     )
 
-    faculty_full = len(faculty.matching) == faculty.capacity
-    swap_available = student in faculty.matching or faculty.prefers(
-        student, faculty.get_worst_match()
+    supervisor_full = len(supervisor.matching) == supervisor.capacity
+    swap_available = student in supervisor.matching or supervisor.prefers(
+        student, supervisor.get_worst_match()
     )
 
-    project_upsetting_faculty = len(
+    project_upsetting_supervisor = len(
         project.matching
-    ) == project.capacity and faculty.prefers(
+    ) == project.capacity and supervisor.prefers(
         student, project.get_worst_match()
     )
 
     return (
         both_undersubscribed
-        or (project_undersubscribed and faculty_full and swap_available)
-        or project_upsetting_faculty
+        or (project_undersubscribed and supervisor_full and swap_available)
+        or project_upsetting_supervisor
     )
 
 
@@ -371,10 +375,10 @@ def unmatch_pair(student, project):
     project.unmatch(student)
 
 
-def student_allocation(students, projects, faculty, optimal="student"):
+def student_allocation(students, projects, supervisors, optimal="student"):
     """ Solve an instance of SA by treating it as a bi-level HR. A unique,
     stable and optimal matching is found for the given set of students, projects
-    and faculty. The optimality of the matching is found with respect to one
+    and supervisor. The optimality of the matching is found with respect to one
     party and is subsequently the worst stable matching for the other.
 
     Parameters
@@ -383,15 +387,15 @@ def student_allocation(students, projects, faculty, optimal="student"):
         The students in the game. Each student must rank a subset of the
         elements of `projects`.
     projects : `list`
-        The projects in the game. Each project is offered by a member of
-        `faculty` that governs its preferences.
-    faculty : `list`)`
-        The faculty in the game. Each member of the faculty offers a distinct
+        The projects in the game. Each project is offered by a of
+        `supervisor` that governs its preferences.
+    supervisor : `list`)`
+        The supervisor in the game. Each of the supervisor offers a distinct
         subset of `projects` and ranks all the students that have ranked at
         least one of these projects.
     optimal : `str`, optional
         Which party the matching should be optimised for. Must be one of
-        `"student"` and `"faculty"`. Defaults to `"student"`.
+        `"student"` and `"supervisor"`. Defaults to `"student"`.
 
     Returns
     =======
@@ -402,20 +406,20 @@ def student_allocation(students, projects, faculty, optimal="student"):
 
     if optimal == "student":
         return student_optimal(students, projects)
-    if optimal == "faculty":
-        return faculty_optimal(projects, faculty)
+    if optimal == "supervisor":
+        return supervisor_optimal(projects, supervisors)
 
 
 def student_optimal(students, projects):
     """ Solve the instance of SA to be student-optimal. The algorithm is as
     follows:
 
-        0. Set all students to be unassigned, and every project (and faculty
-        member) to be totally unsubscribed.
+        0. Set all students to be unassigned, and every project (and supervisor)
+        to be totally unsubscribed.
 
         1. Take any student, :math:`s`, that is unassigned and has a non-empty
         preference list, and consider their most preferred project, :math:`p`.
-        Let :math:`f` denote the faculty member that offers :math:`p`. Assign
+        Let :math:`f` denote the supervisor that offers :math:`p`. Assign
         :math:`s` to be matched to :math:`p` (and thus :math:`f`).
 
         2. If :math:`p` is now over-subscribed, find its worst current match,
@@ -443,7 +447,7 @@ def student_optimal(students, projects):
 
         student = free_students.pop()
         project = student.get_favourite()
-        faculty = project.faculty
+        supervisor = project.supervisor
 
         match_pair(student, project)
 
@@ -452,8 +456,8 @@ def student_optimal(students, projects):
             unmatch_pair(worst, project)
             free_students.append(worst)
 
-        elif len(faculty.matching) > faculty.capacity:
-            worst = faculty.get_worst_match()
+        elif len(supervisor.matching) > supervisor.capacity:
+            worst = supervisor.get_worst_match()
             worst_project = worst.matching
             unmatch_pair(worst, worst_project)
             free_students.append(worst)
@@ -465,17 +469,17 @@ def student_optimal(students, projects):
                 if not successor.prefs:
                     free_students.remove(successor)
 
-        if len(faculty.matching) == faculty.capacity:
-            successors = faculty.get_successors()
+        if len(supervisor.matching) == supervisor.capacity:
+            successors = supervisor.get_successors()
             for successor in successors:
 
-                faculty_projects = [
+                supervisor_projects = [
                     project
-                    for project in faculty.projects
+                    for project in supervisor.projects
                     if project in successor.prefs
                 ]
 
-                for project in faculty_projects:
+                for project in supervisor_projects:
                     delete_pair(project, successor)
                 if not successor.prefs:
                     free_students.remove(successor)
@@ -483,19 +487,19 @@ def student_optimal(students, projects):
     return {p: p.matching for p in projects}
 
 
-def faculty_optimal(projects, faculty):
-    """ Solve the instance of SA to be faculty-optimal. The algorithm is as
+def supervisor_optimal(projects, supervisors):
+    """ Solve the instance of SA to be supervisor-optimal. The algorithm is as
     follows:
 
-        0. Set all students to be unassigned, and every project (and faculty
-        member) to be totally unsubscribed.
+        0. Set all students to be unassigned, and every project (and supervisor)
+        to be totally unsubscribed.
 
-        1. Take any faculty member, :math:`f`, that is under-subscribed and
+        1. Take any supervisor member, :math:`f`, that is under-subscribed and
         whose preference list contains at least one student that is not
         currently matched to at least one acceptable (though currently
-        under-subscribed) project offered by :math:`f`. Consider the faculty
-        member's most preferred such student, :math:`s`, and that student's most
-        preferred such project, :math:`p`.
+        under-subscribed) project offered by :math:`f`. Consider the
+        supervisor's most preferred such student, :math:`s`, and that student's
+        most preferred such project, :math:`p`.
 
         2. If :math:`s` is matched to some other project, :math:`p'`, then
         unmatch them. In any case, match :math:`s` and :math:`p` (and thus
@@ -504,14 +508,14 @@ def faculty_optimal(projects, faculty):
         3. For each successor, :math:`p'`, to :math:`p` in the preference list
         of :math:`s`, delete the pair :math:`(p', s)` from the game.
 
-        4. Go to 1 until there are no such lecturers, then end.
+        4. Go to 1 until there are no such supervisors, then end.
     """
 
-    free_faculty = faculty[:]
-    while free_faculty:
+    free_supervisors = supervisors[:]
+    while free_supervisors:
 
-        facult = free_faculty.pop()
-        student, project = facult.get_favourite()
+        supervisor = free_supervisors.pop()
+        student, project = supervisor.get_favourite()
 
         if student.matching:
             curr_match = student.matching
@@ -523,6 +527,10 @@ def faculty_optimal(projects, faculty):
         for successor in successors:
             delete_pair(student, successor)
 
-        free_faculty = [f for f in faculty if f.get_favourite() is not None]
+        free_supervisors = [
+            supervisor
+            for supervisor in supervisors
+            if supervisor.get_favourite() is not None
+        ]
 
     return {p: p.matching for p in projects}
