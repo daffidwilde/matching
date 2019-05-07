@@ -1,4 +1,4 @@
-""" A player class with methods for finding and forgetting other players. """
+""" The base Player class for use in various games. """
 
 
 class Player:
@@ -8,112 +8,67 @@ class Player:
     ==========
     name : `object`
         An identifier. This should be unique and descriptive.
-    pref_names : `list` or `tuple`
-        A list, or tuple, ranking the elements of the other set by
-        their names.
-    capacity : `int`, optional
-        The maximum number of matches the player can have at once. If not
-        specified, defaults to 1.
 
     Attributes
     ==========
-    matching : `Player` or `list` of `Player` instances
-        The current match(es) to the player. This is initialised as `None` or an
-        empty list (depending on the type of game) and will remain that way at
-        least until the player's game is solved.
+    prefs : `list`
+        A list of `Player` instances in order of the player's preferences.
+        Defaults to `None` and is updated using the `set_prefs` method.
+    pref_names : `list`
+        A list the names in `prefs`. Updates with `prefs`.
+    matching : `Player` or `None`
+        The current match of the player. `None` if not currently matched.
     """
 
-    def __init__(self, name, pref_names, capacity=1):
+    def __init__(self, name):
 
         self.name = name
-        self.pref_names = list(pref_names)
-        self._pref_names = pref_names
-        self.capacity = capacity
+        self.prefs = None
+        self.pref_names = None
         self.matching = None
-        if self.capacity > 1:
-            self.matching = []
 
     def __repr__(self):
 
         return str(self.name)
 
-    def get_favourite_name(self):
-        """ Get the player's favourite name. """
+    def set_prefs(self, players):
+        """ Set the player's preferences to be a list of players. """
 
-        if isinstance(self.matching, list):
-            for name in self.pref_names:
-                if name not in (match.name for match in self.matching):
-                    return name
+        self.prefs = players
+        self.pref_names = [player.name for player in players]
 
-        if isinstance(self.matching, (Player, type(None))):
-            return self.pref_names[0]
+    def get_favourite(self):
+        """ Get the player's favourite player. """
 
-        return None
-
-    def get_favourite(self, others):
-        """ Get the player's favourite member of the other party. """
-
-        fave_name = self.get_favourite_name()
-
-        if not self.matching or isinstance(self.matching, Player):
-            for other in others:
-                if other.name == fave_name:
-                    return other
-
-        for other in others:
-            if other.name == fave_name and other not in self.matching:
-                return other
-
-        return None
+        return self.prefs[0]
 
     def match(self, other):
-        """ Assign other to be matched to the player. """
+        """ Assign the player to be matched to some other player. """
 
-        if isinstance(self.matching, list):
-            self.matching.append(other)
-        else:
-            self.matching = other
+        self.matching = other
 
-    def unmatch(self, other):
-        """ Remove other from the player's current matching. """
+    def unmatch(self):
+        """ Set the player to be unmatched. """
 
-        if isinstance(self.matching, list):
-            self.matching.remove(other)
-        else:
-            self.matching = None
-
-    def get_worst_match_idx(self):
-        """ Get the preference list index of the player's worst current match.
-        """
-
-        if isinstance(self.matching, list):
-            return max(
-                (self.pref_names.index(other.name) for other in self.matching)
-            )
-
-        return self.pref_names.index(self.matching.name)
+        self.matching = None
 
     def forget(self, other):
-        """ Forget another player by removing their name from the player's
-        preference list. """
+        """ Forget another player by removing them from the player's preference
+        list. """
 
-        self.pref_names.remove(other.name)
+        prefs = self.prefs[:]
+        prefs.remove(other)
+        self.prefs = prefs
 
-    def get_successors(self, others, idx=None):
-        """ Get all the successors either to the current match (for simple
-        games) or the worst current match (for capacitated games). This match is
-        at position `idx` in the player's preference list. """
+    def get_successors(self):
+        """ Get all the successors to the current match of the player. """
 
-        idx = self.get_worst_match_idx()
-        return [
-            other
-            for other in others
-            if other.name in self.pref_names[idx + 1 :]
-        ]
+        idx = self.prefs.index(self.matching)
+        return self.prefs[idx + 1 :]
 
     def prefers(self, player, other):
         """ Determines whether the player prefers a player over some other
         player. """
 
-        prefs = self._pref_names
+        prefs = self.pref_names
         return prefs.index(player.name) < prefs.index(other.name)

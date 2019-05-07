@@ -1,66 +1,39 @@
 """ Unit tests for the solvers.util functions. """
 
+from hypothesis import given
+from hypothesis.strategies import lists, text
+
 from matching import Player
-from matching.solvers.util import delete_pair, match_pair, unmatch_pair
-
-from .params import PLAYER
+from matching.games.util import delete_pair, match_pair
 
 
-@PLAYER
-def test_delete_pair(name, pref_names, capacity):
+@given(name=text(), pref_names=lists(text(), min_size=1))
+def test_delete_pair(name, pref_names):
     """ Verify that two players can forget each other. """
 
-    others = [Player(other, [name]) for other in pref_names]
+    others = [Player(other) for other in pref_names]
 
     for other in others:
-        player = Player(name, pref_names, capacity)
+        player = Player(name)
+        other.set_prefs([player])
+        player.set_prefs(others)
+
         delete_pair(player, other)
+        assert player.prefs == [o for o in others if o != other]
+        assert other.prefs == []
 
-        assert set(player.pref_names) == set(pref_names) - set([other.name])
-        assert other.pref_names == []
 
-
-@PLAYER
-def test_match_pair(name, pref_names, capacity):
+@given(name=text(), pref_names=lists(text(), min_size=1))
+def test_match_pair(name, pref_names):
     """ Verify that two players can be matched to one another. """
 
-    others = [Player(other, [name]) for other in pref_names]
+    others = [Player(other) for other in pref_names]
 
     for other in others:
-        player = Player(name, pref_names, capacity)
+        player = Player(name)
+        other.set_prefs([player])
+        player.set_prefs(others)
+
         match_pair(player, other)
-
-        assert (
-            player.matching == other
-            if capacity == 1
-            else player.matching == [other]
-        )
+        assert player.matching == other
         assert other.matching == player
-
-
-@PLAYER
-def test_unmatch_pair(name, pref_names, capacity):
-    """ Verify that two players can be unmatched from one another. """
-
-    others = [Player(other, [name]) for other in pref_names]
-
-    for other in others:
-        player = Player(name, pref_names, capacity)
-
-        player.matching = other if capacity == 1 else [other]
-        other.matching = player
-        unmatch_pair(player, other)
-
-        assert (
-            player.matching is None if capacity == 1 else player.matching == []
-        )
-        assert other.matching is None
-
-        player.matching = other if capacity == 1 else [other]
-        other.matching = [player]
-        unmatch_pair(player, other)
-
-        assert (
-            player.matching is None if capacity == 1 else player.matching == []
-        )
-        assert other.matching == []

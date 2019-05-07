@@ -1,5 +1,5 @@
-from glob import iglob
 import os
+from glob import iglob
 
 
 def main():

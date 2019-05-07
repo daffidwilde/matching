@@ -4,17 +4,17 @@ import pytest
 
 from matching import Matching, Player
 
-suitors = [
-    Player("A", [1, 2, 3]),
-    Player("B", [2, 1, 3]),
-    Player("C", [1, 3, 2]),
-]
+suitors = [Player("A"), Player("B"), Player("C")]
 
-reviewers = [
-    Player(1, ["B", "A", "C"]),
-    Player(2, ["B", "A", "C"]),
-    Player(3, ["A", "B", "C"]),
-]
+reviewers = [Player(1), Player(2), Player(3)]
+
+suitors[0].set_prefs(reviewers)
+suitors[1].set_prefs([reviewers[1], reviewers[0], reviewers[2]])
+suitors[2].set_prefs([reviewers[0], reviewers[2], reviewers[1]])
+
+reviewers[0].set_prefs([suitors[1], suitors[0], suitors[2]])
+reviewers[1].set_prefs([suitors[1], suitors[0], suitors[2]])
+reviewers[2].set_prefs(suitors)
 
 dictionary = dict(zip(suitors, reviewers))
 
@@ -35,6 +35,29 @@ def test_repr():
 
     matching = Matching()
     assert repr(matching) == "{}"
+
+    matching = Matching(dictionary)
+    assert repr(matching) == str(dictionary)
+
+
+def test_keys():
+    """ Check a Matching can have its `keys` accessed. """
+
+    matching = Matching()
+    assert list(matching.keys()) == []
+
+    matching = Matching(dictionary)
+    assert list(matching.keys()) == suitors
+
+
+def test_values():
+    """ Check a Matching can have its `values` accessed. """
+
+    matching = Matching()
+    assert list(matching.values()) == []
+
+    matching = Matching(dictionary)
+    assert list(matching.values()) == reviewers
 
 
 def test_getitem():
