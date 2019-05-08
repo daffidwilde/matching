@@ -35,13 +35,11 @@ def test_init_preferences(player_names, seed):
     )
 
     for suitor in game.suitors:
-        pref_names = [reviewer.name for reviewer in suitor.prefs]
-        assert suitor_prefs[suitor.name] == pref_names
+        assert suitor_prefs[suitor.name] == suitor.pref_names
         assert suitor.matching is None
 
     for reviewer in game.reviewers:
-        pref_names = [suitor.name for suitor in reviewer.prefs]
-        assert reviewer_prefs[reviewer.name] == pref_names
+        assert reviewer_prefs[reviewer.name] == reviewer.pref_names
         assert reviewer.matching is None
 
     assert game.matching is None

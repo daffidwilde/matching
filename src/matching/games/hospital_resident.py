@@ -1,7 +1,7 @@
 """ The Hospital-Resident Assignment Problem solver and core algorithm. """
 
-from matching import Player as Resident
 from matching import Game, Matching
+from matching import Player as Resident
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
@@ -37,13 +37,19 @@ class HospitalResident(Game):
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
-    def __init__(self, residents=None, hospitals=None, resident_prefs=None,
-            hospital_prefs=None, capacities=None
-        ):
+    def __init__(
+        self,
+        residents=None,
+        hospitals=None,
+        resident_prefs=None,
+        hospital_prefs=None,
+        capacities=None,
+    ):
 
         if resident_prefs and hospital_prefs and capacities:
-            residents, hospitals = _make_players(resident_prefs, hospital_prefs,
-                    capacities)
+            residents, hospitals = _make_players(
+                resident_prefs, hospital_prefs, capacities
+            )
 
         self.residents = residents
         self.hospitals = hospitals
@@ -367,8 +373,9 @@ def _make_players(resident_prefs, hospital_prefs, capacities):
     """ Make a set of residents and hospitals from the dictionaries given, and
     add their preferences. """
 
-    resident_dict, hospital_dict = _make_instances(resident_prefs,
-            hospital_prefs, capacities)
+    resident_dict, hospital_dict = _make_instances(
+        resident_prefs, hospital_prefs, capacities
+    )
 
     for resident_name, resident in resident_dict.items():
         prefs = [hospital_dict[name] for name in resident_prefs[resident_name]]
@@ -396,5 +403,5 @@ def _make_instances(resident_prefs, hospital_prefs, capacities):
         cap = capacities[hospital_name]
         hospital = Hospital(name=hospital_name, capacity=cap)
         hospital_dict[hospital_name] = hospital
-        
+
     return resident_dict, hospital_dict

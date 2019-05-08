@@ -1,7 +1,7 @@
 """ Toolbox for HR tests. """
 
-from collections import defaultdict
 import itertools as it
+from collections import defaultdict
 
 import numpy as np
 from hypothesis import given

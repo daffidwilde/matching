@@ -31,13 +31,15 @@ def test_init_preferences(resident_names, hospital_names, capacities, seed):
     """ Test that HospitalResident is created correctly when passed a set of
     preferences for each party. """
 
-    resident_prefs, hospital_prefs = make_prefs(resident_names, hospital_names,
-            seed)
+    resident_prefs, hospital_prefs = make_prefs(
+        resident_names, hospital_names, seed
+    )
 
     capacities_ = dict(zip(hospital_names, capacities))
     game = HospitalResident(
-        resident_prefs=resident_prefs, hospital_prefs=hospital_prefs,
-        capacities=capacities_
+        resident_prefs=resident_prefs,
+        hospital_prefs=hospital_prefs,
+        capacities=capacities_,
     )
 
     for resident in game.residents:
@@ -121,8 +123,9 @@ def test_solve_preferences(resident_names, hospital_names, capacities, seed):
         )
         capacities_ = dict(zip(hospital_names, capacities))
         game = HospitalResident(
-            resident_prefs=resident_prefs, hospital_prefs=hospital_prefs,
-            capacities=capacities_
+            resident_prefs=resident_prefs,
+            hospital_prefs=hospital_prefs,
+            capacities=capacities_,
         )
 
         matching = game.solve(optimal)
