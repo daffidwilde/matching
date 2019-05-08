@@ -1,5 +1,6 @@
 """ Toolbox for HR tests. """
 
+from collections import defaultdict
 import itertools as it
 
 import numpy as np
@@ -23,7 +24,7 @@ def make_players(resident_names, hospital_names, capacities):
     possible_prefs = get_possible_prefs(hospitals)
     logged_prefs = {}
     for resident in residents:
-        prefs = possible_prefs[np.random.choice(range(len(possible_prefs)))]
+        prefs = possible_prefs[np.random.randint(len(possible_prefs))]
         resident.set_prefs(prefs)
         for hospital in prefs:
             try:
@@ -64,6 +65,25 @@ def make_game(resident_names, hospital_names, capacities, seed):
     game = HospitalResident(residents, hospitals)
 
     return residents, hospitals, game
+
+
+def make_prefs(resident_names, hospital_names, seed):
+    """ Make a valid set of preferences given a set of names. """
+
+    np.random.seed(seed)
+    resident_prefs, hospital_prefs = defaultdict(list), defaultdict(list)
+    possible_prefs = get_possible_prefs(hospital_names)
+
+    for resident in resident_names:
+        prefs = possible_prefs[np.random.randint(len(possible_prefs))]
+        resident_prefs[resident].extend(prefs)
+        for hospital in prefs:
+            hospital_prefs[hospital].append(resident)
+
+    for hospital in hospital_prefs:
+        np.random.shuffle(hospital_prefs[hospital])
+
+    return resident_prefs, hospital_prefs
 
 
 HOSPITAL_RESIDENT = given(
