@@ -1,6 +1,7 @@
 """ Toolkit for SA tests. """
 
 import itertools as it
+from collections import defaultdict
 
 import numpy as np
 from hypothesis import given
@@ -82,6 +83,39 @@ def make_game(student_names, project_names, supervisor_names, capacities, seed):
     return students, projects, supervisors, game
 
 
+def make_connections(student_names, project_names, supervisor_names, seed):
+    """ Make a valid set of preferences and affiliations given a set of names.
+    """
+
+    np.random.seed(seed)
+    project_supervisors = {}
+    student_prefs, supervisor_prefs = defaultdict(list), defaultdict(list)
+
+    for project in project_names:
+        supervisor = np.random.choice(supervisor_names)
+        project_supervisors[project] = supervisor
+
+    supervisor_names = [
+        supervisor
+        for supervisor in supervisor_names
+        if supervisor in project_supervisors.values()
+    ]
+    possible_prefs = get_possible_prefs(project_names)
+    for student in student_names:
+        prefs = possible_prefs[np.random.randint(len(possible_prefs))]
+        student_prefs[student].extend(prefs)
+        for project in prefs:
+            supervisor = project_supervisors[project]
+            sup_prefs = supervisor_prefs[supervisor]
+            if student not in sup_prefs:
+                sup_prefs.append(student)
+
+    for supervisor in supervisor_prefs:
+        np.random.shuffle(supervisor_prefs[supervisor])
+
+    return student_prefs, supervisor_prefs, project_supervisors
+
+
 STUDENT_ALLOCATION = given(
     student_names=lists(
         elements=sampled_from(["A", "B", "C", "D"]),
@@ -102,7 +136,7 @@ STUDENT_ALLOCATION = given(
         unique=True,
     ),
     capacities=lists(
-        integers(min_value=1, max_value=2), min_size=1, max_size=5
+        integers(min_value=1, max_value=2), min_size=5, max_size=5
     ),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )

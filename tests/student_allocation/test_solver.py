@@ -7,12 +7,15 @@ from matching import Player as Student
 from matching.games import StudentAllocation
 from matching.players import Project, Supervisor
 
-from .params import STUDENT_ALLOCATION, make_game
+from .params import STUDENT_ALLOCATION, make_connections, make_game
 
 
 @STUDENT_ALLOCATION
-def test_init(student_names, project_names, supervisor_names, capacities, seed):
-    """ Test that an instance of StudentAllocation is created correctly. """
+def test_init_players(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that an instance of StudentAllocation is created correctly when
+    passed a set of players. """
 
     students, projects, supervisors, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
@@ -26,6 +29,40 @@ def test_init(student_names, project_names, supervisor_names, capacities, seed):
     assert all([supervisor.matching == [] for supervisor in game.supervisors])
     assert game.matching is None
     assert game.blocking_pairs is None
+
+
+@STUDENT_ALLOCATION
+def test_init_connections(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that StudentAllocation is created correctly when passed a set of
+    preferences and affiliations for each party. """
+
+    student_prefs, supervisor_prefs, project_supervisors = make_connections(
+        student_names, project_names, supervisor_names, seed
+    )
+
+    capacities_ = dict(zip(project_names, capacities))
+    game = StudentAllocation(
+        student_prefs=student_prefs,
+        supervisor_prefs=supervisor_prefs,
+        project_supervisors=project_supervisors,
+        project_capacities=capacities_,
+    )
+
+    for student in game.students:
+        assert student.pref_names == student_prefs[student.name]
+        assert student.matching is None
+
+    for project in game.projects:
+        assert project.supervisor.name == project_supervisors[project.name]
+        assert project.matching == []
+
+    for supervisor in game.supervisors:
+        assert supervisor.pref_names == supervisor_prefs[supervisor.name]
+        assert supervisor.matching == []
+
+    assert game.matching is None
 
 
 @STUDENT_ALLOCATION
@@ -138,7 +175,8 @@ def test_inputs_supervisor_capacities(
 def test_solve(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation can solve games correctly. """
+    """ Test that StudentAllocation can solve games correctly when passed a set
+    of players. """
 
     for optimal in ["student", "supervisor"]:
         students, projects, _, game = make_game(
@@ -160,6 +198,44 @@ def test_solve(
             assert student in supervisor.matching
 
         for student in set(students) - set(matched_students):
+            assert student.matching is None
+
+
+@STUDENT_ALLOCATION
+def test_solve_connections(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that StudentAllocation can solve games correctly when passed a set
+    of connections. """
+
+    for optimal in ["student", "supervisor"]:
+        student_prefs, supervisor_prefs, project_supervisors = make_connections(
+            student_names, project_names, supervisor_names, seed
+        )
+
+        capacities_ = dict(zip(project_names, capacities))
+        game = StudentAllocation(
+            student_prefs=student_prefs,
+            supervisor_prefs=supervisor_prefs,
+            project_supervisors=project_supervisors,
+            project_capacities=capacities_,
+        )
+
+        matching = game.solve(optimal)
+        assert isinstance(matching, Matching)
+        assert set(matching.keys()) == set(game.projects)
+        matched_students = [
+            stud for match in matching.values() for stud in match
+        ]
+        assert matched_students != [] and set(matched_students).issubset(
+            set(game.students)
+        )
+
+        for student in matched_students:
+            supervisor = student.matching.supervisor
+            assert student in supervisor.matching
+
+        for student in set(game.students) - set(matched_students):
             assert student.matching is None
 
 
