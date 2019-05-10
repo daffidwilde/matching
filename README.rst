@@ -121,8 +121,8 @@ This information can be conveyed as a few dictionaries like so:
 ... }
 >>> capacities = {hosp: 2 for hosp in hospital_prefs}
 
-Then, similarly, this game is solved using the `HospitalResident` class but an
-instance is created using the `create_from_dictionaries` class method:
+Then, similarly, this game is solved using the ``HospitalResident`` class but an
+instance is created using the ``create_from_dictionaries`` class method:
 
 >>> game = HospitalResident.create_from_dictionaries(
 ...     resident_prefs, hospital_prefs, capacities
@@ -134,7 +134,7 @@ Note
 ++++
 
 Despite passing dictionaries of strings here, the matching displays instances of
-`matching` players:
+``matching`` players:
 
 >>> matching = game.matching
 >>> for hospital in matching:
@@ -143,7 +143,7 @@ Despite passing dictionaries of strings here, the matching displays instances of
 <class 'matching.players.hospital.Hospital'>
 <class 'matching.players.hospital.Hospital'>
 
-This is because `create_from_dictionaries` creates instances of the appropriate
+This is because ``create_from_dictionaries`` creates instances of the appropriate
 player classes first and passes them to the game class. Using dictionaries like
 this can be an efficient way of creating large games but it does require the
 names of the players in each party to be unique.
