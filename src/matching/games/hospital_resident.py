@@ -400,8 +400,8 @@ def _make_instances(resident_prefs, hospital_prefs, capacities):
         resident = Resident(name=resident_name)
         resident_dict[resident_name] = resident
     for hospital_name in hospital_prefs:
-        cap = capacities[hospital_name]
-        hospital = Hospital(name=hospital_name, capacity=cap)
+        capacity = capacities[hospital_name]
+        hospital = Hospital(name=hospital_name, capacity=capacity)
         hospital_dict[hospital_name] = hospital
 
     return resident_dict, hospital_dict

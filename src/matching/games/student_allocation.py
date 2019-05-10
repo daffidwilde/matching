@@ -1,6 +1,10 @@
 """ The Student Allocation Problem solver and core algorithm. """
 
+from collections import defaultdict
+
 from matching import Game, Matching
+from matching import Player as Student
+from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
 
@@ -44,7 +48,29 @@ class StudentAllocation(Game):
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
-    def __init__(self, students, projects, supervisors):
+    def __init__(
+        self,
+        students=None,
+        projects=None,
+        supervisors=None,
+        student_prefs=None,
+        supervisor_prefs=None,
+        project_supervisors=None,
+        project_capacities=None,
+    ):
+
+        if (
+            student_prefs
+            and supervisor_prefs
+            and project_supervisors
+            and project_capacities
+        ):
+            students, projects, supervisors = _make_players(
+                student_prefs,
+                supervisor_prefs,
+                project_supervisors,
+                project_capacities,
+            )
 
         self.students = students
         self.projects = projects
@@ -534,3 +560,59 @@ def supervisor_optimal(projects, supervisors):
         ]
 
     return {p: p.matching for p in projects}
+
+
+def _make_players(
+    student_prefs, supervisor_prefs, project_supervisors, project_capacities
+):
+    """ Make a set of students, projects and supervisors from the dictionaries
+    given, and add their preferences. """
+
+    student_dict, project_dict, supervisor_dict = _make_instances(
+        student_prefs, project_supervisors, project_capacities
+    )
+
+    for student_name, student in student_dict.items():
+        prefs = [project_dict[name] for name in student_prefs[student_name]]
+        student.set_prefs(prefs)
+
+    for supervisor_name, supervisor in supervisor_dict.items():
+        prefs = [
+            student_dict[name] for name in supervisor_prefs[supervisor_name]
+        ]
+        supervisor.set_prefs(prefs)
+
+    students = list(student_dict.values())
+    projects = list(project_dict.values())
+    supervisors = list(supervisor_dict.values())
+
+    return students, projects, supervisors
+
+
+def _make_instances(student_prefs, project_supervisors, project_capacities):
+    """ Create `Student`, `Project` and `Supervisor` instances for the names in
+    each dictionary. """
+
+    student_dict, project_dict, supervisor_dict = {}, {}, {}
+    supervisor_capacities = defaultdict(int)
+
+    for student_name in student_prefs:
+        student = Student(name=student_name)
+        student_dict[student_name] = student
+
+    for project_name, supervisor_name in project_supervisors.items():
+        capacity = project_capacities[project_name]
+        supervisor_capacities[supervisor_name] += capacity
+        project = Project(name=project_name, capacity=capacity)
+        project_dict[project_name] = project
+
+    for supervisor_name, capacity in supervisor_capacities.items():
+        supervisor = Supervisor(name=supervisor_name, capacity=capacity)
+        supervisor_dict[supervisor_name] = supervisor
+
+    for project_name, supervisor_name in project_supervisors.items():
+        project = project_dict[project_name]
+        supervisor = supervisor_dict[supervisor_name]
+        project.set_supervisor(supervisor)
+
+    return student_dict, project_dict, supervisor_dict
