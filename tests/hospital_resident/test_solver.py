@@ -27,7 +27,9 @@ def test_init(resident_names, hospital_names, capacities, seed):
 
 
 @HOSPITAL_RESIDENT
-def test_create_from_dictionaries(resident_names, hospital_names, capacities, seed):
+def test_create_from_dictionaries(
+    resident_names, hospital_names, capacities, seed
+):
     """ Test that HospitalResident is created correctly when passed a set of
     dictionaries for each party. """
 
@@ -37,7 +39,7 @@ def test_create_from_dictionaries(resident_names, hospital_names, capacities, se
 
     capacities_ = dict(zip(hospital_names, capacities))
     game = HospitalResident.create_from_dictionaries(
-        resident_prefs, hospital_prefs, capacities_,
+        resident_prefs, hospital_prefs, capacities_
     )
 
     for resident in game.residents:

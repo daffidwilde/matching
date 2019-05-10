@@ -11,9 +11,7 @@ from .params import STUDENT_ALLOCATION, make_connections, make_game
 
 
 @STUDENT_ALLOCATION
-def test_init(
-    student_names, project_names, supervisor_names, capacities, seed
-):
+def test_init(student_names, project_names, supervisor_names, capacities, seed):
     """ Test that an instance of StudentAllocation is created correctly when
     passed a set of players. """
 
@@ -38,28 +36,25 @@ def test_create_from_dictionaries(
     """ Test that StudentAllocation is created correctly when passed
     dictionaries of preferences and affiliations for each party. """
 
-    student_prefs, supervisor_prefs, project_supervisors = make_connections(
-        student_names, project_names, supervisor_names, seed
+    stud_prefs, sup_prefs, proj_sups, sup_caps = make_connections(
+        student_names, project_names, supervisor_names, capacities, seed
     )
 
-    capacities_ = dict(zip(project_names, capacities))
+    proj_caps = dict(zip(project_names, capacities))
     game = StudentAllocation.create_from_dictionaries(
-        student_prefs,
-        supervisor_prefs,
-        project_supervisors,
-        capacities_,
+        stud_prefs, sup_prefs, proj_sups, proj_caps, sup_caps
     )
 
     for student in game.students:
-        assert student.pref_names == student_prefs[student.name]
+        assert student.pref_names == stud_prefs[student.name]
         assert student.matching is None
 
     for project in game.projects:
-        assert project.supervisor.name == project_supervisors[project.name]
+        assert project.supervisor.name == proj_sups[project.name]
         assert project.matching == []
 
     for supervisor in game.supervisors:
-        assert supervisor.pref_names == supervisor_prefs[supervisor.name]
+        assert supervisor.pref_names == sup_prefs[supervisor.name]
         assert supervisor.matching == []
 
     assert game.matching is None

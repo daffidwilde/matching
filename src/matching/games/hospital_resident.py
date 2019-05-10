@@ -37,11 +37,7 @@ class HospitalResident(Game):
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
-    def __init__(
-        self,
-        residents=None,
-        hospitals=None,
-    ):
+    def __init__(self, residents=None, hospitals=None):
 
         self.residents = residents
         self.hospitals = hospitals
@@ -50,12 +46,14 @@ class HospitalResident(Game):
         self._check_inputs()
 
     @classmethod
-    def create_from_dictionaries(cls, resident_prefs, hospital_prefs, capacities):
+    def create_from_dictionaries(
+        cls, resident_prefs, hospital_prefs, capacities
+    ):
         """ Create sets of players and an instance of HR from two preference
         dictionaries and capacities. """
 
-        residents, hospitals = _make_players(resident_prefs, hospital_prefs,
-                capacities
+        residents, hospitals = _make_players(
+            resident_prefs, hospital_prefs, capacities
         )
         game = cls(residents, hospitals)
 
