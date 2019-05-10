@@ -1,6 +1,12 @@
 History
 =======
 
+v1.1 - 2019-05-10
+-----------------
+
+- Implemented the student-allocation problem.
+- Added capability for large game creation from dictionaries.
+
 v1.0.2 - 2019-01-30
 -------------------
 
