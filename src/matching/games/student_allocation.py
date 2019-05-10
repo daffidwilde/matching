@@ -50,27 +50,10 @@ class StudentAllocation(Game):
 
     def __init__(
         self,
-        students=None,
-        projects=None,
-        supervisors=None,
-        student_prefs=None,
-        supervisor_prefs=None,
-        project_supervisors=None,
-        project_capacities=None,
+        students,
+        projects,
+        supervisors,
     ):
-
-        if (
-            student_prefs
-            and supervisor_prefs
-            and project_supervisors
-            and project_capacities
-        ):
-            students, projects, supervisors = _make_players(
-                student_prefs,
-                supervisor_prefs,
-                project_supervisors,
-                project_capacities,
-            )
 
         self.students = students
         self.projects = projects
@@ -78,6 +61,20 @@ class StudentAllocation(Game):
         super().__init__()
 
         self._check_inputs()
+
+    @classmethod
+    def create_from_dictionaries(
+        cls, student_prefs, supervisor_prefs, project_supervisors, capacities
+    ):
+        """ Create sets of students, projects and supervisors, and an instance
+        of SA from two preference dictionaries, affiliations and capacities. """
+
+        students, projects, supervisors = _make_players(
+            student_prefs, supervisor_prefs, project_supervisors, capacities
+        )
+        game = cls(students, projects, supervisors)
+
+        return game
 
     def solve(self, optimal="student"):
         """ Solve the instance of SA using either the student- or

@@ -13,16 +13,10 @@ class StableMarriage(Game):
     ==========
     suitors : `list` of `Player` instances, optional
         The suitors in the matching game. Each suitor must rank the names of all
-        elements in `reviewers`. Requires `reviewers`.
+        elements in `reviewers`.
     reviewers : `list` of `Player` instances, optional
         The reviewers in the matching game. Each reviewer must rank the names of
-        all elements in `suitors`. Requires `suitors`.
-    suitor_prefs : `dict`
-        A dictionary specifying the preferences of each suitor by name. Requires
-        `reviewer_dict`.
-    reviewer_prefs : `dict`
-        A dictionary specifying the preferences of each reviewer by name.
-        Requires `suitor_dict`.
+        all elements in `suitors`.
 
     Attributes
     ==========
@@ -36,23 +30,23 @@ class StableMarriage(Game):
         match. Initialises as `None`.
     """
 
-    def __init__(
-        self,
-        suitors=None,
-        reviewers=None,
-        suitor_prefs=None,
-        reviewer_prefs=None,
-    ):
-
-        if suitor_prefs and reviewer_prefs:
-            suitors, reviewers = _make_players(suitor_prefs, reviewer_prefs)
+    def __init__(self, suitors, reviewers):
 
         self.suitors = suitors
         self.reviewers = reviewers
 
+        super().__init__()
         self._check_inputs()
 
-        super().__init__()
+    @classmethod
+    def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
+        """ Create two sets of players and an instance of SM from two
+        preference dictionaries. """
+
+        suitors, reviewers = _make_players(suitor_prefs, reviewer_prefs)
+        game = cls(suitors, reviewers)
+
+        return game
 
     def solve(self, optimal="suitor"):
         """ Solve the instance of SM using either the suitor- or

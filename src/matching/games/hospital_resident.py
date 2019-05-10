@@ -41,21 +41,25 @@ class HospitalResident(Game):
         self,
         residents=None,
         hospitals=None,
-        resident_prefs=None,
-        hospital_prefs=None,
-        capacities=None,
     ):
-
-        if resident_prefs and hospital_prefs and capacities:
-            residents, hospitals = _make_players(
-                resident_prefs, hospital_prefs, capacities
-            )
 
         self.residents = residents
         self.hospitals = hospitals
-        super().__init__()
 
+        super().__init__()
         self._check_inputs()
+
+    @classmethod
+    def create_from_dictionaries(cls, resident_prefs, hospital_prefs, capacities):
+        """ Create sets of players and an instance of HR from two preference
+        dictionaries and capacities. """
+
+        residents, hospitals = _make_players(resident_prefs, hospital_prefs,
+                capacities
+        )
+        game = cls(residents, hospitals)
+
+        return game
 
     def solve(self, optimal="resident"):
         """ Solve the instance of HR using either the resident- (resident-) or
