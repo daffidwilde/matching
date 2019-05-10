@@ -11,7 +11,7 @@ from .params import HOSPITAL_RESIDENT, make_game, make_prefs
 
 
 @HOSPITAL_RESIDENT
-def test_init_players(resident_names, hospital_names, capacities, seed):
+def test_init(resident_names, hospital_names, capacities, seed):
     """ Test that an instance of HospitalResident is created correctly when
     passed a set of players. """
 
@@ -27,19 +27,17 @@ def test_init_players(resident_names, hospital_names, capacities, seed):
 
 
 @HOSPITAL_RESIDENT
-def test_init_preferences(resident_names, hospital_names, capacities, seed):
+def test_create_from_dictionaries(resident_names, hospital_names, capacities, seed):
     """ Test that HospitalResident is created correctly when passed a set of
-    preferences for each party. """
+    dictionaries for each party. """
 
     resident_prefs, hospital_prefs = make_prefs(
         resident_names, hospital_names, seed
     )
 
     capacities_ = dict(zip(hospital_names, capacities))
-    game = HospitalResident(
-        resident_prefs=resident_prefs,
-        hospital_prefs=hospital_prefs,
-        capacities=capacities_,
+    game = HospitalResident.create_from_dictionaries(
+        resident_prefs, hospital_prefs, capacities_,
     )
 
     for resident in game.residents:
@@ -89,7 +87,7 @@ def test_inputs_hospital_prefs(
 
 
 @HOSPITAL_RESIDENT
-def test_solve_players(resident_names, hospital_names, capacities, seed):
+def test_solve(resident_names, hospital_names, capacities, seed):
     """ Test that HospitalResident can solve games correctly when passed
     players. """
 
@@ -109,36 +107,6 @@ def test_solve_players(resident_names, hospital_names, capacities, seed):
         )
 
         for resident in set(residents) - set(matched_residents):
-            assert resident.matching is None
-
-
-@HOSPITAL_RESIDENT
-def test_solve_preferences(resident_names, hospital_names, capacities, seed):
-    """ Test that HospitalResident can solve games correctly when passed
-    preferences. """
-
-    for optimal in ["resident", "hospital"]:
-        resident_prefs, hospital_prefs = make_prefs(
-            resident_names, hospital_names, seed
-        )
-        capacities_ = dict(zip(hospital_names, capacities))
-        game = HospitalResident(
-            resident_prefs=resident_prefs,
-            hospital_prefs=hospital_prefs,
-            capacities=capacities_,
-        )
-
-        matching = game.solve(optimal)
-        assert isinstance(matching, Matching)
-        assert set(matching.keys()) == set(game.hospitals)
-        matched_residents = [
-            res for match in matching.values() for res in match
-        ]
-        assert matched_residents != [] and set(matched_residents).issubset(
-            set(game.residents)
-        )
-
-        for resident in set(game.residents) - set(matched_residents):
             assert resident.matching is None
 
 

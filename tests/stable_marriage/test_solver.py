@@ -9,7 +9,7 @@ from .params import STABLE_MARRIAGE, make_players, make_prefs
 
 
 @STABLE_MARRIAGE
-def test_init_players(player_names, seed):
+def test_init(player_names, seed):
     """ Test that the StableMarriage solver takes two sets of preformed players
     correctly. """
 
@@ -25,14 +25,12 @@ def test_init_players(player_names, seed):
 
 
 @STABLE_MARRIAGE
-def test_init_preferences(player_names, seed):
+def test_create_from_dictionaries(player_names, seed):
     """ Test that the StableMarriage solver can take two preference dictionaries
     correctly. """
 
     suitor_prefs, reviewer_prefs = make_prefs(player_names, seed)
-    game = StableMarriage(
-        suitor_prefs=suitor_prefs, reviewer_prefs=reviewer_prefs
-    )
+    game = StableMarriage.create_from_dictionaries(suitor_prefs, reviewer_prefs)
 
     for suitor in game.suitors:
         assert suitor_prefs[suitor.name] == suitor.pref_names
@@ -79,7 +77,7 @@ def test_inputs_player_ranks(player_names, seed):
 
 
 @STABLE_MARRIAGE
-def test_solve_players(player_names, seed):
+def test_solve(player_names, seed):
     """ Test that StableMarriage can solve games correctly when passed players.
     """
 
@@ -91,23 +89,6 @@ def test_solve_players(player_names, seed):
         assert isinstance(matching, Matching)
         assert set(matching.keys()) == set(suitors)
         assert set(matching.values()) == set(reviewers)
-
-
-@STABLE_MARRIAGE
-def test_solve_preferences(player_names, seed):
-    """ Test that StableMarriage can solve games correctly when passed
-    preferences. """
-
-    for optimal in ["suitor", "reviewer"]:
-        suitor_prefs, reviewer_prefs = make_prefs(player_names, seed)
-        game = StableMarriage(
-            suitor_prefs=suitor_prefs, reviewer_prefs=reviewer_prefs
-        )
-
-        matching = game.solve(optimal)
-        assert isinstance(matching, Matching)
-        assert set(matching.keys()) == set(game.suitors)
-        assert set(matching.values()) == set(game.reviewers)
 
 
 @STABLE_MARRIAGE

@@ -11,7 +11,7 @@ from .params import STUDENT_ALLOCATION, make_connections, make_game
 
 
 @STUDENT_ALLOCATION
-def test_init_players(
+def test_init(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that an instance of StudentAllocation is created correctly when
@@ -32,22 +32,22 @@ def test_init_players(
 
 
 @STUDENT_ALLOCATION
-def test_init_connections(
+def test_create_from_dictionaries(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation is created correctly when passed a set of
-    preferences and affiliations for each party. """
+    """ Test that StudentAllocation is created correctly when passed
+    dictionaries of preferences and affiliations for each party. """
 
     student_prefs, supervisor_prefs, project_supervisors = make_connections(
         student_names, project_names, supervisor_names, seed
     )
 
     capacities_ = dict(zip(project_names, capacities))
-    game = StudentAllocation(
-        student_prefs=student_prefs,
-        supervisor_prefs=supervisor_prefs,
-        project_supervisors=project_supervisors,
-        project_capacities=capacities_,
+    game = StudentAllocation.create_from_dictionaries(
+        student_prefs,
+        supervisor_prefs,
+        project_supervisors,
+        capacities_,
     )
 
     for student in game.students:
@@ -198,44 +198,6 @@ def test_solve(
             assert student in supervisor.matching
 
         for student in set(students) - set(matched_students):
-            assert student.matching is None
-
-
-@STUDENT_ALLOCATION
-def test_solve_connections(
-    student_names, project_names, supervisor_names, capacities, seed
-):
-    """ Test that StudentAllocation can solve games correctly when passed a set
-    of connections. """
-
-    for optimal in ["student", "supervisor"]:
-        student_prefs, supervisor_prefs, project_supervisors = make_connections(
-            student_names, project_names, supervisor_names, seed
-        )
-
-        capacities_ = dict(zip(project_names, capacities))
-        game = StudentAllocation(
-            student_prefs=student_prefs,
-            supervisor_prefs=supervisor_prefs,
-            project_supervisors=project_supervisors,
-            project_capacities=capacities_,
-        )
-
-        matching = game.solve(optimal)
-        assert isinstance(matching, Matching)
-        assert set(matching.keys()) == set(game.projects)
-        matched_students = [
-            stud for match in matching.values() for stud in match
-        ]
-        assert matched_students != [] and set(matched_students).issubset(
-            set(game.students)
-        )
-
-        for student in matched_students:
-            supervisor = student.matching.supervisor
-            assert student in supervisor.matching
-
-        for student in set(game.students) - set(matched_students):
             assert student.matching is None
 
 
