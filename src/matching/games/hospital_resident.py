@@ -1,6 +1,8 @@
 """ The Hospital-Resident Assignment Problem solver and core algorithm. """
 
 from matching import Game, Matching
+from matching import Player as Resident
+from matching.players import Hospital
 
 from .util import delete_pair, match_pair
 
@@ -35,13 +37,27 @@ class HospitalResident(Game):
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
-    def __init__(self, residents, hospitals):
+    def __init__(self, residents=None, hospitals=None):
 
         self.residents = residents
         self.hospitals = hospitals
-        super().__init__()
 
+        super().__init__()
         self._check_inputs()
+
+    @classmethod
+    def create_from_dictionaries(
+        cls, resident_prefs, hospital_prefs, capacities
+    ):
+        """ Create sets of players and an instance of HR from two preference
+        dictionaries and capacities. """
+
+        residents, hospitals = _make_players(
+            resident_prefs, hospital_prefs, capacities
+        )
+        game = cls(residents, hospitals)
+
+        return game
 
     def solve(self, optimal="resident"):
         """ Solve the instance of HR using either the resident- (resident-) or
@@ -353,3 +369,41 @@ def hospital_optimal(hospitals):
                 free_hospitals.remove(successor)
 
     return {r: r.matching for r in hospitals}
+
+
+def _make_players(resident_prefs, hospital_prefs, capacities):
+    """ Make a set of residents and hospitals from the dictionaries given, and
+    add their preferences. """
+
+    resident_dict, hospital_dict = _make_instances(
+        resident_prefs, hospital_prefs, capacities
+    )
+
+    for resident_name, resident in resident_dict.items():
+        prefs = [hospital_dict[name] for name in resident_prefs[resident_name]]
+        resident.set_prefs(prefs)
+
+    for hospital_name, hospital in hospital_dict.items():
+        prefs = [resident_dict[name] for name in hospital_prefs[hospital_name]]
+        hospital.set_prefs(prefs)
+
+    residents = list(resident_dict.values())
+    hospitals = list(hospital_dict.values())
+
+    return residents, hospitals
+
+
+def _make_instances(resident_prefs, hospital_prefs, capacities):
+    """ Create `Resident` and `Hospital` instances for the names in each
+    dictionary. """
+
+    resident_dict, hospital_dict = {}, {}
+    for resident_name in resident_prefs:
+        resident = Resident(name=resident_name)
+        resident_dict[resident_name] = resident
+    for hospital_name in hospital_prefs:
+        capacity = capacities[hospital_name]
+        hospital = Hospital(name=hospital_name, capacity=capacity)
+        hospital_dict[hospital_name] = hospital
+
+    return resident_dict, hospital_dict

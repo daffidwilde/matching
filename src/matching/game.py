@@ -1,7 +1,5 @@
 """ The base matchmaker class for facilitating and solving matching games. """
 
-from .matching import Matching
-
 
 class Game:
     """ A class to store information about, and facilitate the solving of, a

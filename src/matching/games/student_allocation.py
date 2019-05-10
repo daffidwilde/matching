@@ -1,6 +1,8 @@
 """ The Student Allocation Problem solver and core algorithm. """
 
 from matching import Game, Matching
+from matching import Player as Student
+from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
 
@@ -37,10 +39,10 @@ class StudentAllocation(Game):
                 - the project or its supervisor is under-subscribed, or
                 - the project is under-subscribed and the supervisor is at
                   capacity, and the student is matched to a project offered by
-                  the supervisor or the supervisor prefers the student to its worst
-                  currently matched student, or
-                - the project is at capacity and its supervisor prefers the student
-                  to its worst currently matched student.
+                  the supervisor or the supervisor prefers the student to its
+                  worst currently matched student, or
+                - the project is at capacity and its supervisor prefers the
+                  student to its worst currently matched student.
         Such pairs are said to 'block' the matching. Initialises as `None`.
     """
 
@@ -49,9 +51,32 @@ class StudentAllocation(Game):
         self.students = students
         self.projects = projects
         self.supervisors = supervisors
-        super().__init__()
 
+        super().__init__()
         self._check_inputs()
+
+    @classmethod
+    def create_from_dictionaries(
+        cls,
+        student_prefs,
+        supervisor_prefs,
+        project_supervisors,
+        project_capacities,
+        supervisor_capacities,
+    ):
+        """ Create sets of students, projects and supervisors, and an instance
+        of SA from two preference dictionaries, affiliations and capacities. """
+
+        students, projects, supervisors = _make_players(
+            student_prefs,
+            supervisor_prefs,
+            project_supervisors,
+            project_capacities,
+            supervisor_capacities,
+        )
+        game = cls(students, projects, supervisors)
+
+        return game
 
     def solve(self, optimal="student"):
         """ Solve the instance of SA using either the student- or
@@ -159,8 +184,9 @@ class StudentAllocation(Game):
             if len(supervisor.matching) > supervisor.capacity:
                 errors.append(
                     ValueError(
-                        f"{supervisor} is matched to {supervisor.matching} which "
-                        f"if over their capacity of {supervisor.capacity}."
+                        f"{supervisor} is matched to {supervisor.matching} "
+                        "which if over their capacity of "
+                        f"{supervisor.capacity}."
                     )
                 )
 
@@ -262,8 +288,9 @@ class StudentAllocation(Game):
             if set(supervisor.prefs) != set(students_that_ranked):
                 errors.append(
                     ValueError(
-                        f"{supervisor} has not ranked the students that ranked at "
-                        f"least one of its projects: {set(supervisor.prefs)} != "
+                        f"{supervisor} has not ranked the students that ranked "
+                        "at least one of its projects: "
+                        f"{set(supervisor.prefs)} != "
                         f"{set(students_that_ranked)}"
                     )
                 )
@@ -305,15 +332,15 @@ class StudentAllocation(Game):
             if supervisor.capacity < max(project_capacities):
                 errors.append(
                     ValueError(
-                        f"{supervisor} does not have enough space to provide for "
-                        "their largest project"
+                        f"{supervisor} does not have enough space to provide "
+                        "for their largest project"
                     )
                 )
             elif supervisor.capacity > sum(project_capacities):
                 errors.append(
                     ValueError(
-                        f"{supervisor} can offer more spaces than their projects "
-                        "can provide"
+                        f"{supervisor} can offer more spaces than their "
+                        "projects can provide"
                     )
                 )
 
@@ -336,10 +363,10 @@ def _check_project_unhappy(project, student):
     """ Determine whether `project` is unhappy because either:
             - they and their supervisor are under-subscribed;
             - they are under-subscribed, their supervisor is full, and either
-              `student` is in the supervisor's matching or the supervisor prefers
-              `student` to their worst current matching;
-            - `project` is full and their supervisor prefers `student` to the worst
-              student in the matching of `project`.
+              `student` is in the supervisor's matching or the supervisor
+              prefers `student` to their worst current matching;
+            - `project` is full and their supervisor prefers `student` to the
+              worst student in the matching of `project`.
     """
 
     supervisor = project.supervisor
@@ -534,3 +561,67 @@ def supervisor_optimal(projects, supervisors):
         ]
 
     return {p: p.matching for p in projects}
+
+
+def _make_players(
+    student_prefs,
+    supervisor_prefs,
+    project_supervisors,
+    project_capacities,
+    supervisor_capacities,
+):
+    """ Make a set of students, projects and supervisors from the dictionaries
+    given, and add their preferences. """
+
+    student_dict, project_dict, supervisor_dict = _make_instances(
+        student_prefs,
+        project_supervisors,
+        project_capacities,
+        supervisor_capacities,
+    )
+
+    for name, student in student_dict.items():
+        prefs = [project_dict[project] for project in student_prefs[name]]
+        student.set_prefs(prefs)
+
+    for name, supervisor in supervisor_dict.items():
+        prefs = [student_dict[student] for student in supervisor_prefs[name]]
+        supervisor.set_prefs(prefs)
+
+    students = list(student_dict.values())
+    projects = list(project_dict.values())
+    supervisors = list(supervisor_dict.values())
+
+    return students, projects, supervisors
+
+
+def _make_instances(
+    student_prefs,
+    project_supervisors,
+    project_capacities,
+    supervisor_capacities,
+):
+    """ Create `Student`, `Project` and `Supervisor` instances for the names in
+    each dictionary. """
+
+    student_dict, project_dict, supervisor_dict = {}, {}, {}
+
+    for student_name in student_prefs:
+        student = Student(name=student_name)
+        student_dict[student_name] = student
+
+    for project_name, supervisor_name in project_supervisors.items():
+        capacity = project_capacities[project_name]
+        project = Project(name=project_name, capacity=capacity)
+        project_dict[project_name] = project
+
+    for supervisor_name, capacity in supervisor_capacities.items():
+        supervisor = Supervisor(name=supervisor_name, capacity=capacity)
+        supervisor_dict[supervisor_name] = supervisor
+
+    for project_name, supervisor_name in project_supervisors.items():
+        project = project_dict[project_name]
+        supervisor = supervisor_dict[supervisor_name]
+        project.set_supervisor(supervisor)
+
+    return student_dict, project_dict, supervisor_dict

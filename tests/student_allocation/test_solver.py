@@ -7,12 +7,13 @@ from matching import Player as Student
 from matching.games import StudentAllocation
 from matching.players import Project, Supervisor
 
-from .params import STUDENT_ALLOCATION, make_game
+from .params import STUDENT_ALLOCATION, make_connections, make_game
 
 
 @STUDENT_ALLOCATION
 def test_init(student_names, project_names, supervisor_names, capacities, seed):
-    """ Test that an instance of StudentAllocation is created correctly. """
+    """ Test that an instance of StudentAllocation is created correctly when
+    passed a set of players. """
 
     students, projects, supervisors, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
@@ -26,6 +27,37 @@ def test_init(student_names, project_names, supervisor_names, capacities, seed):
     assert all([supervisor.matching == [] for supervisor in game.supervisors])
     assert game.matching is None
     assert game.blocking_pairs is None
+
+
+@STUDENT_ALLOCATION
+def test_create_from_dictionaries(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that StudentAllocation is created correctly when passed
+    dictionaries of preferences and affiliations for each party. """
+
+    stud_prefs, sup_prefs, proj_sups, sup_caps = make_connections(
+        student_names, project_names, supervisor_names, capacities, seed
+    )
+
+    proj_caps = dict(zip(project_names, capacities))
+    game = StudentAllocation.create_from_dictionaries(
+        stud_prefs, sup_prefs, proj_sups, proj_caps, sup_caps
+    )
+
+    for student in game.students:
+        assert student.pref_names == stud_prefs[student.name]
+        assert student.matching is None
+
+    for project in game.projects:
+        assert project.supervisor.name == proj_sups[project.name]
+        assert project.matching == []
+
+    for supervisor in game.supervisors:
+        assert supervisor.pref_names == sup_prefs[supervisor.name]
+        assert supervisor.matching == []
+
+    assert game.matching is None
 
 
 @STUDENT_ALLOCATION
@@ -138,7 +170,8 @@ def test_inputs_supervisor_capacities(
 def test_solve(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation can solve games correctly. """
+    """ Test that StudentAllocation can solve games correctly when passed a set
+    of players. """
 
     for optimal in ["student", "supervisor"]:
         students, projects, _, game = make_game(

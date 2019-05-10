@@ -1,6 +1,6 @@
 """ The Stable Marriage Problem solver and algorithm. """
 
-from matching import Game, Matching
+from matching import Game, Matching, Player
 
 from .util import delete_pair, match_pair
 
@@ -11,10 +11,10 @@ class StableMarriage(Game):
 
     Parameters
     ==========
-    suitors : `list` of `Player` instances
+    suitors : `list` of `Player` instances, optional
         The suitors in the matching game. Each suitor must rank the names of all
         elements in `reviewers`.
-    reviewers : `list` of `Player` instances
+    reviewers : `list` of `Player` instances, optional
         The reviewers in the matching game. Each reviewer must rank the names of
         all elements in `suitors`.
 
@@ -35,9 +35,18 @@ class StableMarriage(Game):
         self.suitors = suitors
         self.reviewers = reviewers
 
+        super().__init__()
         self._check_inputs()
 
-        super().__init__()
+    @classmethod
+    def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
+        """ Create two sets of players and an instance of SM from two
+        preference dictionaries. """
+
+        suitors, reviewers = _make_players(suitor_prefs, reviewer_prefs)
+        game = cls(suitors, reviewers)
+
+        return game
 
     def solve(self, optimal="suitor"):
         """ Solve the instance of SM using either the suitor- or
@@ -208,3 +217,37 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
         suitors, reviewers = reviewers, suitors
 
     return {s: s.matching for s in suitors}
+
+
+def _make_players(suitor_prefs, reviewer_prefs):
+    """ Make a set of suitors and reviewers from the dictionaries given, and add
+    their preferences. """
+
+    suitor_dict, reviewer_dict = _make_instances(suitor_prefs, reviewer_prefs)
+
+    for suitor_name, suitor in suitor_dict.items():
+        prefs = [reviewer_dict[name] for name in suitor_prefs[suitor_name]]
+        suitor.set_prefs(prefs)
+
+    for reviewer_name, reviewer in reviewer_dict.items():
+        prefs = [suitor_dict[name] for name in reviewer_prefs[reviewer_name]]
+        reviewer.set_prefs(prefs)
+
+    suitors = list(suitor_dict.values())
+    reviewers = list(reviewer_dict.values())
+
+    return suitors, reviewers
+
+
+def _make_instances(suitor_prefs, reviewer_prefs):
+    """ Create `Player` instances for the names in each dictionary. """
+
+    suitor_dict, reviewer_dict = {}, {}
+    for suitor_name in suitor_prefs:
+        suitor = Player(name=suitor_name)
+        suitor_dict[suitor_name] = suitor
+    for reviewer_name in reviewer_prefs:
+        reviewer = Player(name=reviewer_name)
+        reviewer_dict[reviewer_name] = reviewer
+
+    return suitor_dict, reviewer_dict
