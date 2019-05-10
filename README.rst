@@ -34,8 +34,8 @@ In ``matching``, we deal with three types of matching game:
 - the student-allocation problem (SA).
 
 
-Using the `Player` class
-------------------------
+Using the ``Player`` class
+--------------------------
 
 With all of these games, ``matching`` uses a ``Player`` class to represent the
 members of the "applying" party, i.e. residents and students. For HR and SA,
