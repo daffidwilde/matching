@@ -1,32 +1,35 @@
 Source files
 ============
 
+Included here are the source files for all the subpackages and submodules in
+Matching.
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpackages
 
-   matching.games
-   matching.players
+   games/index.rst
+   players/index.rst
 
-Submodules
-----------
+Below are the source files for the base game and player classes, and for the
+general matching class.
 
-``matching.game``
-+++++++++++++++++
+``matching.game`` module
+------------------------
 
 .. automodule:: matching.game
    :members:
    :show-inheritance:
 
-``matching.matching``
-+++++++++++++++++++++
+``matching.matching`` module
+----------------------------
 
 .. automodule:: matching.matching
    :members:
    :show-inheritance:
 
-``matching.player``
-+++++++++++++++++++
+``matching.player`` module
+--------------------------
 
 .. automodule:: matching.player
    :members:
