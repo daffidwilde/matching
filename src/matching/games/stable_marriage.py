@@ -1,4 +1,4 @@
-""" The Stable Marriage Problem solver and algorithm. """
+""" The SM solver and algorithm. """
 
 from matching import Game, Matching, Player
 
@@ -6,28 +6,26 @@ from .util import delete_pair, match_pair
 
 
 class StableMarriage(Game):
-    """ A class for solving instances of the Stable Marriage Problem (SM) using
-    the extended Gale-Shapley algorithm.
+    """ A class for solving instances of the stable marriage problem (SM).
 
     Parameters
-    ==========
-    suitors : `list` of `Player` instances, optional
-        The suitors in the matching game. Each suitor must rank the names of all
-        elements in `reviewers`.
-    reviewers : `list` of `Player` instances, optional
-        The reviewers in the matching game. Each reviewer must rank the names of
-        all elements in `suitors`.
+    ----------
+    suitors : list of Player
+        The suitors in the game. Each suitor must rank all elements in
+        ``reviewers``.
+    reviewers : list of Player
+        The reviewers in the game. Each reviewer must rank all elements in
+        ``suitors``.
 
     Attributes
-    ==========
-    matching : `matching.matching.Matching`
+    ----------
+    matching : Matching or None
         Once the game is solved, a matching is available. This uses the suitors
-        and reviewers as keys and values, respectively, in a `Matching` object;
-        something that closely resembles a standard Python dictionary.
-        Initialises as `None`.
-    blocking_pairs : `list` of (`suitor`, `reviewer`)-tuples
+        and reviewers as keys and values, respectively, in a ``Matching``
+        object. Initialises as `None`.
+    blocking_pairs : list of (Player, Player)
         The suitor-reviewer pairs that both prefer one another to their current
-        match. Initialises as `None`.
+        match. Initialises as ``None``.
     """
 
     def __init__(self, suitors, reviewers):
@@ -40,8 +38,7 @@ class StableMarriage(Game):
 
     @classmethod
     def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
-        """ Create two sets of players and an instance of SM from two
-        preference dictionaries. """
+        """ Create an instance of SM from two preference dictionaries. """
 
         suitors, reviewers = _make_players(suitor_prefs, reviewer_prefs)
         game = cls(suitors, reviewers)
@@ -169,28 +166,26 @@ def unmatch_pair(suitor, reviewer):
 
 def stable_marriage(suitors, reviewers, optimal="suitor"):
     """ An extended version of the original Gale-Shapley algorithm which makes
-    use of the inherent structures of matching games. A unique, stable and
-    optimal matching is found for any valid set of suitors and reviewers. The
-    optimality of the matching is with respect to one party and is subsequently
-    the worst stable matching for the other.
+    use of the inherent structures of SM instances. A unique, stable and optimal
+    matching is found for any valid set of suitors and reviewers. The optimality
+    of the matching is with respect to one party and is subsequently the worst
+    stable matching for the other.
 
     Parameters
-    ==========
-    suitors : `list` of `Player` instances
-        The suitors in the game. Must rank all the names of those in
-        `reviewers`.
-    reviewers : `list` of `Player` instances
-        The reviewers in the game. Must rank all the names of those in
-        `suitors`.
-    optimal : `str`, optional
+    ----------
+    suitors : list of Player
+        The suitors in the game. Each must rank all of those in ``reviewers``.
+    reviewers : list of Player
+        The reviewers in the game. Each must rank all of those in ``suitors``.
+    optimal : str, optional
         Which party the matching should be optimised for. Must be one of
-        `"suitor"` and `"reviewer"`. Defaults to the former.
+        ``"suitor"`` and ``"reviewer"``. Defaults to the former.
 
     Returns
-    =======
-    matching : `Matching` (`dict`-like)
-        A dictionary-like object of `Player` instances. The keys are given by
-        the members of `suitors`, and the values are their match in `reviewers`.
+    -------
+    matching : Matching
+        A dictionary-like object where the keys are given by the members of
+        ``suitors``, and the values are their match in ``reviewers``.
     """
 
     if optimal.lower() == "reviewer":
@@ -220,8 +215,8 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
 
 
 def _make_players(suitor_prefs, reviewer_prefs):
-    """ Make a set of suitors and reviewers from the dictionaries given, and add
-    their preferences. """
+    """ Make a set of ``Player`` instances each for suitors and reviewers from
+    the dictionaries given. Add their preferences. """
 
     suitor_dict, reviewer_dict = _make_instances(suitor_prefs, reviewer_prefs)
 
@@ -240,7 +235,7 @@ def _make_players(suitor_prefs, reviewer_prefs):
 
 
 def _make_instances(suitor_prefs, reviewer_prefs):
-    """ Create `Player` instances for the names in each dictionary. """
+    """ Create ``Player`` instances for the names in each dictionary. """
 
     suitor_dict, reviewer_dict = {}, {}
     for suitor_name in suitor_prefs:
