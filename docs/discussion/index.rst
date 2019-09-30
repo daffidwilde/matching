@@ -11,5 +11,6 @@ generally.
 
    stable_marriage/index.rst
    hospital_resident/index.rst
+   student_allocation/index.rst
    game_theory.rst
    other_packages.rst

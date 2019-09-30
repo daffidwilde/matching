@@ -1,4 +1,4 @@
 .. _hospital-resident:
 
-The Hospital-Resident Assignment Problem
+The hospital-resident assignment problem
 ========================================
