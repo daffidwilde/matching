@@ -7,3 +7,4 @@ Reference
    :maxdepth: 2
 
    source.rst
+   bibliography.rst

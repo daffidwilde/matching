@@ -34,5 +34,4 @@ two rows:
 
 Upon closer inspection, we can see that each suitor is now matched with their
 most preferred reviewer so as not to form a blocking pair that would upset any
-current matchings. This matching is stable and, due to this fact, is considered
-*suitor-optimal*.
+current matchings. This matching is stable and is considered *suitor-optimal*.
