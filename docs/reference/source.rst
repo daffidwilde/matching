@@ -14,22 +14,22 @@ Matching.
 Below are the source files for the base game and player classes, and for the
 general matching class.
 
-``matching.game`` module
-------------------------
+The ``matching.game`` module
+----------------------------
 
 .. automodule:: matching.game
    :members:
    :show-inheritance:
 
-``matching.matching`` module
-----------------------------
+The ``matching.matching`` module
+--------------------------------
 
 .. automodule:: matching.matching
    :members:
    :show-inheritance:
 
-``matching.player`` module
---------------------------
+The ``matching.player`` module
+------------------------------
 
 .. automodule:: matching.player
    :members:
