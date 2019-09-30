@@ -3,20 +3,23 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to matching's documentation!
+Welcome to Matching's documentation!
 ====================================
 
-A matching game is defined by two sets, called suitors and reviewers. Each
-suitor has a ranked preference list of the reviewers and vice versa. The
-objective of a matching game is to find a mapping between the two sets such that
-no pair in the mapping can do better without upsetting the other matchings.
+Matching is a package for solving matching games.
 
-In :code:`matching`, we divide matching games into two general problems; these
-are known colloquially as stable marriage problems and hospital-resident
-assignment problems respectively.
+A matching game is defined by two sets of players. Each player in one set has a
+ranked preference list of those in the other, and the objective is to find some
+mapping between the two sets such that no pair of players are unhappy. The
+context of the terms "mapping" and "unhappy" are dependent on the framework of
+the particular game being played but are largely to do with the stability of the
+pairings.
 
-The purpose of :code:`matching` is to solve instances of these games and house
-implementations of algorithms with which to do that.
+In Matching, we deal with three types of matching game:
+
+- the stable marriage problem (SM);
+- the hospital-resident assignment problem (HR);
+- the student-allocation problem (SA).
 
 .. toctree::
    :maxdepth: 2
