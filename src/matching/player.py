@@ -5,19 +5,20 @@ class Player:
     """ A class to represent a player within the matching game.
 
     Parameters
-    ==========
-    name : `object`
+    ----------
+    name : object
         An identifier. This should be unique and descriptive.
 
     Attributes
-    ==========
-    prefs : `list`
-        A list of `Player` instances in order of the player's preferences.
-        Defaults to `None` and is updated using the `set_prefs` method.
-    pref_names : `list`
-        A list the names in `prefs`. Updates with `prefs`.
-    matching : `Player` or `None`
-        The current match of the player. `None` if not currently matched.
+    ----------
+    prefs : list of Player
+        The player's preferences. Defaults to ``None`` and is updated using the
+        ``set_prefs`` method.
+    pref_names : list
+        A list of the names in ``prefs``. Updates with ``prefs`` via
+        ``set_prefs`` method.
+    matching : Player or None
+        The current match of the player. ``None`` if not currently matched.
     """
 
     def __init__(self, name):
