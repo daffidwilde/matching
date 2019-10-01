@@ -281,7 +281,7 @@ def resident_optimal(residents, hospitals):
         them to one another.
 
         2. If, as a result of this new matching, :math:`h` is now
-        over-subscribed, find the worst res)dent currently assigned to
+        over-subscribed, find the worst resident currently assigned to
         :math:`h`, :math:`r'`. Set :math:`r'` to be unmatched and remove them
         from :math:`h`'s matching. Otherwise, go to 3.
 
