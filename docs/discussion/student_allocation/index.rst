@@ -8,3 +8,9 @@ students to projects that are each led by a supervisor according to some
 capacities and preferences. In this kind of problem there are technically three
 sets of players, although supervisors and their projects act together as a set
 of players.
+
+.. include:: definitions.rst
+
+.. include:: example.rst
+
+.. include:: algorithm.rst
