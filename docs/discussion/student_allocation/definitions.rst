@@ -37,7 +37,7 @@ them. In the case of SA, we have the following constraints on those preferences:
   no students have ranked any of a supervisor's projects then that supervisor is
   removed from :math:`U`.
 - The preference list of a project :math:`p \in P` is governed by its supervisor
-  :math:`u = L(p)`. We denote this preference as :math:`g_u(p)` and it is simply
+  :math:`u = L(p)`. We denote this preference as :math:`g_p(u)` and it is simply
   :math:`g(u)` without the students who did not rank :math:`p`. If no students
   have ranked a project then that project is removed from :math:`P`.
 
@@ -61,7 +61,7 @@ referred to as the union of its projects' matchings:
 A matching is only considered valid if **all** of the following are satisfied:
 
     1. For all :math:`s \in S` with a match we have :math:`M(s) \in f(s)`.
-    2. For all :math:`p \in P` we have :math:`M^{-1}(p) \subseteq g_u(p)` and
+    2. For all :math:`p \in P` we have :math:`M^{-1}(p) \subseteq g_p(u)` and
        :math:`|M^{-1}(p)| \leq c_p`.
     3. For all :math:`u \in U` we have :math:`M^{-1}(u) \subseteq g(u)` and
        :math:`|M^{-1}(u)| \leq c_u`.

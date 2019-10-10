@@ -4,6 +4,10 @@ Bibliography
 This is a collection of various bibliographic items referenced in the
 documentation.
 
+.. [Abra2007] Abraham, D.J., Irving, R.W. and Manlove, D.F. (2007). Two
+   algorithms for the Student-Project Allocation problem. Journal of Discrete
+   Algorithms, 5(1), 73-90. doi:10.1016/j.jda.2006.03.006
+
 .. [Dubi1981] Dubins, L. and Freedman, D. (1981). Machiavelli and the
    Gale-Shapley Algorithm. American Mathematics Monthly, 88, 485-494. 
    doi:10.2307/2321753
