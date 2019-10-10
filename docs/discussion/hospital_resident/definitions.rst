@@ -15,9 +15,9 @@ needn't be exhaustive of the other party. Instead:
   denote this preference by :math:`f(r)`.
 - Each hospital :math:`h \in H` must rank **all** those residents that have
   ranked it. That is, the preference list of :math:`h`, denoted by :math:`g(h)`,
-  is a permutation of the set given by
-  :math:`\left\{r \in R \ | \ h \in f(r)\right\} \subseteq R`. If no residents
-  rank a hospital then that hospital is removed from :math:`H`.
+  is a permutation of the set given by :math:`\left\{r \in R \ | \ h \in
+  f(r)\right\}`. If no residents rank a hospital then that hospital is removed
+  from :math:`H`.
 
 This construction of residents, hospitals, capacities and preference lists is
 a game and is denoted by :math:`(R,H)`. This game is used to model instances of
