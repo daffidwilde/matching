@@ -84,8 +84,8 @@ following hold:
           - Both :math:`p` and :math:`u` are under-subscribed, i.e.
             :math:`|M^{-1}(p)| < c_p` and :math:`|M^{-1}(u)| < c_u`.
           - :math:`|M^{-1}(p)| < c_p` and :math:`|M^{-1}(u)| = c_u`, and either
-            :math:`M(s) \in L^{-1}(u)` or :math:`u` prefers :math:`s` to their
-            worst current match :math:`s' \in M^{-1}(u)`.
+            :math:`M(s) = p' \in L^{-1}(u)` or :math:`u` prefers :math:`s` to
+            their worst current match :math:`s' \in M^{-1}(u)`.
           - :math:`|M^{-1}(p)| = c_p` and :math:`u` prefers :math:`s` to the
             project's worst student :math:`s \in M^{-1}(p)`.
 
