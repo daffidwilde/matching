@@ -1,8 +1,8 @@
 Contributing to the library
 ===========================
 
-If you are interested in contributing to the Matching library then the
-developers first offer their thanks.
+If you are interested in contributing to the Matching library then first of all
+we would like to offer our thanks and say welcome!
 
 Whether you're looking to provide a fix for a current `issue
 <https://github.com/daffidwilde/matching/issues>`_, report a bug or implement a
