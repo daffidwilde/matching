@@ -8,3 +8,5 @@ Reference
 
    source.rst
    bibliography.rst
+   citation.rst
+   contributing.rst
