@@ -112,12 +112,14 @@ class StudentAllocation(Game):
         blocking_pairs = []
         for student in self.students:
             for project in self.projects:
-                if project in student.prefs:
-                    if _check_student_unhappy(
-                        student, project
-                    ) and _check_project_unhappy(project, student):
-                        blocking_pairs.append((student, project))
+                if (
+                    project in student.prefs
+                    and _check_student_unhappy(student, project)
+                    and _check_project_unhappy(project, student)
+                ):
+                    blocking_pairs.append((student, project))
 
+        self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
     def _check_student_matching(self):
@@ -383,7 +385,8 @@ def _check_project_unhappy(project, student):
     )
 
     supervisor_full = len(supervisor.matching) == supervisor.capacity
-    swap_available = student in supervisor.matching or supervisor.prefers(
+    swap_available = (student in supervisor.matching and student.matching !=
+            project) or supervisor.prefers(
         student, supervisor.get_worst_match()
     )
 
