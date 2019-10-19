@@ -270,8 +270,8 @@ def hospital_resident(residents, hospitals, optimal="resident"):
 
 
 def resident_optimal(residents, hospitals):
-    """ Solve the instance of HR to be resident-optimal. The
-    algorithm (set out in `DubinsFreedman1981`_) is as follows:
+    """ Solve the instance of HR to be resident-optimal. The algorithm is as
+    follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
         unsubscribed.
@@ -317,8 +317,8 @@ def resident_optimal(residents, hospitals):
 
 
 def hospital_optimal(hospitals):
-    """ Solve the instance of HR to be hospital-optimal. The
-    algorithm (originally described in `Roth1984`_) is as follows:
+    """ Solve the instance of HR to be hospital-optimal. The algorithm is as
+    follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
         unsubscribed.
