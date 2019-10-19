@@ -3,8 +3,8 @@ The algorithm
 
 Finding stable and optimal solutions to SA is easily motivated since those
 solutions would solve the real-world problem they model. Actually implementing
-this in the real world is described in more detail in :ref:`this tutorial
-<tutorial-iii>`.
+this in the real world is described in more detail in `this tutorial
+<../../tutorials/project_allocation/main.ipynb>`_.
 
 As with HR, there are two algorithms implemented in Matching to solve instances
 of SA, one to handle the optimality of each party (students and
