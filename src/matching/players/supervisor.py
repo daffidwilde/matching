@@ -7,23 +7,25 @@ class Supervisor(Hospital):
     """ A class to represent a supervisor in an instance of SA.
 
     Parameters
-    ==========
-    name : `object`
+    ----------
+    name : object
         An identifier. This should be unique and descriptive.
-    capacity : `int`
+    capacity : int
         The maximum number of matches the supervisor can have.
 
     Attributes
-    ==========
-    projects : `list`
+    ----------
+    projects : list of Project
         The projects that the supervisor runs. Defaults to an empty list.
-    prefs : `list`
-        A list of `Player` instances in the order of preference.
-    pref_names : `list`
-        A list of the names in `prefs`. Updates with `prefs`.
-    matching : `list`
+    prefs : list of Player
+        The supervisor's preferences. Defaults to ``None`` and is updated via
+        the ``set_prefs`` method.
+    pref_names : list
+        A list of the names in ``prefs``. Updates with ``prefs`` via
+        ``set_prefs``.
+    matching : list of Player
         The current matches of the supervisor. An empty list if currently
-        unsubscribed, and updated through its project matching updates.
+        unsubscribed, and updated through its projects' matching updates.
     """
 
     def __init__(self, name, capacity):
@@ -32,7 +34,7 @@ class Supervisor(Hospital):
         self.projects = []
 
     def set_prefs(self, students):
-        """ Set the preference of the supervisor, and pass those on to the
+        """ Set the preference of the supervisor, and pass those on to its
         projects. """
 
         self.prefs = students
@@ -45,8 +47,8 @@ class Supervisor(Hospital):
             project.set_prefs(acceptable)
 
     def forget(self, student):
-        """ Only forget a student if it is not ranked by any of the supervisor's
-        projects. """
+        """ Only forget ``student`` if it is not ranked by any of the
+        supervisor's projects. """
 
         if not any([student in project.prefs for project in self.projects]):
             prefs = self.prefs[:]
@@ -57,7 +59,8 @@ class Supervisor(Hospital):
         """ Find the supervisor's favourite student that it is not currently
         matched to, but has a preference of, one of the supervisor's
         under-subscribed projects. Also return the student's favourite
-        under-subscribed project. """
+        under-subscribed project. If no such student exists, return ``None``.
+        """
 
         if len(self.matching) < self.capacity:
             for student in self.prefs:

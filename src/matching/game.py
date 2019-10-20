@@ -1,21 +1,22 @@
-""" The base matchmaker class for facilitating and solving matching games. """
+""" The base game class for facilitating and solving matching games. """
 
 
 class Game:
     """ A class to store information about, and facilitate the solving of, a
     matching game.
 
-    This is a base class and is not intended for uses other than inheritance.
+    **This is a base class and is not intended for use other than inheritance.**
 
     Attributes
-    ==========
-    matching : `None`
-        Initialised to be `None`. After solving the game instance, a dictionary
-        storing the final matches is given here.
-    blocking_pairs : `None`.
-        Initialised to be `None`. After solving and checking the stability of
-        the game instance, a list of any pairs that block the stability of the
-        matching.
+    ----------
+    _matching : None
+        Initialised to be :code:`None`. After solving the game,
+        a :code:`Matching` object is found here. Not used -- instead, use the
+        :code:`Game.matching` property.
+    blocking_pairs : None
+        Initialised to be :code:`None`. After solving and checking the stability
+        of the game instance, a list of any pairs that block the stability of
+        the matching.
     """
 
     def __init__(self):
@@ -31,7 +32,7 @@ class Game:
 
     @matching.getter
     def matching(self):
-        """ Property getter. """
+        """ Property method to stop direct write access. """
 
         return self._matching
 

@@ -1,4 +1,4 @@
-""" The Hospital-Resident Assignment Problem solver and core algorithm. """
+""" The HR solver and algorithm. """
 
 from matching import Game, Matching
 from matching import Player as Resident
@@ -8,33 +8,35 @@ from .util import delete_pair, match_pair
 
 
 class HospitalResident(Game):
-    """ A class for solving instances of the Hospital-Resident Assignment
-    Problem (HR) using an adapted Gale-Shapley algorithm.
+    """ A class for solving instances of the hospital-resident assignment
+    problem (HR).
+
+    In this case, a blocking pair is any resident-hospital pair that satisfies
+    **all** of the following:
+        - They are present in each other's preference lists;
+        - either the resident is unmatched, or they prefer the hospital to their
+          current match;
+        - either the hospital is under-subscribed, or they prefer the resident
+          to at least one of their current matches.
 
     Parameters
-    ==========
-    residents : `list` of `Player` instances
-        The residents (residents) in the matching game. Each resident must rank
-        a subset of the names in `hospitals`.
-    hospitals : `list` of `Player` instances
-        The hospitals (hospitals) in the matching game. Each hospital must rank
-        all of (and only) the names of the residents which rank it.
+    ----------
+    residents : list of Player
+        The residents in the matching game. Each resident must rank a subset of
+        those in :code:`hospitals`.
+    hospitals : list of Hospital
+        The hospitals in the matching game. Each hospital must rank all of (and
+        only) the residents which rank it.
 
     Attributes
-    ==========
-    matching : `matching.matching.Matching`
-        Once the game is solved, a matching is available as a `Matching` object.
-        This resembles and behaves much like a standard Python dictionary that
-        uses the hospitals as keys and their resident matches as values.
-        Initialises as `None`.
-    blocking_pairs : `list` of (`resident`, `hospital`)-tuples
-        The resident-hospital pairs that satisfy the following conditions:
-            - They are present in each other's preference lists;
-            - either the resident is unmatched, or they prefer the hospital to
-              their current match;
-            - either the hospital is under-subscribed, or they prefer the
-              resident to at least one of their current matches.
-        Such pairs are said to 'block' the matching. Initialises as `None`.
+    ----------
+    matching : Matching or None
+        Once the game is solved, a matching is available as a :code:`Matching`
+        object with the hospitals as keys and their resident matches as values.
+        Initialises as :code:`None`.
+    blocking_pairs : list of (Player, Hospital) or None
+        Initialises as `None`. Otherwise, a list of the resident-hospital
+        blocking pairs.
     """
 
     def __init__(self, residents=None, hospitals=None):
@@ -49,7 +51,7 @@ class HospitalResident(Game):
     def create_from_dictionaries(
         cls, resident_prefs, hospital_prefs, capacities
     ):
-        """ Create sets of players and an instance of HR from two preference
+        """ Create an instance of :code:`HospitalResident` from two preference
         dictionaries and capacities. """
 
         residents, hospitals = _make_players(
@@ -60,8 +62,8 @@ class HospitalResident(Game):
         return game
 
     def solve(self, optimal="resident"):
-        """ Solve the instance of HR using either the resident- (resident-) or
-        hospital- (hospital-) oriented algorithm. Return the matching. """
+        """ Solve the instance of HR using either the resident- or
+        hospital-oriented algorithm. Return the matching. """
 
         self._matching = Matching(
             hospital_resident(self.residents, self.hospitals, optimal)
@@ -237,30 +239,28 @@ def unmatch_pair(resident, hospital):
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):
-    """ Solve an instance of HR matching game by treating it as a stable
-    marriage game with hospital capacities. A unique, stable and optimal
-    matching is found for the given set of residents (residents) and hospitals
-    (hospitals). The optimality of the matching is found with respect to one
+    """ Solve an instance of HR using an adapted Gale-Shapley algorithm. A
+    unique, stable and optimal matching is found for the given set of residents
+    and hospitals. The optimality of the matching is found with respect to one
     party and is subsequently the worst stable matching for the other.
 
     Parameters
-    ==========
-    residents : `list` of `Player` instances
-        The residents in the game. Each resident must rank the names of a subset
-        of the elements of `hospitals`.
-    hospitals : `list` of `Player` instances
-        The hospitals in the game. Each hospital must all the names of those
-        elements of `hospitals` that rank them.
-    optimal : `str`, optional
+    ----------
+    residents : list of Player
+        The residents in the game. Each resident must rank a non-empty subset
+        of the elements of ``hospitals``.
+    hospitals : list of Hospital
+        The hospitals in the game. Each hospital must rank all the residents
+        that have ranked them.
+    optimal : str, optional
         Which party the matching should be optimised for. Must be one of
-        `"resident"` and `"hospital"` (or `"resident"` and `"hospital"`
-        respectively). Defaults to `"resident"`.
+        ``"resident"`` and ``"hospital"``. Defaults to the former.
 
     Returns
-    =======
-    matching : `Matching` (`dict`-like)
-        A dictionary-like object of `Player` instances. The keys are the members
-        of `hospitals`, and the values are their matches ranked by preference.
+    -------
+    matching : Matching
+        A dictionary-like object where the keys are the members of
+        ``hospitals``, and the values are their matches ranked by preference.
     """
 
     if optimal == "resident":
@@ -270,7 +270,7 @@ def hospital_resident(residents, hospitals, optimal="resident"):
 
 
 def resident_optimal(residents, hospitals):
-    """ Solve the instance of HR to be resident- (resident-) optimal. The
+    """ Solve the instance of HR to be resident-optimal. The
     algorithm (set out in `DubinsFreedman1981`_) is as follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -281,7 +281,7 @@ def resident_optimal(residents, hospitals):
         them to one another.
 
         2. If, as a result of this new matching, :math:`h` is now
-        over-subscribed, find the worst res)dent currently assigned to
+        over-subscribed, find the worst resident currently assigned to
         :math:`h`, :math:`r'`. Set :math:`r'` to be unmatched and remove them
         from :math:`h`'s matching. Otherwise, go to 3.
 
@@ -317,7 +317,7 @@ def resident_optimal(residents, hospitals):
 
 
 def hospital_optimal(hospitals):
-    """ Solve the instance of HR to be hospital- (hospital-) optimal. The
+    """ Solve the instance of HR to be hospital-optimal. The
     algorithm (originally described in `Roth1984`_) is as follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -394,8 +394,8 @@ def _make_players(resident_prefs, hospital_prefs, capacities):
 
 
 def _make_instances(resident_prefs, hospital_prefs, capacities):
-    """ Create `Resident` and `Hospital` instances for the names in each
-    dictionary. """
+    """ Create ``Player`` (resident) and ``Hospital`` instances for the names in
+    each dictionary. """
 
     resident_dict, hospital_dict = {}, {}
     for resident_name in resident_prefs:
