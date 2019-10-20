@@ -23,16 +23,6 @@ student_names = [f"19{i:04d}" for i in range(MAX_STUDENTS)]
 supervisor_names = list(string.ascii_uppercase)
 
 
-def create_player_to_capacity_map(player_names):
-    """ Create a dictionary mapping player names to their capacity. """
-
-    player_to_capacity = {}
-    for name in player_names:
-        player_to_capacity[name] = np.random.randint(1, MAX_CAPACITY + 1)
-
-    return player_to_capacity
-
-
 def create_supervisor_to_projects_map():
     """ Create a dictionary mapping supervisor names to their projects.
     To do this, first sample the number of projects that each supervisor will
@@ -61,6 +51,23 @@ def create_supervisor_to_projects_map():
         ]
 
     return supervisor_to_projects
+
+
+def create_player_to_capacity_maps(supervisor_to_projects):
+    """ Create dictionaries mapping supervisor names and project codes to their
+    respective capacities. """
+
+    supervisor_to_capacity, project_to_capacity = {}, {}
+    for supervisor, projects in supervisor_to_projects.items():
+        supervisor_capacity = np.random.randint(1, MAX_CAPACITY + 1)
+        supervisor_to_capacity[supervisor] = supervisor_capacity
+
+        for project in projects:
+            project_to_capacity[project] = np.random.randint(
+                1, supervisor_capacity + 2
+            )
+
+    return supervisor_to_capacity, project_to_capacity
 
 
 def get_all_projects(supervisor_to_projects):
@@ -164,7 +171,10 @@ def create_project_dataframe(project_to_capacity, supervisor_to_projects):
 
 
 def save_dataframes(
-    student_dataframe, supervisor_dataframe, project_dataframe, root="../../data/"
+    student_dataframe,
+    supervisor_dataframe,
+    project_dataframe,
+    root="../../data/",
 ):
     """ Save the player dataframes in the ``root`` directory. By default, this
     is in the level above this directory in a ``data`` directory. """
@@ -184,19 +194,16 @@ def main():
     print("Seed set:", SEED)
 
     supervisor_to_projects = create_supervisor_to_projects_map()
-    supervisor_to_capacity = create_player_to_capacity_map(supervisor_names)
-    print("Supervisor dictionaries created...")
+    supervisor_to_capacity, project_to_capacity = (
+        create_player_to_capacity_maps(supervisor_to_projects)
+    )
+    print("Supervisor and project dictionaries created...")
 
     all_projects = list(get_all_projects(supervisor_to_projects))
 
-    redacted_projects = [
-        p for p in all_projects if p != "B0"
-    ]
+    redacted_projects = [p for p in all_projects if p != "L1"]
     student_to_choices = create_student_to_choices_map(redacted_projects)
     print("Student choices assigned...")
-
-    project_to_capacity = create_player_to_capacity_map(all_projects)
-    print("Project capacities created...")
 
     df_students = create_student_dataframe(student_to_choices)
     df_supervisors = create_supervisor_dataframe(supervisor_to_capacity)
