@@ -1,5 +1,3 @@
-.. _gale-shapley:
-
 The algorithm
 -------------
 
