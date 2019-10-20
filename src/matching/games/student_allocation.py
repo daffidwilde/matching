@@ -385,10 +385,10 @@ def _check_project_unhappy(project, student):
     )
 
     supervisor_full = len(supervisor.matching) == supervisor.capacity
-    swap_available = (student in supervisor.matching and student.matching !=
-            project) or supervisor.prefers(
-        student, supervisor.get_worst_match()
-    )
+
+    swap_available = (
+        student in supervisor.matching and student.matching != project
+    ) or supervisor.prefers(student, supervisor.get_worst_match())
 
     project_upsetting_supervisor = len(
         project.matching

@@ -9,6 +9,4 @@ various forms and solve them using the algorithms implemented in this library.
 .. toctree::
    :maxdepth: 2
 
-   tutorial_i.rst
-   tutorial_ii.rst
-   tutorial_iii.rst
+   project_allocation/main.ipynb
