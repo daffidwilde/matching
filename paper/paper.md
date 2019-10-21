@@ -15,10 +15,12 @@ authors:
   - name: Vincent Knight
     orcid: 0000-0002-4245-0638
     affiliation: 1
+  - name: Jonathan Gillard
+    orcid: 0000-0001-9166-298X
 affiliations:
-  - name: School of Mathematics, Cardiff University, Cardiff CF24 4AG, UK
+  - name: School of Mathematics, Cardiff University
     index: 1
-date: 14 October 2019
+date: October 2019
 bibliography: paper.bib
 ---
 
