@@ -43,7 +43,7 @@ stable if it contains no blocking pairs. In SM, a blocking pair is any pair $(s,
 r) \in S \times R$ that would rather be matched to one another than their
 current match. This definition is different for other matching games but the
 spirit is the same in that a pair blocks a matching if their envy is rational.
-Irrational envy would be that one player wishes to be matched to another over
+Irrational envy would be where one player wishes to be matched to another over
 their current match but the other player does not (or cannot) reciprocate.
 
 Consider the unsolved game of size three shown in Figure \ref{fig:sm_matching}
