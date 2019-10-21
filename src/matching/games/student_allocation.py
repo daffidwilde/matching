@@ -1,4 +1,4 @@
-""" The Student Allocation Problem solver and core algorithm. """
+""" The SA solver and algorithm. """
 
 from matching import Game, Matching
 from matching import Player as Student
@@ -8,42 +8,47 @@ from .util import delete_pair, match_pair
 
 
 class StudentAllocation(Game):
-    """ A class for solving instances of the Student Allocation problem (SA)
+    """ A class for solving instances of the student-allocation problem (SA)
     using an adapted Gale-Shapley algorithm.
 
+    In this case, a blocking pair is defined as any student-project pair that
+    satisfies **all** of the following:
+    
+    1. The student has a preference of the project.
+    2. Either the student is unmatched, or they prefer the project to their
+       current project.
+    3. At least one of the following: 
+    
+       - The project or its supervisor is under-subscribed.
+       - The project is under-subscribed and the supervisor is at capacity, and
+         the student is matched to a project offered by the supervisor or the
+         supervisor prefers the student to its worst currently matched student.
+       - The project is at capacity and its supervisor prefers the student to
+         its worst currently matched student.
+
     Parameters
-    ==========
-    students : `list`
+    ----------
+    students : list of Player
         The students in the game. Each student must rank a subset of the
         projects.
-    projects : `list`
+    projects : list of Project
         The projects in the game. Each project has a supervisor associated
         with it that governs its preferences.
-    supervisors : `list`
-        The supervisor in the game. Each supervisor oversees a distinct subset
-        of projects and ranks all of those students that have ranked at least
-        one of its projects.
+    supervisors : list of Supervisor
+        The supervisors in the game. Each supervisor oversees a unique subset
+        of ``projects`` and ranks all of those students that have ranked at
+        least one of its projects.
 
     Attributes
-    ==========
-    matching : `matching.matching.Matching`
-        Once the game is solved, a matching is available. This `Matching` object
-        behaves much like a dictionary that uses projects as keys and their
-        student matches as values. Initialises as `None`.
-    blocking_pairs : `list` of (`student`, `project`)-tuples
-        The student-project pairs that satisfy the following conditions:
-            - The student has a preference of the project;
-            - either the student is unmatched, or they prefer the project to
-              their current project;
-            - either:
-                - the project or its supervisor is under-subscribed, or
-                - the project is under-subscribed and the supervisor is at
-                  capacity, and the student is matched to a project offered by
-                  the supervisor or the supervisor prefers the student to its
-                  worst currently matched student, or
-                - the project is at capacity and its supervisor prefers the
-                  student to its worst currently matched student.
-        Such pairs are said to 'block' the matching. Initialises as `None`.
+    ----------
+    matching : Matching or None
+        Once the game is solved, a matching is available. This ``Matching``
+        object behaves much like a dictionary that uses the elements of
+        ``projects`` as keys and their student matches as values. Initialises as
+        ``None``.
+    blocking_pairs : list of (Player, Project)
+        Initialises as None. Otherwise, a list of the student-project blocking
+        pairs.
     """
 
     def __init__(self, students, projects, supervisors):
@@ -64,8 +69,8 @@ class StudentAllocation(Game):
         project_capacities,
         supervisor_capacities,
     ):
-        """ Create sets of students, projects and supervisors, and an instance
-        of SA from two preference dictionaries, affiliations and capacities. """
+        """ Create an instance of SA from two preference dictionaries,
+        affiliations and capacities. """
 
         students, projects, supervisors = _make_players(
             student_prefs,
@@ -107,12 +112,14 @@ class StudentAllocation(Game):
         blocking_pairs = []
         for student in self.students:
             for project in self.projects:
-                if project in student.prefs:
-                    if _check_student_unhappy(
-                        student, project
-                    ) and _check_project_unhappy(project, student):
-                        blocking_pairs.append((student, project))
+                if (
+                    project in student.prefs
+                    and _check_student_unhappy(student, project)
+                    and _check_project_unhappy(project, student)
+                ):
+                    blocking_pairs.append((student, project))
 
+        self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
     def _check_student_matching(self):
@@ -302,7 +309,7 @@ class StudentAllocation(Game):
 
     def _check_init_project_capacities(self):
         """ Check that each project has at least one space but no more than
-        their supervisor member. """
+        their supervisor. """
 
         errors = []
         for project in self.projects:
@@ -351,8 +358,8 @@ class StudentAllocation(Game):
 
 
 def _check_student_unhappy(student, project):
-    """ Determine whether `student` is unhappy either because they are unmatched
-    or because they prefer `project` to their current matching. """
+    """ Determine whether ``student`` is unhappy either because they are
+    unmatched or because they prefer ``project`` to their current matching. """
 
     return student.matching is None or student.prefers(
         project, student.matching
@@ -360,13 +367,13 @@ def _check_student_unhappy(student, project):
 
 
 def _check_project_unhappy(project, student):
-    """ Determine whether `project` is unhappy because either:
-            - they and their supervisor are under-subscribed;
-            - they are under-subscribed, their supervisor is full, and either
-              `student` is in the supervisor's matching or the supervisor
-              prefers `student` to their worst current matching;
-            - `project` is full and their supervisor prefers `student` to the
-              worst student in the matching of `project`.
+    """ Determine whether ``project`` is unhappy because either:
+        - they and their supervisor are under-subscribed;
+        - they are under-subscribed, their supervisor is full, and either
+          ``student`` is in the supervisor's matching or the supervisor prefers
+          ``student`` to their worst current matching;
+        - ``project`` is full and their supervisor prefers ``student`` to the
+          worst student in the matching of ``project``.
     """
 
     supervisor = project.supervisor
@@ -378,9 +385,10 @@ def _check_project_unhappy(project, student):
     )
 
     supervisor_full = len(supervisor.matching) == supervisor.capacity
-    swap_available = student in supervisor.matching or supervisor.prefers(
-        student, supervisor.get_worst_match()
-    )
+
+    swap_available = (
+        student in supervisor.matching and student.matching != project
+    ) or supervisor.prefers(student, supervisor.get_worst_match())
 
     project_upsetting_supervisor = len(
         project.matching
@@ -405,30 +413,30 @@ def unmatch_pair(student, project):
 def student_allocation(students, projects, supervisors, optimal="student"):
     """ Solve an instance of SA by treating it as a bi-level HR. A unique,
     stable and optimal matching is found for the given set of students, projects
-    and supervisor. The optimality of the matching is found with respect to one
+    and supervisors. The optimality of the matching is found with respect to one
     party and is subsequently the worst stable matching for the other.
 
     Parameters
-    ==========
-    students : `list`
+    ----------
+    students : list of Player
         The students in the game. Each student must rank a subset of the
-        elements of `projects`.
-    projects : `list`
-        The projects in the game. Each project is offered by a of
-        `supervisor` that governs its preferences.
-    supervisor : `list`)`
-        The supervisor in the game. Each of the supervisor offers a distinct
-        subset of `projects` and ranks all the students that have ranked at
-        least one of these projects.
-    optimal : `str`, optional
+        elements of ``projects``.
+    projects : list of Project
+        The projects in the game. Each project is offered by a supervisor that
+        governs its preferences.
+    supervisor : list of Supervisor
+        The supervisors in the game. Each supervisor offers a unique subset of
+        ``projects`` and ranks all the students that have ranked at least one of
+        these projects.
+    optimal : str, optional
         Which party the matching should be optimised for. Must be one of
-        `"student"` and `"supervisor"`. Defaults to `"student"`.
+        ``"student"`` and ``"supervisor"``. Defaults to the former.
 
     Returns
     =======
-    matching : `Matching`
-        A dictionary-like object using the `projects` as keys and their matches
-        (made from `students`) as values.
+    matching : Matching
+        A dictionary-like object where the keys are the members of ``projects``
+        and their student matches are the values.
     """
 
     if optimal == "student":
@@ -570,8 +578,9 @@ def _make_players(
     project_capacities,
     supervisor_capacities,
 ):
-    """ Make a set of students, projects and supervisors from the dictionaries
-    given, and add their preferences. """
+    """ Make a set of ``Player``, ``Project`` and ``Supervisor`` instances,
+    respectively for the students, projects and supervisors from the
+    dictionaries given, and add their preferences. """
 
     student_dict, project_dict, supervisor_dict = _make_instances(
         student_prefs,
@@ -601,8 +610,8 @@ def _make_instances(
     project_capacities,
     supervisor_capacities,
 ):
-    """ Create `Student`, `Project` and `Supervisor` instances for the names in
-    each dictionary. """
+    """ Create ``Player``, ``Project`` and ``Supervisor`` instances for the
+    names in each dictionary. """
 
     student_dict, project_dict, supervisor_dict = {}, {}, {}
 

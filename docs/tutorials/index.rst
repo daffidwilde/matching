@@ -3,5 +3,10 @@
 Tutorials
 =========
 
-In these tutorials, we will make use of a few small instances of matching games
-and solve them using the various algorithms implemented in this library.
+In these tutorials, we will make use of a few instances of matching games in
+various forms and solve them using the algorithms implemented in this library.
+
+.. toctree::
+   :maxdepth: 2
+
+   project_allocation/main.ipynb

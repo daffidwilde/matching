@@ -1,11 +1,11 @@
 .. _stable-marriage:
 
-The Stable Marriage Problem
+The stable marriage problem
 ===========================
 
-The stable marriage problem (SMP) describes the problem of finding a stable
-matching between two distinct, equally sized sets of players.
-
+The stable marriage problem (SM) describes the problem of finding a stable
+matching between two distinct, equally sized sets of players with complete
+preferences.
 
 .. include:: definitions.rst
 

@@ -9,6 +9,7 @@ dist/
 *egg-info*
 htmlcov/
 *.hypothesis/*
+*.ipynb_checkpoints*
 *pyc
 *.swp
 

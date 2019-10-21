@@ -1,0 +1,15 @@
+version: 2
+
+python:
+  version: 3.7
+  install:
+    - requirements: requirements.txt
+    - requirements: docs/requirements.txt
+
+sphinx:
+  configuration: docs/conf.py
+
+conda:
+  environment: docs/environment.yml
+
+formats: all

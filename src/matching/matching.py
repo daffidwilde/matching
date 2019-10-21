@@ -1,11 +1,18 @@
-""" A new dictionary-like object for matchings. """
+""" A dictionary-like object for matchings. """
 
 from .player import Player
 
 
 class Matching(dict):
-    """ A class to store, and allow easy updating of, matchings found by a
-    solver. """
+    """ A class to store, and allow for the easy updating of, matchings found by
+    a game solver.
+
+    Attributes
+    ----------
+    dictionary : dict or None
+        If not ``None``, a dictionary mapping a ``Player`` to one of: ``None``,
+        a single ``Player`` or a list of ``Player`` instances.
+    """
 
     def __init__(self, dictionary=None):
 
