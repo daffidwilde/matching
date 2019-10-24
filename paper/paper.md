@@ -26,11 +26,11 @@ bibliography: paper.bib
 
 # Summary
 
-Matching is a library for creating and solving instances of matching games. A
-matching game is typically defined by two sets of players that each have
-preferences over at least some of the elements of the other. The objective of
-the game is to find a mapping between the sets of players that maximises the
-satisfaction of at least one of the sets and the stability of its pairings.
+Matching games allow for the allocation of resources and partnerships in a fair,
+game theoretic way. Typically, a matching game is defined by two sets of players
+that each have preferences over at least some of the elements of the other set.
+The objective of the game is to find a mapping between the sets of players in
+which everyone is *happy enough*; we call this concept stability.
 
 One of the simplest types of matching game models the Stable Marriage Problem
 (SM). In SM, we have two sets of size $N$: a set of suitors $S$ and a set of
