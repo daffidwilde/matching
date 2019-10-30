@@ -1,6 +1,8 @@
 language: python
 python:
   - 3.6
+  - 3.7
+  - 3.8
 
 cache:
   directories:
@@ -11,11 +13,7 @@ install:
   - python setup.py develop
   - pip install --upgrade pytest
   - pip install coveralls==1.1 hypothesis pytest-cov
-  - pip install sphinx sphinx_rtd_theme
 script:
-    #  - cd docs; make html
-    #  - cd ..
-    #  - pytest --doctest-glob='.rst'
   - pytest --cov=src/matching tests
   - pip uninstall -y matching
   - pip install matching
