@@ -5,6 +5,95 @@ from matching import Game, Matching, Player
 from .util import delete_pair, match_pair
 
 
+class StableRoommates(Game):
+    """ A class for solving instances of the stable roommates problem (SR).
+
+    Parameters
+    ----------
+    players : list of Player
+        The players in the game. Each must rank all other players.
+
+    Attributes
+    ----------
+    matching : Matching or None
+        Once the game is solved, a matching is available. This uses the players
+        as keys and values in a ``Matching`` object. Initialises as ``None``.
+    """
+
+    def __init__(self, players):
+
+        self.players = players
+
+        super().__init__()
+        self._check_inputs()
+
+    @classmethod
+    def create_from_dictionary(cls, player_prefs):
+        """ Create an instance of SR from a preference dictionary. """
+
+        players = _make_players(player_prefs)
+        game = cls(players)
+
+        return game
+
+    def solve(self):
+        """ Solve the instance of SR using Irving's algorithm. Return the
+        matching. """
+
+        self._matching = Matching(stable_roommates(self.players))
+        return self.matching
+
+    def check_stability(self):
+        """ Check for the existence of any blocking pairs in the current
+        matching. Then the stability of the matching holds when there are no
+        blocking pairs and all players have been matched. """
+
+        if None in self.matching.values():
+            return False
+
+        blocking_pairs = []
+        for player in self.players:
+            others = [p for p in self.players if p != player]
+            for other in others:
+                both_matched = player.matching and other.matching
+                if both_matched:
+                    prefer_each_other = (
+                        player.prefers(other, player.matching)
+                        and other.prefers(player, other.matching)
+                    )
+                    if prefer_each_other:
+                        blocking_pairs.append((player, other))
+
+        self.blocking_pairs = blocking_pairs
+        return not any(blocking_pairs)
+
+    def check_validity(self):
+        """ Check whether the current matching is valid. """
+
+        errors = []
+        matching = self.matching
+        for player in self.players:
+            if player.matching is None:
+                errors.append(ValueError(f"{player} is unmatched."))
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
+    def _check_inputs(self):
+        """ Check that all players have ranked all other players. """
+
+        for player in self.players:
+            others = {p for p in self.players if p != player}
+            if set(player.prefs) != others:
+                raise ValueError(
+                    "Every player must rank all other players. "
+                    f"{player}: {player.prefs} not permutation of {others}"
+                )
+
+        return True
+
+
 def forget_pair(player, other):
     """ Remove a (player, other) pair from the game. """
 
@@ -118,13 +207,31 @@ def stable_roommates(players):
 
     Returns
     -------
-    matching : Matching
-        A dict-like object where the keys and values are given by the members of
-        ``players``.
+    matching : dict
+        A dictionary of matches where the keys and values are given by the
+        members of ``players``.
     """
 
     players = first_phase(players)
     if any(len(p.prefs) > 1 for p in players):
         players = second_phase(players)
 
-    return Matching({p: p.matching for p in players})
+    return {p: p.matching for p in players}
+
+
+def _make_players(player_prefs):
+    """ Make a set of ``Player`` instances from the dictionary given. Add their
+    preferences. """
+
+    player_dict = {}
+    for player_name in player_prefs:
+        player = Player(name=player_name)
+        player_dict[player_name] = player
+
+    for player_name, player in player_dict.items():
+        prefs = [player_dict[name] for name in player_prefs[player_name]]
+        player.set_prefs(prefs)
+
+    players = list(player_dict.values())
+
+    return players
