@@ -103,9 +103,9 @@ def test_check_validity(player_names, seed):
 
 
 @STABLE_MARRIAGE
-def test_all_gameed(player_names, seed):
+def test_all_matched(player_names, seed):
     """ Test that StableMarriage recognises a valid matching requires all
-    players to be gameed as players and as part of the game. """
+    players to be matched as players and as part of the game. """
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
