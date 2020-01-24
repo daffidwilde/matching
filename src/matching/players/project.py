@@ -61,7 +61,8 @@ class Project(Hospital):
         """ Remove ``student`` from the preference list of the project and its
         supervisor. """
 
-        prefs = self.prefs[:]
-        prefs.remove(student)
-        self.prefs = prefs
-        self.supervisor.forget(student)
+        if student in self.prefs:
+            prefs = self.prefs[:]
+            prefs.remove(student)
+            self.prefs = prefs
+            self.supervisor.forget(student)
