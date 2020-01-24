@@ -107,3 +107,7 @@ def test_stability():
     matching[d] = b
 
     assert not game.check_stability()
+
+    matching[a] = None
+    matching[c] = None
+    assert not game.check_stability()
