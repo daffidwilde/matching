@@ -9,4 +9,5 @@ various forms and solve them using the algorithms implemented in this library.
 .. toctree::
    :maxdepth: 2
 
+   stable_marriage/main.ipynb
    project_allocation/main.ipynb
