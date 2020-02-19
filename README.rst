@@ -27,11 +27,12 @@ context of the terms "mapping" and "unhappy" are dependent on the framework of
 the particular game being played but are largely to do with the stability of the
 pairings.
 
-In ``matching``, we deal with three types of matching game:
+In ``matching``, we deal with four types of matching game:
 
 - the stable marriage problem (SM);
 - the hospital-resident assignment problem (HR);
-- the student-allocation problem (SA).
+- the student-allocation problem (SA);
+- the stable roommates problem (SR).
 
 
 Using the ``Player`` class
