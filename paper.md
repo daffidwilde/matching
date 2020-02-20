@@ -16,6 +16,7 @@ authors:
     affiliation: 1
   - name: Jonathan Gillard
     orcid: 0000-0001-9166-298X
+    affiliation: 1
 affiliations:
   - name: School of Mathematics, Cardiff University
     index: 1
