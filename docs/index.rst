@@ -19,7 +19,8 @@ In Matching, we deal with three types of matching game:
 
 - the stable marriage problem (SM);
 - the hospital-resident assignment problem (HR);
-- the student-allocation problem (SA).
+- the student-allocation problem (SA);
+- the stable roommates problem (SR).
 
 .. toctree::
    :maxdepth: 2
