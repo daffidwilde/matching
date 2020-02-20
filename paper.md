@@ -1,13 +1,12 @@
 ---
-title: 'Matching: A Python library for solving matching games with an
-        application to the student-project allocation problem'
+title: 'Matching: A Python library for solving matching games'
 tags:
   - Python
   - mathematics
-  - matching algorithms
-  - stability
-  - project allocation
+  - economics
+  - computer science
   - game theory
+  - stability
 authors:
   - name: Henry Wilde
     orcid: 0000-0002-3788-7691
@@ -20,23 +19,23 @@ authors:
 affiliations:
   - name: School of Mathematics, Cardiff University
     index: 1
-date: October 2019
+date: February 2020
 bibliography: paper.bib
 ---
 
 # Summary
 
-Matching games allow for the allocation of resources and partnerships in a fair,
-game theoretic way. Typically, a matching game is defined by two sets of players
-that each have preferences over at least some of the elements of the other set.
-The objective of the game is to find a mapping between the sets of players in
-which everyone is *happy enough*; we call this concept stability.
+Matching games allow for the allocation of resources and partnerships in a fair
+way. Typically, a matching game is defined by two sets of players that each have
+preferences over at least some of the elements of the other set. The objective
+of the game is then to find a mapping between the sets of players in which
+everyone is *happy enough*; this concept is called stability.
 
-One of the simplest types of matching game models the Stable Marriage Problem
-(SM). In SM, we have two sets of size $N$: a set of suitors $S$ and a set of
-reviewers $R$. Each suitor must strictly rank all of the reviewers, and vice
-versa. We call this arrangement of suitors, reviewers, and their preferences a
-game of size $N$ [@Gale1962].
+One of the most ubiquitous matching games models the Stable Marriage Problem
+(SM). In SM, there are two distinct player sets of size $N$: a set of suitors
+$S$ and a set of reviewers $R$. Each suitor must strictly rank all of the
+reviewers, and vice versa. This arrangement of suitors, reviewers, and
+their preferences is called a game of size $N$ [@Gale1962].
 
 A matching is any bijection $M$ between $S$ and $R$, and it is considered to be
 stable if it contains no blocking pairs. In SM, a blocking pair is any pair $(s,
@@ -51,13 +50,13 @@ as an edgeless graph with suitors on the left and reviewers on the right. Beside
 each vertex is the name of the player and their associated ranking of the
 complementary set’s elements.
 
-![A game of size three.\label{fig:sm_matching}](sm_matching.pdf)
+![A game of size three.\label{fig:sm_matching}](img/sm_matching.pdf)
 
 @Gale1962 presented an algorithm for finding a unique, stable and suitor-optimal
 matching to any instance of SM. The matching this algorithm produces is shown in
 Figure \ref{fig:sm_stable}.
 
-![A stable, suitor-optimal solution. \label{fig:sm_stable}](sm_stable.pdf)
+![A stable, suitor-optimal solution. \label{fig:sm_stable}](img/sm_stable.pdf)
 
 Using Matching, this game can be modelled as follows:
 
