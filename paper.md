@@ -51,13 +51,13 @@ as an edgeless graph with suitors on the left and reviewers on the right. Beside
 each vertex is the name of the player and their associated ranking of the
 complementary set’s elements.
 
-![A game of size three.\label{fig:sm_matching}](img/sm_matching.pdf)
+![A game of size three.\label{fig:sm_matching}](img/sm_matching.pdf){ width=50% }
+
+![A stable, suitor-optimal solution.\label{fig:sm_stable}](img/sm_stable.pdf){ width=50% }
 
 @Gale1962 presented an algorithm for finding a unique, stable and suitor-optimal
 matching to any instance of SM. The matching this algorithm produces is shown in
 Figure \ref{fig:sm_stable}.
-
-![A stable, suitor-optimal solution. \label{fig:sm_stable}](img/sm_stable.pdf)
 
 Using Matching, this game can be modelled as follows:
 
