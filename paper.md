@@ -111,7 +111,7 @@ practices in research software development [@jime2017], and is thoroughly
 documented: [matching.readthedocs.io](https://matching.readthedocs.io).
 Furthermore, the software automatically tested using example, integration, and
 property-based unit tests with 100% coverage. The current version of Matching
-has also been archived on Zenodo [@wild2020].
+has also been archived on Zenodo [@matching].
 
 The primary limitations of Matching are the time complexities of the algorithm
 implementations. In practical terms, the running time of any of the algorithms
