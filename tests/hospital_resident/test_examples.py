@@ -21,7 +21,7 @@ def test_readme_example():
         "C": ["D", "A", "S", "L", "J"],
         "G": ["D", "J", "L"],
     }
-    
+
     capacities = {hosp: 2 for hosp in hospital_prefs}
 
     game = HospitalResident.create_from_dictionaries(

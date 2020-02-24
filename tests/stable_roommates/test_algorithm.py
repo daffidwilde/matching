@@ -1,6 +1,11 @@
 """ Integration and unit tests for the SR algorithm. """
 
-from matching.games.stable_roommates import first_phase, locate_all_or_nothing_cycle, second_phase, stable_roommates
+from matching.games.stable_roommates import (
+    first_phase,
+    locate_all_or_nothing_cycle,
+    second_phase,
+    stable_roommates,
+)
 
 from .params import STABLE_ROOMMATES, make_players
 
@@ -60,4 +65,3 @@ def test_stable_roommates(player_names, seed):
         if other is not None:
             assert player.prefs == [other]
             assert other.matching == player
-            

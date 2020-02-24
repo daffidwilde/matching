@@ -38,7 +38,10 @@ def test_pride_and_prejudice():
 
     matching = stable_marriage(suitors, reviewers)
     assert matching == {
-        bingley: jane, collins: charlotte, darcy: elizabeth, wickham: lydia
+        bingley: jane,
+        collins: charlotte,
+        darcy: elizabeth,
+        wickham: lydia,
     }
 
 
