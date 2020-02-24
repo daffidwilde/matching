@@ -27,7 +27,8 @@ def test_example_in_issue():
     in #64. """
 
     players = [
-        Player(name) for name in ("charlie", "peter", "elise", "paul", "kelly", "sam")
+        Player(name)
+        for name in ("charlie", "peter", "elise", "paul", "kelly", "sam")
     ]
     charlie, peter, elise, paul, kelly, sam = players
 
@@ -40,5 +41,10 @@ def test_example_in_issue():
 
     matching = stable_roommates(players)
     assert matching == {
-        charlie: sam, peter: kelly, elise: paul, paul: elise, kelly: peter, sam: charlie
+        charlie: sam,
+        peter: kelly,
+        elise: paul,
+        paul: elise,
+        kelly: peter,
+        sam: charlie,
     }

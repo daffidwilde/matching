@@ -57,10 +57,9 @@ class StableRoommates(Game):
             for other in others:
                 both_matched = player.matching and other.matching
                 if both_matched:
-                    prefer_each_other = (
-                        player.prefers(other, player.matching)
-                        and other.prefers(player, other.matching)
-                    )
+                    prefer_each_other = player.prefers(
+                        other, player.matching
+                    ) and other.prefers(player, other.matching)
                     if prefer_each_other:
                         blocking_pairs.append((player, other))
 
@@ -165,7 +164,7 @@ def locate_all_or_nothing_cycle(player):
             break
 
     idx = lasts.index(player)
-    cycle = zip(lasts[idx + 1:], seconds[idx:])
+    cycle = zip(lasts[idx + 1 :], seconds[idx:])
 
     return cycle
 

@@ -51,7 +51,8 @@ class Supervisor(Hospital):
         supervisor's projects. """
 
         if student in self.prefs and not any(
-            [student in project.prefs for project in self.projects]):
+            [student in project.prefs for project in self.projects]
+        ):
             prefs = self.prefs[:]
             prefs.remove(student)
             self.prefs = prefs

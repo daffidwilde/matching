@@ -116,9 +116,9 @@ This information can be conveyed as a few dictionaries like so:
 ...     "L": ["M", "C", "G"],
 ... }
 >>> hospital_prefs = {
-...     "M": ["D", "J"],
+...     "M": ["D", "J", "L", "S"],
 ...     "C": ["D", "A", "S", "L", "J"],
-...     "G": ["D", "A", "J", "L"],
+...     "G": ["D", "J", "L"],
 ... }
 >>> capacities = {hosp: 2 for hosp in hospital_prefs}
 

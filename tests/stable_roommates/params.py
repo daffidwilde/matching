@@ -36,13 +36,9 @@ def make_prefs(player_names, seed):
 
 
 PLAYER_NAMES = lists(
-    sampled_from(["A", "B", "C", "D"]),
-    min_size=4,
-    max_size=4,
-    unique=True,
+    sampled_from(["A", "B", "C", "D"]), min_size=4, max_size=4, unique=True
 )
 
 STABLE_ROOMMATES = given(
-    player_names=PLAYER_NAMES,
-    seed=integers(min_value=0, max_value=2 ** 32 - 1),
+    player_names=PLAYER_NAMES, seed=integers(min_value=0, max_value=2 ** 32 - 1)
 )
