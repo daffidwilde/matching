@@ -13,4 +13,4 @@ htmlcov/
 *pyc
 *.swp
 
-!paper/*.pdf
+!img/*.pdf
