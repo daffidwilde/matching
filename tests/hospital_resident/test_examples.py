@@ -1,8 +1,8 @@
 """ A collection of example tests. """
 
 from matching import Player as Resident
+from matching.games import HospitalResident, hospital_resident
 from matching.players import Hospital
-from matching.games import hospital_resident, HospitalResident
 
 
 def test_readme_example():
