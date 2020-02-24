@@ -1,6 +1,13 @@
 History
 =======
 
+v1.2 - 2020-02-24
+-----------------
+
+- Implement the stable roommates problem.
+- Add example tests to all games.
+- Flesh out documentation.
+
 v1.1 - 2019-05-10
 -----------------
 
