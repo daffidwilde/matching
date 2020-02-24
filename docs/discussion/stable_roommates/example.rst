@@ -17,21 +17,16 @@ relationships between the players. Consider the matching below:
    :width: 80 %
    :align: center
 
-
-Here we can see that players :math:`A`, :math:`C` and :math:`F` are matched to
-their favourite player but :math:`B`, :math:`D` and :math:`E` are matched to
-their least favourite. There’s nothing particularly special about that but we
-can see that players :math:`B` and :math:`D` form a blocking pair given that
-they would both rather be matched with one another than with their current
-match. Hence, this matching is unstable.
-
-We can attempt to rectify this instability by swapping the matches for the first
-two rows:
+Here we can see that players :math:`C` and :math:`F` would rather be matched to
+one another than their current matches, :math:`D` and :math:`E` respectively.
+Thus, :math:`(C, F)` are a blocking pair in this matching and the matching is
+unstable. We can attempt to rectify this instability by swapping these pairs
+over:
 
 .. image:: ../../_static/sr_stable.svg
    :width: 80 %
    :align: center
 
-Upon closer inspection, we can see that each suitor is now matched with their
-most preferred reviewer so as not to form a blocking pair that would upset any
-current matchings. This matching is stable and is considered *suitor-optimal*.
+Despite this move actually making :math:`D` worse off, there are no players they
+envy where the feeling is reciprocated under this matching. With that, there are
+no blocking pairs and this matching is stable.

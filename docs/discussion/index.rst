@@ -13,4 +13,5 @@ libraries.
    stable_marriage/index.rst
    hospital_resident/index.rst
    student_allocation/index.rst
+   stable_roommates/index.rst
    other_packages.rst
