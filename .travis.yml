@@ -18,6 +18,7 @@ script:
     #  - pytest --doctest-glob='.rst'
   - pytest --cov=src/matching tests
   - python -m doctest paper.md
+  - python -m doctest README.rst
   - pip uninstall -y matching
   - pip install matching
 after_success: coveralls
