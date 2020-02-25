@@ -17,6 +17,7 @@ script:
     #  - cd ..
     #  - pytest --doctest-glob='.rst'
   - pytest --cov=src/matching tests
+  - python -m doctest paper.md
   - pip uninstall -y matching
   - pip install matching
 after_success: coveralls

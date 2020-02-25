@@ -78,6 +78,7 @@ Using Matching, this matching can be computed as follows:
 >>> game = StableMarriage(suitors, reviewers)
 >>> game.solve()
 {A: E, B: D, C: F}
+
 ```
 
 While it is relatively easy to find solutions to games like this with pen and
@@ -132,8 +133,9 @@ solved in less than one tenth of a second:
 >>> capacities = {h: 20 for h in hospital_prefs}
 >>> game = HospitalResident.create_from_dictionaries(
 ...     resident_prefs, hospital_prefs, capacities
->>> )
+... )
 >>> _ = game.solve() # 48.6 ms ± 963 µs per loop
+
 ```
 
 Matching has been designed to be used as a research tool and to aid in the
