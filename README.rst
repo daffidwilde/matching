@@ -149,6 +149,10 @@ player classes first and passes them to the game class. Using dictionaries like
 this can be an efficient way of creating large games but it does require the
 names of the players in each party to be unique.
 
+Documentation
+-------------
+
+Full documentation is available here: `<https://matching.readthedocs.io>`_
 
 Get in contact!
 ---------------
