@@ -27,11 +27,12 @@ context of the terms "mapping" and "unhappy" are dependent on the framework of
 the particular game being played but are largely to do with the stability of the
 pairings.
 
-In ``matching``, we deal with three types of matching game:
+In ``matching``, we deal with four types of matching game:
 
 - the stable marriage problem (SM);
 - the hospital-resident assignment problem (HR);
-- the student-allocation problem (SA).
+- the student-allocation problem (SA);
+- the stable roommates problem (SR).
 
 
 Using the ``Player`` class
@@ -115,9 +116,9 @@ This information can be conveyed as a few dictionaries like so:
 ...     "L": ["M", "C", "G"],
 ... }
 >>> hospital_prefs = {
-...     "M": ["D", "J"],
+...     "M": ["D", "J", "L", "S"],
 ...     "C": ["D", "A", "S", "L", "J"],
-...     "G": ["D", "A", "J", "L"],
+...     "G": ["D", "J", "L"],
 ... }
 >>> capacities = {hosp: 2 for hosp in hospital_prefs}
 
@@ -148,6 +149,10 @@ player classes first and passes them to the game class. Using dictionaries like
 this can be an efficient way of creating large games but it does require the
 names of the players in each party to be unique.
 
+Documentation
+-------------
+
+Full documentation is available here: `<https://matching.readthedocs.io>`_
 
 Get in contact!
 ---------------
