@@ -11,8 +11,9 @@ install:
   - python setup.py develop
   - pip install --upgrade pytest
   - pip install coveralls==1.1 hypothesis pytest-cov
-  - pip install nbval
   - pip install sphinx sphinx_rtd_theme
+  - pip install nbval
+  - pip install pandas  # for testing
 script:
     #  - cd docs; make html
     #  - cd ..
