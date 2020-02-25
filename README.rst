@@ -115,7 +115,7 @@ This information can be conveyed as a few dictionaries like so:
 ...     "L": ["M", "C", "G"],
 ... }
 >>> hospital_prefs = {
-...     "M": ["D", "J", "S", "L"],
+...     "M": ["D", "L", "S", "J"],
 ...     "C": ["D", "A", "S", "L", "J"],
 ...     "G": ["D", "J", "L"],
 ... }
@@ -129,7 +129,7 @@ instance is created using the ``create_from_dictionaries`` class method:
 ...     resident_prefs, hospital_prefs, capacities
 ... )
 >>> game.solve()
-{M: [S, L], C: [D, A], G: [J]}
+{M: [L, S], C: [D, A], G: [J]}
 
 Note
 ++++
