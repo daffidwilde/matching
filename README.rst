@@ -84,7 +84,7 @@ and behave like one. It is in fact an instance of the ``Matching`` class:
 
 >>> matching = game.matching
 >>> type(matching)
-matching.matching.Matching
+<class 'matching.matching.Matching'>
 
 This dictionary-like object is primarily useful as a teaching device that eases
 the process of manipulating a matching after a solution has been found. 
@@ -115,20 +115,21 @@ This information can be conveyed as a few dictionaries like so:
 ...     "L": ["M", "C", "G"],
 ... }
 >>> hospital_prefs = {
-...     "M": ["D", "J"],
+...     "M": ["D", "L", "S", "J"],
 ...     "C": ["D", "A", "S", "L", "J"],
-...     "G": ["D", "A", "J", "L"],
+...     "G": ["D", "J", "L"],
 ... }
 >>> capacities = {hosp: 2 for hosp in hospital_prefs}
 
 Then, similarly, this game is solved using the ``HospitalResident`` class but an
 instance is created using the ``create_from_dictionaries`` class method:
 
+>>> from matching.games import HospitalResident
 >>> game = HospitalResident.create_from_dictionaries(
 ...     resident_prefs, hospital_prefs, capacities
 ... )
 >>> game.solve()
-{M: [L, S], C: [D, A], G[J]}
+{M: [L, S], C: [D, A], G: [J]}
 
 Note
 ++++
