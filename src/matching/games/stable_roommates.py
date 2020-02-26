@@ -55,13 +55,13 @@ class StableRoommates(Game):
         for player in self.players:
             others = [p for p in self.players if p != player]
             for other in others:
-                both_matched = player.matching and other.matching
-                if both_matched:
+                if (other, player) not in blocking_pairs:
+                    both_matched = player.matching and other.matching
                     prefer_each_other = player.prefers(
                         other, player.matching
                     ) and other.prefers(player, other.matching)
-                    if prefer_each_other:
-                        blocking_pairs.append((player, other))
+                    if both_matched and prefer_each_other:
+                            blocking_pairs.append((player, other))
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
@@ -215,7 +215,7 @@ def stable_roommates(players):
     if any(len(p.prefs) > 1 for p in players):
         players = second_phase(players)
 
-    return {p: p.matching for p in players}
+    return {player: player.matching for player in players}
 
 
 def _make_players(player_prefs):
