@@ -2,6 +2,7 @@
 .cache
 *cov*
 dist/
+*.json
 *.aux
 *.log
 *.pdf
@@ -12,5 +13,6 @@ htmlcov/
 *.ipynb_checkpoints*
 *pyc
 *.swp
+*.yml
 
 !img/*.pdf
