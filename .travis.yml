@@ -12,11 +12,17 @@ install:
   - pip install --upgrade pytest
   - pip install coveralls==1.1 hypothesis pytest-cov
   - pip install sphinx sphinx_rtd_theme
+  - pip install nbval
+  - pip install pandas  # for testing
+  - pip install matplotlib  # for testing
 script:
     #  - cd docs; make html
     #  - cd ..
     #  - pytest --doctest-glob='.rst'
   - pytest --cov=src/matching tests
+  - pytest --nbval --current-env docs/
+  - python -m doctest paper.md
+  - python -m doctest README.rst
   - pip uninstall -y matching
   - pip install matching
 after_success: coveralls
