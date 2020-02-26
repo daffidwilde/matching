@@ -150,10 +150,40 @@ appropriate player classes first and passes them to the game class. Using
 dictionaries like this can be an efficient way of creating large games but it
 does require the names of the players in each party to be unique.
 
+
 Documentation
 -------------
 
 Full documentation is available here: `<https://matching.readthedocs.io>`_
+
+
+A note on performance
+---------------------
+
+One of the limitations of this library is the time complexities of the algorithm
+implementations. In practical terms, the running time of any of the algorithms
+in Matching is negligible but the theoretic complexity of each has not yet been
+attained. For example, an instance of HR with 400 applicants and 20 hospitals is
+solved in less than one tenth of a second:
+
+```python
+>>> from matching.games import HospitalResident
+>>> import numpy as np
+>>> np.random.seed(0)
+>>> resident_prefs = {
+...     r: np.argsort(np.random.random(size=20)) for r in range(400)
+... }
+>>> hospital_prefs = {
+...     h: np.argsort(np.random.random(size=400)) for h in range(20)
+... }
+>>> capacities = {h: 20 for h in hospital_prefs}
+>>> game = HospitalResident.create_from_dictionaries(
+...     resident_prefs, hospital_prefs, capacities
+... )
+>>> _ = game.solve() # 48.6 ms ± 963 µs per loop
+
+```
+
 
 Get in contact!
 ---------------
