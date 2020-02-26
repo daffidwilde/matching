@@ -170,11 +170,7 @@ def create_project_dataframe(project_to_capacity, supervisor_to_projects):
     return df_projects
 
 
-def save_dataframes(
-    student_dataframe,
-    supervisor_dataframe,
-    project_dataframe,
-):
+def save_dataframes(student_dataframe, supervisor_dataframe, project_dataframe):
     """ Save the player dataframes. """
 
     for df, name in zip(
@@ -192,8 +188,8 @@ def main():
     print("Seed set:", SEED)
 
     supervisor_to_projects = create_supervisor_to_projects_map()
-    supervisor_to_capacity, project_to_capacity = (
-        create_player_to_capacity_maps(supervisor_to_projects)
+    supervisor_to_capacity, project_to_capacity = create_player_to_capacity_maps(
+        supervisor_to_projects
     )
     print("Supervisor and project dictionaries created...")
 

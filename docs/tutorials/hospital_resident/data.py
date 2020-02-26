@@ -1,10 +1,9 @@
 """ A script to create the dummy data used in `main.ipynb`. """
 
-import yaml
 from collections import defaultdict
 
 import numpy as np
-
+import yaml
 
 NUM_RESIDENTS = 200
 CAPACITY = 30
@@ -12,27 +11,29 @@ SEED = 0
 
 resident_names = [f"{i:03d}" for i in range(NUM_RESIDENTS)]
 hospital_names = [
- "Dewi Sant",
- "Prince Charles",
- "Prince of Wales",
- "Royal Glamorgan",
- "Royal Gwent",
- "St. David",
- "University",
+    "Dewi Sant",
+    "Prince Charles",
+    "Prince of Wales",
+    "Royal Glamorgan",
+    "Royal Gwent",
+    "St. David",
+    "University",
 ]
 
 
 def create_resident_to_preferences_map():
     """ Create a map from resident names to an ordered subset of the hospital
     names. """
- 
+
     resident_to_preference_size = {
         resident: np.random.randint(1, len(hospital_names) + 1)
         for resident in resident_names
     }
 
     resident_to_preference_idxs = {
-        resident: np.random.choice(len(hospital_names), size=size, replace=False)
+        resident: np.random.choice(
+            len(hospital_names), size=size, replace=False
+        )
         for resident, size in resident_to_preference_size.items()
     }
 
@@ -88,7 +89,9 @@ def main():
     print("Seed set:", SEED)
 
     resident_preferences = create_resident_to_preferences_map()
-    hospital_preferences = create_hospital_to_preferences_map(resident_preferences)
+    hospital_preferences = create_hospital_to_preferences_map(
+        resident_preferences
+    )
     capacities = create_hospital_to_capacity_map()
     print("Player dictionaries created...")
 

@@ -63,7 +63,7 @@ class Player:
             prefs.remove(other)
         except ValueError:
             pass
-        
+
         self.prefs = prefs
 
     def get_successors(self):
