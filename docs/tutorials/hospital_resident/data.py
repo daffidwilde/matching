@@ -1,24 +1,23 @@
 """ A script to create the dummy data used in `main.ipynb`. """
 
-import json
+import yaml
 from collections import defaultdict
 
 import numpy as np
 
 
 NUM_RESIDENTS = 200
-CAPACITY = 25
+CAPACITY = 30
 SEED = 0
 
 resident_names = [f"{i:03d}" for i in range(NUM_RESIDENTS)]
 hospital_names = [
  "Dewi Sant",
- "Noah's Ark",
  "Prince Charles",
  "Prince of Wales",
  "Royal Glamorgan",
  "Royal Gwent",
- "St. David's",
+ "St. David",
  "University",
 ]
 
@@ -70,7 +69,7 @@ def create_hospital_to_capacity_map():
     return hospital_to_capacity
 
 
-def save_dictionaries_to_json(
+def save_dictionaries_to_yaml(
     resident_preferences, hospital_preferences, capacities
 ):
 
@@ -78,8 +77,8 @@ def save_dictionaries_to_json(
         (resident_preferences, hospital_preferences, capacities),
         ("residents", "hospitals", "capacities"),
     ):
-        with open(f"{name}.json", "w") as f:
-            json.dump(dictionary, f, indent=4)
+        with open(f"{name}.yml", "w") as f:
+            yaml.dump(dictionary, f, indent=4)
 
 
 def main():
@@ -93,7 +92,7 @@ def main():
     capacities = create_hospital_to_capacity_map()
     print("Player dictionaries created...")
 
-    save_dictionaries_to_json(
+    save_dictionaries_to_yaml(
         resident_preferences, hospital_preferences, capacities
     )
     print("Dictionaries saved.")
