@@ -99,7 +99,7 @@ Matching is a Python library that relies on one core library from the
 standard scientific Python stack -- NumPy [@numpy] -- that currently implements
 algorithms for four types of matching games:
 
-- The stable marriage problem (SM) [@gale1962];
+- the stable marriage problem (SM) [@gale1962];
 - the hospital-resident assignment problem (HR) [@gale1962; @roth1984];
 - the student-project allocation problem (SA) [@abra2007];
 - the stable roommates problem (SR) [@irvi1985].
