@@ -170,20 +170,14 @@ def create_project_dataframe(project_to_capacity, supervisor_to_projects):
     return df_projects
 
 
-def save_dataframes(
-    student_dataframe,
-    supervisor_dataframe,
-    project_dataframe,
-    root="../../data/",
-):
-    """ Save the player dataframes in the ``root`` directory. By default, this
-    is in the level above this directory in a ``data`` directory. """
+def save_dataframes(student_dataframe, supervisor_dataframe, project_dataframe):
+    """ Save the player dataframes. """
 
     for df, name in zip(
         (student_dataframe, supervisor_dataframe, project_dataframe),
         ("students", "supervisors", "projects"),
     ):
-        df.to_csv(root + f"{name}.csv", index=False)
+        df.to_csv(f"{name}.csv", index=False)
 
 
 def main():

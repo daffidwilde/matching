@@ -2,7 +2,7 @@ The algorithm
 -------------
 
 Robert Irving presented an efficient algorithm for finding a stable matching to
-SR in [Irvi1985]_ if one exists. The algorithm comes in two phases:
+SR in :cite:`Irv85` if one exists. The algorithm comes in two phases:
 
 Phase 1
 +++++++

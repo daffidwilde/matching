@@ -5,9 +5,9 @@ Finding optimal, stable matchings for HR is of great importance as it solves
 real-world problems. For instance, the `National Resident Matching Program
 <http://www.nrmp.org>`_ uses an algorithm like the one presented here to assign
 medical students in the US to hospitals. An algorithm which solves HR was
-originally presented in [Gale1962]_ but further work was done to improve on
-these algorithms in later years [Dubi1981]_, [Roth1984]_. Unlike the algorithm
-for SM, this algorithm takes a different form depending on the desired
+originally presented in :cite:`GS62` but further work was done to improve on
+these algorithms in later years :cite:`DF81`, :cite:`Rot84`. Unlike the
+algorithm for SM, this algorithm takes a different form depending on the desired
 optimality of the solution. Below are the resident-optimal and hospital-optimal
 algorithms for finding a unique, stable matching for an instance of HR.
 

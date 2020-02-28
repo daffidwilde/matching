@@ -9,6 +9,6 @@ dependencies:
     - python>=3.6
     - pip>=19
     - pip:
-        - matching==1.1
+        - matching
         - nbsphinx
         - sphinx_rtd_theme

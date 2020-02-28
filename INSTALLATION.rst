@@ -1,6 +1,3 @@
-Installation
-------------
-
 Matching is written in Python 3, and relies only on `NumPy
 <http://www.numpy.org/>`_ for general use.
 

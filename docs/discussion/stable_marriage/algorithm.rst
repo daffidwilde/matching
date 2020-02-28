@@ -2,7 +2,7 @@ The algorithm
 -------------
 
 David Gale and Lloyd Shapley presented an algorithm for solving SM in
-[Gale1962]_. In fact, the algorithm provides a unique, stable, suitor-optimal
+:cite:`GS62`. In fact, the algorithm provides a unique, stable, suitor-optimal
 matching for any instance of SM and is as follows:
 
 0. Assign all suitors and reviewers to be unmatched.

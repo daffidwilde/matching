@@ -35,6 +35,24 @@ In ``matching``, we deal with four types of matching game:
 - the stable roommates problem (SR).
 
 
+Installation
+------------
+
+Matching is written in Python 3, and relies only on `NumPy
+<http://www.numpy.org/>`_ for general use.
+
+The library is most easily installed using :code:`pip`::
+
+    $ python -m pip install matching
+
+However, if you would like to install it from source then go ahead and clone the
+GitHub repo::
+
+    $ git clone https://github.com/daffidwilde/matching.git
+    $ cd matching
+    $ python setup.py install
+
+
 Using the ``Player`` class
 --------------------------
 
@@ -85,7 +103,7 @@ and behave like one. It is in fact an instance of the ``Matching`` class:
 
 >>> matching = game.matching
 >>> type(matching)
-matching.matching.Matching
+<class 'matching.matching.Matching'>
 
 This dictionary-like object is primarily useful as a teaching device that eases
 the process of manipulating a matching after a solution has been found. 
@@ -116,7 +134,7 @@ This information can be conveyed as a few dictionaries like so:
 ...     "L": ["M", "C", "G"],
 ... }
 >>> hospital_prefs = {
-...     "M": ["D", "J", "L", "S"],
+...     "M": ["D", "L", "S", "J"],
 ...     "C": ["D", "A", "S", "L", "J"],
 ...     "G": ["D", "J", "L"],
 ... }
@@ -125,11 +143,12 @@ This information can be conveyed as a few dictionaries like so:
 Then, similarly, this game is solved using the ``HospitalResident`` class but an
 instance is created using the ``create_from_dictionaries`` class method:
 
+>>> from matching.games import HospitalResident
 >>> game = HospitalResident.create_from_dictionaries(
 ...     resident_prefs, hospital_prefs, capacities
 ... )
 >>> game.solve()
-{M: [L, S], C: [D, A], G[J]}
+{M: [L, S], C: [D, A], G: [J]}
 
 Note
 ++++
@@ -144,10 +163,44 @@ Despite passing dictionaries of strings here, the matching displays instances of
 <class 'matching.players.hospital.Hospital'>
 <class 'matching.players.hospital.Hospital'>
 
-This is because ``create_from_dictionaries`` creates instances of the appropriate
-player classes first and passes them to the game class. Using dictionaries like
-this can be an efficient way of creating large games but it does require the
-names of the players in each party to be unique.
+This is because ``create_from_dictionaries`` creates instances of the
+appropriate player classes first and passes them to the game class. Using
+dictionaries like this can be an efficient way of creating large games but it
+does require the names of the players in each party to be unique.
+
+
+Documentation
+-------------
+
+Full documentation is available here: `<https://matching.readthedocs.io>`_
+
+
+A note on performance
+---------------------
+
+One of the limitations of this library is the time complexities of the algorithm
+implementations. In practical terms, the running time of any of the algorithms
+in Matching is negligible but the theoretic complexity of each has not yet been
+attained. For example, an instance of HR with 400 applicants and 20 hospitals is
+solved in less than one tenth of a second:
+
+```python
+>>> from matching.games import HospitalResident
+>>> import numpy as np
+>>> np.random.seed(0)
+>>> resident_prefs = {
+...     r: np.argsort(np.random.random(size=20)) for r in range(400)
+... }
+>>> hospital_prefs = {
+...     h: np.argsort(np.random.random(size=400)) for h in range(20)
+... }
+>>> capacities = {h: 20 for h in hospital_prefs}
+>>> game = HospitalResident.create_from_dictionaries(
+...     resident_prefs, hospital_prefs, capacities
+... )
+>>> _ = game.solve() # 48.6 ms ± 963 µs per loop
+
+```
 
 Documentation
 -------------

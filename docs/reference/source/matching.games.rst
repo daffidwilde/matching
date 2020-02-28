@@ -20,6 +20,14 @@ matching.games.stable\_marriage module
    :undoc-members:
    :show-inheritance:
 
+matching.games.stable\_roommates module
+---------------------------------------
+
+.. automodule:: matching.games.stable_roommates
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 matching.games.student\_allocation module
 -----------------------------------------
 

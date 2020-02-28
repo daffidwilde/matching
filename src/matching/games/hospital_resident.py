@@ -13,6 +13,7 @@ class HospitalResident(Game):
 
     In this case, a blocking pair is any resident-hospital pair that satisfies
     **all** of the following:
+
         - They are present in each other's preference lists;
         - either the resident is unmatched, or they prefer the hospital to their
           current match;
@@ -239,10 +240,11 @@ def unmatch_pair(resident, hospital):
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):
-    """ Solve an instance of HR using an adapted Gale-Shapley algorithm. A
-    unique, stable and optimal matching is found for the given set of residents
-    and hospitals. The optimality of the matching is found with respect to one
-    party and is subsequently the worst stable matching for the other.
+    """ Solve an instance of HR using an adapted Gale-Shapley algorithm
+    :cite:`Rot84`. A unique, stable and optimal matching is found for the given
+    set of residents and hospitals. The optimality of the matching is found with
+    respect to one party and is subsequently the worst stable matching for the
+    other.
 
     Parameters
     ----------
