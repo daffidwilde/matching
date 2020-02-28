@@ -202,6 +202,10 @@ solved in less than one tenth of a second:
 
 ```
 
+Documentation
+-------------
+
+Full documentation is available here: `<https://matching.readthedocs.io>`_
 
 Get in contact!
 ---------------

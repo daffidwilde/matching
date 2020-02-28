@@ -50,7 +50,9 @@ class Supervisor(Hospital):
         """ Only forget ``student`` if it is not ranked by any of the
         supervisor's projects. """
 
-        if not any([student in project.prefs for project in self.projects]):
+        if student in self.prefs and not any(
+            [student in project.prefs for project in self.projects]
+        ):
             prefs = self.prefs[:]
             prefs.remove(student)
             self.prefs = prefs

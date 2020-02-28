@@ -1,6 +1,8 @@
 language: python
 python:
   - 3.6
+  - 3.7
+  - 3.8
 
 cache:
   directories:
@@ -11,7 +13,7 @@ install:
   - python setup.py develop
   - pip install --upgrade pytest
   - pip install coveralls==1.1 hypothesis pytest-cov
-  - pip install sphinx sphinx_rtd_theme
+  - pip install sphinx sphinx_rtd_theme sphinxcontrib-bibtex
   - pip install nbval
   - pip install pandas
   - pip install matplotlib
