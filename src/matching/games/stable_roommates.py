@@ -196,7 +196,7 @@ def second_phase(players):
 
 
 def stable_roommates(players):
-    """ Irving's algorithm `[Irvi1984]`_ that finds stable solutions to
+    """ Irving's algorithm :cite:`Irv85` that finds stable solutions to
     instances of SR if one exists. Otherwise, an incomplete matching is found.
 
     Parameters

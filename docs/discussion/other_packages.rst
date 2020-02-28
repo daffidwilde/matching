@@ -10,15 +10,15 @@ Python
 ------
 
 - `Axelrod <https://axelrod.readthedocs.io/en/stable/>`_: a research library
-  aimed at the study of the Iterated Prisoners Dilemma [Knig2016]_.
+  aimed at the study of the Iterated Prisoners Dilemma :cite:`KCH+16`.
 
 - `Gambit <http://www.gambit-project.org>`_: a C library with both a Python
   and online interface for the computation of equilibria in large games
-  [McKe2016]_.
+  :cite:`MMT14`.
 
 - `Nashpy <https://nashpy.readthedocs.io/en/stable/>`_: a library for the
   computation of Nash equilibria in two-player, normal form games with a number
-  of different algorithms [Nash2016]_.
+  of different algorithms :cite:`KBRK19`.
 
 - `PyNFG <https://pypi.org/project/PyNFG/>`_: a library for modelling network
   form games.

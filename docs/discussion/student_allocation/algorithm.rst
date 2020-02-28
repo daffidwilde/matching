@@ -8,10 +8,10 @@ this in the real world is described in more detail in `this tutorial
 
 As with HR, there are two algorithms implemented in Matching to solve instances
 of SA, one to handle the optimality of each party (students and
-project/supervisors). These algorithms, taken from [Abra2007]_, follow a similar
-structure to those for HR in that they take advantage of the inherent structure
-of the game. Again, each party-optimal algorithm provides a unique, stable
-matching for an instance of SA.
+project/supervisors). These algorithms, taken from :cite:`AIM07`, follow a
+similar structure to those for HR in that they take advantage of the inherent
+structure of the game. Again, each party-optimal algorithm provides a unique,
+stable matching for an instance of SA.
 
 Student-optimal
 +++++++++++++++
