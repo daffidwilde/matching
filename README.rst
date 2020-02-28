@@ -184,7 +184,6 @@ in Matching is negligible but the theoretic complexity of each has not yet been
 attained. For example, an instance of HR with 400 applicants and 20 hospitals is
 solved in less than one tenth of a second:
 
-```python
 >>> from matching.games import HospitalResident
 >>> import numpy as np
 >>> np.random.seed(0)
@@ -200,7 +199,6 @@ solved in less than one tenth of a second:
 ... )
 >>> _ = game.solve() # 48.6 ms ± 963 µs per loop
 
-```
 
 Documentation
 -------------
