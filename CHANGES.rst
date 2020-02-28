@@ -1,6 +1,13 @@
 History
 =======
 
+v1.2.1 - 2020-02-28
+-------------------
+
+- Finish documentation.
+- Complete paper for submission to JOSS.
+- Catch flaky forgetting bug in `Player`.
+
 v1.2 - 2020-02-24
 -----------------
 
