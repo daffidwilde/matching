@@ -19,9 +19,25 @@ def test_init(student_names, project_names, supervisor_names, capacities, seed):
         student_names, project_names, supervisor_names, capacities, seed
     )
 
-    assert game.students == students
-    assert game.projects == projects
-    assert game.supervisors == supervisors
+    for student, game_student in zip(students, game.students):
+        assert student.name == game_student.name
+        assert student.pref_names == game_student.pref_names
+
+    for project, game_project in zip(projects, game.projects):
+        assert project.name == game_project.name
+        assert project.pref_names == game_project.pref_names
+        assert project.capacity == game_project.capacity
+        assert project.supervisor.name == game_project.supervisor.name
+
+    for supervisor, game_supervisor in zip(supervisors, game.supervisors):
+        assert supervisor.name == game_supervisor.name
+        assert supervisor.pref_names == game_supervisor.pref_names
+        assert supervisor.capacity == game_supervisor.capacity
+        
+        supervisor_projects = [p.name for p in supervisor.projects]
+        game_supervisor_projects = [p.name for p in game_supervisor.projects]
+        assert supervisor_projects == game_supervisor_projects
+
     assert all([student.matching is None for student in game.students])
     assert all([project.matching == [] for project in game.projects])
     assert all([supervisor.matching == [] for supervisor in game.supervisors])
@@ -180,19 +196,27 @@ def test_solve(
 
         matching = game.solve(optimal)
         assert isinstance(matching, Matching)
-        assert set(matching.keys()) == set(projects)
+
+        projects = sorted(projects, key=lambda p: p.name)
+        matching_keys = sorted(matching.keys(), key=lambda k: k.name)
+        for game_project, project in zip(matching_keys, projects):
+            assert game_project.name == project.name
+            assert game_project.pref_names == project.pref_names
+            assert game_project.capacity == project.capacity
+            assert game_project.supervisor.name == project.supervisor.name
+
         matched_students = [
             stud for match in matching.values() for stud in match
         ]
         assert matched_students != [] and set(matched_students).issubset(
-            set(students)
+            set(game.students)
         )
 
         for student in matched_students:
             supervisor = student.matching.supervisor
             assert student in supervisor.matching
 
-        for student in set(students) - set(matched_students):
+        for student in set(game.students) - set(matched_students):
             assert student.matching is None
 
 
@@ -320,9 +344,7 @@ def test_check_stability():
     projects = [Project("P", 2), Project("Q", 2)]
     supervisors = [Supervisor("X", 2), Supervisor("Y", 2)]
 
-    a, b, c = students
-    p, q = projects
-    x, y = supervisors
+    (a, b, c), (p, q), (x, y) = students, projects, supervisors
 
     p.set_supervisor(x)
     q.set_supervisor(y)
@@ -338,6 +360,8 @@ def test_check_stability():
 
     matching = game.solve()
     assert game.check_stability()
+
+    (a, b, c), (p, q) = game.students, game.projects
 
     matching[p] = [c]
     matching[q] = [a, b]
