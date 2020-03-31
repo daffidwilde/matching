@@ -205,4 +205,4 @@ Get in contact!
 
 I hope this package is useful, and feel free to contact me here (or on Twitter:
 `@daffidwilde <https://twitter.com/daffidwilde>`_) with any issues or
-recommendations. PRs always welcome!
+recommendations. Pull requests are always welcome!
