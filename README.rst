@@ -200,11 +200,6 @@ solved in less than one tenth of a second:
 >>> _ = game.solve() # 48.6 ms ± 963 µs per loop
 
 
-Documentation
--------------
-
-Full documentation is available here: `<https://matching.readthedocs.io>`_
-
 Get in contact!
 ---------------
 
