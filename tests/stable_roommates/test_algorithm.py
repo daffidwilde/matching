@@ -50,7 +50,7 @@ def test_second_phase(player_names, seed):
                 assert player.prefs == [player.matching]
             else:
                 assert player.matching is None
-    except IndexError:
+    except (IndexError, ValueError):
         pass
 
 
