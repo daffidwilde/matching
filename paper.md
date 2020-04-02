@@ -88,10 +88,8 @@ Matching games have applications in many fields where relationships between
 rational agents must be managed. Some example applications include: being able
 to inform on healthcare finance policy [@agar2017]; helping to reduce the
 complexity of automated wireless communication networks [@baya2016]; and
-education infrastructure has proven to be crucial to matching game research
-since the seminal papers and in recent work [@chia2019]. Thus, having access to
-software implementations of algorithms that are able to solve such games is
-essential.
+education infrastructure [@chia2019]. Thus, having access to software
+implementations of algorithms that are able to solve such games is essential.
 
 The only current adversary to Matching is MatchingR [@till2018]. MatchingR is a
 package written in C++ with an R interface and its content overlaps well with
