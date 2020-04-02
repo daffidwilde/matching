@@ -1,5 +1,6 @@
-Matching requires a Python version of 3.5 or above and relies only on `NumPy
-<http://www.numpy.org/>`_ for installation and general use.
+.. note::
+    Matching requires a Python version of 3.5 or above and relies only on `NumPy
+    <http://www.numpy.org/>`_ for installation and general use.
 
 The library is most easily installed using :code:`pip`::
 
