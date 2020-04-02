@@ -58,12 +58,7 @@ class Player:
         list. """
 
         prefs = self.prefs[:]
-
-        try:
-            prefs.remove(other)
-        except ValueError:
-            pass
-
+        prefs.remove(other)
         self.prefs = prefs
 
     def get_successors(self):
