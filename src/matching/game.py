@@ -21,20 +21,8 @@ class Game:
 
     def __init__(self):
 
-        self._matching = None
+        self.matching = None
         self.blocking_pairs = None
-
-    @property
-    def matching(self):
-        """ Property method to stop direct write access. """
-
-        return self._matching
-
-    @matching.getter
-    def matching(self):
-        """ Property method to stop direct write access. """
-
-        return self._matching
 
     def solve(self):
         """ Placeholder for solving the given matching game. """
