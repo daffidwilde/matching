@@ -66,7 +66,7 @@ class HospitalResident(Game):
         """ Solve the instance of HR using either the resident- or
         hospital-oriented algorithm. Return the matching. """
 
-        self._matching = Matching(
+        self.matching = Matching(
             hospital_resident(self.residents, self.hospitals, optimal)
         )
         return self.matching

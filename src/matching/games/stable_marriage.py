@@ -49,7 +49,7 @@ class StableMarriage(Game):
         """ Solve the instance of SM using either the suitor- or
         reviewer-oriented Gale-Shapley algorithm. Return the matching. """
 
-        self._matching = Matching(
+        self.matching = Matching(
             stable_marriage(self.suitors, self.reviewers, optimal)
         )
         return self.matching

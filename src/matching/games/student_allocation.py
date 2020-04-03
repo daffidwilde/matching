@@ -87,7 +87,7 @@ class StudentAllocation(Game):
         """ Solve the instance of SA using either the student- or
         supervisor-optimal algorithm. """
 
-        self._matching = Matching(
+        self.matching = Matching(
             student_allocation(
                 self.students, self.projects, self.supervisors, optimal
             )
