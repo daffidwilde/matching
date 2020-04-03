@@ -1,13 +1,13 @@
 """ The HR solver and algorithm. """
 
-from matching import Game, Matching
+from matching import BaseGame, Matching
 from matching import Player as Resident
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
 
 
-class HospitalResident(Game):
+class HospitalResident(BaseGame):
     """ A class for solving instances of the hospital-resident assignment
     problem (HR).
 
