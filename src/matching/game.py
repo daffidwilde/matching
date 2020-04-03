@@ -9,10 +9,9 @@ class Game:
 
     Attributes
     ----------
-    _matching : None
+    matching : None
         Initialised to be :code:`None`. After solving the game,
-        a :code:`Matching` object is found here. Not used -- instead, use the
-        :code:`Game.matching` property.
+        a :code:`Matching` object is found here.
     blocking_pairs : None
         Initialised to be :code:`None`. After solving and checking the stability
         of the game instance, a list of any pairs that block the stability of
