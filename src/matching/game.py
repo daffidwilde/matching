@@ -8,10 +8,9 @@ class BaseGame(metaclass=abc.ABCMeta):
 
     Attributes
     ----------
-    _matching : None
+    matching : None
         Initialised to be :code:`None`. After solving the game,
-        a :code:`Matching` object is found here. Not used -- instead, use the
-        :code:`Game.matching` property.
+        a :code:`Matching` object is found here.
     blocking_pairs : None
         Initialised to be :code:`None`. After solving and checking the stability
         of the game instance, a list of any pairs that block the stability of
@@ -20,20 +19,8 @@ class BaseGame(metaclass=abc.ABCMeta):
 
     def __init__(self):
 
-        self._matching = None
+        self.matching = None
         self.blocking_pairs = None
-
-    @property
-    def matching(self):
-        """ Property method to stop direct write access. """
-
-        return self._matching
-
-    @matching.getter
-    def matching(self):
-        """ Property method to stop direct write access. """
-
-        return self._matching
 
     @abc.abstractmethod
     def solve(self):

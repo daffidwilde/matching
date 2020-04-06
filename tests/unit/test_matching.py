@@ -5,7 +5,6 @@ import pytest
 from matching import Matching, Player
 
 suitors = [Player("A"), Player("B"), Player("C")]
-
 reviewers = [Player(1), Player(2), Player(3)]
 
 suitors[0].set_prefs(reviewers)

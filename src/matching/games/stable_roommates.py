@@ -43,7 +43,7 @@ class StableRoommates(BaseGame):
         """ Solve the instance of SR using Irving's algorithm. Return the
         matching. """
 
-        self._matching = Matching(stable_roommates(self.players))
+        self.matching = Matching(stable_roommates(self.players))
         return self.matching
 
     def check_stability(self):
