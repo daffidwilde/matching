@@ -1,5 +1,7 @@
 """ The SR solver and algorithm. """
 
+import copy
+
 from matching import Game, Matching, Player
 
 from .util import delete_pair, match_pair
@@ -22,6 +24,7 @@ class StableRoommates(Game):
 
     def __init__(self, players):
 
+        players = copy.deepcopy(players)
         self.players = players
 
         super().__init__()
