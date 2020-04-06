@@ -1,7 +1,7 @@
 """ A collection of example tests. """
 
 from matching import Player as Resident
-from matching.games import HospitalResident, hospital_resident
+from matching.games import HospitalResident
 from matching.players import Hospital
 
 
@@ -29,7 +29,7 @@ def test_readme_example():
     )
     (A, S, D, J, L), (M, C, G) = game.residents, game.hospitals
 
-    matching = hospital_resident(game.residents, game.hospitals)
+    matching = game.solve()
     assert matching == {M: [L, S], C: [D, A], G: [J]}
 
 
@@ -57,5 +57,22 @@ def test_example_in_issue():
     )
     (G1, G2, G3), (F, I, P, S) = game.residents, game.hospitals
 
-    matching = hospital_resident(game.residents, game.hospitals)
+    matching = game.solve()
     assert matching == {I: [G1], P: [G3, G2], F: [], S: []}
+
+
+def test_resident_loses_all_preferences():
+    """ An example that forces a resident to be removed from the game as all of
+    their preferences have been forgotten. """
+
+    resident_prefs = {"A": ["X"], "B": ["X", "Y"]}
+    hospital_prefs = {"X": ["B", "A"], "Y": ["B"]}
+    capacities = {"X": 1, "Y": 1}
+
+    game = HospitalResident.create_from_dictionaries(
+        resident_prefs, hospital_prefs, capacities
+    )
+    (A, B), (X, Y) = game.residents, game.hospitals
+
+    matching = game.solve()
+    assert matching == {X: [B], Y: []}
