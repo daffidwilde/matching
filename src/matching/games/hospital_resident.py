@@ -1,5 +1,7 @@
 """ The HR solver and algorithm. """
 
+import copy
+
 from matching import BaseGame, Matching
 from matching import Player as Resident
 from matching.players import Hospital
@@ -40,8 +42,9 @@ class HospitalResident(BaseGame):
         blocking pairs.
     """
 
-    def __init__(self, residents=None, hospitals=None):
+    def __init__(self, residents, hospitals):
 
+        residents, hospitals = copy.deepcopy([residents, hospitals])
         self.residents = residents
         self.hospitals = hospitals
 

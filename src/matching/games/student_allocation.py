@@ -1,5 +1,7 @@
 """ The SA solver and algorithm. """
 
+import copy
+
 from matching import BaseGame, Matching
 from matching import Player as Student
 from matching.players import Project, Supervisor
@@ -53,6 +55,9 @@ class StudentAllocation(BaseGame):
 
     def __init__(self, students, projects, supervisors):
 
+        students, projects, supervisors = copy.deepcopy(
+            [students, projects, supervisors]
+        )
         self.students = students
         self.projects = projects
         self.supervisors = supervisors

@@ -1,5 +1,7 @@
 """ The SM solver and algorithm. """
 
+import copy
+
 from matching import BaseGame, Matching, Player
 
 from .util import delete_pair, match_pair
@@ -30,6 +32,7 @@ class StableMarriage(BaseGame):
 
     def __init__(self, suitors, reviewers):
 
+        suitors, reviewers = copy.deepcopy([suitors, reviewers])
         self.suitors = suitors
         self.reviewers = reviewers
 
