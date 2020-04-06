@@ -2,14 +2,14 @@
 
 import copy
 
-from matching import Game, Matching
+from matching import BaseGame, Matching
 from matching import Player as Student
 from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
 
 
-class StudentAllocation(Game):
+class StudentAllocation(BaseGame):
     """ A class for solving instances of the student-allocation problem (SA)
     using an adapted Gale-Shapley algorithm.
 
