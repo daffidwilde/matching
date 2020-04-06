@@ -6,7 +6,6 @@ from matching import BaseGame
 
 
 class DummyGame(BaseGame):
-
     def solve(self):
         raise NotImplementedError()
 

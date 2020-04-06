@@ -2,6 +2,7 @@
 
 import abc
 
+
 class BaseGame(metaclass=abc.ABCMeta):
     """ An abstract base class for facilitating various matching games.
 

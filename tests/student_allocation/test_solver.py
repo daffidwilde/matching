@@ -33,7 +33,7 @@ def test_init(student_names, project_names, supervisor_names, capacities, seed):
         assert supervisor.name == game_supervisor.name
         assert supervisor.pref_names == game_supervisor.pref_names
         assert supervisor.capacity == game_supervisor.capacity
-        
+
         supervisor_projects = [p.name for p in supervisor.projects]
         game_supervisor_projects = [p.name for p in game_supervisor.projects]
         assert supervisor_projects == game_supervisor_projects
