@@ -16,8 +16,12 @@ def test_init(player_names, seed):
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
 
-    assert game.suitors == suitors
-    assert game.reviewers == reviewers
+    for player, game_player in zip(
+        suitors + reviewers, game.suitors + game.reviewers
+    ):
+        assert player.name == game_player.name
+        assert player.pref_names == game_player.pref_names
+
     assert all(
         [player.matching is None for player in game.suitors + game.reviewers]
     )
@@ -87,8 +91,20 @@ def test_solve(player_names, seed):
 
         matching = game.solve(optimal)
         assert isinstance(matching, Matching)
-        assert set(matching.keys()) == set(suitors)
-        assert set(matching.values()) == set(reviewers)
+
+        suitors = sorted(suitors, key=lambda s: s.name)
+        reviewers = sorted(reviewers, key=lambda r: r.name)
+
+        matching_keys = sorted(matching.keys(), key=lambda k: k.name)
+        matching_values = sorted(matching.values(), key=lambda v: v.name)
+
+        for game_suitor, suitor in zip(matching_keys, suitors):
+            assert game_suitor.name == suitor.name
+            assert game_suitor.pref_names == suitor.pref_names
+
+        for game_reviewer, reviewer in zip(matching_values, reviewers):
+            assert game_reviewer.name == reviewer.name
+            assert game_reviewer.pref_names == reviewer.pref_names
 
 
 @STABLE_MARRIAGE
@@ -141,21 +157,23 @@ def test_check_stability():
     from matching import Player
 
     suitors = [Player("A"), Player("B")]
-    reviewers = [Player(1), Player(2)]
+    reviewers = [Player("X"), Player("Y")]
 
-    suitors[0].set_prefs(reviewers)
-    suitors[1].set_prefs(reviewers[::-1])
+    (a, b), (x, y) = suitors, reviewers
 
-    reviewers[0].set_prefs(suitors)
-    reviewers[1].set_prefs(suitors[::-1])
+    a.set_prefs(reviewers)
+    b.set_prefs(reviewers[::-1])
+
+    x.set_prefs(suitors)
+    y.set_prefs(suitors[::-1])
 
     game = StableMarriage(suitors, reviewers)
 
     matching = game.solve()
     assert game.check_stability()
 
-    (s_a, s_b), (r_1, r_2) = game.suitors, game.reviewers
-    matching[s_a] = r_2
-    matching[s_b] = r_1
+    (a, b), (x, y) = game.suitors, game.reviewers
+    matching[a] = y
+    matching[b] = x
 
     assert not game.check_stability()

@@ -1,13 +1,15 @@
 """ The SA solver and algorithm. """
 
-from matching import Game, Matching
+import copy
+
+from matching import BaseGame, Matching
 from matching import Player as Student
 from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
 
 
-class StudentAllocation(Game):
+class StudentAllocation(BaseGame):
     """ A class for solving instances of the student-allocation problem (SA)
     using an adapted Gale-Shapley algorithm.
 
@@ -53,6 +55,9 @@ class StudentAllocation(Game):
 
     def __init__(self, students, projects, supervisors):
 
+        students, projects, supervisors = copy.deepcopy(
+            [students, projects, supervisors]
+        )
         self.students = students
         self.projects = projects
         self.supervisors = supervisors

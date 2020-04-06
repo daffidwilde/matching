@@ -19,8 +19,15 @@ def test_init(resident_names, hospital_names, capacities, seed):
         resident_names, hospital_names, capacities, seed
     )
 
-    assert game.residents == residents
-    assert game.hospitals == hospitals
+    for resident, game_resident in zip(residents, game.residents):
+        assert resident.name == game_resident.name
+        assert resident.pref_names == game_resident.pref_names
+
+    for hospital, game_hospital in zip(hospitals, game.hospitals):
+        assert hospital.name == game_hospital.name
+        assert hospital.pref_names == game_hospital.pref_names
+        assert hospital.capacity == game_hospital.capacity
+
     assert all([resident.matching is None for resident in game.residents])
     assert all([hospital.matching == [] for hospital in game.hospitals])
     assert game.matching is None
@@ -100,15 +107,23 @@ def test_solve(resident_names, hospital_names, capacities, seed):
 
         matching = game.solve(optimal)
         assert isinstance(matching, Matching)
-        assert set(matching.keys()) == set(hospitals)
+
+        hospitals = sorted(hospitals, key=lambda h: h.name)
+        matching_keys = sorted(matching.keys(), key=lambda k: k.name)
+        for game_hospital, hospital in zip(matching_keys, hospitals):
+            assert game_hospital.name == hospital.name
+            assert game_hospital.pref_names == hospital.pref_names
+            assert game_hospital.capacity == hospital.capacity
+
         matched_residents = [
-            res for match in matching.values() for res in match
+            resident for match in matching.values() for resident in match
         ]
+
         assert matched_residents != [] and set(matched_residents).issubset(
-            set(residents)
+            set(game.residents)
         )
 
-        for resident in set(residents) - set(matched_residents):
+        for resident in set(game.residents) - set(matched_residents):
             assert resident.matching is None
 
 
@@ -172,8 +187,7 @@ def test_check_stability():
     residents = [Resident("A"), Resident("B"), Resident("C")]
     hospitals = [Hospital("X", 2), Hospital("Y", 2)]
 
-    a, b, c = residents
-    x, y = hospitals
+    (a, b, c), (x, y) = residents, hospitals
 
     a.set_prefs([x, y])
     b.set_prefs([y])
@@ -187,6 +201,7 @@ def test_check_stability():
     matching = game.solve()
     assert game.check_stability()
 
+    (a, b, c), (x, y) = game.residents, game.hospitals
     matching[x] = [c]
     matching[y] = [a, b]
 
