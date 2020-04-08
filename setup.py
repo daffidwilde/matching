@@ -19,5 +19,6 @@ setup(
     keywords=["game-theory gale-shapley matching-games"],
     packages=find_packages("src"),
     package_dir={"": "src"},
+    python_requires=">=3.5",
     tests_require=["pytest", "hypothesis", "numpy"],
 )
