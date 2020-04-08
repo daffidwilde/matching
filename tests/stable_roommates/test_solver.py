@@ -16,7 +16,10 @@ def test_init(player_names, seed):
     players = make_players(player_names, seed)
     game = StableRoommates(players)
 
-    assert game.players == players
+    for player, game_player in zip(players, game.players):
+        assert player.name == game_player.name
+        assert player.pref_names == game_player.pref_names
+
     assert all([player.matching is None for player in game.players])
     assert game.matching is None
 
@@ -59,9 +62,16 @@ def test_solve(player_names, seed):
 
     matching = game.solve()
     assert isinstance(matching, Matching)
-    assert set(matching.keys()) == set(players)
+
+    players = sorted(players, key=lambda p: p.name)
+    matching_keys = sorted(matching.keys(), key=lambda k: k.name)
+
+    for game_player, player in zip(matching_keys, players):
+        assert game_player.name == player.name
+        assert game_player.pref_names == player.pref_names
+
     for match in matching.values():
-        assert match is None or match in players
+        assert match is None or match in game.players
 
 
 @STABLE_ROOMMATES
@@ -98,8 +108,9 @@ def test_stability():
     game = StableRoommates(players)
 
     matching = game.solve()
-    print(matching)
     assert game.check_stability()
+
+    a, b, c, d = game.players
 
     matching[a] = c
     matching[b] = d

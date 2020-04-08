@@ -1,11 +1,13 @@
 """ The SM solver and algorithm. """
 
-from matching import Game, Matching, Player
+import copy
+
+from matching import BaseGame, Matching, Player
 
 from .util import delete_pair, match_pair
 
 
-class StableMarriage(Game):
+class StableMarriage(BaseGame):
     """ A class for solving instances of the stable marriage problem (SM).
 
     Parameters
@@ -30,6 +32,7 @@ class StableMarriage(Game):
 
     def __init__(self, suitors, reviewers):
 
+        suitors, reviewers = copy.deepcopy([suitors, reviewers])
         self.suitors = suitors
         self.reviewers = reviewers
 
@@ -49,7 +52,7 @@ class StableMarriage(Game):
         """ Solve the instance of SM using either the suitor- or
         reviewer-oriented Gale-Shapley algorithm. Return the matching. """
 
-        self._matching = Matching(
+        self.matching = Matching(
             stable_marriage(self.suitors, self.reviewers, optimal)
         )
         return self.matching

@@ -1,13 +1,15 @@
 """ The HR solver and algorithm. """
 
-from matching import Game, Matching
+import copy
+
+from matching import BaseGame, Matching
 from matching import Player as Resident
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
 
 
-class HospitalResident(Game):
+class HospitalResident(BaseGame):
     """ A class for solving instances of the hospital-resident assignment
     problem (HR).
 
@@ -40,8 +42,9 @@ class HospitalResident(Game):
         blocking pairs.
     """
 
-    def __init__(self, residents=None, hospitals=None):
+    def __init__(self, residents, hospitals):
 
+        residents, hospitals = copy.deepcopy([residents, hospitals])
         self.residents = residents
         self.hospitals = hospitals
 
@@ -66,7 +69,7 @@ class HospitalResident(Game):
         """ Solve the instance of HR using either the resident- or
         hospital-oriented algorithm. Return the matching. """
 
-        self._matching = Matching(
+        self.matching = Matching(
             hospital_resident(self.residents, self.hospitals, optimal)
         )
         return self.matching
