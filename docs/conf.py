@@ -195,10 +195,20 @@ autosummary_generate = [
     "reference/source/modules.rst",
 ]
 
-# nbsphinx_prolog = """
-# Go there: https://github.com/daffidwilde/matching/blob/docs/{{ env.doc2path(env.docname, base=None) }}
-# ----
-# """
+nbsphinx_prolog = """
+
+{% set docname = 'docs/' + env.doc2path(env.docname, base=None) %}
+
+.. raw:: html
+
+    <div class="admonition note">
+      <p>This page was generated from
+        <a class="reference external"
+        href="https://github.com/daffidwilde/matching/blob/master/{{ docname|e }}">{{ docname|e }}</a>.
+      </p>
+    </div>
+
+"""
 
 nbsphinx_epilog = """
 ----
