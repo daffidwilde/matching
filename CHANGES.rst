@@ -1,6 +1,18 @@
 History
 =======
 
+v1.3 - 2020-04-14
+-----------------
+
+- Players are now copied via `copy.deepcopy` when a game is created and the
+  copies are used, leaving any originals unchanged.
+- Formalise test and Python requirements in `setup.py`.
+- Revert flaky forgetting fix from v1.2.1 and correct the flaky tests that were
+  causing the issue.
+- Replace the `Game` class with `BaseGame` and make it a metaclass via
+  `abc.ABCMeta`.
+- Fix bugs in documentation stopping build.
+
 v1.2.1 - 2020-02-28
 -------------------
 
