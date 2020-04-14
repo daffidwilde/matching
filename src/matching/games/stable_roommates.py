@@ -1,11 +1,13 @@
 """ The SR solver and algorithm. """
 
-from matching import Game, Matching, Player
+import copy
+
+from matching import BaseGame, Matching, Player
 
 from .util import delete_pair, match_pair
 
 
-class StableRoommates(Game):
+class StableRoommates(BaseGame):
     """ A class for solving instances of the stable roommates problem (SR).
 
     Parameters
@@ -22,6 +24,7 @@ class StableRoommates(Game):
 
     def __init__(self, players):
 
+        players = copy.deepcopy(players)
         self.players = players
 
         super().__init__()

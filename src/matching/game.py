@@ -1,11 +1,10 @@
 """ The base game class for facilitating and solving matching games. """
 
+import abc
 
-class Game:
-    """ A class to store information about, and facilitate the solving of, a
-    matching game.
 
-    **This is a base class and is not intended for use other than inheritance.**
+class BaseGame(metaclass=abc.ABCMeta):
+    """ An abstract base class for facilitating various matching games.
 
     Attributes
     ----------
@@ -23,17 +22,14 @@ class Game:
         self.matching = None
         self.blocking_pairs = None
 
+    @abc.abstractmethod
     def solve(self):
         """ Placeholder for solving the given matching game. """
 
-        raise NotImplementedError()
-
+    @abc.abstractmethod
     def check_stability(self):
         """ Placeholder for checking the stability of the current matching. """
 
-        raise NotImplementedError()
-
+    @abc.abstractmethod
     def check_validity(self):
         """ Placeholder for checking the validity of the current matching. """
-
-        raise NotImplementedError()

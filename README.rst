@@ -200,14 +200,9 @@ solved in less than one tenth of a second:
 >>> _ = game.solve() # 48.6 ms ± 963 µs per loop
 
 
-Documentation
--------------
-
-Full documentation is available here: `<https://matching.readthedocs.io>`_
-
 Get in contact!
 ---------------
 
 I hope this package is useful, and feel free to contact me here (or on Twitter:
 `@daffidwilde <https://twitter.com/daffidwilde>`_) with any issues or
-recommendations. PRs always welcome!
+recommendations. Pull requests are always welcome!
