@@ -16,6 +16,9 @@ Matching
 .. image:: https://zenodo.org/badge/119597240.svg
    :target: https://zenodo.org/badge/latestdoi/119597240
 
+.. image:: https://joss.theoj.org/papers/10.21105/joss.02169/status.svg
+    :target: https://doi.org/10.21105/joss.02169
+
 
 A package for solving matching games.
 -------------------------------------
