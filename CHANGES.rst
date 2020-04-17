@@ -1,6 +1,11 @@
 History
 =======
 
+v1.3.0 - 2020-04-17
+-------------------
+
+- Update the self-citation information in `paper.bib` to `v1.3`.
+
 v1.3 - 2020-04-14
 -----------------
 
