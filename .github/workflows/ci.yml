@@ -47,7 +47,7 @@ jobs:
       run: |
         python -m pytest --nbval --current-env docs
         python -m doctest paper.md
-        python -m doctest README.md
+        python -m doctest README.rst
     - name: Check pip install
       run: |
           python -m pip uninstall -y matching
