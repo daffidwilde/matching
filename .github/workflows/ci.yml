@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@master
@@ -27,8 +27,9 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install -q --no-cache-dir -e .
         python -m pip install -q --no-cache-dir pytest pytest-cov isort black
-        python -m pip install -q --no-cache-dir sphinx sphinx_rtd_theme sphinxcontrib-bibtex
-        python -m pip install -q --no-cache-dir nbval matplotlib pandas PyYAML
+        python -m pip install -q --no-cache-dir sphinx sphinx_rtd_theme
+        python -m pip install -q --no-cache-dir nbval sphinxcontrib-bibtex
+        python -m pip install -q --no-cache-dir matplotlib pandas PyYAML
         python -m pip list
     - name: Lint with Black
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
