@@ -13,6 +13,6 @@ htmlcov/
 *.ipynb_checkpoints*
 *pyc
 *.swp
-*.yml
+
 
 !img/*.pdf
