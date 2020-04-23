@@ -2,19 +2,16 @@ Matching
 ========
 
 .. image:: https://img.shields.io/pypi/v/matching.svg
-   :target: https://pypi.org/project/matching/
+    :target: https://pypi.org/project/matching/
 
-.. image:: https://coveralls.io/repos/github/daffidwilde/matching/badge.svg?branch=master
-   :target: https://coveralls.io/github/daffidwilde/matching?branch=master
-
-.. image:: https://travis-ci.com/daffidwilde/matching.svg?branch=master
-   :target: https://travis-ci.com/daffidwilde/matching
+.. image:: https://github.com/daffidwilde/matching/workflows/CI/CD/badge.svg
+    :target: https://github.com/daffidwilde/matching/actions?query=workflow%3ACI%2FCD+branch%3Amaster
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/ambv/black
+    :target: https://github.com/ambv/black
 
 .. image:: https://zenodo.org/badge/119597240.svg
-   :target: https://zenodo.org/badge/latestdoi/119597240
+    :target: https://zenodo.org/badge/latestdoi/119597240
 
 .. image:: https://joss.theoj.org/papers/10.21105/joss.02169/status.svg
     :target: https://doi.org/10.21105/joss.02169
