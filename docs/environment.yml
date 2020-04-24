@@ -8,6 +8,7 @@ dependencies:
     - ipython>=7.6
     - python>=3.6
     - pip>=19
+    - sphinx=2.4.0
     - pip:
         - matching
         - nbsphinx
