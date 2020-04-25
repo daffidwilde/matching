@@ -8,19 +8,18 @@ Welcome to Matching's documentation!
 
 Matching is a package for solving matching games.
 
-A matching game is defined by two sets of players. Each player in one set has a
-ranked preference list of those in the other, and the objective is to find some
-mapping between the two sets such that no pair of players are unhappy. The
-context of the terms "mapping" and "unhappy" are dependent on the framework of
-the particular game being played but are largely to do with the stability of the
-pairings.
+Matching games allow for the allocation of resources and partnerships in a fair
+way. Typically, a matching game is defined by two sets of players that each have
+preferences over at least some of the elements of the other set. The objective
+of the game is then to find a mapping between the sets of players in which
+everyone is *happy enough* with their match.
 
-In Matching, we deal with three types of matching game:
+In Matching, we deal with the following types of matching game:
 
-- the stable marriage problem (SM);
-- the hospital-resident assignment problem (HR);
-- the student-allocation problem (SA);
-- the stable roommates problem (SR).
+- the stable marriage problem (SM)
+- the hospital-resident assignment problem (HR)
+- the student-allocation problem (SA)
+- the stable roommates problem (SR)
 
 .. toctree::
    :maxdepth: 2
