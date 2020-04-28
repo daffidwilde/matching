@@ -49,6 +49,12 @@ GitHub repo::
     $ python setup.py install
 
 
+Documentation
+-------------
+
+Full documentation is available here: `<https://matching.readthedocs.io>`_
+
+
 Playing a simple game
 ---------------------
 
@@ -118,12 +124,6 @@ does require the names of the players in each party to be unique.
 With all games, Matching uses a ``Player`` class to represent the members of the
 "applying" party, i.e. residents and students. For HR and SA, there are specific
 classes to represent the roles of ``Hospital``, ``Project`` and ``Supervisor``.
-
-
-Documentation
--------------
-
-Full documentation is available here: `<https://matching.readthedocs.io>`_
 
 
 A note on performance
