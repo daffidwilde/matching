@@ -22,6 +22,6 @@ matching for any instance of SM and is as follows:
 5. Go to 1 until there are no such suitors, then end.
 
 .. note::
-   As the game requires equally sized sets of players, the *resident-optimal*
+   As the game requires equally sized sets of players, the *reviewer-optimal*
    algorithm is equivalent to the above but with the roles of suitors and
    reviewers reversed.
