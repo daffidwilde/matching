@@ -1,9 +1,6 @@
 Matching
 ========
 
-.. image:: https://img.shields.io/pypi/v/matching.svg
-    :target: https://pypi.org/project/matching/
-
 .. image:: https://github.com/daffidwilde/matching/workflows/CI/CD/badge.svg
     :target: https://github.com/daffidwilde/matching/actions?query=workflow%3ACI%2FCD+branch%3Amaster
 
@@ -20,14 +17,13 @@ Matching
 A package for solving matching games.
 -------------------------------------
 
-A matching game is defined by two sets of players. Each player in one set has a
-ranked preference list of those in the other, and the objective is to find some
-mapping between the two sets such that no pair of players are unhappy. The
-context of the terms "mapping" and "unhappy" are dependent on the framework of
-the particular game being played but are largely to do with the stability of the
-pairings.
+Matching games allow for the allocation of resources and partnerships in a fair
+way. Typically, a matching game is defined by two sets of players that each have
+preferences over at least some of the elements of the other set. The objective
+of the game is then to find a mapping between the sets of players in which
+everyone is happy enough with their match.
 
-In ``matching``, we deal with four types of matching game:
+In Matching, we deal with four types of matching game:
 
 - the stable marriage problem (SM);
 - the hospital-resident assignment problem (HR);
@@ -38,7 +34,7 @@ In ``matching``, we deal with four types of matching game:
 Installation
 ------------
 
-Matching is written in Python 3, and relies only on `NumPy
+Matching requires Python 3.5 or above, and relies only on `NumPy
 <http://www.numpy.org/>`_ for general use.
 
 The library is most easily installed using :code:`pip`::
@@ -53,50 +49,42 @@ GitHub repo::
     $ python setup.py install
 
 
-Using the ``Player`` class
---------------------------
+Playing a simple game
+---------------------
 
-With all of these games, ``matching`` uses a ``Player`` class to represent the
-members of the "applying" party, i.e. residents and students. For HR and SA,
-there are specific classes to represent the roles of ``Hospital``, ``Project``
-and ``Supervisor``.
+With all games, Matching uses a ``Player`` class to represent the members of the
+"applying" party, i.e. residents and students. For HR and SA, there are specific
+classes to represent the roles of ``Hospital``, ``Project`` and ``Supervisor``.
 
-For instances of SM, we require two lists of ``Player`` instances -- one for
-each party detailing their preferences.
-
-Consider the following problem which is represented on a bipartite graph.
+Consider the following instance of SM which is represented on a bipartite graph
+where the suitors and reviewers are along the left and right respectively.
 
 .. image:: ./img/stable_marriage.png
    :align: center
    :width: 10cm
 
-We construct the players in this game in the following way:
+We can construct these preferences using dictionaries:
 
->>> from matching import Player
-
->>> suitors = [Player(name="A"), Player(name="B"), Player(name="C")]
->>> reviewers = [Player(name="D"), Player(name="E"), Player(name="F")]
->>> (A, B, C), (D, E, F) = suitors, reviewers
-
->>> A.set_prefs([D, E, F])
->>> B.set_prefs([D, F, E])
->>> C.set_prefs([F, D, E])
-
->>> D.set_prefs([B, C, A])
->>> E.set_prefs([A, C, B])
->>> F.set_prefs([C, B, A])
+>>> suitor_preferences = {
+...     "A": ["D", "E", "F"], "B": ["D", "F", "E"], "C": ["F", "D", "E"]
+... }
+>>> reviewer_preferences = {
+...     "D": ["B", "C", "A"], "E": ["A", "C", "B"], "F": ["C", "B", "A"]
+... }
 
 Then to solve this matching game, we make use of the ``StableMarriage`` class,
 like so:
 
 >>> from matching.games import StableMarriage
->>> game = StableMarriage(suitors, reviewers)
+>>> game = StableMarriage.create_from_dictionaries(
+...     suitor_preferences, reviewer_preferences
+... )
 >>> game.solve()
 {A: E, B: D, C: F}
 
 
-Note
-++++
+The ``Matching`` object
++++++++++++++++++++++++
 
 This matching is not a standard Python dictionary, though it does largely look
 and behave like one. It is in fact an instance of the ``Matching`` class:
@@ -109,64 +97,27 @@ This dictionary-like object is primarily useful as a teaching device that eases
 the process of manipulating a matching after a solution has been found. 
 
 
-Using dictionaries
-------------------
-
-For larger game instances, creating players directly (as above) could be
-unreasonably tedious. An alternative approach is to create an instance of a game
-from Python dictionaries. For example, consider the following instance of HR:
-
-There are five residents -- Ada, Sam, Jo, Luc, Dani -- applying to work at three
-hospitals: Mercy, City, General. Each hospital has two available positions, and
-the players' preferences of one another are as follows:
-
-.. image:: ./img/hospital_resident.png
-   :align: center
-   :width: 10cm
-
-This information can be conveyed as a few dictionaries like so:
-
->>> resident_prefs = {
-...     "A": ["C"],
-...     "S": ["C", "M"],
-...     "D": ["C", "M", "G"],
-...     "J": ["C", "G", "M"],
-...     "L": ["M", "C", "G"],
-... }
->>> hospital_prefs = {
-...     "M": ["D", "L", "S", "J"],
-...     "C": ["D", "A", "S", "L", "J"],
-...     "G": ["D", "J", "L"],
-... }
->>> capacities = {hosp: 2 for hosp in hospital_prefs}
-
-Then, similarly, this game is solved using the ``HospitalResident`` class but an
-instance is created using the ``create_from_dictionaries`` class method:
-
->>> from matching.games import HospitalResident
->>> game = HospitalResident.create_from_dictionaries(
-...     resident_prefs, hospital_prefs, capacities
-... )
->>> game.solve()
-{M: [L, S], C: [D, A], G: [J]}
-
-Note
-++++
+``Player`` classes
+++++++++++++++++++
 
 Despite passing dictionaries of strings here, the matching displays instances of
-``matching`` players:
+``matching.player.Player``:
 
 >>> matching = game.matching
->>> for hospital in matching:
-...     print(type(hospital))
-<class 'matching.players.hospital.Hospital'>
-<class 'matching.players.hospital.Hospital'>
-<class 'matching.players.hospital.Hospital'>
+>>> for suitor in matching:
+...     print(type(suitor))
+<class 'matching.player.Player'>
+<class 'matching.player.Player'>
+<class 'matching.player.Player'>
 
 This is because ``create_from_dictionaries`` creates instances of the
 appropriate player classes first and passes them to the game class. Using
 dictionaries like this can be an efficient way of creating large games but it
 does require the names of the players in each party to be unique.
+
+With all games, Matching uses a ``Player`` class to represent the members of the
+"applying" party, i.e. residents and students. For HR and SA, there are specific
+classes to represent the roles of ``Hospital``, ``Project`` and ``Supervisor``.
 
 
 Documentation
@@ -187,13 +138,16 @@ solved in less than one tenth of a second:
 >>> from matching.games import HospitalResident
 >>> import numpy as np
 >>> np.random.seed(0)
+>>> num_residents, num_hospitals = 400, 20
 >>> resident_prefs = {
-...     r: np.argsort(np.random.random(size=20)) for r in range(400)
+...     r: np.argsort(np.random.random(size=num_hospitals))
+...     for r in range(num_residents)
 ... }
 >>> hospital_prefs = {
-...     h: np.argsort(np.random.random(size=400)) for h in range(20)
+...     h: np.argsort(np.random.random(size=num_residents))
+...     for h in range(num_hospitals)
 ... }
->>> capacities = {h: 20 for h in hospital_prefs}
+>>> capacities = {h: num_hospitals for h in hospital_prefs}
 >>> game = HospitalResident.create_from_dictionaries(
 ...     resident_prefs, hospital_prefs, capacities
 ... )
