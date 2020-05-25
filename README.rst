@@ -52,8 +52,12 @@ GitHub repo::
 Documentation
 -------------
 
-Full documentation is available here: `<https://matching.readthedocs.io>`_
+Full documentation (including tutorials and discussion material) is available
+here: `<https://matching.readthedocs.io>`_
 
+An academic paper on this library has been included in the Journal of Open
+Source Software (JOSS) and is available here:
+`<https://joss.theoj.org/papers/10.21105/joss.02169>`_
 
 Playing a simple game
 ---------------------
