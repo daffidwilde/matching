@@ -39,7 +39,7 @@ jobs:
     - name: Lint imports with isort
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
-        isort -rc src --check-only
+        isort src --check-only
     - name: Test with pytest 
       run: |
         python -m pytest --cov=matching --cov-fail-under=100 tests
