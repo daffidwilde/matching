@@ -103,9 +103,7 @@ def test_inputs_hospital_capacities(
     project, but does not offer a surplus of spaces from their projects.
     Otherwise, raise an Exception. """
 
-    _, _, game = make_game(
-        resident_names, hospital_names, capacities, seed
-    )
+    _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
     assert game._check_init_hospital_capacities()
 
