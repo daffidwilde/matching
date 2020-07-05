@@ -1,6 +1,13 @@
 History
 =======
 
+v1.3.2 - 2020-07-05
+-------------------
+
+- Add HR input check for non-positive hospital capacities.
+- Remove recursive flag from `isort` call in CI.
+- Minor clean up of `README` images.
+
 v1.3.1 - 2020-05-26
 -------------------
 
