@@ -96,6 +96,24 @@ def test_inputs_hospital_prefs(
 
 
 @HOSPITAL_RESIDENT
+def test_inputs_hospital_capacities(
+    resident_names, hospital_names, capacities, seed
+):
+    """ Test that each hospital has enough space to accommodate their largest
+    project, but does not offer a surplus of spaces from their projects.
+    Otherwise, raise an Exception. """
+
+    _, _, game = make_game(resident_names, hospital_names, capacities, seed)
+
+    assert game._check_init_hospital_capacities()
+
+    hospital = game.hospitals[0]
+    hospital.capacity = 0
+    with pytest.raises(Exception):
+        game._check_init_hospital_capacities()
+
+
+@HOSPITAL_RESIDENT
 def test_solve(resident_names, hospital_names, capacities, seed):
     """ Test that HospitalResident can solve games correctly when passed
     players. """

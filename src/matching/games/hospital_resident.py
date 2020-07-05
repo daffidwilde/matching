@@ -209,6 +209,25 @@ class HospitalResident(BaseGame):
 
         return True
 
+    def _check_init_hospital_capacities(self):
+        """ Check that each hospital has sufficient spaces for their
+        projects. """
+
+        errors = []
+        for hospital in self.hospitals:
+            if hospital.capacity < 1:
+                errors.append(
+                    ValueError(
+                        f"{hospital} does not have a valid capacity: "
+                        f"{hospital.capacity}"
+                    )
+                )
+
+        if errors:
+            raise Exception(*errors)
+
+        return True
+
 
 def _check_mutual_preference(resident, hospital):
     """ Determine whether two players each have a preference of the other. """
