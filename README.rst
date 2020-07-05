@@ -69,7 +69,7 @@ classes to represent the roles of ``Hospital``, ``Project`` and ``Supervisor``.
 Consider the following instance of SM which is represented on a bipartite graph
 where the suitors and reviewers are along the left and right respectively.
 
-.. image:: ./img/stable_marriage.png
+.. image:: ./tex/stable_marriage.png
    :align: center
    :width: 10cm
 
