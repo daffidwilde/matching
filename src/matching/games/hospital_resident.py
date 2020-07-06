@@ -30,7 +30,7 @@ class HospitalResident(BaseGame):
         those in :code:`hospitals`.
     hospitals : list of Hospital
         The hospitals in the matching game. Each hospital must rank all of (and
-        only) the residents which )ank it.
+        only) the residents which rank it.
 
     Attributes
     ----------
