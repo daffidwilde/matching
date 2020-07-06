@@ -13,12 +13,17 @@ class Hospital(Player):
         An identifier. This should be unique and descriptive.
     capacity : int
         The maximum number of matches the hospital can have.
+    _original_capacity : int
+        A record of the player's original capacity in case it is altered when
+        passed to a game.
 
     Attributes
     ----------
     prefs : list of Player
         The hospital's preferences. Defaults to ``None`` and is updated using
         the ``set_prefs`` method.
+    _original_prefs : list of Player
+        A record of the player's original preferences.
     pref_names : list
         A list of the names in ``prefs``. Updates with ``prefs`` via the
         ``set_prefs`` method.
@@ -31,6 +36,7 @@ class Hospital(Player):
 
         super().__init__(name)
         self.capacity = capacity
+        self._original_capacity = capacity
         self.matching = []
 
     def get_favourite(self):

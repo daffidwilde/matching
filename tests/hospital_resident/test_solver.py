@@ -219,7 +219,9 @@ def test_inputs_hospital_capacities(
         assert game.hospitals == game._all_hospitals
 
     hospital = game.hospitals[0]
+    capacity = hospital.capacity
     hospital.capacity = 0
+    assert hospital._original_capacity == capacity
     with warnings.catch_warnings(record=True) as w:
         game._check_init_hospital_capacities()
 

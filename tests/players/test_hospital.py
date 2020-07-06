@@ -15,6 +15,7 @@ def test_init(name, capacity):
 
     assert hospital.name == name
     assert hospital.capacity == capacity
+    assert hospital._original_capacity == capacity
     assert hospital.prefs is None
     assert hospital.pref_names is None
     assert hospital._original_prefs is None
