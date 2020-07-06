@@ -25,6 +25,8 @@ class BaseGame(metaclass=abc.ABCMeta):
     def _remove_player(self, player, player_party, other_party):
         """ Remove a player from the game and any relevant preference lists. """
 
+        party = vars(self)[player_party][:]
+        party.remove(player)
         vars(self)[player_party].remove(player)
         for other in vars(self)[other_party]:
             if player in other.prefs:

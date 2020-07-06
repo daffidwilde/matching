@@ -66,7 +66,7 @@ def make_players(student_names, project_names, supervisor_names, capacities):
         supervisor.set_prefs(np.random.permutation(studs).tolist())
 
     projects = [p for p in projects if p.prefs]
-    supervisors = [f for f in supervisors if f.prefs]
+    supervisors = [s for s in supervisors if s.prefs]
 
     return students, projects, supervisors
 
@@ -91,32 +91,42 @@ def make_connections(
 
     np.random.seed(seed)
     project_supervisors = {}
+    project_capacities = dict(zip(project_names, capacities))
     student_prefs = defaultdict(list)
     supervisor_prefs = defaultdict(list)
+    supervisor_projects = defaultdict(list)
     supervisor_capacities = defaultdict(list)
 
-    for project, capacity in zip(project_names, capacities):
+    for project in project_names:
         supervisor = np.random.choice(supervisor_names)
         project_supervisors[project] = supervisor
-        supervisor_capacities[supervisor].append(capacity)
-
-    supervisor_capacities = dict(supervisor_capacities)
-    supervisor_names = [supervisor for supervisor in supervisor_capacities]
-    for supervisor, values in supervisor_capacities.items():
-        print(values)
-        values = sorted(values)
-        capacity = np.random.randint(max(values), sum(values) + 1)
-        supervisor_capacities[supervisor] = capacity
 
     possible_prefs = get_possible_prefs(project_names)
     for student in student_names:
         prefs = possible_prefs[np.random.randint(len(possible_prefs))]
         student_prefs[student].extend(prefs)
+
         for project in prefs:
             supervisor = project_supervisors[project]
             sup_prefs = supervisor_prefs[supervisor]
             if student not in sup_prefs:
                 sup_prefs.append(student)
+
+    chosen_projects = {
+        p for projects in student_prefs.values() for p in projects
+    }
+    for project in set(project_names) - chosen_projects:
+        del project_supervisors[project]
+        del project_capacities[project]
+
+    for project, supervisor in project_supervisors.items():
+        supervisor_projects[supervisor].append(project)
+
+    supervisor_capacities = dict(supervisor_capacities)
+    for supervisor, projects in supervisor_projects.items():
+        values = [project_capacities[project] for project in projects]
+        capacity = np.random.randint(max(values), sum(values) + 1)
+        supervisor_capacities[supervisor] = capacity
 
     for supervisor in supervisor_prefs:
         np.random.shuffle(supervisor_prefs[supervisor])

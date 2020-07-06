@@ -1,10 +1,15 @@
 """ The SA solver and algorithm. """
-
 import copy
+import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Student
 from matching.players import Project, Supervisor
+from matching.warning import (
+    InvalidCapacityWarning,
+    InvalidPreferencesWarning,
+    PlayerExcludedWarning,
+)
 
 from .util import delete_pair, match_pair
 
@@ -62,8 +67,27 @@ class StudentAllocation(BaseGame):
         self.projects = projects
         self.supervisors = supervisors
 
+        self._all_students = students
+        self._all_projects = projects
+        self._all_supervisors = supervisors
+
         super().__init__()
         self._check_inputs()
+
+    def _remove_player(self, player, player_party, other_party=None):
+        """ Remove players from the game normally unless the player is a
+        supervisor. """
+
+        if player_party == "supervisors":
+            self.supervisors.remove(player)
+            for project in player.projects:
+                try:
+                    super()._remove_player(project, "projects", "students")
+                except ValueError:
+                    pass
+
+        else:
+            super()._remove_player(player, player_party, other_party)
 
     @classmethod
     def create_from_dictionaries(
@@ -232,61 +256,127 @@ class StudentAllocation(BaseGame):
         """ Check that the players in the game have valid preferences, and in
         the case of projects and supervisor: capacities. """
 
-        self._check_student_prefs()
-        self._check_project_prefs()
-        self._check_supervisor_prefs()
+        self._check_student_prefs_all_projects()
+        self._check_student_prefs_all_nonempty()
 
-        self._check_init_project_capacities()
-        self._check_init_supervisor_capacities()
+        self._check_project_prefs_all_reciprocated()
+        self._check_project_reciprocates_all_prefs()
+        self._check_project_prefs_all_nonempty()
 
-    def _check_student_prefs(self):
-        """ Make sure that each student's preference list is a subset of the
-        available projects. Otherwise, raise an error. """
+        self._check_supervisor_prefs_all_reciprocated()
+        self._check_supervisor_reciprocates_all_prefs()
+        self._check_supervisor_prefs_all_nonempty()
 
-        errors = []
+        self._check_init_project_capacities_positive()
+        self._check_init_supervisor_capacities_positive()
+        self._check_init_supervisor_capacities_sufficient()
+        self._check_init_supervisor_capacities_necessary()
+
+    def _check_student_prefs_all_projects(self):
+        """ Make sure that each student has ranked only projects. """
+
         for student in self.students:
-            if not set(student.prefs).issubset(set(self.projects)):
-                errors.append(
-                    ValueError(
-                        f"{student} has ranked a non-project: "
-                        f"{set(student.prefs)} != {set(self.projects)}"
+
+            for project in student.prefs:
+                if project not in self.projects:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{student} has ranked a non-project: {project}."
+                        )
+                    )
+
+                    student.forget(project)
+
+    def _check_student_prefs_all_nonempty(self):
+        """ Make sure that each student has a nonempty preference list. """
+
+        for student in self.students:
+
+            if not student.prefs:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{student} has an empty preference list."
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
+                self._remove_player(student, "students", "supervisors")
 
-        return True
+    def _check_project_prefs_all_reciprocated(self):
+        """ Make sure that each project has ranked only those students that
+        have ranked it. """
 
-    def _check_project_prefs(self):
-        """ Make sure that each project ranks all and only those students that
-        ranked it. """
-
-        errors = []
         for project in self.projects:
+
+            for student in project.prefs:
+                if project not in student.prefs:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{project} ranked {student} but they did not. "
+                            f"Removing {student} from {project} preferences."
+                        )
+                    )
+
+                    project.forget(student)
+
+    def _check_project_reciprocates_all_prefs(self):
+        """ Make sure that each project has ranked all those students that
+        have ranked it. """
+
+        for project in self.projects:
+
             students_that_ranked = [
-                student for student in self.students if project in student.prefs
+                res for res in self.students if project in res.prefs
             ]
-            if set(project.prefs) != set(students_that_ranked):
-                errors.append(
-                    ValueError(
-                        f"{project} has not ranked the students that ranked "
-                        f"it: {set(project.prefs)} != "
-                        f"{set(students_that_ranked)}"
+            for student in students_that_ranked:
+                if student not in project.prefs:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{student} ranked {project} but they did not. "
+                            f"Removing {project} from {student} preferences."
+                        )
+                    )
+
+                    student.forget(project)
+
+    def _check_project_prefs_all_nonempty(self):
+        """ Make sure that each project has a non-empty preference list. """
+
+        for project in self.projects:
+            if not project.prefs:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{project} has an empty preference list."
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
+                self._remove_player(project, "projects", "students")
 
-        return True
+    def _check_supervisor_prefs_all_reciprocated(self):
+        """ Make sure that each supervisor has ranked only those students that
+        have ranked at least one of their projects. """
 
-    def _check_supervisor_prefs(self):
-        """ Make sure that each supervisor ranks all and only those students
-        that ranked at least one project that they offer. """
-
-        errors = []
         for supervisor in self.supervisors:
+
+            for student in supervisor.prefs:
+                student_prefs_supervisors = {
+                    p.supervisor for p in student.prefs
+                }
+                if supervisor not in student_prefs_supervisors:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{supervisor} ranked {student} but they have not "
+                            "ranked one of their projects."
+                        )
+                    )
+
+                    supervisor.forget(student)
+
+    def _check_supervisor_reciprocates_all_prefs(self):
+        """ Make sure that each supervisor has ranked all those students that
+        have ranked at least one of its projects. """
+
+        for supervisor in self.supervisors:
+
             students_that_ranked = [
                 student
                 for student in self.students
@@ -297,69 +387,120 @@ class StudentAllocation(BaseGame):
                     ]
                 )
             ]
-            if set(supervisor.prefs) != set(students_that_ranked):
-                errors.append(
-                    ValueError(
-                        f"{supervisor} has not ranked the students that ranked "
-                        "at least one of its projects: "
-                        f"{set(supervisor.prefs)} != "
-                        f"{set(students_that_ranked)}"
+            for student in students_that_ranked:
+                if student not in supervisor.prefs:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{student} ranked a project provided by "
+                            f"{supervisor} but they did not."
+                        )
                     )
-                )
 
-        if errors:
-            raise Exception(*errors)
+                    for project in student.prefs:
+                        if project.supervisor == supervisor:
+                            warnings.warn(
+                                InvalidPreferencesWarning(
+                                    f"{student} ranked {project} but its "
+                                    "supervisor did not."
+                                )
+                            )
 
-        return True
+                            student.forget(project)
 
-    def _check_init_project_capacities(self):
-        """ Check that each project has at least one space but no more than
-        their supervisor. """
+    def _check_supervisor_prefs_all_nonempty(self):
+        """ Make sure that every supervisor has a non-empty preference list. """
 
-        errors = []
-        for project in self.projects:
-            if (
-                project.capacity < 1
-                or project.capacity > project.supervisor.capacity
-            ):
-                errors.append(
-                    ValueError(
-                        f"{project} does not have a valid capacity: "
-                        f"{project.capacity}"
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_init_supervisor_capacities(self):
-        """ Check that each supervisor has sufficient spaces for their
-        projects. """
-
-        errors = []
         for supervisor in self.supervisors:
-            project_capacities = [proj.capacity for proj in supervisor.projects]
-            if supervisor.capacity < max(project_capacities):
-                errors.append(
-                    ValueError(
-                        f"{supervisor} does not have enough space to provide "
-                        "for their largest project"
-                    )
-                )
-            elif supervisor.capacity > sum(project_capacities):
-                errors.append(
-                    ValueError(
-                        f"{supervisor} can offer more spaces than their "
-                        "projects can provide"
+            if not supervisor.prefs:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{supervisor} has an empty preference list."
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
+                for project in supervisor.projects:
+                    warnings.warn(
+                        PlayerExcludedWarning(
+                            f"{project} supervisor no longer in game."
+                        )
+                    )
 
-        return True
+                self._remove_player(supervisor, "supervisors")
+
+    def _check_init_project_capacities_positive(self):
+        """ Check that each project has at least one space. """
+
+        for project in self.projects:
+
+            supervisor = project.supervisor
+            if project.capacity < 1:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{project} does not have a positive capacity."
+                    )
+                )
+
+                self._remove_player(project, "projects", "students")
+
+    def _check_init_supervisor_capacities_positive(self):
+        """ Check that each supervisor has at least one space. """
+
+        for supervisor in self.supervisors:
+
+            if supervisor.capacity < 1:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{supervisor} does not have a positive capacity."
+                    )
+                )
+
+                for project in supervisor.projects:
+                    warnings.warn(
+                        PlayerExcludedWarning(
+                            f"{project} supervisor no longer in game."
+                        )
+                    )
+
+                self._remove_player(supervisor, "supervisors")
+
+    def _check_init_supervisor_capacities_sufficient(self):
+        """ Check that each supervisor has the capacity to support its largest
+        project(s). """
+
+        for supervisor in self.supervisors:
+
+            for project in supervisor.projects:
+                if project.capacity > supervisor.capacity:
+                    warnings.warn(
+                        InvalidCapacityWarning(
+                            f"{project} has a capacity of {project.capacity} "
+                            "but its supervisor has a capacity of "
+                            f"{supervisor.capacity}."
+                        )
+                    )
+
+                    project.capacity = supervisor.capacity
+
+    def _check_init_supervisor_capacities_necessary(self):
+        """ Check that each supervisor has at most the necessary capacity for
+        all of their projects. """
+
+        for supervisor in self.supervisors:
+
+            total_project_capacity = sum(
+                p.capacity for p in supervisor.projects
+            )
+
+            if supervisor.capacity > total_project_capacity:
+                warnings.warn(
+                    InvalidCapacityWarning(
+                        f"{supervisor} has a capacity of {supervisor.capacity} "
+                        "but their projects have a capacity of "
+                        f"{total_project_capacity}"
+                    )
+                )
+
+                supervisor.capacity = total_project_capacity
 
 
 def _check_student_unhappy(student, project):
