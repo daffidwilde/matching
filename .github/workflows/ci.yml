@@ -35,11 +35,11 @@ jobs:
     - name: Lint with Black
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
-        black --check --diff -l 80 .
+        python -m black --check --diff -l 80 .
     - name: Lint imports with isort
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
-        isort src --check-only
+        python -m isort -w 80 -m 3 --trailing-comma --check-only .
     - name: Test with pytest 
       run: |
         python -m pytest --cov=matching --cov-fail-under=100 tests
