@@ -22,13 +22,13 @@ class BaseGame(metaclass=abc.ABCMeta):
         self.matching = None
         self.blocking_pairs = None
 
-    def _remove_player(self, player, player_party, other_party=None):
+    def _remove_player(self, player, player_party, other_party):
         """ Remove a player from the game and any relevant preference lists. """
 
         party = vars(self)[player_party][:]
         party.remove(player)
         vars(self)[player_party].remove(player)
-        for other in vars(self).get(other_party, []):
+        for other in vars(self)[other_party]:
             if player in other.prefs:
                 other.forget(player)
 
