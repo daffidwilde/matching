@@ -228,27 +228,116 @@ def test_inputs_project_prefs_all_nonempty(
 
 
 @STUDENT_ALLOCATION
-def test_inputs_supervisor_prefs(
+def test_inputs_supervisor_prefs_all_reciprocate(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that each supervisor's preference list is a permutation of the
-    students that have ranked at least one project that they provide. Otherwise,
-    check that an Exception is raised. """
+    """ Test that each supervisor has ranked only those students that have
+    ranked at least one of its projects. If not, check that a warning is caught
+    and the supervisor has forgotten any such players. """
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
 
-    assert game._check_supervisor_prefs()
+    with warnings.catch_warnings(record=True) as w:
+        game._check_supervisor_prefs_all_reciprocated()
+
+        assert not w
+        assert game.supervisors == game._all_supervisors
 
     supervisor = game.supervisors[0]
-    supervisor.prefs = [Student("foo")]
-    with pytest.raises(Exception):
-        game._check_supervisor_prefs()
+    student = supervisor.prefs[0]
+    for project in student.prefs:
+        if project.supervisor == supervisor:
+            student.forget(project)
+            project.prefs.remove(student)
+
+    with warnings.catch_warnings(record=True) as w:
+
+        game._check_supervisor_prefs_all_reciprocated()
+
+        message = w[-1].message
+        assert isinstance(message, InvalidPreferencesWarning)
+        assert supervisor.name in str(message)
+        assert student.name in str(message)
+        assert student not in supervisor.prefs
 
 
 @STUDENT_ALLOCATION
-def test_inputs_project_capacities_remove(
+def test_inputs_supervisor_reciprocates_all_prefs(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that each supervisor has ranked all those students that have ranked
+    at least one of its projects. If not, check that a warning is caught and any
+    such student has forgotten all projects belonging to that supervisor. """
+
+    _, _, _, game = make_game(
+        student_names, project_names, supervisor_names, capacities, seed
+    )
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_supervisor_reciprocates_all_prefs()
+
+        assert not w
+        assert game.supervisors == game._all_supervisors
+
+    supervisor = game.supervisors[0]
+    student = supervisor.prefs[0]
+    supervisor.prefs.remove(student)
+    with warnings.catch_warnings(record=True) as ws:
+        game._check_supervisor_reciprocates_all_prefs()
+
+        w, *ws = ws
+        message = w.message
+        assert isinstance(message, InvalidPreferencesWarning)
+        assert supervisor.name in str(message)
+        assert student.name in str(message)
+        assert supervisor not in student.prefs
+
+        messages = " ".join((str(w.message) for w in ws))
+        for project in supervisor.projects:
+            if project in student._original_prefs:
+                assert project not in student.prefs
+                assert project.name in messages
+
+
+@STUDENT_ALLOCATION
+def test_inputs_supervisor_prefs_all_nonempty(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that each supervisor has a non-empty preference list. If not, check
+    that a warning is caught and the supervisor, along with its projects, have
+    been removed from the game. """
+
+    _, _, _, game = make_game(
+        student_names, project_names, supervisor_names, capacities, seed
+    )
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_supervisor_prefs_all_nonempty()
+
+        assert not w
+        assert game.supervisors == game._all_supervisors
+
+    supervisor = game.supervisors[0]
+    supervisor.prefs = []
+    with warnings.catch_warnings(record=True) as ws:
+        game._check_supervisor_prefs_all_nonempty()
+
+        w, *ws = ws
+        message = w.message
+        assert isinstance(message, PlayerExcludedWarning)
+        assert supervisor.name in str(message)
+        assert supervisor not in game.supervisors
+
+        messages = " ".join((str(w.message) for w in ws))
+        for project in supervisor.projects:
+            assert project not in game.projects
+            assert project.name in messages
+
+
+@STUDENT_ALLOCATION
+def test_inputs_project_capacities_positive(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that each project has a positive capacity. If not, check that the
@@ -259,7 +348,7 @@ def test_inputs_project_capacities_remove(
     )
 
     with warnings.catch_warnings(record=True) as w:
-        game._check_init_project_capacities()
+        game._check_init_project_capacities_positive()
 
         assert not w
         assert game.projects == game._all_projects
@@ -267,7 +356,7 @@ def test_inputs_project_capacities_remove(
     project = game.projects[0]
     project.capacity = 0
     with warnings.catch_warnings(record=True) as w:
-        game._check_init_project_capacities()
+        game._check_init_project_capacities_positive()
 
         message = w[-1].message
         assert isinstance(message, PlayerExcludedWarning)
@@ -275,8 +364,45 @@ def test_inputs_project_capacities_remove(
         assert project not in game.projects
 
 
+
+
 @STUDENT_ALLOCATION
-def test_inputs_project_capacities_update(
+def test_inputs_supervisor_capacities_positive(
+    student_names, project_names, supervisor_names, capacities, seed
+):
+    """ Test that each supervisor has a positive capacity. If not, check that a
+    warning is caught and that they are removed. """
+
+    _, _, _, game = make_game(
+        student_names, project_names, supervisor_names, capacities, seed
+    )
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_init_supervisor_capacities_positive()
+
+        assert not w
+        assert game.supervisors == game._all_supervisors
+
+    supervisor = game.supervisors[0]
+    supervisor.capacity = 0
+    with warnings.catch_warnings(record=True) as ws:
+
+        game._check_init_supervisor_capacities_positive()
+
+        w, *ws = ws
+        message = w.message
+        assert isinstance(message, PlayerExcludedWarning)
+        assert supervisor.name in str(message)
+        assert supervisor not in game.supervisors
+
+        messages = " ".join((str(w.message) for w in ws))
+        for project in supervisor.projects:
+            assert project not in game.projects
+            assert project.name in messages
+
+
+@STUDENT_ALLOCATION
+def test_inputs_supervisor_capacities_sufficient(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that each project has a capacity no larger than its supervisor. If
@@ -288,7 +414,7 @@ def test_inputs_project_capacities_update(
     )
 
     with warnings.catch_warnings(record=True) as w:
-        game._check_init_project_capacities()
+        game._check_init_supervisor_capacities_sufficient()
 
         assert not w
         assert game.projects == game._all_projects
@@ -297,7 +423,7 @@ def test_inputs_project_capacities_update(
     supervisor_capacity = project.supervisor.capacity
     project.capacity = supervisor_capacity + 1
     with warnings.catch_warnings(record=True) as w:
-        game._check_init_project_capacities()
+        game._check_init_supervisor_capacities_sufficient()
 
         message = w[-1].message
         assert isinstance(message, InvalidCapacityWarning)
@@ -307,38 +433,7 @@ def test_inputs_project_capacities_update(
 
 
 @STUDENT_ALLOCATION
-def test_inputs_supervisor_capacities_remove(
-    student_names, project_names, supervisor_names, capacities, seed
-):
-    """ Test that each supervisor has a positive capacity. If not, check that a
-    warning is caught and that they are removed. """
-
-    _, _, _, game = make_game(
-        student_names, project_names, supervisor_names, capacities, seed
-    )
-
-    with warnings.catch_warnings(record=True) as w:
-        game._check_init_supervisor_capacities()
-
-        assert not w
-        assert game.supervisors == game._all_supervisors
-
-    supervisor = game.supervisors[0]
-    supervisor.capacity = 0
-    with warnings.catch_warnings(record=True) as w:
-        game._check_init_supervisor_capacities()
-
-        message = w[-1].message
-        assert isinstance(message, PlayerExcludedWarning)
-        assert supervisor.name in str(message)
-        assert supervisor not in game.supervisors
-
-        for project in supervisor.projects:
-            assert project not in game.projects
-
-
-@STUDENT_ALLOCATION
-def test_inputs_supervisor_capacities_update(
+def test_inputs_supervisor_capacities_necessary(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that each project does not have a higher capacity than the sum of
@@ -350,7 +445,7 @@ def test_inputs_supervisor_capacities_update(
     )
 
     with warnings.catch_warnings(record=True) as w:
-        game._check_init_supervisor_capacities()
+        game._check_init_supervisor_capacities_necessary()
 
         assert not w
         assert game.supervisors == game._all_supervisors
@@ -359,7 +454,7 @@ def test_inputs_supervisor_capacities_update(
     total_project_capacity = sum(p.capacity for p in supervisor.projects)
     supervisor.capacity = total_project_capacity + 1
     with warnings.catch_warnings(record=True) as w:
-        game._check_init_supervisor_capacities()
+        game._check_init_supervisor_capacities_necessary()
 
         message = w[-1].message
         assert isinstance(message, InvalidCapacityWarning)
