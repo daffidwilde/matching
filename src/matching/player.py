@@ -19,6 +19,8 @@ class Player:
         ``set_prefs`` method.
     matching : Player or None
         The current match of the player. ``None`` if not currently matched.
+    _original_prefs : list of Player
+        The original set of player preferences.
     """
 
     def __init__(self, name):
@@ -27,6 +29,7 @@ class Player:
         self.prefs = None
         self.pref_names = None
         self.matching = None
+        self._original_prefs = None
 
     def __repr__(self):
 
@@ -37,6 +40,7 @@ class Player:
 
         self.prefs = players
         self.pref_names = [player.name for player in players]
+        self._original_prefs = players[:]
 
     def get_favourite(self):
         """ Get the player's favourite player. """
@@ -71,5 +75,5 @@ class Player:
         """ Determines whether the player prefers a player over some other
         player. """
 
-        prefs = self.pref_names
-        return prefs.index(player.name) < prefs.index(other.name)
+        prefs = self._original_prefs
+        return prefs.index(player) < prefs.index(other)

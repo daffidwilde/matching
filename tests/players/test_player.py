@@ -14,7 +14,7 @@ def test_init(name):
 
     assert player.name == name
     assert player.prefs is None
-    assert player.pref_names is None
+    assert player._original_prefs is None
     assert player.matching is None
 
 
@@ -36,7 +36,7 @@ def test_set_prefs(name, pref_names):
 
     player.set_prefs(others)
     assert player.prefs == others
-    assert player.pref_names == [other.name for other in others]
+    assert player._original_prefs == others
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
@@ -88,7 +88,7 @@ def test_forget(name, pref_names):
 
     player.forget(others[-1])
     assert player.prefs == []
-    assert player.pref_names == pref_names
+    assert player._original_prefs == others
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
@@ -101,7 +101,7 @@ def test_get_successors(name, pref_names):
 
     player.set_prefs(others)
     player.matching = others[0]
-    if len(player.pref_names) > 1:
+    if len(player._original_prefs) > 1:
         successors = others[1:]
         assert player.get_successors() == successors
     else:
