@@ -135,7 +135,8 @@ def test_inputs_hospital_prefs_all_reciprocate(
         assert game.hospitals == game._all_hospitals
 
     hospital = game.hospitals[0]
-    resident = hospital.prefs.pop()
+    resident = hospital.prefs[0]
+    resident.forget(hospital)
     with warnings.catch_warnings(record=True) as w:
         game._check_hospital_prefs_all_reciprocated()
 
@@ -163,7 +164,8 @@ def test_inputs_hospital_reciprocates_all_prefs(
         assert game.hospitals == game._all_hospitals
 
     hospital = game.hospitals[0]
-    resident = hospital.prefs.pop()
+    resident = hospital.prefs[0]
+    hospital.forget(resident)
     with warnings.catch_warnings(record=True) as w:
         game._check_hospital_reciprocates_all_prefs()
 
