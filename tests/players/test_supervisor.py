@@ -19,6 +19,7 @@ def test_init(name, capacity):
     assert supervisor.projects == []
     assert supervisor.prefs is None
     assert supervisor.pref_names is None
+    assert supervisor._original_prefs is None
     assert supervisor.matching == []
 
 
@@ -39,6 +40,8 @@ def test_set_prefs(name, capacity, pref_names):
     supervisor.set_prefs(students)
     assert supervisor.prefs == students
     assert supervisor.pref_names == pref_names
+    assert supervisor._original_prefs == students
     for project in supervisor.projects:
         assert project.prefs == students
         assert project.pref_names == pref_names
+        assert project._original_prefs == students
