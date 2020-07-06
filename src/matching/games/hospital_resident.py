@@ -1,10 +1,11 @@
 """ The HR solver and algorithm. """
-
 import copy
+import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Resident
 from matching.players import Hospital
+from matching.warning import InvalidPreferencesWarning, PlayerExcludedWarning
 
 from .util import delete_pair, match_pair
 
@@ -47,6 +48,9 @@ class HospitalResident(BaseGame):
         residents, hospitals = copy.deepcopy([residents, hospitals])
         self.residents = residents
         self.hospitals = hospitals
+
+        self._all_residents = residents
+        self._all_hospitals = hospitals
 
         super().__init__()
         self._check_inputs()
@@ -164,69 +168,105 @@ class HospitalResident(BaseGame):
         """ Raise an error if any of the conditions of the game have been
         broken. """
 
-        self._check_resident_prefs()
-        self._check_hospital_prefs()
+        self._check_resident_prefs_all_hospitals()
+        self._check_resident_prefs_all_nonempty()
+        self._check_hospital_prefs_all_reciprocated()
+        self._check_hospital_reciprocates_all_prefs()
+        self._check_hospital_prefs_all_nonempty()
+        self._check_init_hospital_capacities()
 
-    def _check_resident_prefs(self):
-        """ Make sure that the residents' preferences are all subsets of the
-        available hospital names. Otherwise, raise an error. """
+    def _check_resident_prefs_all_hospitals(self):
+        """ Make sure that each resident has ranked only hospitals. """
 
-        errors = []
         for resident in self.residents:
-            if not set(resident.prefs).issubset(set(self.hospitals)):
-                errors.append(
-                    ValueError(
-                        f"{resident} has ranked a non-hospital: "
-                        f"{set(resident.prefs)} != {set(self.hospitals)}"
+
+            for hospital in resident.prefs:
+                if hospital not in self.hospitals:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{resident} has ranked a non-hospital: {hospital}."
+                        )
+                    )
+
+                    resident.forget(hospital)
+
+    def _check_resident_prefs_all_nonempty(self):
+        """ Make sure that each resident has a nonempty preference list. """
+
+        for resident in self.residents:
+
+            if not resident.prefs:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{resident} has an empty preference list."
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
+                self._remove_player(resident, "residents", "hospitals")
 
-        return True
+    def _check_hospital_prefs_all_reciprocated(self):
+        """ Make sure that each hospital has ranked only those residents that
+        have ranked it. """
 
-    def _check_hospital_prefs(self):
-        """ Make sure that every hospital ranks all and only those residents
-        that have ranked it. Otherwise, raise an error. """
-
-        errors = []
         for hospital in self.hospitals:
+
+            for resident in hospital.prefs:
+                if hospital not in resident.prefs:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{hospital} ranked {resident} but they did not. "
+                            f"Removing {resident} from {hospital} preferences."
+                        )
+                    )
+
+                    hospital.forget(resident)
+
+    def _check_hospital_reciprocates_all_prefs(self):
+        """ Make sure that each hospital has ranked all those residents that
+        have ranked it. """
+
+        for hospital in self.hospitals:
+
             residents_that_ranked = [
                 res for res in self.residents if hospital in res.prefs
             ]
-            if set(hospital.prefs) != set(residents_that_ranked):
-                errors.append(
-                    ValueError(
-                        f"{hospital} has not ranked all the residents that "
-                        f"ranked it: {set(hospital.prefs)} != "
-                        f"{set(residents_that_ranked)}."
+            for resident in residents_that_ranked:
+                if resident not in hospital.prefs:
+                    warnings.warn(
+                        InvalidPreferencesWarning(
+                            f"{resident} ranked {hospital} but they did not. "
+                            f"Removing {hospital} from {resident} preferences."
+                        )
+                    )
+
+                    resident.forget(hospital)
+
+    def _check_hospital_prefs_all_nonempty(self):
+        """ Make sure that each hospital has a nonempty preference list. """
+
+        for hospital in self.hospitals:
+            if not hospital.prefs:
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{hospital} has an empty preference list."
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
-
-        return True
+                self._remove_player(hospital, "hospitals", "residents")
 
     def _check_init_hospital_capacities(self):
-        """ Check that each hospital has sufficient spaces for their
-        projects. """
+        """ Check that each hospital has a positive capacity. Ignore any
+        hospital that does not. """
 
-        errors = []
         for hospital in self.hospitals:
             if hospital.capacity < 1:
-                errors.append(
-                    ValueError(
-                        f"{hospital} does not have a valid capacity: "
-                        f"{hospital.capacity}"
+                warnings.warn(
+                    PlayerExcludedWarning(
+                        f"{hospital} does not have a positive capacity."
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
-
-        return True
+                self._remove_player(hospital, "hospitals", "residents")
 
 
 def _check_mutual_preference(resident, hospital):

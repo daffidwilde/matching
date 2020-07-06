@@ -1,11 +1,14 @@
 """ Unit tests for the HR solver. """
 
+import warnings
+
 import pytest
 
 from matching import Matching
 from matching import Player as Resident
 from matching.games import HospitalResident
 from matching.players import Hospital
+from matching.warning import InvalidPreferencesWarning, PlayerExcludedWarning
 
 from .params import HOSPITAL_RESIDENT, make_game, make_prefs
 
@@ -62,37 +65,141 @@ def test_create_from_dictionaries(
 
 
 @HOSPITAL_RESIDENT
-def test_inputs_resident_prefs(
+def test_inputs_resident_prefs_all_hospitals(
     resident_names, hospital_names, capacities, seed
 ):
-    """ Test that each resident's preference list is a subset of the available
-    hospitals, and check that an Exception is raised if not. """
+    """ Test that every resident has only hospitals in its preference list. If
+    not, check that a warning is caught and the player's preferences are
+    changed. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
-    assert game._check_resident_prefs()
+    with warnings.catch_warnings(record=True) as w:
+        game._check_resident_prefs_all_hospitals()
 
-    game.residents[0].prefs = [Resident("foo")]
+        assert not w
+        assert game.residents == game._all_residents
 
-    with pytest.raises(Exception):
-        game._check_resident_prefs()
+    resident = game.residents[0]
+    resident.prefs = [Resident("foo")]
+    with warnings.catch_warnings(record=True) as w:
+        game._check_resident_prefs_all_hospitals()
+
+        message = w[-1].message
+        assert isinstance(message, InvalidPreferencesWarning)
+        assert resident.name in str(message)
+        assert "foo" in str(message)
+        assert resident.prefs == []
 
 
 @HOSPITAL_RESIDENT
-def test_inputs_hospital_prefs(
+def test_inputs_resident_prefs_all_nonempty(
     resident_names, hospital_names, capacities, seed
 ):
-    """ Test that each hospital has ranked all and only those residents that
-    have ranked it, and check that an Exception is raised if not. """
+    """ Test that every resident has a non-empty preference list. If not, check
+    that a warning is caught and the player has been removed from the game. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
-    assert game._check_hospital_prefs()
+    with warnings.catch_warnings(record=True) as w:
+        game._check_resident_prefs_all_nonempty()
 
-    game.hospitals[0].prefs.pop()
+        assert not w
+        assert game.residents == game._all_residents
 
-    with pytest.raises(Exception):
-        game._check_hospital_prefs()
+    resident = game.residents[0]
+    resident.prefs = []
+    with warnings.catch_warnings(record=True) as w:
+        game._check_resident_prefs_all_nonempty()
+
+        message = w[-1].message
+        assert isinstance(message, PlayerExcludedWarning)
+        assert resident.name in str(message)
+        assert resident not in game.residents
+
+
+@HOSPITAL_RESIDENT
+def test_inputs_hospital_prefs_all_reciprocate(
+    resident_names, hospital_names, capacities, seed
+):
+    """ Test that each hospital has ranked only those residents that have ranked
+    it. If not, check that a warning is caught and the hospital has forgotten
+    any such players. """
+
+    _, _, game = make_game(resident_names, hospital_names, capacities, seed)
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_hospital_prefs_all_reciprocated()
+
+        assert not w
+        assert game.hospitals == game._all_hospitals
+
+    hospital = game.hospitals[0]
+    resident = hospital.prefs[0]
+    resident.forget(hospital)
+    with warnings.catch_warnings(record=True) as w:
+        game._check_hospital_prefs_all_reciprocated()
+
+        message = w[-1].message
+        assert isinstance(message, InvalidPreferencesWarning)
+        assert hospital.name in str(message)
+        assert resident.name in str(message)
+        assert resident not in hospital.prefs
+
+
+@HOSPITAL_RESIDENT
+def test_inputs_hospital_reciprocates_all_prefs(
+    resident_names, hospital_names, capacities, seed
+):
+    """ Test that each hospital has ranked all those residents that have ranked
+    it. If not, check that a warning is caught and any such resident has
+    forgotten the hospital. """
+
+    _, _, game = make_game(resident_names, hospital_names, capacities, seed)
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_hospital_reciprocates_all_prefs()
+
+        assert not w
+        assert game.hospitals == game._all_hospitals
+
+    hospital = game.hospitals[0]
+    resident = hospital.prefs[0]
+    hospital.forget(resident)
+    with warnings.catch_warnings(record=True) as w:
+        game._check_hospital_reciprocates_all_prefs()
+
+        message = w[-1].message
+        assert isinstance(message, InvalidPreferencesWarning)
+        assert hospital.name in str(message)
+        assert resident.name in str(message)
+        assert hospital not in resident.prefs
+
+
+@HOSPITAL_RESIDENT
+def test_inputs_hospital_prefs_all_nonempty(
+    resident_names, hospital_names, capacities, seed
+):
+    """ Test that every hospital has a non-empty preference list. If not, check
+    that a warning is caught and the player has been removed from the game. """
+
+    _, _, game = make_game(resident_names, hospital_names, capacities, seed)
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_hospital_prefs_all_nonempty()
+
+        assert not w
+        assert game.hospitals == game._all_hospitals
+
+    hospital = game.hospitals[0]
+    hospital.prefs = []
+    with warnings.catch_warnings(record=True) as w:
+        game._check_hospital_prefs_all_nonempty()
+
+        message = w[-1].message
+        assert isinstance(message, PlayerExcludedWarning)
+        assert hospital.name in str(message)
+        assert hospital not in game.hospitals
 
 
 @HOSPITAL_RESIDENT
@@ -105,12 +212,21 @@ def test_inputs_hospital_capacities(
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
 
-    assert game._check_init_hospital_capacities()
+    with warnings.catch_warnings(record=True) as w:
+        game._check_init_hospital_capacities()
+
+        assert not w
+        assert game.hospitals == game._all_hospitals
 
     hospital = game.hospitals[0]
     hospital.capacity = 0
-    with pytest.raises(Exception):
+    with warnings.catch_warnings(record=True) as w:
         game._check_init_hospital_capacities()
+
+        message = w[-1].message
+        assert isinstance(message, PlayerExcludedWarning)
+        assert hospital.name in str(message)
+        assert hospital not in game.hospitals
 
 
 @HOSPITAL_RESIDENT
