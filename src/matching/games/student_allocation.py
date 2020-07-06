@@ -1,5 +1,4 @@
 """ The SA solver and algorithm. """
-
 import copy
 import warnings
 
@@ -442,7 +441,6 @@ class StudentAllocation(BaseGame):
                 )
 
                 self._remove_player(project, "projects", "students")
-
 
     def _check_init_supervisor_capacities_positive(self):
         """ Check that each supervisor has at least one space. """

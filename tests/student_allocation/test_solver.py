@@ -1,13 +1,17 @@
 """ Unit tests for the SA solver. """
+import warnings
 
 import pytest
-import warnings
 
 from matching import Matching
 from matching import Player as Student
 from matching.games import StudentAllocation
 from matching.players import Project, Supervisor
-from matching.warning import InvalidCapacityWarning, InvalidPreferencesWarning, PlayerExcludedWarning
+from matching.warning import (
+    InvalidCapacityWarning,
+    InvalidPreferencesWarning,
+    PlayerExcludedWarning,
+)
 
 from .params import STUDENT_ALLOCATION, make_connections, make_game
 
@@ -226,7 +230,6 @@ def test_inputs_project_prefs_all_nonempty(
         assert project not in game.projects
 
 
-
 @STUDENT_ALLOCATION
 def test_inputs_supervisor_prefs_all_reciprocate(
     student_names, project_names, supervisor_names, capacities, seed
@@ -362,8 +365,6 @@ def test_inputs_project_capacities_positive(
         assert isinstance(message, PlayerExcludedWarning)
         assert project.name in str(message)
         assert project not in game.projects
-
-
 
 
 @STUDENT_ALLOCATION
