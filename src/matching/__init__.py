@@ -1,4 +1,11 @@
-""" Top-level imports only. """
+""" Top-level imports for the library. """
+
+import sys
+
+if not sys.warnoptions:
+    import warnings
+
+    warnings.simplefilter("always")
 
 from .game import BaseGame
 from .matching import Matching
