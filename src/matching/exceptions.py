@@ -1,11 +1,11 @@
-""" Warnings for game input checks. """
+""" Exceptions for game solver checks. """
 
 
-class InvalidPreferencesWarning(UserWarning):
+class PreferencesChangedWarning(UserWarning):
     """ A warning for when the preferences of a player are invalid. """
 
 
-class InvalidCapacityWarning(UserWarning):
+class CapacityChangedWarning(UserWarning):
     """ A warning for when the capacity of a player is invalid. """
 
 
