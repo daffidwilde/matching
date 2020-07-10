@@ -4,7 +4,7 @@ import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Resident
-from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
+from matching.exceptions import MatchingError, PlayerExcludedWarning, PreferencesChangedWarning
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
@@ -81,101 +81,21 @@ class HospitalResident(BaseGame):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        self._check_resident_matching()
-        self._check_hospital_capacity()
-        self._check_hospital_matching()
+        unacceptables = (
+            self._check_for_unacceptable_matches("residents")
+            + self._check_for_unacceptable_matches("hospitals")
+        )
+        oversubs = self._check_for_oversubscribed_players("hospitals")
+
+        if unacceptables or oversubs:
+            raise MatchingError(
+                unacceptable_matches=unacceptables,
+                oversubscribed_hospitals=oversubs,
+            )
 
         return True
 
-    def check_stability(self):
-        """ Check for the existence of any blocking pairs in the current
-        matching, thus determining the stability of the matching. """
-
-        blocking_pairs = []
-        for resident in self.residents:
-            for hospital in self.hospitals:
-                if (
-                    _check_mutual_preference(resident, hospital)
-                    and _check_resident_unhappy(resident, hospital)
-                    and _check_hospital_unhappy(resident, hospital)
-                ):
-                    blocking_pairs.append((resident, hospital))
-
-        self.blocking_pairs = blocking_pairs
-        return not any(blocking_pairs)
-
-    def _check_resident_matching(self):
-        """ Check that no resident is matched to an unacceptable hospital. """
-
-        errors = []
-        for resident in self.residents:
-            if (
-                resident.matching is not None
-                and resident.matching not in resident.prefs
-            ):
-                errors.append(
-                    ValueError(
-                        f"{resident} is matched to {resident.matching} but "
-                        "they do not appear in their preference list: "
-                        f"{resident.prefs}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_hospital_capacity(self):
-        """ Check that no hospital is over-subscribed. """
-
-        errors = []
-        for hospital in self.hospitals:
-            if len(hospital.matching) > hospital.capacity:
-                errors.append(
-                    ValueError(
-                        f"{hospital} is matched to {hospital.matching} which "
-                        f"is over their capacity of {hospital.capacity}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_hospital_matching(self):
-        """ Check that no hospital is matched to an unacceptable resident. """
-
-        errors = []
-        for hospital in self.hospitals:
-            for resident in hospital.matching:
-                if resident not in hospital.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{hospital} has {resident} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{hospital.prefs}."
-                        )
-                    )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_inputs(self):
-        """ Raise an error if any of the conditions of the game have been
-        broken. """
-
-        self._check_resident_prefs_all_hospitals()
-        self._check_resident_prefs_all_nonempty()
-        self._check_hospital_prefs_all_reciprocated()
-        self._check_hospital_reciprocates_all_prefs()
-        self._check_hospital_prefs_all_nonempty()
-        self._check_init_hospital_capacities()
-
-    def _check_for_unacceptable_matchings(self, party):
+    def _check_for_unacceptable_matches(self, party):
         """ Check that no player in `party` is matched to an unacceptable
         player. """
 
@@ -210,6 +130,35 @@ class HospitalResident(BaseGame):
                 )
 
         return errors
+
+    def check_stability(self):
+        """ Check for the existence of any blocking pairs in the current
+        matching, thus determining the stability of the matching. """
+
+        blocking_pairs = []
+        for resident in self.residents:
+            for hospital in self.hospitals:
+                if (
+                    _check_mutual_preference(resident, hospital)
+                    and _check_resident_unhappy(resident, hospital)
+                    and _check_hospital_unhappy(resident, hospital)
+                ):
+                    blocking_pairs.append((resident, hospital))
+
+        self.blocking_pairs = blocking_pairs
+        return not any(blocking_pairs)
+
+    def _check_inputs(self):
+        """ Raise an error if any of the conditions of the game have been
+        broken. """
+
+        self._check_resident_prefs_all_hospitals()
+        self._check_resident_prefs_all_nonempty()
+        self._check_hospital_prefs_all_reciprocated()
+        self._check_hospital_reciprocates_all_prefs()
+        self._check_hospital_prefs_all_nonempty()
+        self._check_init_hospital_capacities()
+
 
     def _check_resident_prefs_all_hospitals(self):
         """ Make sure that each resident has ranked only hospitals. """

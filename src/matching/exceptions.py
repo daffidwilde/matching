@@ -3,11 +3,12 @@
 class MatchingError(Exception):
     """ A generic error for when something is wrong with an internal object. """
 
-    def __init__(self, unacceptables=[], oversubscribeds=[]):
+    def __init__(self, **kwargs):
 
-        self.unacceptables = unacceptables
-        self.oversubscribeds = oversubscribeds
-        self.message = [*unacceptables, *oversubscribeds]
+        for key, val in kwargs.items():
+            self.__setattr__(key, val)
+
+        self.message = kwargs
 
         super().__init__(self.message)
 
