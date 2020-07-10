@@ -125,17 +125,21 @@ class StudentAllocation(BaseGame):
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. Return a
-        `MatchingError` detailing the issues if not. """
+        """ Check whether the current matching is valid. Raise a `MatchingError`
+        detailing the issues if not. """
 
-        errors = []
-        for party in ("students", "projects", "supervisors"):
-            errors.extend(self._check_for_unacceptable_matchings(party))
-            if party != "students":
-                errors.extend(self._check_for_oversubscribed_players(party))
+        unacceptables = (
+            self._check_for_unacceptable_matchings("students")
+            + self._check_for_unacceptable_matchings("projects")
+            + self._check_for_unacceptable_matchings("supervisors")
+        )
+        oversubscribeds = (
+            self._check_for_oversubscribed_players("projects")
+            + self._check_for_oversubscribed_players("supervisors")
+        )
 
-        if errors:
-            raise MatchingError(*errors)
+        if unacceptables or oversubscribeds:
+            raise MatchingError(unacceptables, oversubscribeds)
 
         return True
 
@@ -155,42 +159,6 @@ class StudentAllocation(BaseGame):
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
-
-    def _check_for_unacceptable_matchings(self, party):
-        """ Check that no player in `party` is matched to an unacceptable
-        player. """
-
-        message = lambda player, other: (
-            f"{player} is matched to {other} but they do not appear in their "
-            f"preference list: {player.prefs}."
-        )
-        errors = []
-        for player in vars(self)[party]:
-
-            if party == "students":
-                other = player.matching
-                if other is not None and other not in player.prefs:
-                    errors.append(message(player, other))
-
-            else:
-                for other in player.matching:
-                    if other not in player.prefs:
-                        errors.append(message(player, other))
-
-        return errors
-
-    def _check_for_oversubscribed_players(self, party):
-        """ Check that no player in `party` is oversubscribed. """
-
-        errors = []
-        for player in vars(self)[party]:
-            if len(player.matching) > player.capacity:
-                errors.append(
-                    f"{player} is matched to {player.matching} which is over "
-                    f"their capacity of {player.capacity}."
-                )
-
-        return errors
 
     def _check_inputs(self):
         """ Check that the players in the game have valid preferences, and in

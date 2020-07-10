@@ -528,18 +528,18 @@ def test_check_for_unacceptable_matchings_students(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert not game._check_for_unacceptable_matchings("students")
 
     student = game.students[0]
     project = Project(name="foo", capacity=0)
     student.matching = project
-    errors = game._check_for_unacceptable_matchings("students")
-    assert len(errors) == 1
-    assert student.name in errors[0]
-    assert project.name in errors[0]
-    assert str(student.prefs) in errors[0]
+
+    with pytest.raises(MatchingError) as error:
+        game.check_validity()
+        e = error.unacceptables[0]
+        assert student.name in e
+        assert project.name in e
+        assert str(student.prefs) in e
 
 
 @STUDENT_ALLOCATION
@@ -552,18 +552,18 @@ def test_check_for_unacceptable_matchings_projects(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert not game._check_for_unacceptable_matchings("projects")
 
     project = game.projects[0]
     student = Student(name="foo")
     project.matching.append(student)
-    errors = game._check_for_unacceptable_matchings("projects")
-    assert len(errors) == 1
-    assert project.name in errors[0]
-    assert student.name in errors[0]
-    assert str(project.prefs) in errors[0]
+
+    with pytest.raises(MatchingError) as error:
+        game.check_validity()
+        e = error.unacceptables[0]
+        assert project.name in errors[0]
+        assert student.name in errors[0]
+        assert str(project.prefs) in errors[0]
 
 
 @STUDENT_ALLOCATION
@@ -577,18 +577,18 @@ def test_check_for_unacceptable_matchings_supervisors(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert not game._check_for_unacceptable_matchings("supervisors")
 
     supervisor = game.supervisors[0]
     student = Student(name="foo")
     supervisor.matching.append(student)
-    errors = game._check_for_unacceptable_matchings("supervisors")
-    assert len(errors) == 1
-    assert supervisor.name in errors[0]
-    assert student.name in errors[0]
-    assert str(supervisor.prefs) in errors[0]
+
+    with pytest.raises(MatchingError) as error:
+        game.check_validity()
+        e = error.unacceptables[0]
+        assert supervisor.name in e
+        assert student.name in e
+        assert str(supervisor.prefs) in e
 
 
 @STUDENT_ALLOCATION
@@ -601,17 +601,17 @@ def test_check_for_oversubscribed_projects(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert not game._check_for_oversubscribed_players("projects")
 
     project = game.projects[0]
     project.matching = range(project.capacity + 1)
-    errors = game._check_for_oversubscribed_players("projects")
-    assert len(errors) == 1
-    assert project.name in errors[0]
-    assert str(project.matching) in errors[0]
-    assert str(project.capacity) in errors[0]
+
+    with pytest.raises(MatchingError) as error:
+        game.check_validity()
+        e = error.oversubscribeds[0]
+        assert project.name in e
+        assert str(project.matching) in e
+        assert str(project.capacity) in e
 
 
 @STUDENT_ALLOCATION
@@ -624,17 +624,17 @@ def test_check_for_oversubscribed_supervisors(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert not game._check_for_oversubscribed_players("supervisors")
 
     supervisor = game.supervisors[0]
     supervisor.matching = range(supervisor.capacity + 1)
-    errors = game._check_for_oversubscribed_players("supervisors")
-    assert len(errors) == 1
-    assert supervisor.name in errors[0]
-    assert str(supervisor.matching) in errors[0]
-    assert str(supervisor.capacity) in errors[0]
+
+    with pytest.raises(MatchingError) as error:
+        game.check_validity()
+        e = error.oversubscribeds[0]
+        assert supervisor.name in e
+        assert str(supervisor.matching) in e
+        assert str(supervisor.capacity) in e
 
 
 def test_check_stability():
