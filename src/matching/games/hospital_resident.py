@@ -175,6 +175,42 @@ class HospitalResident(BaseGame):
         self._check_hospital_prefs_all_nonempty()
         self._check_init_hospital_capacities()
 
+    def _check_for_unacceptable_matchings(self, party):
+        """ Check that no player in `party` is matched to an unacceptable
+        player. """
+
+        message = lambda player, other: (
+            f"{player} is matched to {other} but they do not appear in their "
+            f"preference list: {player.prefs}."
+        )
+        errors = []
+        for player in vars(self)[party]:
+
+            try:
+                for other in player.matching:
+                    if other not in player.prefs:
+                        errors.append(message(player, other))
+
+            except TypeError:
+                other = player.matching
+                if other is not None and other not in player.prefs:
+                    errors.append(message(player, other))
+
+        return errors
+
+    def _check_for_oversubscribed_players(self, party):
+        """ Check that no player in `party` is oversubscribed. """
+
+        errors = []
+        for player in vars(self)[party]:
+            if len(player.matching) > player.capacity:
+                errors.append(
+                    f"{player} is matched to {player.matching} which is over "
+                    f"their capacity of {player.capacity}."
+                )
+
+        return errors
+
     def _check_resident_prefs_all_hospitals(self):
         """ Make sure that each resident has ranked only hospitals. """
 
