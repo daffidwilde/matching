@@ -2,8 +2,9 @@
 import copy
 import warnings
 
-from matching import BaseGame, Matching
+from matching import Matching
 from matching import Player as Student
+from matching.games import HospitalResident
 from matching.exceptions import (
     CapacityChangedWarning,
     MatchingError,
@@ -15,7 +16,7 @@ from matching.players import Project, Supervisor
 from .util import delete_pair, match_pair
 
 
-class StudentAllocation(BaseGame):
+class StudentAllocation(HospitalResident):
     """ A class for solving instances of the student-allocation problem (SA)
     using an adapted Gale-Shapley algorithm.
 
@@ -72,7 +73,7 @@ class StudentAllocation(BaseGame):
         self._all_projects = projects
         self._all_supervisors = supervisors
 
-        super().__init__()
+        super().__init__(students, projects)
         self._check_inputs()
 
     def _remove_player(self, player, player_party, other_party=None):
