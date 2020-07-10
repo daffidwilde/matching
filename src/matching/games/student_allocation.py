@@ -6,6 +6,7 @@ from matching import BaseGame, Matching
 from matching import Player as Student
 from matching.exceptions import (
     CapacityChangedWarning,
+    MatchingError,
     PlayerExcludedWarning,
     PreferencesChangedWarning,
 )
@@ -124,13 +125,17 @@ class StudentAllocation(BaseGame):
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. """
+        """ Check whether the current matching is valid. Return a
+        `MatchingError` detailing the issues if not. """
 
-        self._check_student_matching()
-        self._check_project_capacity()
-        self._check_project_matching()
-        self._check_supervisor_capacity()
-        self._check_supervisor_matching()
+        errors = []
+        for party in ("students", "projects", "supervisors"):
+            errors.extend(self._check_for_unacceptable_matchings(party))
+            if party != "students":
+                errors.extend(self._check_for_oversubscribed_players(party))
+
+        if errors:
+            raise MatchingError(*errors)
 
         return True
 
@@ -151,106 +156,41 @@ class StudentAllocation(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def _check_student_matching(self):
-        """ Check that no student is matched to an unacceptable project. """
+    def _check_for_unacceptable_matchings(self, party):
+        """ Check that no player in `party` is matched to an unacceptable
+        player. """
+
+        message = lambda player, other: (
+            f"{player} is matched to {other} but they do not appear in their "
+            f"preference list: {player.prefs}."
+        )
+        errors = []
+        for player in vars(self)[party]:
+
+            if party == "students":
+                other = player.matching
+                if other is not None and other not in player.prefs:
+                    errors.append(message(player, other))
+
+            else:
+                for other in player.matching:
+                    if other not in player.prefs:
+                        errors.append(message(player, other))
+
+        return errors
+
+    def _check_for_oversubscribed_players(self, party):
+        """ Check that no player in `party` is oversubscribed. """
 
         errors = []
-        for student in self.students:
-            if (
-                student.matching is not None
-                and student.matching not in student.prefs
-            ):
+        for player in vars(self)[party]:
+            if len(player.matching) > player.capacity:
                 errors.append(
-                    ValueError(
-                        f"{student} is matched to {student.matching} but "
-                        "they do not appear in their preference list: "
-                        f"{student.prefs}."
-                    )
+                    f"{player} is matched to {player.matching} which is over "
+                    f"their capacity of {player.capacity}."
                 )
 
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_project_capacity(self):
-        """ Check that no projects are over-subscribed. """
-
-        errors = []
-        for project in self.projects:
-            if len(project.matching) > project.capacity:
-                errors.append(
-                    ValueError(
-                        f"{project} is matched to {project.matching} which "
-                        f"if over their capacity of {project.capacity}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_project_matching(self):
-        """ Check that no project is matched to an unacceptable student. """
-
-        errors = []
-        for project in self.projects:
-            for student in project.matching:
-                if student not in project.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{project} has {student} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{project.prefs}."
-                        )
-                    )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_supervisor_capacity(self):
-        """ Check that no supervisor is over-subscribed. """
-
-        errors = []
-
-        for supervisor in self.supervisors:
-            if len(supervisor.matching) > supervisor.capacity:
-                errors.append(
-                    ValueError(
-                        f"{supervisor} is matched to {supervisor.matching} "
-                        "which if over their capacity of "
-                        f"{supervisor.capacity}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_supervisor_matching(self):
-        """ Check that no supervisor is matched to an unacceptable student.
-        """
-
-        errors = []
-        for supervisor in self.supervisors:
-            for student in supervisor.matching:
-                if student not in supervisor.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{supervisor} has {student} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{supervisor.prefs}."
-                        )
-                    )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
+        return errors
 
     def _check_inputs(self):
         """ Check that the players in the game have valid preferences, and in

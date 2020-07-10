@@ -7,6 +7,7 @@ from matching import Matching
 from matching import Player as Student
 from matching.exceptions import (
     CapacityChangedWarning,
+    MatchingError,
     PlayerExcludedWarning,
     PreferencesChangedWarning,
 )
@@ -518,10 +519,10 @@ def test_check_validity(
 
 
 @STUDENT_ALLOCATION
-def test_check_student_matching(
+def test_check_for_unacceptable_matchings_students(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation recognises a valid matching requires a
+    """ Test that StudentAllocation recognises a valid matching requires each
     student to have a preference of their match, if they have one. """
 
     _, _, _, game = make_game(
@@ -529,19 +530,23 @@ def test_check_student_matching(
     )
 
     game.solve()
-    assert game._check_student_matching()
+    assert not game._check_for_unacceptable_matchings("students")
 
     student = game.students[0]
-    student.matching = Project(name="foo", capacity=0)
-    with pytest.raises(Exception):
-        game._check_student_matching()
+    project = Project(name="foo", capacity=0)
+    student.matching = project
+    errors = game._check_for_unacceptable_matchings("students")
+    assert len(errors) == 1
+    assert student.name in errors[0]
+    assert project.name in errors[0]
+    assert str(student.prefs) in errors[0]
 
 
 @STUDENT_ALLOCATION
-def test_check_project_matching(
+def test_check_for_unacceptable_matchings_projects(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation recognises a valid matching requires a
+    """ Test that StudentAllocation recognises a valid matching requires each
     project to have a preference of each of their matches, if they have any. """
 
     _, _, _, game = make_game(
@@ -549,16 +554,20 @@ def test_check_project_matching(
     )
 
     game.solve()
-    assert game._check_project_matching()
+    assert not game._check_for_unacceptable_matchings("projects")
 
     project = game.projects[0]
-    project.matching.append(Student(name="foo"))
-    with pytest.raises(Exception):
-        game._check_project_matching()
+    student = Student(name="foo")
+    project.matching.append(student)
+    errors = game._check_for_unacceptable_matchings("projects")
+    assert len(errors) == 1
+    assert project.name in errors[0]
+    assert student.name in errors[0]
+    assert str(project.prefs) in errors[0]
 
 
 @STUDENT_ALLOCATION
-def test_check_supervisor_matching(
+def test_check_for_unacceptable_matchings_supervisors(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires each
@@ -570,16 +579,20 @@ def test_check_supervisor_matching(
     )
 
     game.solve()
-    assert game._check_supervisor_matching()
+    assert not game._check_for_unacceptable_matchings("supervisors")
 
     supervisor = game.supervisors[0]
-    supervisor.matching.append(Student(name="foo"))
-    with pytest.raises(Exception):
-        game._check_supervisor_matching()
+    student = Student(name="foo")
+    supervisor.matching.append(student)
+    errors = game._check_for_unacceptable_matchings("supervisors")
+    assert len(errors) == 1
+    assert supervisor.name in errors[0]
+    assert student.name in errors[0]
+    assert str(supervisor.prefs) in errors[0]
 
 
 @STUDENT_ALLOCATION
-def test_check_project_capacity(
+def test_check_for_oversubscribed_projects(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires all
@@ -590,16 +603,19 @@ def test_check_project_capacity(
     )
 
     game.solve()
-    assert game._check_project_capacity()
+    assert not game._check_for_oversubscribed_players("projects")
 
     project = game.projects[0]
     project.matching = range(project.capacity + 1)
-    with pytest.raises(Exception):
-        game._check_project_capacity()
+    errors = game._check_for_oversubscribed_players("projects")
+    assert len(errors) == 1
+    assert project.name in errors[0]
+    assert str(project.matching) in errors[0]
+    assert str(project.capacity) in errors[0]
 
 
 @STUDENT_ALLOCATION
-def test_check_supervisor_capacity(
+def test_check_for_oversubscribed_supervisors(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires all
@@ -610,12 +626,15 @@ def test_check_supervisor_capacity(
     )
 
     game.solve()
-    assert game._check_supervisor_capacity()
+    assert not game._check_for_oversubscribed_players("supervisors")
 
     supervisor = game.supervisors[0]
     supervisor.matching = range(supervisor.capacity + 1)
-    with pytest.raises(Exception):
-        game._check_supervisor_capacity()
+    errors = game._check_for_oversubscribed_players("supervisors")
+    assert len(errors) == 1
+    assert supervisor.name in errors[0]
+    assert str(supervisor.matching) in errors[0]
+    assert str(supervisor.capacity) in errors[0]
 
 
 def test_check_stability():
