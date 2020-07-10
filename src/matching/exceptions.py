@@ -3,6 +3,13 @@
 class MatchingError(Exception):
     """ A generic error for when something is wrong with an internal object. """
 
+    def __init__(self, unacceptables=[], oversubscribeds=[]):
+
+        self.unacceptables = unacceptables
+        self.oversubscribeds = oversubscribeds
+        self.message = [*unacceptables, *oversubscribeds]
+
+        super().__init__(self.message)
 
 class PreferencesChangedWarning(UserWarning):
     """ A warning for when the preferences of a player are invalid. """
