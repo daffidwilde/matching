@@ -4,8 +4,8 @@ import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Resident
+from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
 from matching.players import Hospital
-from matching.warning import InvalidPreferencesWarning, PlayerExcludedWarning
 
 from .util import delete_pair, match_pair
 
@@ -183,7 +183,7 @@ class HospitalResident(BaseGame):
             for hospital in resident.prefs:
                 if hospital not in self.hospitals:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{resident} has ranked a non-hospital: {hospital}."
                         )
                     )
@@ -213,7 +213,7 @@ class HospitalResident(BaseGame):
             for resident in hospital.prefs:
                 if hospital not in resident.prefs:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{hospital} ranked {resident} but they did not. "
                             f"Removing {resident} from {hospital} preferences."
                         )
@@ -233,7 +233,7 @@ class HospitalResident(BaseGame):
             for resident in residents_that_ranked:
                 if resident not in hospital.prefs:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{resident} ranked {hospital} but they did not. "
                             f"Removing {hospital} from {resident} preferences."
                         )

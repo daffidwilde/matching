@@ -4,12 +4,12 @@ import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Student
-from matching.players import Project, Supervisor
-from matching.warning import (
-    InvalidCapacityWarning,
-    InvalidPreferencesWarning,
+from matching.exceptions import (
+    CapacityChangedWarning,
     PlayerExcludedWarning,
+    PreferencesChangedWarning,
 )
+from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
 
@@ -280,7 +280,7 @@ class StudentAllocation(BaseGame):
             for project in student.prefs:
                 if project not in self.projects:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{student} has ranked a non-project: {project}."
                         )
                     )
@@ -310,7 +310,7 @@ class StudentAllocation(BaseGame):
             for student in project.prefs:
                 if project not in student.prefs:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{project} ranked {student} but they did not. "
                             f"Removing {student} from {project} preferences."
                         )
@@ -330,7 +330,7 @@ class StudentAllocation(BaseGame):
             for student in students_that_ranked:
                 if student not in project.prefs:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{student} ranked {project} but they did not. "
                             f"Removing {project} from {student} preferences."
                         )
@@ -363,7 +363,7 @@ class StudentAllocation(BaseGame):
                 }
                 if supervisor not in student_prefs_supervisors:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{supervisor} ranked {student} but they have not "
                             "ranked one of their projects."
                         )
@@ -390,7 +390,7 @@ class StudentAllocation(BaseGame):
             for student in students_that_ranked:
                 if student not in supervisor.prefs:
                     warnings.warn(
-                        InvalidPreferencesWarning(
+                        PreferencesChangedWarning(
                             f"{student} ranked a project provided by "
                             f"{supervisor} but they did not."
                         )
@@ -399,7 +399,7 @@ class StudentAllocation(BaseGame):
                     for project in student.prefs:
                         if project.supervisor == supervisor:
                             warnings.warn(
-                                InvalidPreferencesWarning(
+                                PreferencesChangedWarning(
                                     f"{student} ranked {project} but its "
                                     "supervisor did not."
                                 )
@@ -472,7 +472,7 @@ class StudentAllocation(BaseGame):
             for project in supervisor.projects:
                 if project.capacity > supervisor.capacity:
                     warnings.warn(
-                        InvalidCapacityWarning(
+                        CapacityChangedWarning(
                             f"{project} has a capacity of {project.capacity} "
                             "but its supervisor has a capacity of "
                             f"{supervisor.capacity}."
@@ -493,7 +493,7 @@ class StudentAllocation(BaseGame):
 
             if supervisor.capacity > total_project_capacity:
                 warnings.warn(
-                    InvalidCapacityWarning(
+                    CapacityChangedWarning(
                         f"{supervisor} has a capacity of {supervisor.capacity} "
                         "but their projects have a capacity of "
                         f"{total_project_capacity}"

@@ -1,14 +1,13 @@
 """ Unit tests for the HR solver. """
-
 import warnings
 
 import pytest
 
 from matching import Matching
 from matching import Player as Resident
+from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
 from matching.games import HospitalResident
 from matching.players import Hospital
-from matching.warning import InvalidPreferencesWarning, PlayerExcludedWarning
 
 from .params import HOSPITAL_RESIDENT, make_game, make_prefs
 
@@ -86,7 +85,7 @@ def test_inputs_resident_prefs_all_hospitals(
         game._check_resident_prefs_all_hospitals()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert resident.name in str(message)
         assert "foo" in str(message)
         assert resident.prefs == []
@@ -141,7 +140,7 @@ def test_inputs_hospital_prefs_all_reciprocate(
         game._check_hospital_prefs_all_reciprocated()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert hospital.name in str(message)
         assert resident.name in str(message)
         assert resident not in hospital.prefs
@@ -170,7 +169,7 @@ def test_inputs_hospital_reciprocates_all_prefs(
         game._check_hospital_reciprocates_all_prefs()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert hospital.name in str(message)
         assert resident.name in str(message)
         assert hospital not in resident.prefs

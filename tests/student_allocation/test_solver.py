@@ -5,13 +5,13 @@ import pytest
 
 from matching import Matching
 from matching import Player as Student
+from matching.exceptions import (
+    CapacityChangedWarning,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 from matching.games import StudentAllocation
 from matching.players import Project, Supervisor
-from matching.warning import (
-    InvalidCapacityWarning,
-    InvalidPreferencesWarning,
-    PlayerExcludedWarning,
-)
 
 from .params import STUDENT_ALLOCATION, make_connections, make_game
 
@@ -106,7 +106,7 @@ def test_inputs_student_prefs_all_projects(
         game._check_student_prefs_all_projects()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert student.name in str(message)
         assert "foo" in str(message)
         assert student.prefs == []
@@ -165,7 +165,7 @@ def test_inputs_project_prefs_all_reciprocate(
         game._check_project_prefs_all_reciprocated()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert project.name in str(message)
         assert student.name in str(message)
         assert student not in project.prefs
@@ -196,7 +196,7 @@ def test_inputs_project_reciprocates_all_prefs(
         game._check_project_reciprocates_all_prefs()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert project.name in str(message)
         assert student.name in str(message)
         assert project not in student.prefs
@@ -260,7 +260,7 @@ def test_inputs_supervisor_prefs_all_reciprocate(
         game._check_supervisor_prefs_all_reciprocated()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert supervisor.name in str(message)
         assert student.name in str(message)
         assert student not in supervisor.prefs
@@ -292,7 +292,7 @@ def test_inputs_supervisor_reciprocates_all_prefs(
 
         w, *ws = ws
         message = w.message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert supervisor.name in str(message)
         assert student.name in str(message)
         assert supervisor not in student.prefs
@@ -427,7 +427,7 @@ def test_inputs_supervisor_capacities_sufficient(
         game._check_init_supervisor_capacities_sufficient()
 
         message = w[-1].message
-        assert isinstance(message, InvalidCapacityWarning)
+        assert isinstance(message, CapacityChangedWarning)
         assert project.name in str(message)
         assert str(supervisor_capacity) in str(message)
         assert project.capacity == supervisor_capacity
@@ -458,7 +458,7 @@ def test_inputs_supervisor_capacities_necessary(
         game._check_init_supervisor_capacities_necessary()
 
         message = w[-1].message
-        assert isinstance(message, InvalidCapacityWarning)
+        assert isinstance(message, CapacityChangedWarning)
         assert supervisor.name in str(message)
         assert str(total_project_capacity) in str(message)
         assert supervisor.capacity == total_project_capacity
