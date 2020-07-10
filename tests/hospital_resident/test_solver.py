@@ -287,10 +287,10 @@ def test_check_for_unacceptable_matches_residents(resident_names, hospital_names
 
     with pytest.raises(MatchingError) as e:
         game.check_validity()
-        unacceptable_match = e.unacceptable_matches[0]
-        assert unacceptable_match.startswith(resident.name)
-        assert unacceptable_match.endswith(hospital.name)
-        assert str(resident.prefs)
+        error = e.unacceptable_matches[0]
+        assert error.startswith(resident.name)
+        assert error.endswith(hospital.name)
+        assert str(resident.prefs) in error
 
 
 @HOSPITAL_RESIDENT
@@ -307,10 +307,10 @@ def test_check_for_unacceptable_matches_hospitals(resident_names, hospital_names
 
     with pytest.raises(MatchingError) as e:
         game.check_validity()
-        unacceptable_match = e.unacceptable_matches[0]
-        assert unacceptable_match.startswith(hospital.name)
-        assert unacceptable_match.endswith(resident.name)
-        assert str(hospital.prefs) in unacceptable_match
+        error = e.unacceptable_matches[0]
+        assert error.startswith(hospital.name)
+        assert error.endswith(resident.name)
+        assert str(hospital.prefs) in error
 
 
 @HOSPITAL_RESIDENT
@@ -326,10 +326,10 @@ def test_check_for_oversubscribed_hospitals(resident_names, hospital_names, capa
 
     with pytest.raises(MatchingError) as e:
         game.check_validity()
-        oversubscribed_hospital = e.oversubscribed_hospitals[0]
-        assert oversubscribed_hospital.startswith(hospital.name)
-        assert oversubscribed_hospital.endswith(str(hospital.capacity))
-        assert str(hospital.matching) in oversubscribed_hospital
+        error = e.oversubscribed_hospitals[0]
+        assert error.startswith(hospital.name)
+        assert error.endswith(str(hospital.capacity))
+        assert str(hospital.matching) in error
 
 
 def test_check_stability():

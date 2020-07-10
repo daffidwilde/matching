@@ -519,7 +519,7 @@ def test_check_validity(
 
 
 @STUDENT_ALLOCATION
-def test_check_for_unacceptable_matchings_students(
+def test_check_for_unacceptable_matches_students(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires each
@@ -534,16 +534,16 @@ def test_check_for_unacceptable_matchings_students(
     project = Project(name="foo", capacity=0)
     student.matching = project
 
-    with pytest.raises(MatchingError) as error:
+    with pytest.raises(MatchingError) as e:
         game.check_validity()
-        e = error.unacceptables[0]
-        assert student.name in e
-        assert project.name in e
-        assert str(student.prefs) in e
+        error = e.unacceptable_matches[0]
+        assert error.startswith(student.name)
+        assert error.endswith(str(student.prefs))
+        assert project.name in error
 
 
 @STUDENT_ALLOCATION
-def test_check_for_unacceptable_matchings_projects(
+def test_check_for_unacceptable_matches_projects(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires each
@@ -558,16 +558,16 @@ def test_check_for_unacceptable_matchings_projects(
     student = Student(name="foo")
     project.matching.append(student)
 
-    with pytest.raises(MatchingError) as error:
+    with pytest.raises(MatchingError) as e:
         game.check_validity()
-        e = error.unacceptables[0]
-        assert project.name in errors[0]
-        assert student.name in errors[0]
-        assert str(project.prefs) in errors[0]
+        error = e.unacceptable_matches[0]
+        assert error.startswith(project.name)
+        assert error.endswith(str(project.prefs))
+        assert str(student.name) in error
 
 
 @STUDENT_ALLOCATION
-def test_check_for_unacceptable_matchings_supervisors(
+def test_check_for_unacceptable_matches_supervisors(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires each
@@ -583,12 +583,12 @@ def test_check_for_unacceptable_matchings_supervisors(
     student = Student(name="foo")
     supervisor.matching.append(student)
 
-    with pytest.raises(MatchingError) as error:
+    with pytest.raises(MatchingError) as e:
         game.check_validity()
-        e = error.unacceptables[0]
-        assert supervisor.name in e
-        assert student.name in e
-        assert str(supervisor.prefs) in e
+        error = e.unacceptable_matches[0]
+        assert error.startswith(supervisor.name)
+        assert error.endswith(str(supervisor.prefs))
+        assert student.name in error
 
 
 @STUDENT_ALLOCATION
@@ -606,12 +606,12 @@ def test_check_for_oversubscribed_projects(
     project = game.projects[0]
     project.matching = range(project.capacity + 1)
 
-    with pytest.raises(MatchingError) as error:
+    with pytest.raises(MatchingError) as e:
         game.check_validity()
-        e = error.oversubscribeds[0]
-        assert project.name in e
+        error = e.oversubscribed_players[0]
+        assert error.startswith(project.name)
+        assert error.endswith(str(project.capacity))
         assert str(project.matching) in e
-        assert str(project.capacity) in e
 
 
 @STUDENT_ALLOCATION
@@ -629,12 +629,12 @@ def test_check_for_oversubscribed_supervisors(
     supervisor = game.supervisors[0]
     supervisor.matching = range(supervisor.capacity + 1)
 
-    with pytest.raises(MatchingError) as error:
+    with pytest.raises(MatchingError) as e:
         game.check_validity()
-        e = error.oversubscribeds[0]
-        assert supervisor.name in e
+        error = e.oversubscribed_players[0]
+        assert error.startswith(supervisor.name)
+        assert error.endswith(str(supervisor.capacity))
         assert str(supervisor.matching) in e
-        assert str(supervisor.capacity) in e
 
 
 def test_check_stability():

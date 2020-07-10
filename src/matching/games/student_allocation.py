@@ -130,17 +130,20 @@ class StudentAllocation(HospitalResident):
         detailing the issues if not. """
 
         unacceptables = (
-            self._check_for_unacceptable_matchings("students")
-            + self._check_for_unacceptable_matchings("projects")
-            + self._check_for_unacceptable_matchings("supervisors")
+            self._check_for_unacceptable_matches("students")
+            + self._check_for_unacceptable_matches("projects")
+            + self._check_for_unacceptable_matches("supervisors")
         )
-        oversubscribeds = (
+        oversubs = (
             self._check_for_oversubscribed_players("projects")
             + self._check_for_oversubscribed_players("supervisors")
         )
 
-        if unacceptables or oversubscribeds:
-            raise MatchingError(unacceptables, oversubscribeds)
+        if unacceptables or oversubs:
+            raise MatchingError(
+                unacceptable_matches=unacceptables,
+                oversubscribed_players=oversubs,
+            )
 
         return True
 
