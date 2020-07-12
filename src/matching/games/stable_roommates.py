@@ -3,6 +3,7 @@
 import copy
 
 from matching import BaseGame, Matching, Player
+from matching.exceptions import MatchingError
 
 from .util import delete_pair, match_pair
 
@@ -46,6 +47,20 @@ class StableRoommates(BaseGame):
         self.matching = Matching(stable_roommates(self.players))
         return self.matching
 
+    def check_validity(self):
+        """ Check whether the current matching is valid. Raise `MatchingError`
+        detailing the issues if not. """
+
+        issues = []
+        for player in self.players:
+            if player.matching is None:
+                issues.append(f"{player} is unmatched.")
+
+        if issues:
+            raise MatchingError(unmatched_players=issues)
+
+        return True
+
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
         matching. Then the stability of the matching holds when there are no
@@ -68,19 +83,6 @@ class StableRoommates(BaseGame):
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
-
-    def check_validity(self):
-        """ Check whether the current matching is valid. """
-
-        errors = []
-        matching = self.matching
-        for player in self.players:
-            if player.matching is None:
-                errors.append(ValueError(f"{player} is unmatched."))
-        if errors:
-            raise Exception(*errors)
-
-        return True
 
     def _check_inputs(self):
         """ Check that all players have ranked all other players. """
