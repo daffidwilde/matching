@@ -1,14 +1,17 @@
 """ Unit tests for the HR solver. """
-
 import warnings
 
 import pytest
 
 from matching import Matching
 from matching import Player as Resident
+from matching.exceptions import (
+    MatchingError,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 from matching.games import HospitalResident
 from matching.players import Hospital
-from matching.warning import InvalidPreferencesWarning, PlayerExcludedWarning
 
 from .params import HOSPITAL_RESIDENT, make_game, make_prefs
 
@@ -86,7 +89,7 @@ def test_inputs_resident_prefs_all_hospitals(
         game._check_resident_prefs_all_hospitals()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert resident.name in str(message)
         assert "foo" in str(message)
         assert resident.prefs == []
@@ -141,7 +144,7 @@ def test_inputs_hospital_prefs_all_reciprocate(
         game._check_hospital_prefs_all_reciprocated()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert hospital.name in str(message)
         assert resident.name in str(message)
         assert resident not in hospital.prefs
@@ -170,7 +173,7 @@ def test_inputs_hospital_reciprocates_all_prefs(
         game._check_hospital_reciprocates_all_prefs()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert hospital.name in str(message)
         assert resident.name in str(message)
         assert hospital not in resident.prefs
@@ -275,45 +278,68 @@ def test_check_validity(resident_names, hospital_names, capacities, seed):
 
 
 @HOSPITAL_RESIDENT
-def test_resident_matching(resident_names, hospital_names, capacities, seed):
-    """ Test that HospitalResident recognises a valid matching requires a resident
-    to have a preference of their match, if they have one. """
+def test_check_for_unacceptable_matches_residents(
+    resident_names, hospital_names, capacities, seed
+):
+    """ Test that HospitalResident recognises a valid matching requires each
+    resident to have a preference of their match, if they have one. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
-
     game.solve()
-    game.residents[0].matching = Resident(name="foo")
 
-    with pytest.raises(Exception):
-        game._check_resident_matching()
+    resident = game.residents[0]
+    hospital = Hospital(name="foo", capacity="bar")
+    resident.matching = hospital
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.unacceptable_matches[0]
+        assert error.startswith(resident.name)
+        assert error.endswith(hospital.name)
+        assert str(resident.prefs) in error
 
 
 @HOSPITAL_RESIDENT
-def test_hospital_matching(resident_names, hospital_names, capacities, seed):
-    """ Test that HospitalResident recognises a valid matching requires a
+def test_check_for_unacceptable_matches_hospitals(
+    resident_names, hospital_names, capacities, seed
+):
+    """ Test that HospitalResident recognises a valid matching requires each
     hospital to have a preference of each of its matches, if any. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
-
     game.solve()
-    game.hospitals[0].matching.append(Resident(name="foo"))
 
-    with pytest.raises(Exception):
-        game._check_hospital_matching()
+    hospital = game.hospitals[0]
+    resident = Resident(name="foo")
+    hospital.matching.append(resident)
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.unacceptable_matches[0]
+        assert error.startswith(hospital.name)
+        assert error.endswith(resident.name)
+        assert str(hospital.prefs) in error
 
 
 @HOSPITAL_RESIDENT
-def test_hospital_capacity(resident_names, hospital_names, capacities, seed):
+def test_check_for_oversubscribed_hospitals(
+    resident_names, hospital_names, capacities, seed
+):
     """ Test that HospitalResident recognises a valid matching requires all
-    hospitals to not be over-subscribed. """
+    hospitals to not be oversubscribed. """
 
     _, _, game = make_game(resident_names, hospital_names, capacities, seed)
-
     game.solve()
-    game.hospitals[0].matching = range(game.hospitals[0].capacity + 1)
 
-    with pytest.raises(Exception):
-        game._check_hospital_capacity()
+    hospital = game.hospitals[0]
+    hospital.matching = range(hospital.capacity + 1)
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.oversubscribed_hospitals[0]
+        assert error.startswith(hospital.name)
+        assert error.endswith(str(hospital.capacity))
+        assert str(hospital.matching) in error
 
 
 def test_check_stability():

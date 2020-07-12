@@ -96,3 +96,18 @@ def test_get_successors(name, capacity, pref_names):
 
     hospital.matching = others
     assert hospital.get_successors() == []
+
+
+@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+def test_check_if_match_is_unacceptable(name, capacity, pref_names):
+    """ Check that a hospital can verify the acceptability of its matches. """
+
+    hospital = Hospital(name, capacity)
+    others = [Resident(other) for other in pref_names]
+
+    assert hospital.check_if_match_is_unacceptable() is None
+
+    hospital.set_prefs(others[:-1])
+    hospital.matching = [others[-1]]
+    message = hospital.not_in_preferences_message(others[-1])
+    assert hospital.check_if_match_is_unacceptable() == [message]

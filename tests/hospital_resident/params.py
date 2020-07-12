@@ -99,6 +99,8 @@ HOSPITAL_RESIDENT = given(
         max_size=3,
         unique=True,
     ),
-    capacities=lists(elements=integers(min_value=2), min_size=3, max_size=3),
+    capacities=lists(
+        elements=integers(min_value=2, max_value=4), min_size=3, max_size=3,
+    ),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
 )

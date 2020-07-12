@@ -5,13 +5,14 @@ import pytest
 
 from matching import Matching
 from matching import Player as Student
+from matching.exceptions import (
+    CapacityChangedWarning,
+    MatchingError,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 from matching.games import StudentAllocation
 from matching.players import Project, Supervisor
-from matching.warning import (
-    InvalidCapacityWarning,
-    InvalidPreferencesWarning,
-    PlayerExcludedWarning,
-)
 
 from .params import STUDENT_ALLOCATION, make_connections, make_game
 
@@ -106,7 +107,7 @@ def test_inputs_student_prefs_all_projects(
         game._check_student_prefs_all_projects()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert student.name in str(message)
         assert "foo" in str(message)
         assert student.prefs == []
@@ -165,7 +166,7 @@ def test_inputs_project_prefs_all_reciprocate(
         game._check_project_prefs_all_reciprocated()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert project.name in str(message)
         assert student.name in str(message)
         assert student not in project.prefs
@@ -196,7 +197,7 @@ def test_inputs_project_reciprocates_all_prefs(
         game._check_project_reciprocates_all_prefs()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert project.name in str(message)
         assert student.name in str(message)
         assert project not in student.prefs
@@ -260,7 +261,7 @@ def test_inputs_supervisor_prefs_all_reciprocate(
         game._check_supervisor_prefs_all_reciprocated()
 
         message = w[-1].message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert supervisor.name in str(message)
         assert student.name in str(message)
         assert student not in supervisor.prefs
@@ -292,7 +293,7 @@ def test_inputs_supervisor_reciprocates_all_prefs(
 
         w, *ws = ws
         message = w.message
-        assert isinstance(message, InvalidPreferencesWarning)
+        assert isinstance(message, PreferencesChangedWarning)
         assert supervisor.name in str(message)
         assert student.name in str(message)
         assert supervisor not in student.prefs
@@ -427,7 +428,7 @@ def test_inputs_supervisor_capacities_sufficient(
         game._check_init_supervisor_capacities_sufficient()
 
         message = w[-1].message
-        assert isinstance(message, InvalidCapacityWarning)
+        assert isinstance(message, CapacityChangedWarning)
         assert project.name in str(message)
         assert str(supervisor_capacity) in str(message)
         assert project.capacity == supervisor_capacity
@@ -458,7 +459,7 @@ def test_inputs_supervisor_capacities_necessary(
         game._check_init_supervisor_capacities_necessary()
 
         message = w[-1].message
-        assert isinstance(message, InvalidCapacityWarning)
+        assert isinstance(message, CapacityChangedWarning)
         assert supervisor.name in str(message)
         assert str(total_project_capacity) in str(message)
         assert supervisor.capacity == total_project_capacity
@@ -518,47 +519,55 @@ def test_check_validity(
 
 
 @STUDENT_ALLOCATION
-def test_check_student_matching(
+def test_check_for_unacceptable_matches_students(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation recognises a valid matching requires a
+    """ Test that StudentAllocation recognises a valid matching requires each
     student to have a preference of their match, if they have one. """
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert game._check_student_matching()
 
     student = game.students[0]
-    student.matching = Project(name="foo", capacity=0)
-    with pytest.raises(Exception):
-        game._check_student_matching()
+    project = Project(name="foo", capacity=0)
+    student.matching = project
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.unacceptable_matches[0]
+        assert error.startswith(student.name)
+        assert error.endswith(str(student.prefs))
+        assert project.name in error
 
 
 @STUDENT_ALLOCATION
-def test_check_project_matching(
+def test_check_for_unacceptable_matches_projects(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Test that StudentAllocation recognises a valid matching requires a
+    """ Test that StudentAllocation recognises a valid matching requires each
     project to have a preference of each of their matches, if they have any. """
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert game._check_project_matching()
 
     project = game.projects[0]
-    project.matching.append(Student(name="foo"))
-    with pytest.raises(Exception):
-        game._check_project_matching()
+    student = Student(name="foo")
+    project.matching.append(student)
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.unacceptable_matches[0]
+        assert error.startswith(project.name)
+        assert error.endswith(str(project.prefs))
+        assert str(student.name) in error
 
 
 @STUDENT_ALLOCATION
-def test_check_supervisor_matching(
+def test_check_for_unacceptable_matches_supervisors(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires each
@@ -568,18 +577,22 @@ def test_check_supervisor_matching(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert game._check_supervisor_matching()
 
     supervisor = game.supervisors[0]
-    supervisor.matching.append(Student(name="foo"))
-    with pytest.raises(Exception):
-        game._check_supervisor_matching()
+    student = Student(name="foo")
+    supervisor.matching.append(student)
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.unacceptable_matches[0]
+        assert error.startswith(supervisor.name)
+        assert error.endswith(str(supervisor.prefs))
+        assert student.name in error
 
 
 @STUDENT_ALLOCATION
-def test_check_project_capacity(
+def test_check_for_oversubscribed_projects(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires all
@@ -588,18 +601,21 @@ def test_check_project_capacity(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert game._check_project_capacity()
 
     project = game.projects[0]
     project.matching = range(project.capacity + 1)
-    with pytest.raises(Exception):
-        game._check_project_capacity()
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.oversubscribed_players[0]
+        assert error.startswith(project.name)
+        assert error.endswith(str(project.capacity))
+        assert str(project.matching) in e
 
 
 @STUDENT_ALLOCATION
-def test_check_supervisor_capacity(
+def test_check_for_oversubscribed_supervisors(
     student_names, project_names, supervisor_names, capacities, seed
 ):
     """ Test that StudentAllocation recognises a valid matching requires all
@@ -608,14 +624,17 @@ def test_check_supervisor_capacity(
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed
     )
-
     game.solve()
-    assert game._check_supervisor_capacity()
 
     supervisor = game.supervisors[0]
     supervisor.matching = range(supervisor.capacity + 1)
-    with pytest.raises(Exception):
-        game._check_supervisor_capacity()
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.oversubscribed_players[0]
+        assert error.startswith(supervisor.name)
+        assert error.endswith(str(supervisor.capacity))
+        assert str(supervisor.matching) in e
 
 
 def test_check_stability():

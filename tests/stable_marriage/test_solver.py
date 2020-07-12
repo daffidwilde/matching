@@ -1,8 +1,8 @@
 """ Unit tests for the SM solver. """
-
 import pytest
 
 from matching import Matching
+from matching.exceptions import MatchingError
 from matching.games import StableMarriage
 
 from .params import STABLE_MARRIAGE, make_players, make_prefs
@@ -119,19 +119,39 @@ def test_check_validity(player_names, seed):
 
 
 @STABLE_MARRIAGE
-def test_all_matched(player_names, seed):
+def test_check_for_unmatched_players(player_names, seed):
     """ Test that StableMarriage recognises a valid matching requires all
-    players to be matched as players and as part of the game. """
+    players to be matched as players. """
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
+    game.solve()
 
+    player = game.suitors[0]
+    player.matching = None
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.unmatched_players[0]
+        assert error.startswith(player.name)
+
+
+@STABLE_MARRIAGE
+def test_check_for_players_not_in_matching(player_names, seed):
+    """ Test that StableMarriage recognises a valid matching requires all
+    players to be matched in the matching. """
+
+    suitors, reviewers = make_players(player_names, seed)
+    game = StableMarriage(suitors, reviewers)
     matching = game.solve()
-    matching[game.suitors[0]].matching = None
-    game.matching[game.suitors[0]] = None
 
-    with pytest.raises(Exception):
-        game._check_all_matched()
+    player = game.suitors[0]
+    matching[player] = None
+
+    with pytest.raises(MatchingError) as e:
+        game.check_validity()
+        error = e.players[0]
+        assert error.startswith(player.name)
 
 
 @STABLE_MARRIAGE
