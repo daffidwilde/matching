@@ -4,13 +4,13 @@ import warnings
 
 from matching import Matching
 from matching import Player as Student
-from matching.games import HospitalResident
 from matching.exceptions import (
     CapacityChangedWarning,
     MatchingError,
     PlayerExcludedWarning,
     PreferencesChangedWarning,
 )
+from matching.games import HospitalResident
 from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
@@ -135,10 +135,9 @@ class StudentAllocation(HospitalResident):
             + self._check_for_unacceptable_matches("supervisors")
         )
 
-        oversubscribed_issues = (
-            self._check_for_oversubscribed_players("projects")
-            + self._check_for_oversubscribed_players("supervisors")
-        )
+        oversubscribed_issues = self._check_for_oversubscribed_players(
+            "projects"
+        ) + self._check_for_oversubscribed_players("supervisors")
 
         if unacceptable_issues or oversubscribed_issues:
             raise MatchingError(

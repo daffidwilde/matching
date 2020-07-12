@@ -1,10 +1,9 @@
 """ Unit tests for the SR solver. """
-
 import pytest
 
 from matching import Matching
-from matching.games import StableRoommates
 from matching.exceptions import MatchingError
+from matching.games import StableRoommates
 
 from .params import STABLE_ROOMMATES, make_players, make_prefs
 

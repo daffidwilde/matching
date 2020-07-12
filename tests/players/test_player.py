@@ -59,7 +59,7 @@ def test_match(name, pref_names):
     other = Player(pref_names[0])
 
     player.match(other)
-    assert player.matching == other 
+    assert player.matching == other
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))

@@ -1,10 +1,9 @@
 """ Unit tests for the SM solver. """
-
 import pytest
 
 from matching import Matching
-from matching.games import StableMarriage
 from matching.exceptions import MatchingError
+from matching.games import StableMarriage
 
 from .params import STABLE_MARRIAGE, make_players, make_prefs
 

@@ -103,8 +103,8 @@ class StableMarriage(BaseGame):
     def _check_for_players_not_in_matching(self):
         """ Check that everyone appears in the matching. """
 
-        players_in_matching = (
-            set(self.matching.keys()) | set(self.matching.values())
+        players_in_matching = set(self.matching.keys()) | set(
+            self.matching.values()
         )
 
         issues = []

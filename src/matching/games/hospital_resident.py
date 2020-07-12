@@ -4,7 +4,11 @@ import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Resident
-from matching.exceptions import MatchingError, PlayerExcludedWarning, PreferencesChangedWarning
+from matching.exceptions import (
+    MatchingError,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
@@ -81,10 +85,9 @@ class HospitalResident(BaseGame):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        unacceptable_issues = (
-            self._check_for_unacceptable_matches("residents")
-            + self._check_for_unacceptable_matches("hospitals")
-        )
+        unacceptable_issues = self._check_for_unacceptable_matches(
+            "residents"
+        ) + self._check_for_unacceptable_matches("hospitals")
 
         oversubscribed_issues = self._check_for_oversubscribed_players(
             "hospitals"
@@ -148,7 +151,6 @@ class HospitalResident(BaseGame):
         self._check_hospital_reciprocates_all_prefs()
         self._check_hospital_prefs_all_nonempty()
         self._check_init_hospital_capacities()
-
 
     def _check_resident_prefs_all_hospitals(self):
         """ Make sure that each resident has ranked only hospitals. """
