@@ -129,20 +129,21 @@ class StudentAllocation(HospitalResident):
         """ Check whether the current matching is valid. Raise a `MatchingError`
         detailing the issues if not. """
 
-        unacceptables = (
+        unacceptable_issues = (
             self._check_for_unacceptable_matches("students")
             + self._check_for_unacceptable_matches("projects")
             + self._check_for_unacceptable_matches("supervisors")
         )
-        oversubs = (
+
+        oversubscribed_issues = (
             self._check_for_oversubscribed_players("projects")
             + self._check_for_oversubscribed_players("supervisors")
         )
 
-        if unacceptables or oversubs:
+        if unacceptable_issues or oversubscribed_issues:
             raise MatchingError(
-                unacceptable_matches=unacceptables,
-                oversubscribed_players=oversubs,
+                unacceptable_matches=unacceptable_issues,
+                oversubscribed_players=oversubscribed_issues,
             )
 
         return True

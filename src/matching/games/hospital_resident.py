@@ -81,16 +81,19 @@ class HospitalResident(BaseGame):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        unacceptables = (
+        unacceptable_issues = (
             self._check_for_unacceptable_matches("residents")
             + self._check_for_unacceptable_matches("hospitals")
         )
-        oversubs = self._check_for_oversubscribed_players("hospitals")
 
-        if unacceptables or oversubs:
+        oversubscribed_issues = self._check_for_oversubscribed_players(
+            "hospitals"
+        )
+
+        if unacceptable_issues or oversubscribed_issues:
             raise MatchingError(
-                unacceptable_matches=unacceptables,
-                oversubscribed_hospitals=oversubs,
+                unacceptable_matches=unacceptable_issues,
+                oversubscribed_hospitals=oversubscribed_issues,
             )
 
         return True
@@ -103,33 +106,34 @@ class HospitalResident(BaseGame):
             f"{player} is matched to {other} but they do not appear in their "
             f"preference list: {player.prefs}."
         )
-        errors = []
+
+        issues = []
         for player in vars(self)[party]:
 
             try:
                 for other in player.matching:
                     if other not in player.prefs:
-                        errors.append(message(player, other))
+                        issues.append(message(player, other))
 
             except TypeError:
                 other = player.matching
                 if other is not None and other not in player.prefs:
-                    errors.append(message(player, other))
+                    issues.append(message(player, other))
 
-        return errors
+        return issues
 
     def _check_for_oversubscribed_players(self, party):
         """ Check that no player in `party` is oversubscribed. """
 
-        errors = []
+        issues = []
         for player in vars(self)[party]:
             if len(player.matching) > player.capacity:
-                errors.append(
+                issues.append(
                     f"{player} is matched to {player.matching} which is over "
                     f"their capacity of {player.capacity}."
                 )
 
-        return errors
+        return issues
 
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
