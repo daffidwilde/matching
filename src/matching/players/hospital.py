@@ -32,6 +32,11 @@ class Hospital(Player):
         unsubscribed.
     """
 
+    oversubscribed_message = lambda player: (
+        f"{player} is matched to {player.matching} which is over their "
+        f"capacity of {player.capacity}."
+    )
+
     def __init__(self, name, capacity):
 
         super().__init__(name)
@@ -73,3 +78,20 @@ class Hospital(Player):
 
         idx = self.prefs.index(self.get_worst_match())
         return self.prefs[idx + 1 :]
+
+    def check_if_match_is_unacceptable(self, **kwargs):
+        """ Check the acceptability of the current matches. """
+
+        issues = []
+        for other in self.matching:
+            if other not in self.prefs:
+                issues.append(self.not_in_preferences_message(other))
+
+        if issues:
+            return issues
+
+    def check_if_oversubscribed(self):
+        """ Check whether the player has too many matches. """
+
+        if len(self.matching) > self.capacity:
+            return self.oversubscribed_message()

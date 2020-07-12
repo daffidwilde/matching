@@ -119,3 +119,22 @@ def test_prefers(name, pref_names):
     player.set_prefs(others)
     for i, other in enumerate(others[:-1]):
         assert player.prefers(other, others[i + 1])
+
+
+@given(name=text(), pref_names=lists(text(), min_size=1, unique=True))
+def test_check_if_match_unacceptable(name, pref_names):
+    """ Test that the acceptability of a match is caught correctly. """
+
+    player = Player(name)
+    others = [Player(other) for other in pref_names]
+
+    message = player.unmatched_message()
+    assert player.check_if_match_is_unacceptable() == message
+
+    player.set_prefs(others[:-1])
+    player.match(others[-1])
+    message = player.not_in_preferences_message(others[-1])
+    assert player.check_if_match_is_unacceptable() == message
+
+    player.set_prefs(others)
+    assert player.check_if_match_is_unacceptable() is None

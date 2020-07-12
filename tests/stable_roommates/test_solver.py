@@ -1,8 +1,8 @@
 """ Unit tests for the SR solver. """
-
 import pytest
 
 from matching import Matching
+from matching.exceptions import MatchingError
 from matching.games import StableRoommates
 
 from .params import STABLE_ROOMMATES, make_players, make_prefs
@@ -84,7 +84,7 @@ def test_check_validity(player_names, seed):
 
     matching = game.solve()
     if None in matching.values():
-        with pytest.raises(Exception):
+        with pytest.raises(MatchingError):
             game.check_validity()
 
     else:

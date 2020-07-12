@@ -23,6 +23,13 @@ class Player:
         The original set of player preferences.
     """
 
+    unmatched_message = lambda player: f"{player} is unmatched."
+
+    not_in_preferences_message = lambda player, other: (
+        f"{player} is matched to {other} but they do not appear in their "
+        f"preference list: {player.prefs}."
+    )
+
     def __init__(self, name):
 
         self.name = name
@@ -77,3 +84,15 @@ class Player:
 
         prefs = self._original_prefs
         return prefs.index(player) < prefs.index(other)
+
+    def check_if_match_is_unacceptable(self, unmatched_okay=False):
+        """ Check the acceptability of the current match, with the stipulation
+        that being unmatched is okay (or not). """
+
+        other = self.matching
+
+        if other is None and unmatched_okay is False:
+            return self.unmatched_message()
+
+        elif other is not None and other not in self.prefs:
+            return self.not_in_preferences_message(other)

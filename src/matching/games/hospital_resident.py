@@ -4,7 +4,11 @@ import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Resident
-from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
+from matching.exceptions import (
+    MatchingError,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
@@ -81,11 +85,44 @@ class HospitalResident(BaseGame):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        self._check_resident_matching()
-        self._check_hospital_capacity()
-        self._check_hospital_matching()
+        unacceptable_issues = self._check_for_unacceptable_matches(
+            "residents"
+        ) + self._check_for_unacceptable_matches("hospitals")
+
+        oversubscribed_issues = self._check_for_oversubscribed_players(
+            "hospitals"
+        )
+
+        if unacceptable_issues or oversubscribed_issues:
+            raise MatchingError(
+                unacceptable_matches=unacceptable_issues,
+                oversubscribed_hospitals=oversubscribed_issues,
+            )
 
         return True
+
+    def _check_for_unacceptable_matches(self, party):
+        """ Check that no player in `party` is matched to an unacceptable
+        player. """
+
+        issues = []
+        for player in vars(self)[party]:
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=True)
+            if issue:
+                issues.append(issue)
+
+        return issues
+
+    def _check_for_oversubscribed_players(self, party):
+        """ Check that no player in `party` is oversubscribed. """
+
+        issues = []
+        for player in vars(self)[party]:
+            issue = player.check_if_oversubscribed()
+            if issue:
+                issues.append(issue)
+
+        return issues
 
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
@@ -103,66 +140,6 @@ class HospitalResident(BaseGame):
 
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
-
-    def _check_resident_matching(self):
-        """ Check that no resident is matched to an unacceptable hospital. """
-
-        errors = []
-        for resident in self.residents:
-            if (
-                resident.matching is not None
-                and resident.matching not in resident.prefs
-            ):
-                errors.append(
-                    ValueError(
-                        f"{resident} is matched to {resident.matching} but "
-                        "they do not appear in their preference list: "
-                        f"{resident.prefs}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_hospital_capacity(self):
-        """ Check that no hospital is over-subscribed. """
-
-        errors = []
-        for hospital in self.hospitals:
-            if len(hospital.matching) > hospital.capacity:
-                errors.append(
-                    ValueError(
-                        f"{hospital} is matched to {hospital.matching} which "
-                        f"is over their capacity of {hospital.capacity}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_hospital_matching(self):
-        """ Check that no hospital is matched to an unacceptable resident. """
-
-        errors = []
-        for hospital in self.hospitals:
-            for resident in hospital.matching:
-                if resident not in hospital.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{hospital} has {resident} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{hospital.prefs}."
-                        )
-                    )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
 
     def _check_inputs(self):
         """ Raise an error if any of the conditions of the game have been
