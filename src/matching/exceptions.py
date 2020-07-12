@@ -1,5 +1,6 @@
 """ Exceptions for game solver checks. """
 
+
 class MatchingError(Exception):
     """ A generic error for when something is wrong with an internal object. """
 
