@@ -58,7 +58,7 @@ class StableMarriage(BaseGame):
         )
         return self.matching
 
-     def check_validity(self):
+    def check_validity(self):
         """ Check whether the current matching is valid. """
 
         unmatched_issues = self._check_for_unmatched_players()
@@ -74,7 +74,7 @@ class StableMarriage(BaseGame):
 
         return True
 
-   def check_stability(self):
+    def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
         matching, thus determining the stability of the matching. """
 
@@ -94,8 +94,9 @@ class StableMarriage(BaseGame):
 
         issues = []
         for player in self.suitors + self.reviewers:
-            if player.matching is None:
-                issues.append(f"{player} is unmatched.")
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=False)
+            if issue:
+                issues.append(issue)
 
         return issues
 

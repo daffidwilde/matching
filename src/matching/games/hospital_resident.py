@@ -102,23 +102,11 @@ class HospitalResident(BaseGame):
         """ Check that no player in `party` is matched to an unacceptable
         player. """
 
-        message = lambda player, other: (
-            f"{player} is matched to {other} but they do not appear in their "
-            f"preference list: {player.prefs}."
-        )
-
         issues = []
         for player in vars(self)[party]:
-
-            try:
-                for other in player.matching:
-                    if other not in player.prefs:
-                        issues.append(message(player, other))
-
-            except TypeError:
-                other = player.matching
-                if other is not None and other not in player.prefs:
-                    issues.append(message(player, other))
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=True)
+            if issue:
+                issues.append(issue)
 
         return issues
 
@@ -127,11 +115,9 @@ class HospitalResident(BaseGame):
 
         issues = []
         for player in vars(self)[party]:
-            if len(player.matching) > player.capacity:
-                issues.append(
-                    f"{player} is matched to {player.matching} which is over "
-                    f"their capacity of {player.capacity}."
-                )
+            issue = player.check_if_oversubscribed()
+            if issue:
+                issues.append(issue)
 
         return issues
 

@@ -53,8 +53,9 @@ class StableRoommates(BaseGame):
 
         issues = []
         for player in self.players:
-            if player.matching is None:
-                issues.append(f"{player} is unmatched.")
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=False)
+            if issue:
+                issues.append(issue)
 
         if issues:
             raise MatchingError(unmatched_players=issues)
