@@ -335,7 +335,7 @@ def test_check_for_unacceptable_matches_residents(
         game.check_validity()
         error = e.unacceptable_matches[0]
         assert issue == error
-    
+
 
 @HOSPITAL_RESIDENT
 def test_check_for_unacceptable_matches_hospitals(

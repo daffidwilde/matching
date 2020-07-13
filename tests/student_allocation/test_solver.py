@@ -102,9 +102,7 @@ def test_remove_supervisor_and_projects(
 
     game._remove_player(supervisor, "supervisors")
     assert supervisor not in game.supervisors
-    assert all(
-        project not in game.projects for project in projects
-    )
+    assert all(project not in game.projects for project in projects)
 
 
 @STUDENT_ALLOCATION

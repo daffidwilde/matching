@@ -1,9 +1,7 @@
 """ Tests for the BaseGame class. """
-
 import warnings
 
 import pytest
-
 from hypothesis import given
 from hypothesis.strategies import booleans, lists, text
 
