@@ -104,7 +104,7 @@ class StudentAllocation(HospitalResident):
         project_supervisors,
         project_capacities,
         supervisor_capacities,
-        clean,
+        clean=False,
     ):
         """ Create an instance of SA from two preference dictionaries,
         affiliations and capacities. """
