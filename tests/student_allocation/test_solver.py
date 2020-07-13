@@ -87,6 +87,43 @@ def test_create_from_dictionaries(
 
 
 @STUDENT_ALLOCATION
+def test_remove_supervisor_and_projects(
+    student_names, project_names, supervisor_names, capacities, seed, clean
+):
+    """ Test that a supervisor and its projects can be removed from an instance
+    of SA. """
+
+    _, _, _, game = make_game(
+        student_names, project_names, supervisor_names, capacities, seed, clean
+    )
+
+    supervisor = game.supervisors[0]
+    projects = supervisor.projects
+
+    game._remove_player(supervisor, "supervisors")
+    assert supervisor not in game.supervisors
+    assert all(
+        project not in game.projects for project in projects
+    )
+
+
+@STUDENT_ALLOCATION
+def test_remove_student(
+    student_names, project_names, supervisor_names, capacities, seed, clean
+):
+    """ Test that a student can be removed from an instance of SA. """
+
+    _, _, _, game = make_game(
+        student_names, project_names, supervisor_names, capacities, seed, clean
+    )
+
+    student = game.students[0]
+
+    game._remove_player(student, "students", "projects")
+    assert student not in game.students
+
+
+@STUDENT_ALLOCATION
 def test_check_inputs(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
