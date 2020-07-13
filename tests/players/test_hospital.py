@@ -105,7 +105,7 @@ def test_check_if_match_is_unacceptable(name, capacity, pref_names):
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
-    assert hospital.check_if_match_is_unacceptable() is None
+    assert hospital.check_if_match_is_unacceptable() == []
 
     hospital.set_prefs(others[:-1])
     hospital.matching = [others[-1]]
