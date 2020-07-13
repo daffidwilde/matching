@@ -2,7 +2,7 @@
 
 import numpy as np
 from hypothesis import given
-from hypothesis.strategies import composite, integers, lists, sampled_from
+from hypothesis.strategies import booleans, integers, lists, sampled_from
 
 from matching import Player
 

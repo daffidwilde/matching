@@ -186,8 +186,9 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_player_reciprocated_all_prefs("projects", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("supervisors")
-        self._check_inputs_player_reciprocated_all_prefs("supervisors",
-                "students")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "supervisors", "students"
+        )
 
         self._check_inputs_player_capacity("projects", "students")
         self._check_inputs_player_capacity("supervisors", "students")
@@ -233,7 +234,10 @@ class StudentAllocation(HospitalResident):
                 students_that_ranked = [
                     student
                     for student in self.students
-                    if any(project in student.prefs for project in supervisor.projects)
+                    if any(
+                        project in student.prefs
+                        for project in supervisor.projects
+                    )
                 ]
 
                 for student in students_that_ranked:
@@ -246,7 +250,9 @@ class StudentAllocation(HospitalResident):
                         )
 
                         if self.clean:
-                            for project in set(supervisor.projects) & set(student.prefs):
+                            for project in set(supervisor.projects) & set(
+                                student.prefs
+                            ):
                                 student.forget(project)
 
         else:

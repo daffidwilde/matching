@@ -18,8 +18,9 @@ from .params import STUDENT_ALLOCATION, make_connections, make_game
 
 
 @STUDENT_ALLOCATION
-def test_init(student_names, project_names, supervisor_names, capacities, seed,
-        clean):
+def test_init(
+    student_names, project_names, supervisor_names, capacities, seed, clean
+):
     """ Test that an instance of StudentAllocation is created correctly when
     passed a set of players. """
 
@@ -86,8 +87,9 @@ def test_create_from_dictionaries(
 
 
 @STUDENT_ALLOCATION
-def test_check_inputs(student_names, project_names, supervisor_names,
-        capacities, seed, clean):
+def test_check_inputs(
+    student_names, project_names, supervisor_names, capacities, seed, clean
+):
     """ Test that inputs to an instance of SA can be verified. """
 
     _, _, _, game = make_game(
@@ -161,6 +163,7 @@ def test_check_inputs_supervisor_prefs_all_reciprocated(
                 student not in project.prefs for project in supervisor.projects
             )
 
+
 @STUDENT_ALLOCATION
 def test_check_inputs_project_reciprocated_all_prefs(
     student_names, project_names, supervisor_names, capacities, seed, clean
@@ -170,7 +173,7 @@ def test_check_inputs_project_reciprocated_all_prefs(
     forgotten the project. """
 
     _, _, _, game = make_game(
-            student_names, project_names, supervisor_names, capacities, seed, clean
+        student_names, project_names, supervisor_names, capacities, seed, clean
     )
 
     project = game.projects[0]
@@ -282,8 +285,12 @@ def test_solve(
 
     for optimal in ["student", "supervisor"]:
         students, projects, _, game = make_game(
-            student_names, project_names, supervisor_names, capacities, seed,
-            clean
+            student_names,
+            project_names,
+            supervisor_names,
+            capacities,
+            seed,
+            clean,
         )
 
         matching = game.solve(optimal)

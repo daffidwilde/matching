@@ -9,6 +9,7 @@ from matching.players import Hospital
 capacity = integers(min_value=1)
 pref_names = lists(text(), min_size=1)
 
+
 @given(name=text(), capacity=capacity)
 def test_init(name, capacity):
     """ Make an instance of Hospital and check their attributes are correct. """

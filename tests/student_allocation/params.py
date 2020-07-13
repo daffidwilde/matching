@@ -71,8 +71,9 @@ def make_players(student_names, project_names, supervisor_names, capacities):
     return students, projects, supervisors
 
 
-def make_game(student_names, project_names, supervisor_names, capacities, seed,
-        clean):
+def make_game(
+    student_names, project_names, supervisor_names, capacities, seed, clean
+):
     """ Make all of the players and the game itself. """
 
     np.random.seed(seed)
