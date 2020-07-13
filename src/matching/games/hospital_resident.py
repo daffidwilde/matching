@@ -160,8 +160,9 @@ class HospitalResident(BaseGame):
         self._check_inputs_player_prefs_all_in_party("hospitals", "residents")
 
         self._check_inputs_player_prefs_all_reciprocated("hospitals")
-        self._check_inputs_player_reciprocated_all_prefs("hospitals",
-                "residents")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "hospitals", "residents"
+        )
 
         self._check_inputs_player_prefs_nonempty("residents", "hospitals")
         self._check_inputs_player_prefs_nonempty("hospitals", "residents")

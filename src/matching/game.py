@@ -1,11 +1,13 @@
 """ The base game class for facilitating and solving matching games. """
-
 import abc
 import warnings
 
 from matching.exceptions import (
-    CapacityChangedWarning, PlayerExcludedWarning, PreferencesChangedWarning
+    CapacityChangedWarning,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
 )
+
 
 class BaseGame(metaclass=abc.ABCMeta):
     """ An abstract base class for facilitating various matching games.

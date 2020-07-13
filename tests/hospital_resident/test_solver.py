@@ -70,9 +70,7 @@ def test_create_from_dictionaries(
 
 
 @HOSPITAL_RESIDENT
-def test_check_inputs(
-    resident_names, hospital_names, capacities, seed, clean
-):
+def test_check_inputs(resident_names, hospital_names, capacities, seed, clean):
     """ Test that inputs to an instance of HR can be verified. """
 
     _, _, game = make_game(
@@ -145,8 +143,9 @@ def test_check_inputs_hospital_prefs_all_reciprocated(
     it. If not, check that a warning is caught and the hospital has forgotten
     any such players. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
@@ -170,15 +169,17 @@ def test_check_inputs_hospital_reciprocated_all_prefs(
     it. If not, check that a warning is caught and any such resident has
     forgotten the hospital. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
     hospital.forget(resident)
     with warnings.catch_warnings(record=True) as w:
-        game._check_inputs_player_reciprocated_all_prefs("hospitals",
-                "residents")
+        game._check_inputs_player_reciprocated_all_prefs(
+            "hospitals", "residents"
+        )
 
         message = w[-1].message
         assert isinstance(message, PreferencesChangedWarning)
@@ -195,8 +196,9 @@ def test_check_inputs_resident_prefs_all_nonempty(
     """ Test that every resident has a non-empty preference list. If not, check
     that a warning is caught and the player has been removed from the game. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     resident = game.residents[0]
     resident.prefs = []
@@ -217,8 +219,9 @@ def test_check_inputs_hospital_prefs_all_nonempty(
     """ Test that every hospital has a non-empty preference list. If not, check
     that a warning is caught and the player has been removed from the game. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     hospital = game.hospitals[0]
     hospital.prefs = []
@@ -240,8 +243,9 @@ def test_check_inputs_hospital_capacity(
     project, but does not offer a surplus of spaces from their projects.
     Otherwise, raise an Exception. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     hospital = game.hospitals[0]
     capacity = hospital.capacity
@@ -290,12 +294,15 @@ def test_solve(resident_names, hospital_names, capacities, seed, clean):
 
 
 @HOSPITAL_RESIDENT
-def test_check_validity(resident_names, hospital_names, capacities, seed, clean):
+def test_check_validity(
+    resident_names, hospital_names, capacities, seed, clean
+):
     """ Test that HospitalResident finds a valid matching when the game is
     solved. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     game.solve()
     assert game.check_validity()
@@ -308,8 +315,9 @@ def test_check_for_unacceptable_matches_residents(
     """ Test that HospitalResident recognises a valid matching requires each
     resident to have a preference of their match, if they have one. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     resident = game.residents[0]
     hospital = Hospital(name="foo", capacity=1)
@@ -331,8 +339,9 @@ def test_check_for_unacceptable_matches_hospitals(
     """ Test that HospitalResident recognises a valid matching requires each
     hospital to have a preference of each of its matches, if any. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     hospital = game.hospitals[0]
     resident = Resident(name="foo")
@@ -354,8 +363,9 @@ def test_check_for_oversubscribed_hospitals(
     """ Test that HospitalResident recognises a valid matching requires all
     hospitals to not be oversubscribed. """
 
-    _, _, game = make_game(resident_names, hospital_names, capacities, seed,
-            clean)
+    _, _, game = make_game(
+        resident_names, hospital_names, capacities, seed, clean
+    )
 
     hospital = game.hospitals[0]
     hospital.matching = range(hospital.capacity + 1)

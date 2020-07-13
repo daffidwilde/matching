@@ -10,7 +10,6 @@ class MatchingError(Exception):
             self.__setattr__(key, val)
 
         self.message = kwargs
-
         super().__init__(self.message)
 
 
