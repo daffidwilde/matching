@@ -180,24 +180,25 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_player_prefs_unique("supervisors")
 
         self._check_inputs_player_prefs_all_in_party("students", "projects")
+        self._check_inputs_player_prefs_nonempty("students", "projects")
+
         self._check_inputs_player_prefs_all_in_party("supervisors", "students")
+        self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("projects")
         self._check_inputs_player_reciprocated_all_prefs("projects", "students")
+        self._check_inputs_player_prefs_nonempty("projects", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("supervisors")
         self._check_inputs_player_reciprocated_all_prefs(
             "supervisors", "students"
         )
+        self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
         self._check_inputs_player_capacity("projects", "students")
         self._check_inputs_player_capacity("supervisors", "students")
         self._check_inputs_supervisor_capacities_sufficient()
         self._check_inputs_supervisor_capacities_necessary()
-
-        self._check_inputs_player_prefs_nonempty("students", "projects")
-        self._check_inputs_player_prefs_nonempty("projects", "students")
-        self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
     def _check_inputs_player_prefs_all_reciprocated(self, party):
         """ Check that each player in :code:`party` has ranked only those

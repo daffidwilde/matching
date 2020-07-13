@@ -156,6 +156,9 @@ class HospitalResident(BaseGame):
         broken. If the :code:`clean` attribute is :code:`True`, then remove any
         such situations from the game. """
 
+        self._check_inputs_player_prefs_unique("residents")
+        self._check_inputs_player_prefs_unique("hospitals")
+
         self._check_inputs_player_prefs_all_in_party("residents", "hospitals")
         self._check_inputs_player_prefs_all_in_party("hospitals", "residents")
 
