@@ -29,7 +29,7 @@ class StableRoommates(BaseGame):
         self.players = players
 
         super().__init__()
-        self._check_inputs()
+        self.check_inputs()
 
     @classmethod
     def create_from_dictionary(cls, player_prefs):
@@ -85,7 +85,7 @@ class StableRoommates(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def _check_inputs(self):
+    def check_inputs(self):
         """ Check that all players have ranked all other players. """
 
         for player in self.players:
@@ -93,7 +93,7 @@ class StableRoommates(BaseGame):
             if set(player.prefs) != others:
                 raise ValueError(
                     "Every player must rank all other players. "
-                    f"{player}: {player.prefs} not permutation of {others}"
+                    f"{player}: {player.prefs} is not a permutation of {others}"
                 )
 
         return True

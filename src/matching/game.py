@@ -84,7 +84,8 @@ class BaseGame(metaclass=abc.ABCMeta):
 
     def _check_inputs_player_prefs_nonempty(self, party, other_party):
         """ Make sure that each player in :code:`party` has a nonempty
-        preference list. If :code:`clean`, remove any such player. """
+        preference list of players in :code:`other_party`. If :code:`clean`,
+        remove any such player. """
 
         for player in vars(self)[party]:
 
