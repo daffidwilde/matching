@@ -6,8 +6,10 @@ from hypothesis.strategies import integers, lists, text
 from matching import Player as Resident
 from matching.players import Hospital
 
+capacity = integers(min_value=1)
+pref_names = lists(text(), min_size=1)
 
-@given(name=text(), capacity=integers())
+@given(name=text(), capacity=capacity)
 def test_init(name, capacity):
     """ Make an instance of Hospital and check their attributes are correct. """
 
@@ -22,7 +24,7 @@ def test_init(name, capacity):
     assert hospital.matching == []
 
 
-@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+@given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_favourite(name, capacity, pref_names):
     """ Check the correct player is returned as the hospital's favourite. """
 
@@ -36,7 +38,7 @@ def test_get_favourite(name, capacity, pref_names):
     assert hospital.get_favourite() is None
 
 
-@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+@given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_match(name, capacity, pref_names):
     """ Check that a hospital can match to a player correctly. """
 
@@ -52,7 +54,7 @@ def test_match(name, capacity, pref_names):
     assert hospital.matching == others
 
 
-@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+@given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_unmatch(name, capacity, pref_names):
     """ Check that a hospital can unmatch from a player correctly. """
 
@@ -68,7 +70,7 @@ def test_unmatch(name, capacity, pref_names):
     assert hospital.matching == []
 
 
-@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+@given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_worst_match(name, capacity, pref_names):
     """ Check that a hospital can return its worst match. """
 
@@ -82,7 +84,7 @@ def test_get_worst_match(name, capacity, pref_names):
     assert hospital.get_worst_match() == others[-1]
 
 
-@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+@given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_successors(name, capacity, pref_names):
     """ Check that a hospital can get the successors to its worst current match.
     """
@@ -98,7 +100,7 @@ def test_get_successors(name, capacity, pref_names):
     assert hospital.get_successors() == []
 
 
-@given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
+@given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_check_if_match_is_unacceptable(name, capacity, pref_names):
     """ Check that a hospital can verify the acceptability of its matches. """
 
@@ -111,3 +113,18 @@ def test_check_if_match_is_unacceptable(name, capacity, pref_names):
     hospital.matching = [others[-1]]
     message = hospital.not_in_preferences_message(others[-1])
     assert hospital.check_if_match_is_unacceptable() == [message]
+
+
+@given(name=text(), capacity=capacity, pref_names=pref_names)
+def test_check_if_oversubscribed(name, capacity, pref_names):
+    """ Check that a hospital can verify whether it is oversubscribed. """
+
+    hospital = Hospital(name, capacity)
+    others = [Resident(other) for other in pref_names]
+
+    assert hospital.check_if_oversubscribed() is False
+
+    hospital.matching = others
+    hospital.capacity = 0
+    message = hospital.oversubscribed_message()
+    assert hospital.check_if_oversubscribed() == message

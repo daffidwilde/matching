@@ -94,3 +94,5 @@ class Hospital(Player):
 
         if len(self.matching) > self.capacity:
             return self.oversubscribed_message()
+
+        return False
