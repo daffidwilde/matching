@@ -35,6 +35,11 @@ class HospitalResident(BaseGame):
     hospitals : list of Hospital
         The hospitals in the matching game. Each hospital must rank all of (and
         only) the residents which rank it.
+    clean : bool
+        Indicator for whether the players of the game should be cleaned.
+        Cleaning is reductive in nature, removing players from the game and/or
+        other player's preferences if they do not meet the requirements of the
+        game.
 
     Attributes
     ----------
@@ -47,29 +52,32 @@ class HospitalResident(BaseGame):
         blocking pairs.
     """
 
-    def __init__(self, residents, hospitals):
+    def __init__(self, residents, hospitals, clean=False):
 
         residents, hospitals = copy.deepcopy([residents, hospitals])
         self.residents = residents
         self.hospitals = hospitals
+        self.clean = clean
 
         self._all_residents = residents
         self._all_hospitals = hospitals
 
-        super().__init__()
-        self._check_inputs()
+        super().__init__(clean)
+        self.check_inputs()
 
     @classmethod
     def create_from_dictionaries(
-        cls, resident_prefs, hospital_prefs, capacities
+        cls, resident_prefs, hospital_prefs, capacities, clean=False
     ):
         """ Create an instance of :code:`HospitalResident` from two preference
-        dictionaries and capacities. """
+        dictionaries and capacities. If :code:`clean=True` then remove players
+        from the game and/or player preferences if they do not satisfy the
+        conditions of the game. """
 
         residents, hospitals = _make_players(
             resident_prefs, hospital_prefs, capacities
         )
-        game = cls(residents, hospitals)
+        game = cls(residents, hospitals, clean)
 
         return game
 
@@ -108,7 +116,9 @@ class HospitalResident(BaseGame):
         issues = []
         for player in vars(self)[party]:
             issue = player.check_if_match_is_unacceptable(unmatched_okay=True)
-            if issue:
+            if isinstance(issue, list):
+                issues.extend(issue)
+            elif isinstance(issue, str):
                 issues.append(issue)
 
         return issues
@@ -141,109 +151,75 @@ class HospitalResident(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def _check_inputs(self):
-        """ Raise an error if any of the conditions of the game have been
-        broken. """
+    def check_inputs(self):
+        """ Give out warnings if any of the conditions of the game have been
+        broken. If the :code:`clean` attribute is :code:`True`, then remove any
+        such situations from the game. """
 
-        self._check_resident_prefs_all_hospitals()
-        self._check_resident_prefs_all_nonempty()
-        self._check_hospital_prefs_all_reciprocated()
-        self._check_hospital_reciprocates_all_prefs()
-        self._check_hospital_prefs_all_nonempty()
-        self._check_init_hospital_capacities()
+        self._check_inputs_player_prefs_unique("residents")
+        self._check_inputs_player_prefs_unique("hospitals")
 
-    def _check_resident_prefs_all_hospitals(self):
-        """ Make sure that each resident has ranked only hospitals. """
+        self._check_inputs_player_prefs_all_in_party("residents", "hospitals")
+        self._check_inputs_player_prefs_all_in_party("hospitals", "residents")
 
-        for resident in self.residents:
+        self._check_inputs_player_prefs_all_reciprocated("hospitals")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "hospitals", "residents"
+        )
 
-            for hospital in resident.prefs:
-                if hospital not in self.hospitals:
+        self._check_inputs_player_prefs_nonempty("residents", "hospitals")
+        self._check_inputs_player_prefs_nonempty("hospitals", "residents")
+
+        self._check_inputs_player_capacity("hospitals", "residents")
+
+    def _check_inputs_player_prefs_all_reciprocated(self, party):
+        """ Make sure that each player in :code:`party` has ranked only those
+        players that have ranked it. """
+
+        for player in vars(self)[party]:
+
+            for other in player.prefs:
+                if player not in other.prefs:
                     warnings.warn(
                         PreferencesChangedWarning(
-                            f"{resident} has ranked a non-hospital: {hospital}."
+                            f"{player} ranked {other} but they did not."
                         )
                     )
+                    if self.clean:
+                        player.forget(other)
 
-                    resident.forget(hospital)
+    def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
+        """ Make sure that each player in :code:`party` has ranked all those
+        players in :code:`other_party` that have ranked it. """
 
-    def _check_resident_prefs_all_nonempty(self):
-        """ Make sure that each resident has a nonempty preference list. """
+        players = vars(self)[party]
+        others = vars(self)[other_party]
+        for player in players:
 
-        for resident in self.residents:
-
-            if not resident.prefs:
-                warnings.warn(
-                    PlayerExcludedWarning(
-                        f"{resident} has an empty preference list."
-                    )
-                )
-
-                self._remove_player(resident, "residents", "hospitals")
-
-    def _check_hospital_prefs_all_reciprocated(self):
-        """ Make sure that each hospital has ranked only those residents that
-        have ranked it. """
-
-        for hospital in self.hospitals:
-
-            for resident in hospital.prefs:
-                if hospital not in resident.prefs:
-                    warnings.warn(
-                        PreferencesChangedWarning(
-                            f"{hospital} ranked {resident} but they did not. "
-                            f"Removing {resident} from {hospital} preferences."
-                        )
-                    )
-
-                    hospital.forget(resident)
-
-    def _check_hospital_reciprocates_all_prefs(self):
-        """ Make sure that each hospital has ranked all those residents that
-        have ranked it. """
-
-        for hospital in self.hospitals:
-
-            residents_that_ranked = [
-                res for res in self.residents if hospital in res.prefs
+            others_that_ranked = [
+                other for other in others if player in other.prefs
             ]
-            for resident in residents_that_ranked:
-                if resident not in hospital.prefs:
+            for other in others_that_ranked:
+                if other not in player.prefs:
                     warnings.warn(
                         PreferencesChangedWarning(
-                            f"{resident} ranked {hospital} but they did not. "
-                            f"Removing {hospital} from {resident} preferences."
+                            f"{other} ranked {player} but they did not."
                         )
                     )
+                    if self.clean:
+                        other.forget(player)
 
-                    resident.forget(hospital)
+    def _check_inputs_player_capacity(self, party, other_party):
+        """ Check that each player in :code:`party` has a capacity of at least
+        one. If the :code:`clean` attribute is :code:`True`, remove any hospital
+        that does not have such a capacity from the game. """
 
-    def _check_hospital_prefs_all_nonempty(self):
-        """ Make sure that each hospital has a nonempty preference list. """
+        for player in vars(self)[party]:
+            if player.capacity < 1:
+                warnings.warn(PlayerExcludedWarning(player))
 
-        for hospital in self.hospitals:
-            if not hospital.prefs:
-                warnings.warn(
-                    PlayerExcludedWarning(
-                        f"{hospital} has an empty preference list."
-                    )
-                )
-
-                self._remove_player(hospital, "hospitals", "residents")
-
-    def _check_init_hospital_capacities(self):
-        """ Check that each hospital has a positive capacity. Ignore any
-        hospital that does not. """
-
-        for hospital in self.hospitals:
-            if hospital.capacity < 1:
-                warnings.warn(
-                    PlayerExcludedWarning(
-                        f"{hospital} does not have a positive capacity."
-                    )
-                )
-
-                self._remove_player(hospital, "hospitals", "residents")
+                if self.clean:
+                    self._remove_player(player, party, other_party)
 
 
 def _check_mutual_preference(resident, hospital):

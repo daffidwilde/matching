@@ -32,17 +32,19 @@ class Hospital(Player):
         unsubscribed.
     """
 
-    oversubscribed_message = lambda player: (
-        f"{player} is matched to {player.matching} which is over their "
-        f"capacity of {player.capacity}."
-    )
-
     def __init__(self, name, capacity):
 
         super().__init__(name)
         self.capacity = capacity
         self._original_capacity = capacity
         self.matching = []
+
+    def oversubscribed_message(self):
+
+        return (
+            f"{self} is matched to {self.matching} which is over their "
+            f"capacity of {self.capacity}."
+        )
 
     def get_favourite(self):
         """ Get the hospital's favourite resident with whom they are not
@@ -87,11 +89,12 @@ class Hospital(Player):
             if other not in self.prefs:
                 issues.append(self.not_in_preferences_message(other))
 
-        if issues:
-            return issues
+        return issues
 
     def check_if_oversubscribed(self):
         """ Check whether the player has too many matches. """
 
         if len(self.matching) > self.capacity:
             return self.oversubscribed_message()
+
+        return False

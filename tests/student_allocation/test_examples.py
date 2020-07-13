@@ -31,7 +31,7 @@ def test_example_in_docs():
         supervisor_capacities,
     )
     a, b, c, d, e = game.students
-    (x1, x2, y1, y2), (x, y) = game.projects, game.supervisors
+    x1, x2, y1, y2 = game.projects
 
     matching = student_allocation(
         game.students, game.projects, game.supervisors

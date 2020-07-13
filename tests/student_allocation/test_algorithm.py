@@ -9,7 +9,7 @@ from .params import STUDENT_ALLOCATION, make_players
 
 @STUDENT_ALLOCATION
 def test_student_optimal(
-    student_names, project_names, supervisor_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed, clean
 ):
     """ Verify that the student allocation algorithm produces a valid,
     student-optimal solution to an instance of SA. """
@@ -39,7 +39,7 @@ def test_student_optimal(
 
 @STUDENT_ALLOCATION
 def test_supervisor_optimal(
-    student_names, project_names, supervisor_names, capacities, seed
+    student_names, project_names, supervisor_names, capacities, seed, clean
 ):
     """ Verify that the student allocation algorithm produces a valid,
     supervisor-optimal solution to an instance of SA. """

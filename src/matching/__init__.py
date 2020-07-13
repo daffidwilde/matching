@@ -11,3 +11,5 @@ from .game import BaseGame
 from .matching import Matching
 from .player import Player
 from .version import __version__
+
+__all__ = [BaseGame, Matching, Player, __version__]

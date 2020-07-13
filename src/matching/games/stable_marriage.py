@@ -38,7 +38,7 @@ class StableMarriage(BaseGame):
         self.reviewers = reviewers
 
         super().__init__()
-        self._check_inputs()
+        self.check_inputs()
 
     @classmethod
     def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
@@ -119,7 +119,6 @@ class StableMarriage(BaseGame):
         players. """
 
         issues = []
-        matching = self.matching
         for suitor, reviewer in self.matching.items():
             if suitor.matching != reviewer:
                 issues.append(
@@ -129,7 +128,7 @@ class StableMarriage(BaseGame):
 
         return issues
 
-    def _check_inputs(self):
+    def check_inputs(self):
         """ Raise an error if any of the conditions of the game have been
         broken. """
 
