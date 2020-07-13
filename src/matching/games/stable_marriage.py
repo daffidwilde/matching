@@ -119,7 +119,6 @@ class StableMarriage(BaseGame):
         players. """
 
         issues = []
-        matching = self.matching
         for suitor, reviewer in self.matching.items():
             if suitor.matching != reviewer:
                 issues.append(

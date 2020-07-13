@@ -7,7 +7,6 @@ from matching import Player as Student
 from matching.exceptions import (
     CapacityChangedWarning,
     MatchingError,
-    PlayerExcludedWarning,
     PreferencesChangedWarning,
 )
 from matching.games import HospitalResident
@@ -22,12 +21,12 @@ class StudentAllocation(HospitalResident):
 
     In this case, a blocking pair is defined as any student-project pair that
     satisfies **all** of the following:
-    
+
     1. The student has a preference of the project.
     2. Either the student is unmatched, or they prefer the project to their
        current project.
-    3. At least one of the following: 
-    
+    3. At least one of the following:
+
        - The project or its supervisor is under-subscribed.
        - The project is under-subscribed and the supervisor is at capacity, and
          the student is matched to a project offered by the supervisor or the

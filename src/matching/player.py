@@ -23,13 +23,6 @@ class Player:
         The original set of player preferences.
     """
 
-    unmatched_message = lambda player: f"{player} is unmatched."
-
-    not_in_preferences_message = lambda player, other: (
-        f"{player} is matched to {other} but they do not appear in their "
-        f"preference list: {player.prefs}."
-    )
-
     def __init__(self, name):
 
         self.name = name
@@ -41,6 +34,17 @@ class Player:
     def __repr__(self):
 
         return str(self.name)
+
+    def unmatched_message(self):
+
+        return f"{self} is unmatched."
+
+    def not_in_preferences_message(self, other):
+
+        return (
+            f"{self} is matched to {other} but they do not appear in their "
+            f"preference list: {self.prefs}."
+        )
 
     def set_prefs(self, players):
         """ Set the player's preferences to be a list of players. """

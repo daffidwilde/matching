@@ -2,11 +2,7 @@
 import abc
 import warnings
 
-from matching.exceptions import (
-    CapacityChangedWarning,
-    PlayerExcludedWarning,
-    PreferencesChangedWarning,
-)
+from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
 
 
 class BaseGame(metaclass=abc.ABCMeta):

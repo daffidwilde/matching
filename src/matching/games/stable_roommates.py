@@ -5,8 +5,6 @@ import copy
 from matching import BaseGame, Matching, Player
 from matching.exceptions import MatchingError
 
-from .util import delete_pair, match_pair
-
 
 class StableRoommates(BaseGame):
     """ A class for solving instances of the stable roommates problem (SR).
