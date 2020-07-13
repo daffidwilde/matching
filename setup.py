@@ -5,11 +5,13 @@ from setuptools import find_packages, setup
 with open("README.rst", "r") as readme_file:
     README = readme_file.read()
 
-exec(open("src/matching/version.py", "r").read())
+version = {}
+with open("src/matching/version.py", "r") as f:
+    exec(f.read(), version)
 
 setup(
     name="matching",
-    version=__version__,
+    version=version["__version__"],
     description="A package for solving matching games.",
     long_description=README,
     url="https://github.com/daffidwilde/matching",

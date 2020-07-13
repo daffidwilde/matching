@@ -8,7 +8,6 @@ from matching import Player as Student
 from matching.exceptions import (
     CapacityChangedWarning,
     MatchingError,
-    PlayerExcludedWarning,
     PreferencesChangedWarning,
 )
 from matching.games import StudentAllocation

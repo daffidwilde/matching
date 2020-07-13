@@ -45,9 +45,8 @@ def test_check_inputs(player_names, seed):
     all other players. """
 
     players = make_players(player_names, seed)
-    game = StableRoommates(players)
-
     players[0].prefs = players[0].prefs[:-1]
+
     with pytest.raises(Exception):
         StableRoommates(players)
 
