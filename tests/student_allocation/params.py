@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import numpy as np
 from hypothesis import given
-from hypothesis.strategies import integers, lists, sampled_from
+from hypothesis.strategies import booleans, integers, lists, sampled_from
 
 from matching import Player as Student
 from matching.games import StudentAllocation
@@ -71,14 +71,15 @@ def make_players(student_names, project_names, supervisor_names, capacities):
     return students, projects, supervisors
 
 
-def make_game(student_names, project_names, supervisor_names, capacities, seed):
+def make_game(student_names, project_names, supervisor_names, capacities, seed,
+        clean):
     """ Make all of the players and the game itself. """
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(
         student_names, project_names, supervisor_names, capacities
     )
-    game = StudentAllocation(students, projects, supervisors)
+    game = StudentAllocation(students, projects, supervisors, clean)
 
     return students, projects, supervisors, game
 
@@ -135,6 +136,7 @@ def make_connections(
         student_prefs,
         supervisor_prefs,
         project_supervisors,
+        project_capacities,
         supervisor_capacities,
     )
 
@@ -162,4 +164,5 @@ STUDENT_ALLOCATION = given(
         integers(min_value=1, max_value=2), min_size=5, max_size=5
     ),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
+    clean=booleans(),
 )

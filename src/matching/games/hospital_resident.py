@@ -191,7 +191,7 @@ class HospitalResident(BaseGame):
 
         players = vars(self)[party]
         others = vars(self)[other_party]
-        for player in vars(self)[party]:
+        for player in players:
 
             others_that_ranked = [
                 other for other in others if player in other.prefs
