@@ -87,8 +87,7 @@ class Hospital(Player):
             if other not in self.prefs:
                 issues.append(self.not_in_preferences_message(other))
 
-        if issues:
-            return issues
+        return issues
 
     def check_if_oversubscribed(self):
         """ Check whether the player has too many matches. """
