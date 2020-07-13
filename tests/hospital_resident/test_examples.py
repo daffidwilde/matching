@@ -1,8 +1,6 @@
 """ A collection of example tests. """
 
-from matching import Player as Resident
 from matching.games import HospitalResident
-from matching.players import Hospital
 
 
 def test_readme_example():
@@ -72,7 +70,7 @@ def test_resident_loses_all_preferences():
     game = HospitalResident.create_from_dictionaries(
         resident_prefs, hospital_prefs, capacities
     )
-    (A, B), (X, Y) = game.residents, game.hospitals
+    (_, B), (X, Y) = game.residents, game.hospitals
 
     matching = game.solve()
     assert matching == {X: [B], Y: []}
