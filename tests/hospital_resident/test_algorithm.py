@@ -8,7 +8,9 @@ from .params import HOSPITAL_RESIDENT, make_players
 
 
 @HOSPITAL_RESIDENT
-def test_resident_optimal(resident_names, hospital_names, capacities, seed):
+def test_resident_optimal(
+    resident_names, hospital_names, capacities, seed, clean
+):
     """ Verify that the hospital-resident algorithm produces a valid,
     resident-optimal matching for an instance of HR. """
 
@@ -34,7 +36,9 @@ def test_resident_optimal(resident_names, hospital_names, capacities, seed):
 
 
 @HOSPITAL_RESIDENT
-def test_hospital_optimal(resident_names, hospital_names, capacities, seed):
+def test_hospital_optimal(
+    resident_names, hospital_names, capacities, seed, clean
+):
     """ Verify that the hospital-resident algorithm produces a valid,
     hospital-optimal matching for an instance of HR. """
 

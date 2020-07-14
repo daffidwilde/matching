@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import numpy as np
 from hypothesis import given
-from hypothesis.strategies import integers, lists, sampled_from
+from hypothesis.strategies import booleans, integers, lists, sampled_from
 
 from matching import Player as Resident
 from matching.games import HospitalResident
@@ -55,14 +55,14 @@ def get_possible_prefs(players):
     return possible_prefs
 
 
-def make_game(resident_names, hospital_names, capacities, seed):
+def make_game(resident_names, hospital_names, capacities, seed, clean):
     """ Make all of the residents and hospitals, and the match itself. """
 
     np.random.seed(seed)
     residents, hospitals = make_players(
         resident_names, hospital_names, capacities
     )
-    game = HospitalResident(residents, hospitals)
+    game = HospitalResident(residents, hospitals, clean)
 
     return residents, hospitals, game
 
@@ -99,6 +99,9 @@ HOSPITAL_RESIDENT = given(
         max_size=3,
         unique=True,
     ),
-    capacities=lists(elements=integers(min_value=2), min_size=3, max_size=3),
+    capacities=lists(
+        elements=integers(min_value=2, max_value=4), min_size=3, max_size=3,
+    ),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
+    clean=booleans(),
 )

@@ -1,9 +1,14 @@
 """ The HR solver and algorithm. """
-
 import copy
+import warnings
 
 from matching import BaseGame, Matching
 from matching import Player as Resident
+from matching.exceptions import (
+    MatchingError,
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 from matching.players import Hospital
 
 from .util import delete_pair, match_pair
@@ -30,6 +35,11 @@ class HospitalResident(BaseGame):
     hospitals : list of Hospital
         The hospitals in the matching game. Each hospital must rank all of (and
         only) the residents which rank it.
+    clean : bool
+        Indicator for whether the players of the game should be cleaned.
+        Cleaning is reductive in nature, removing players from the game and/or
+        other player's preferences if they do not meet the requirements of the
+        game.
 
     Attributes
     ----------
@@ -42,26 +52,32 @@ class HospitalResident(BaseGame):
         blocking pairs.
     """
 
-    def __init__(self, residents, hospitals):
+    def __init__(self, residents, hospitals, clean=False):
 
         residents, hospitals = copy.deepcopy([residents, hospitals])
         self.residents = residents
         self.hospitals = hospitals
+        self.clean = clean
 
-        super().__init__()
-        self._check_inputs()
+        self._all_residents = residents
+        self._all_hospitals = hospitals
+
+        super().__init__(clean)
+        self.check_inputs()
 
     @classmethod
     def create_from_dictionaries(
-        cls, resident_prefs, hospital_prefs, capacities
+        cls, resident_prefs, hospital_prefs, capacities, clean=False
     ):
         """ Create an instance of :code:`HospitalResident` from two preference
-        dictionaries and capacities. """
+        dictionaries and capacities. If :code:`clean=True` then remove players
+        from the game and/or player preferences if they do not satisfy the
+        conditions of the game. """
 
         residents, hospitals = _make_players(
             resident_prefs, hospital_prefs, capacities
         )
-        game = cls(residents, hospitals)
+        game = cls(residents, hospitals, clean)
 
         return game
 
@@ -77,11 +93,46 @@ class HospitalResident(BaseGame):
     def check_validity(self):
         """ Check whether the current matching is valid. """
 
-        self._check_resident_matching()
-        self._check_hospital_capacity()
-        self._check_hospital_matching()
+        unacceptable_issues = self._check_for_unacceptable_matches(
+            "residents"
+        ) + self._check_for_unacceptable_matches("hospitals")
+
+        oversubscribed_issues = self._check_for_oversubscribed_players(
+            "hospitals"
+        )
+
+        if unacceptable_issues or oversubscribed_issues:
+            raise MatchingError(
+                unacceptable_matches=unacceptable_issues,
+                oversubscribed_hospitals=oversubscribed_issues,
+            )
 
         return True
+
+    def _check_for_unacceptable_matches(self, party):
+        """ Check that no player in `party` is matched to an unacceptable
+        player. """
+
+        issues = []
+        for player in vars(self)[party]:
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=True)
+            if isinstance(issue, list):
+                issues.extend(issue)
+            elif isinstance(issue, str):
+                issues.append(issue)
+
+        return issues
+
+    def _check_for_oversubscribed_players(self, party):
+        """ Check that no player in `party` is oversubscribed. """
+
+        issues = []
+        for player in vars(self)[party]:
+            issue = player.check_if_oversubscribed()
+            if issue:
+                issues.append(issue)
+
+        return issues
 
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
@@ -100,133 +151,75 @@ class HospitalResident(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def _check_resident_matching(self):
-        """ Check that no resident is matched to an unacceptable hospital. """
+    def check_inputs(self):
+        """ Give out warnings if any of the conditions of the game have been
+        broken. If the :code:`clean` attribute is :code:`True`, then remove any
+        such situations from the game. """
 
-        errors = []
-        for resident in self.residents:
-            if (
-                resident.matching is not None
-                and resident.matching not in resident.prefs
-            ):
-                errors.append(
-                    ValueError(
-                        f"{resident} is matched to {resident.matching} but "
-                        "they do not appear in their preference list: "
-                        f"{resident.prefs}."
-                    )
-                )
+        self._check_inputs_player_prefs_unique("residents")
+        self._check_inputs_player_prefs_unique("hospitals")
 
-        if errors:
-            raise Exception(*errors)
+        self._check_inputs_player_prefs_all_in_party("residents", "hospitals")
+        self._check_inputs_player_prefs_all_in_party("hospitals", "residents")
 
-        return True
+        self._check_inputs_player_prefs_all_reciprocated("hospitals")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "hospitals", "residents"
+        )
 
-    def _check_hospital_capacity(self):
-        """ Check that no hospital is over-subscribed. """
+        self._check_inputs_player_prefs_nonempty("residents", "hospitals")
+        self._check_inputs_player_prefs_nonempty("hospitals", "residents")
 
-        errors = []
-        for hospital in self.hospitals:
-            if len(hospital.matching) > hospital.capacity:
-                errors.append(
-                    ValueError(
-                        f"{hospital} is matched to {hospital.matching} which "
-                        f"is over their capacity of {hospital.capacity}."
-                    )
-                )
+        self._check_inputs_player_capacity("hospitals", "residents")
 
-        if errors:
-            raise Exception(*errors)
+    def _check_inputs_player_prefs_all_reciprocated(self, party):
+        """ Make sure that each player in :code:`party` has ranked only those
+        players that have ranked it. """
 
-        return True
+        for player in vars(self)[party]:
 
-    def _check_hospital_matching(self):
-        """ Check that no hospital is matched to an unacceptable resident. """
-
-        errors = []
-        for hospital in self.hospitals:
-            for resident in hospital.matching:
-                if resident not in hospital.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{hospital} has {resident} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{hospital.prefs}."
+            for other in player.prefs:
+                if player not in other.prefs:
+                    warnings.warn(
+                        PreferencesChangedWarning(
+                            f"{player} ranked {other} but they did not."
                         )
                     )
+                    if self.clean:
+                        player.forget(other)
 
-        if errors:
-            raise Exception(*errors)
+    def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
+        """ Make sure that each player in :code:`party` has ranked all those
+        players in :code:`other_party` that have ranked it. """
 
-        return True
+        players = vars(self)[party]
+        others = vars(self)[other_party]
+        for player in players:
 
-    def _check_inputs(self):
-        """ Raise an error if any of the conditions of the game have been
-        broken. """
-
-        self._check_resident_prefs()
-        self._check_hospital_prefs()
-
-    def _check_resident_prefs(self):
-        """ Make sure that the residents' preferences are all subsets of the
-        available hospital names. Otherwise, raise an error. """
-
-        errors = []
-        for resident in self.residents:
-            if not set(resident.prefs).issubset(set(self.hospitals)):
-                errors.append(
-                    ValueError(
-                        f"{resident} has ranked a non-hospital: "
-                        f"{set(resident.prefs)} != {set(self.hospitals)}"
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_hospital_prefs(self):
-        """ Make sure that every hospital ranks all and only those residents
-        that have ranked it. Otherwise, raise an error. """
-
-        errors = []
-        for hospital in self.hospitals:
-            residents_that_ranked = [
-                res for res in self.residents if hospital in res.prefs
+            others_that_ranked = [
+                other for other in others if player in other.prefs
             ]
-            if set(hospital.prefs) != set(residents_that_ranked):
-                errors.append(
-                    ValueError(
-                        f"{hospital} has not ranked all the residents that "
-                        f"ranked it: {set(hospital.prefs)} != "
-                        f"{set(residents_that_ranked)}."
+            for other in others_that_ranked:
+                if other not in player.prefs:
+                    warnings.warn(
+                        PreferencesChangedWarning(
+                            f"{other} ranked {player} but they did not."
+                        )
                     )
-                )
+                    if self.clean:
+                        other.forget(player)
 
-        if errors:
-            raise Exception(*errors)
+    def _check_inputs_player_capacity(self, party, other_party):
+        """ Check that each player in :code:`party` has a capacity of at least
+        one. If the :code:`clean` attribute is :code:`True`, remove any hospital
+        that does not have such a capacity from the game. """
 
-        return True
+        for player in vars(self)[party]:
+            if player.capacity < 1:
+                warnings.warn(PlayerExcludedWarning(player))
 
-    def _check_init_hospital_capacities(self):
-        """ Check that each hospital has sufficient spaces for their
-        projects. """
-
-        errors = []
-        for hospital in self.hospitals:
-            if hospital.capacity < 1:
-                errors.append(
-                    ValueError(
-                        f"{hospital} does not have a valid capacity: "
-                        f"{hospital.capacity}"
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
+                if self.clean:
+                    self._remove_player(player, party, other_party)
 
 
 def _check_mutual_preference(resident, hospital):

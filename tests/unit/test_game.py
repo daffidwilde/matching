@@ -1,8 +1,12 @@
 """ Tests for the BaseGame class. """
+import warnings
 
 import pytest
+from hypothesis import given
+from hypothesis.strategies import booleans, lists, text
 
-from matching import BaseGame
+from matching import BaseGame, Player
+from matching.exceptions import PreferencesChangedWarning
 
 
 class DummyGame(BaseGame):
@@ -24,6 +28,32 @@ def test_init():
     assert isinstance(match, BaseGame)
     assert match.matching is None
     assert match.blocking_pairs is None
+
+
+@given(
+    name=text(),
+    other_names=lists(text(), min_size=1, unique=True),
+    clean=booleans(),
+)
+def test_check_inputs_player_prefs_unique(name, other_names, clean):
+    """ Test that a game can verify its players have unique preferences. """
+
+    player = Player(name)
+    others = [Player(other) for other in other_names]
+    player.set_prefs(others + others[:1])
+
+    game = DummyGame(clean)
+    game.players = [player]
+
+    with warnings.catch_warnings(record=True) as w:
+        game._check_inputs_player_prefs_unique("players")
+
+        message = w[-1].message
+        assert isinstance(message, PreferencesChangedWarning)
+        assert str(message).startswith(name)
+        assert others[0].name in str(message)
+        if clean:
+            assert player.pref_names == other_names
 
 
 def test_no_solve():

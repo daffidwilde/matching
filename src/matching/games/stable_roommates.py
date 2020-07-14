@@ -3,8 +3,7 @@
 import copy
 
 from matching import BaseGame, Matching, Player
-
-from .util import delete_pair, match_pair
+from matching.exceptions import MatchingError
 
 
 class StableRoommates(BaseGame):
@@ -28,7 +27,7 @@ class StableRoommates(BaseGame):
         self.players = players
 
         super().__init__()
-        self._check_inputs()
+        self.check_inputs()
 
     @classmethod
     def create_from_dictionary(cls, player_prefs):
@@ -45,6 +44,21 @@ class StableRoommates(BaseGame):
 
         self.matching = Matching(stable_roommates(self.players))
         return self.matching
+
+    def check_validity(self):
+        """ Check whether the current matching is valid. Raise `MatchingError`
+        detailing the issues if not. """
+
+        issues = []
+        for player in self.players:
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=False)
+            if issue:
+                issues.append(issue)
+
+        if issues:
+            raise MatchingError(unmatched_players=issues)
+
+        return True
 
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
@@ -69,20 +83,7 @@ class StableRoommates(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def check_validity(self):
-        """ Check whether the current matching is valid. """
-
-        errors = []
-        matching = self.matching
-        for player in self.players:
-            if player.matching is None:
-                errors.append(ValueError(f"{player} is unmatched."))
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_inputs(self):
+    def check_inputs(self):
         """ Check that all players have ranked all other players. """
 
         for player in self.players:
@@ -90,7 +91,7 @@ class StableRoommates(BaseGame):
             if set(player.prefs) != others:
                 raise ValueError(
                     "Every player must rank all other players. "
-                    f"{player}: {player.prefs} not permutation of {others}"
+                    f"{player}: {player.prefs} is not a permutation of {others}"
                 )
 
         return True

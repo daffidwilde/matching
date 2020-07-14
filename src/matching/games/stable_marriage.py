@@ -3,6 +3,7 @@
 import copy
 
 from matching import BaseGame, Matching, Player
+from matching.exceptions import MatchingError
 
 from .util import delete_pair, match_pair
 
@@ -37,7 +38,7 @@ class StableMarriage(BaseGame):
         self.reviewers = reviewers
 
         super().__init__()
-        self._check_inputs()
+        self.check_inputs()
 
     @classmethod
     def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
@@ -57,6 +58,22 @@ class StableMarriage(BaseGame):
         )
         return self.matching
 
+    def check_validity(self):
+        """ Check whether the current matching is valid. """
+
+        unmatched_issues = self._check_for_unmatched_players()
+        not_in_matching_issues = self._check_for_players_not_in_matching()
+        inconsistency_issues = self._check_for_inconsistent_matches()
+
+        if unmatched_issues or not_in_matching_issues or inconsistency_issues:
+            raise MatchingError(
+                unmatched_players=unmatched_issues,
+                players_not_in_matching=not_in_matching_issues,
+                inconsistent_matches=inconsistency_issues,
+            )
+
+        return True
+
     def check_stability(self):
         """ Check for the existence of any blocking pairs in the current
         matching, thus determining the stability of the matching. """
@@ -72,62 +89,46 @@ class StableMarriage(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def check_validity(self):
-        """ Check whether the current matching is valid. """
-
-        self._check_all_matched()
-        self._check_matching_consistent()
-        return True
-
-    def _check_all_matched(self):
+    def _check_for_unmatched_players(self):
         """ Check everyone has a match. """
 
-        errors = []
+        issues = []
         for player in self.suitors + self.reviewers:
-            if player.matching is None:
-                errors.append(ValueError(f"{player} is unmatched."))
-            if player not in list(self.matching.keys()) + list(
-                self.matching.values()
-            ):
-                errors.append(
-                    ValueError(f"{player} does not appear in matching.")
+            issue = player.check_if_match_is_unacceptable(unmatched_okay=False)
+            if issue:
+                issues.append(issue)
+
+        return issues
+
+    def _check_for_players_not_in_matching(self):
+        """ Check that everyone appears in the matching. """
+
+        players_in_matching = set(self.matching.keys()) | set(
+            self.matching.values()
+        )
+
+        issues = []
+        for player in self.suitors + self.reviewers:
+            if player not in players_in_matching:
+                issues.append(f"{player} does not appear in matching.")
+
+        return issues
+
+    def _check_for_inconsistent_matches(self):
+        """ Check that the game matching is consistent with those of the
+        players. """
+
+        issues = []
+        for suitor, reviewer in self.matching.items():
+            if suitor.matching != reviewer:
+                issues.append(
+                    f"{suitor} is matched to {suitor.matching} but the "
+                    f"matching says they should be matched to {reviewer}."
                 )
 
-        if errors:
-            raise Exception(*errors)
+        return issues
 
-        return True
-
-    def _check_matching_consistent(self):
-        """ Check that the game matching is consistent with the players. """
-
-        errors = []
-        matching = self.matching
-        for suitor in self.suitors:
-            if suitor.matching != matching[suitor]:
-                errors.append(
-                    ValueError(
-                        f"{suitor} is matched to {suitor.matching} but matching"
-                        f" says {matching[suitor]}."
-                    )
-                )
-
-        for reviewer in self.reviewers:
-            suitor = [s for s in matching if matching[s] == reviewer][0]
-            if reviewer.matching != suitor:
-                errors.append(
-                    ValueError(
-                        f"{reviewer} is matched to {reviewer.matching} but "
-                        f"matching says {suitor}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_inputs(self):
+    def check_inputs(self):
         """ Raise an error if any of the conditions of the game have been
         broken. """
 

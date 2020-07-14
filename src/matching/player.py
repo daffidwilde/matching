@@ -19,6 +19,8 @@ class Player:
         ``set_prefs`` method.
     matching : Player or None
         The current match of the player. ``None`` if not currently matched.
+    _original_prefs : list of Player
+        The original set of player preferences.
     """
 
     def __init__(self, name):
@@ -27,16 +29,29 @@ class Player:
         self.prefs = None
         self.pref_names = None
         self.matching = None
+        self._original_prefs = None
 
     def __repr__(self):
 
         return str(self.name)
+
+    def unmatched_message(self):
+
+        return f"{self} is unmatched."
+
+    def not_in_preferences_message(self, other):
+
+        return (
+            f"{self} is matched to {other} but they do not appear in their "
+            f"preference list: {self.prefs}."
+        )
 
     def set_prefs(self, players):
         """ Set the player's preferences to be a list of players. """
 
         self.prefs = players
         self.pref_names = [player.name for player in players]
+        self._original_prefs = players[:]
 
     def get_favourite(self):
         """ Get the player's favourite player. """
@@ -71,5 +86,17 @@ class Player:
         """ Determines whether the player prefers a player over some other
         player. """
 
-        prefs = self.pref_names
-        return prefs.index(player.name) < prefs.index(other.name)
+        prefs = self._original_prefs
+        return prefs.index(player) < prefs.index(other)
+
+    def check_if_match_is_unacceptable(self, unmatched_okay=False):
+        """ Check the acceptability of the current match, with the stipulation
+        that being unmatched is okay (or not). """
+
+        other = self.matching
+
+        if other is None and unmatched_okay is False:
+            return self.unmatched_message()
+
+        elif other is not None and other not in self.prefs:
+            return self.not_in_preferences_message(other)

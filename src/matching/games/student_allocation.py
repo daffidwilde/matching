@@ -1,26 +1,32 @@
 """ The SA solver and algorithm. """
-
 import copy
+import warnings
 
-from matching import BaseGame, Matching
+from matching import Matching
 from matching import Player as Student
+from matching.exceptions import (
+    CapacityChangedWarning,
+    MatchingError,
+    PreferencesChangedWarning,
+)
+from matching.games import HospitalResident
 from matching.players import Project, Supervisor
 
 from .util import delete_pair, match_pair
 
 
-class StudentAllocation(BaseGame):
+class StudentAllocation(HospitalResident):
     """ A class for solving instances of the student-allocation problem (SA)
     using an adapted Gale-Shapley algorithm.
 
     In this case, a blocking pair is defined as any student-project pair that
     satisfies **all** of the following:
-    
+
     1. The student has a preference of the project.
     2. Either the student is unmatched, or they prefer the project to their
        current project.
-    3. At least one of the following: 
-    
+    3. At least one of the following:
+
        - The project or its supervisor is under-subscribed.
        - The project is under-subscribed and the supervisor is at capacity, and
          the student is matched to a project offered by the supervisor or the
@@ -40,6 +46,9 @@ class StudentAllocation(BaseGame):
         The supervisors in the game. Each supervisor oversees a unique subset
         of ``projects`` and ranks all of those students that have ranked at
         least one of its projects.
+    clean : bool
+        An indicator as to whether the players passed to the game should be
+        cleaned in a reductive fashion. Defaults to :code:`False`.
 
     Attributes
     ----------
@@ -53,7 +62,7 @@ class StudentAllocation(BaseGame):
         pairs.
     """
 
-    def __init__(self, students, projects, supervisors):
+    def __init__(self, students, projects, supervisors, clean=False):
 
         students, projects, supervisors = copy.deepcopy(
             [students, projects, supervisors]
@@ -62,8 +71,29 @@ class StudentAllocation(BaseGame):
         self.projects = projects
         self.supervisors = supervisors
 
-        super().__init__()
-        self._check_inputs()
+        self._all_students = students
+        self._all_projects = projects
+        self._all_supervisors = supervisors
+
+        self.clean = clean
+
+        super().__init__(students, projects, clean)
+        self.check_inputs()
+
+    def _remove_player(self, player, player_party, other_party=None):
+        """ Remove players from the game normally unless the player is a
+        supervisor. """
+
+        if player_party == "supervisors":
+            self.supervisors.remove(player)
+            for project in player.projects:
+                try:
+                    super()._remove_player(project, "projects", "students")
+                except ValueError:
+                    pass
+
+        else:
+            super()._remove_player(player, player_party, other_party)
 
     @classmethod
     def create_from_dictionaries(
@@ -73,6 +103,7 @@ class StudentAllocation(BaseGame):
         project_supervisors,
         project_capacities,
         supervisor_capacities,
+        clean=False,
     ):
         """ Create an instance of SA from two preference dictionaries,
         affiliations and capacities. """
@@ -84,7 +115,7 @@ class StudentAllocation(BaseGame):
             project_capacities,
             supervisor_capacities,
         )
-        game = cls(students, projects, supervisors)
+        game = cls(students, projects, supervisors, clean)
 
         return game
 
@@ -100,13 +131,24 @@ class StudentAllocation(BaseGame):
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. """
+        """ Check whether the current matching is valid. Raise a `MatchingError`
+        detailing the issues if not. """
 
-        self._check_student_matching()
-        self._check_project_capacity()
-        self._check_project_matching()
-        self._check_supervisor_capacity()
-        self._check_supervisor_matching()
+        unacceptable_issues = (
+            self._check_for_unacceptable_matches("students")
+            + self._check_for_unacceptable_matches("projects")
+            + self._check_for_unacceptable_matches("supervisors")
+        )
+
+        oversubscribed_issues = self._check_for_oversubscribed_players(
+            "projects"
+        ) + self._check_for_oversubscribed_players("supervisors")
+
+        if unacceptable_issues or oversubscribed_issues:
+            raise MatchingError(
+                unacceptable_matches=unacceptable_issues,
+                oversubscribed_players=oversubscribed_issues,
+            )
 
         return True
 
@@ -127,239 +169,137 @@ class StudentAllocation(BaseGame):
         self.blocking_pairs = blocking_pairs
         return not any(blocking_pairs)
 
-    def _check_student_matching(self):
-        """ Check that no student is matched to an unacceptable project. """
+    def check_inputs(self):
+        """ Give out warnings if any of the conditions of the game have been
+        broken. If the :code:`clean` attribute is :code:`True`, then remove any
+        such situations from the game. """
 
-        errors = []
-        for student in self.students:
-            if (
-                student.matching is not None
-                and student.matching not in student.prefs
-            ):
-                errors.append(
-                    ValueError(
-                        f"{student} is matched to {student.matching} but "
-                        "they do not appear in their preference list: "
-                        f"{student.prefs}."
-                    )
-                )
+        self._check_inputs_player_prefs_unique("students")
+        self._check_inputs_player_prefs_unique("projects")
+        self._check_inputs_player_prefs_unique("supervisors")
 
-        if errors:
-            raise Exception(*errors)
+        self._check_inputs_player_prefs_all_in_party("students", "projects")
+        self._check_inputs_player_prefs_nonempty("students", "projects")
 
-        return True
+        self._check_inputs_player_prefs_all_in_party("supervisors", "students")
+        self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
-    def _check_project_capacity(self):
-        """ Check that no projects are over-subscribed. """
+        self._check_inputs_player_prefs_all_reciprocated("projects")
+        self._check_inputs_player_reciprocated_all_prefs("projects", "students")
+        self._check_inputs_player_prefs_nonempty("projects", "students")
 
-        errors = []
-        for project in self.projects:
-            if len(project.matching) > project.capacity:
-                errors.append(
-                    ValueError(
-                        f"{project} is matched to {project.matching} which "
-                        f"if over their capacity of {project.capacity}."
-                    )
-                )
+        self._check_inputs_player_prefs_all_reciprocated("supervisors")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "supervisors", "students"
+        )
+        self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
-        if errors:
-            raise Exception(*errors)
+        self._check_inputs_player_capacity("projects", "students")
+        self._check_inputs_player_capacity("supervisors", "students")
+        self._check_inputs_supervisor_capacities_sufficient()
+        self._check_inputs_supervisor_capacities_necessary()
 
-        return True
+    def _check_inputs_player_prefs_all_reciprocated(self, party):
+        """ Check that each player in :code:`party` has ranked only those
+        players that have ranked it, directly or via a project. """
 
-    def _check_project_matching(self):
-        """ Check that no project is matched to an unacceptable student. """
-
-        errors = []
-        for project in self.projects:
-            for student in project.matching:
-                if student not in project.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{project} has {student} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{project.prefs}."
+        if party == "supervisors":
+            for supervisor in self.supervisors:
+                for student in supervisor.prefs:
+                    student_prefs_supervisors = {
+                        p.supervisor for p in student.prefs
+                    }
+                    if supervisor not in student_prefs_supervisors:
+                        warnings.warn(
+                            PreferencesChangedWarning(
+                                f"{supervisor} ranked {student} but they did "
+                                "not rank any of their projects."
+                            )
                         )
-                    )
 
-        if errors:
-            raise Exception(*errors)
+                        if self.clean:
+                            for project in supervisor.projects:
+                                project.forget(student)
 
-        return True
+        else:
+            super()._check_inputs_player_prefs_all_reciprocated(party)
 
-    def _check_supervisor_capacity(self):
-        """ Check that no supervisor is over-subscribed. """
+    def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
+        """ Check that each player in :code:`party` has ranked all those players
+        in :code:`other_party` that ranked it, directly or via a project. """
 
-        errors = []
+        if party == "supervisors":
+            for supervisor in self.supervisors:
 
-        for supervisor in self.supervisors:
-            if len(supervisor.matching) > supervisor.capacity:
-                errors.append(
-                    ValueError(
-                        f"{supervisor} is matched to {supervisor.matching} "
-                        "which if over their capacity of "
-                        f"{supervisor.capacity}."
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_supervisor_matching(self):
-        """ Check that no supervisor is matched to an unacceptable student.
-        """
-
-        errors = []
-        for supervisor in self.supervisors:
-            for student in supervisor.matching:
-                if student not in supervisor.prefs:
-                    errors.append(
-                        ValueError(
-                            f"{supervisor} has {student} in their matching but "
-                            "they do not appear in their preference list: "
-                            f"{supervisor.prefs}."
-                        )
-                    )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_inputs(self):
-        """ Check that the players in the game have valid preferences, and in
-        the case of projects and supervisor: capacities. """
-
-        self._check_student_prefs()
-        self._check_project_prefs()
-        self._check_supervisor_prefs()
-
-        self._check_init_project_capacities()
-        self._check_init_supervisor_capacities()
-
-    def _check_student_prefs(self):
-        """ Make sure that each student's preference list is a subset of the
-        available projects. Otherwise, raise an error. """
-
-        errors = []
-        for student in self.students:
-            if not set(student.prefs).issubset(set(self.projects)):
-                errors.append(
-                    ValueError(
-                        f"{student} has ranked a non-project: "
-                        f"{set(student.prefs)} != {set(self.projects)}"
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_project_prefs(self):
-        """ Make sure that each project ranks all and only those students that
-        ranked it. """
-
-        errors = []
-        for project in self.projects:
-            students_that_ranked = [
-                student for student in self.students if project in student.prefs
-            ]
-            if set(project.prefs) != set(students_that_ranked):
-                errors.append(
-                    ValueError(
-                        f"{project} has not ranked the students that ranked "
-                        f"it: {set(project.prefs)} != "
-                        f"{set(students_that_ranked)}"
-                    )
-                )
-
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_supervisor_prefs(self):
-        """ Make sure that each supervisor ranks all and only those students
-        that ranked at least one project that they offer. """
-
-        errors = []
-        for supervisor in self.supervisors:
-            students_that_ranked = [
-                student
-                for student in self.students
-                if any(
-                    [
+                students_that_ranked = [
+                    student
+                    for student in self.students
+                    if any(
                         project in student.prefs
                         for project in supervisor.projects
-                    ]
-                )
-            ]
-            if set(supervisor.prefs) != set(students_that_ranked):
-                errors.append(
-                    ValueError(
-                        f"{supervisor} has not ranked the students that ranked "
-                        "at least one of its projects: "
-                        f"{set(supervisor.prefs)} != "
-                        f"{set(students_that_ranked)}"
                     )
-                )
+                ]
 
-        if errors:
-            raise Exception(*errors)
+                for student in students_that_ranked:
+                    if student not in supervisor.prefs:
+                        warnings.warn(
+                            PreferencesChangedWarning(
+                                f"{student} ranked a project provided by "
+                                f"{supervisor} but they did not."
+                            )
+                        )
 
-        return True
+                        if self.clean:
+                            for project in set(supervisor.projects) & set(
+                                student.prefs
+                            ):
+                                student.forget(project)
 
-    def _check_init_project_capacities(self):
-        """ Check that each project has at least one space but no more than
-        their supervisor. """
+        else:
+            super()._check_inputs_player_reciprocated_all_prefs(
+                party, other_party
+            )
 
-        errors = []
-        for project in self.projects:
-            if (
-                project.capacity < 1
-                or project.capacity > project.supervisor.capacity
-            ):
-                errors.append(
-                    ValueError(
-                        f"{project} does not have a valid capacity: "
-                        f"{project.capacity}"
-                    )
-                )
+    def _check_inputs_supervisor_capacities_sufficient(self):
+        """ Check that each supervisor has the capacity to support its largest
+        project(s). """
 
-        if errors:
-            raise Exception(*errors)
-
-        return True
-
-    def _check_init_supervisor_capacities(self):
-        """ Check that each supervisor has sufficient spaces for their
-        projects. """
-
-        errors = []
         for supervisor in self.supervisors:
-            project_capacities = [proj.capacity for proj in supervisor.projects]
-            if supervisor.capacity < max(project_capacities):
-                errors.append(
-                    ValueError(
-                        f"{supervisor} does not have enough space to provide "
-                        "for their largest project"
+
+            for project in supervisor.projects:
+                if project.capacity > supervisor.capacity:
+                    warnings.warn(
+                        CapacityChangedWarning(
+                            f"{project} has a capacity of {project.capacity} "
+                            "but its supervisor has a capacity of "
+                            f"{supervisor.capacity}."
+                        )
                     )
-                )
-            elif supervisor.capacity > sum(project_capacities):
-                errors.append(
-                    ValueError(
-                        f"{supervisor} can offer more spaces than their "
-                        "projects can provide"
+
+                    if self.clean:
+                        project.capacity = supervisor.capacity
+
+    def _check_inputs_supervisor_capacities_necessary(self):
+        """ Check that each supervisor has at most the necessary capacity for
+        all of their projects. """
+
+        for supervisor in self.supervisors:
+
+            total_project_capacity = sum(
+                p.capacity for p in supervisor.projects
+            )
+
+            if supervisor.capacity > total_project_capacity:
+                warnings.warn(
+                    CapacityChangedWarning(
+                        f"{supervisor} has a capacity of {supervisor.capacity} "
+                        "but their projects have a capacity of "
+                        f"{total_project_capacity}"
                     )
                 )
 
-        if errors:
-            raise Exception(*errors)
-
-        return True
+                if self.clean:
+                    supervisor.capacity = total_project_capacity
 
 
 def _check_student_unhappy(student, project):
