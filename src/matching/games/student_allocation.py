@@ -1,5 +1,4 @@
 """ The SA solver and algorithm. """
-
 import copy
 import warnings
 

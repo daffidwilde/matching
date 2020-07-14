@@ -1,9 +1,10 @@
 """ Tests for the Student Allocation algorithm. """
-
 import numpy as np
 
 from matching.algorithms.student_allocation import (
-    student_optimal, student_allocation, supervisor_optimal
+    student_allocation,
+    student_optimal,
+    supervisor_optimal,
 )
 
 from .params import STUDENT_ALLOCATION, make_players

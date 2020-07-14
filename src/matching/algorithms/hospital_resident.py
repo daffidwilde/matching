@@ -142,5 +142,3 @@ def hospital_optimal(hospitals):
                 free_hospitals.remove(successor)
 
     return {r: r.matching for r in hospitals}
-
-

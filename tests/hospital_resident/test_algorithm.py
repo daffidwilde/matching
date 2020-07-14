@@ -1,9 +1,10 @@
 """ Tests for the Hospital-Resident algorithm. """
-
 import numpy as np
 
 from matching.algorithms.hospital_resident import (
-    hospital_optimal, hospital_resident, resident_optimal
+    hospital_optimal,
+    hospital_resident,
+    resident_optimal,
 )
 
 from .params import HOSPITAL_RESIDENT, make_players
@@ -68,9 +69,7 @@ def test_hospital_optimal(
     indeed hospital-optimal. """
 
     np.random.seed(seed)
-    _, hospitals = make_players(
-        resident_names, hospital_names, capacities
-    )
+    _, hospitals = make_players(resident_names, hospital_names, capacities)
     matching = hospital_optimal(hospitals)
 
     assert set(hospitals) == set(matching.keys())

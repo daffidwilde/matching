@@ -1,5 +1,4 @@
 """ The HR game class and supporting functions. """
-
 import copy
 import warnings
 
