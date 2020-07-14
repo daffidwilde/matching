@@ -1,5 +1,5 @@
 """ Integration and unit tests for the SR algorithm. """
-from matching.games.stable_roommates import (
+from matching.algorithms.stable_roommates import (
     first_phase,
     locate_all_or_nothing_cycle,
     second_phase,
