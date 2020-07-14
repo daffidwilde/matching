@@ -1,10 +1,10 @@
-""" Unit tests for the solvers.util functions. """
+""" Unit tests for the `matching.algorithms.util` functions. """
 
 from hypothesis import given
 from hypothesis.strategies import lists, text
 
 from matching import Player
-from matching.games.util import delete_pair, match_pair
+from matching.algorithms.util import delete_pair, match_pair
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))

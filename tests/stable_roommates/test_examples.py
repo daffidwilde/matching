@@ -1,7 +1,7 @@
 """ A collection of example tests. """
 
 from matching import Player
-from matching.games import stable_roommates
+from matching.algorithms import stable_roommates
 
 
 def test_original_paper():
