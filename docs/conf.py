@@ -197,14 +197,15 @@ autosummary_generate = [
 
 nbsphinx_prolog = """
 
-{% set docname = 'docs/' + env.doc2path(env.docname, base=None) %}
+{% set docname = "docs/" + env.doc2path(env.docname, base=None) %}
+{% set baseurl = "https://github.com/daffidwilde/matching/blob/main/" %}
 
 .. raw:: html
 
     <div class="admonition note">
       <p>This page was generated from
         <a class="reference external"
-        href="https://github.com/daffidwilde/matching/blob/master/{{ docname|e }}">{{ docname|e }}</a>.
+        href="{{ baseurl }}{{ docname|e }}">{{ docname|e }}</a>.
       </p>
     </div>
 
