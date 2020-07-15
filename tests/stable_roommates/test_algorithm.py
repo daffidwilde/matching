@@ -19,7 +19,7 @@ def test_first_phase(player_names, seed):
 
     for player in players:
         assert player.matching is None
-        assert {p.name for p in player.prefs}.issubset(player.pref_names)
+        assert {p.name for p in player.prefs}.issubset(player._pref_names)
 
 
 @STABLE_ROOMMATES
