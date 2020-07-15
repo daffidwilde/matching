@@ -2,7 +2,7 @@
 
 import copy
 
-from matching import BaseGame, Matching, Player
+from matching import BaseGame, SingleMatching, Player
 from matching.algorithms import stable_roommates
 from matching.exceptions import MatchingError
 
@@ -43,7 +43,7 @@ class StableRoommates(BaseGame):
         """ Solve the instance of SR using Irving's algorithm. Return the
         matching. """
 
-        self.matching = Matching(stable_roommates(self.players))
+        self.matching = SingleMatching(stable_roommates(self.players))
         return self.matching
 
     def check_validity(self):
