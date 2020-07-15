@@ -15,7 +15,7 @@ from matching.exceptions import (
 from matching.games import HospitalResident
 from matching.players import Hospital
 
-from .util import connections, players, games
+from .util import connections, games, players
 
 
 @given(players=players(), clean=booleans())

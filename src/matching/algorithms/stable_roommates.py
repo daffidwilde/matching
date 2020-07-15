@@ -91,6 +91,7 @@ def locate_all_or_nothing_cycle(player):
         lasts.append(their_worst)
 
         player = their_worst
+
         if lasts.count(player) > 1:
             break
 

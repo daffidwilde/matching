@@ -1,7 +1,6 @@
 """ Tests for the BasePlayer class. """
-
 from hypothesis import given
-from hypothesis.strategies import text, integers
+from hypothesis.strategies import text
 
 from matching import BasePlayer
 
@@ -95,7 +94,7 @@ def test_forget(player_others):
 
     for i, other in enumerate(others[:-1]):
         player.forget(other)
-        assert player.prefs == others[i + 1:]
+        assert player.prefs == others[i + 1 :]
 
     player.forget(others[-1])
     assert player.prefs == []

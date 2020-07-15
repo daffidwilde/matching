@@ -1,8 +1,8 @@
 """ Useful functions for base class tests. """
-
-from hypothesis.strategies import composite, text, integers, lists, sampled_from
+from hypothesis.strategies import composite, integers, text
 
 from matching import BasePlayer
+
 
 @composite
 def player_others(

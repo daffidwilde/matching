@@ -1,19 +1,12 @@
 """ Tests for the BaseMatching class. """
-
 import pytest
 from hypothesis import given
 from hypothesis.strategies import dictionaries, text
 
 from matching import BaseMatching
 
-
 DICTIONARIES = given(
-    dictionary=dictionaries(
-        keys=text(),
-        values=text(),
-        min_size=1,
-        max_size=3,
-    )
+    dictionary=dictionaries(keys=text(), values=text(), min_size=1, max_size=3,)
 )
 
 
