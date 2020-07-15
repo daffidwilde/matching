@@ -17,10 +17,10 @@ def test_init(name, capacity):
     assert supervisor.name == name
     assert supervisor.capacity == capacity
     assert supervisor.projects == []
-    assert supervisor.prefs is None
-    assert supervisor.pref_names is None
-    assert supervisor._original_prefs is None
+    assert supervisor.prefs == []
     assert supervisor.matching == []
+    assert supervisor._pref_names == []
+    assert supervisor._original_prefs is None
 
 
 @given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
@@ -33,15 +33,16 @@ def test_set_prefs(name, capacity, pref_names):
     students = []
     for sname in pref_names:
         student = Student(sname)
-        student.prefs = projects
+        student.set_prefs(projects)
         students.append(student)
 
     supervisor.projects = projects
     supervisor.set_prefs(students)
     assert supervisor.prefs == students
-    assert supervisor.pref_names == pref_names
+    assert supervisor._pref_names == pref_names
     assert supervisor._original_prefs == students
+
     for project in supervisor.projects:
         assert project.prefs == students
-        assert project.pref_names == pref_names
+        assert project._pref_names == pref_names
         assert project._original_prefs == students

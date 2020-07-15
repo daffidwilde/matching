@@ -18,11 +18,11 @@ def test_init(name, capacity):
 
     assert hospital.name == name
     assert hospital.capacity == capacity
-    assert hospital._original_capacity == capacity
-    assert hospital.prefs is None
-    assert hospital.pref_names is None
-    assert hospital._original_prefs is None
+    assert hospital.prefs == []
     assert hospital.matching == []
+    assert hospital._pref_names == []
+    assert hospital._original_prefs is None
+    assert hospital._original_capacity == capacity
 
 
 @given(name=text(), capacity=capacity, pref_names=pref_names)

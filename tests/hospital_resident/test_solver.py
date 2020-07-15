@@ -3,7 +3,7 @@ import warnings
 
 import pytest
 
-from matching import Matching
+from matching import MultipleMatching
 from matching import Player as Resident
 from matching.exceptions import (
     MatchingError,
@@ -27,11 +27,11 @@ def test_init(resident_names, hospital_names, capacities, seed, clean):
 
     for resident, game_resident in zip(residents, game.residents):
         assert resident.name == game_resident.name
-        assert resident.pref_names == game_resident.pref_names
+        assert resident._pref_names == game_resident._pref_names
 
     for hospital, game_hospital in zip(hospitals, game.hospitals):
         assert hospital.name == game_hospital.name
-        assert hospital.pref_names == game_hospital.pref_names
+        assert hospital._pref_names == game_hospital._pref_names
         assert hospital.capacity == game_hospital.capacity
 
     assert all([resident.matching is None for resident in game.residents])
@@ -57,11 +57,11 @@ def test_create_from_dictionaries(
     )
 
     for resident in game.residents:
-        assert resident.pref_names == resident_prefs[resident.name]
+        assert resident._pref_names == resident_prefs[resident.name]
         assert resident.matching is None
 
     for hospital in game.hospitals:
-        assert hospital.pref_names == hospital_prefs[hospital.name]
+        assert hospital._pref_names == hospital_prefs[hospital.name]
         assert hospital.capacity == capacities_[hospital.name]
         assert hospital.matching == []
 
@@ -272,13 +272,13 @@ def test_solve(resident_names, hospital_names, capacities, seed, clean):
         )
 
         matching = game.solve(optimal)
-        assert isinstance(matching, Matching)
+        assert isinstance(matching, MultipleMatching)
 
         hospitals = sorted(hospitals, key=lambda h: h.name)
         matching_keys = sorted(matching.keys(), key=lambda k: k.name)
         for game_hospital, hospital in zip(matching_keys, hospitals):
             assert game_hospital.name == hospital.name
-            assert game_hospital.pref_names == hospital.pref_names
+            assert game_hospital._pref_names == hospital._pref_names
             assert game_hospital.capacity == hospital.capacity
 
         matched_residents = [

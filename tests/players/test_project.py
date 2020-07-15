@@ -16,10 +16,10 @@ def test_init(name, capacity):
     assert project.name == name
     assert project.capacity == capacity
     assert project.supervisor is None
-    assert project.prefs is None
-    assert project.pref_names is None
-    assert project._original_prefs is None
+    assert project.prefs == []
     assert project.matching == []
+    assert project._pref_names == []
+    assert project._original_prefs is None
 
 
 @given(name=text(), capacity=integers())
