@@ -6,39 +6,6 @@ from hypothesis.strategies import lists, text
 from matching import Player
 
 
-@given(name=text())
-def test_init(name):
-    """ Make an instance of Player and check their attributes are correct. """
-
-    player = Player(name)
-
-    assert player.name == name
-    assert player.prefs is None
-    assert player._original_prefs is None
-    assert player.matching is None
-
-
-@given(name=text())
-def test_repr(name):
-    """ Verify that a Player instance is represented by their name. """
-
-    player = Player(name)
-
-    assert repr(player) == name
-
-
-@given(name=text(), pref_names=lists(text(), min_size=1))
-def test_set_prefs(name, pref_names):
-    """ Verify a Player can set its preferences correctly. """
-
-    player = Player(name)
-    others = [Player(other) for other in pref_names]
-
-    player.set_prefs(others)
-    assert player.prefs == others
-    assert player._original_prefs == others
-
-
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_favourite(name, pref_names):
     """ Check the correct player is returned as the favourite of a player. """
@@ -75,23 +42,6 @@ def test_unmatch(name, pref_names):
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
-def test_forget(name, pref_names):
-    """ Test that a player can forget somebody. """
-
-    player = Player(name)
-    others = [Player(other) for other in pref_names]
-
-    player.set_prefs(others)
-    for i, other in enumerate(others[:-1]):
-        player.forget(other)
-        assert player.prefs == others[i + 1 :]
-
-    player.forget(others[-1])
-    assert player.prefs == []
-    assert player._original_prefs == others
-
-
-@given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_successors(name, pref_names):
     """ Test that the correct successors to another player in a player's
     preference list are found. """
@@ -106,19 +56,6 @@ def test_get_successors(name, pref_names):
         assert player.get_successors() == successors
     else:
         assert player.get_successors() == []
-
-
-@given(name=text(), pref_names=lists(text(), min_size=1, unique=True))
-def test_prefers(name, pref_names):
-    """ Test that a comparison of preference between two other players can be
-    found for a player. """
-
-    player = Player(name)
-    others = [Player(other) for other in pref_names]
-
-    player.set_prefs(others)
-    for i, other in enumerate(others[:-1]):
-        assert player.prefers(other, others[i + 1])
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1, unique=True))
