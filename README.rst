@@ -97,11 +97,11 @@ The ``Matching`` object
 +++++++++++++++++++++++
 
 This matching is not a standard Python dictionary, though it does largely look
-and behave like one. It is in fact an instance of the ``Matching`` class:
+and behave like one. It is in fact an instance of the ``SingleMatching`` class:
 
 >>> matching = game.matching
 >>> type(matching)
-<class 'matching.matching.Matching'>
+<class 'matching.matchings.SingleMatching'>
 
 This dictionary-like object is primarily useful as a teaching device that eases
 the process of manipulating a matching after a solution has been found. 
@@ -116,9 +116,9 @@ Despite passing dictionaries of strings here, the matching displays instances of
 >>> matching = game.matching
 >>> for suitor in matching:
 ...     print(type(suitor))
-<class 'matching.player.Player'>
-<class 'matching.player.Player'>
-<class 'matching.player.Player'>
+<class 'matching.players.player.Player'>
+<class 'matching.players.player.Player'>
+<class 'matching.players.player.Player'>
 
 This is because ``create_from_dictionaries`` creates instances of the
 appropriate player classes first and passes them to the game class. Using
