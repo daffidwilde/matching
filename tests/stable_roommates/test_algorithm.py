@@ -1,4 +1,6 @@
 """ Integration and unit tests for the SR algorithm. """
+from hypothesis import assume, given
+
 from matching.algorithms.stable_roommates import (
     first_phase,
     locate_all_or_nothing_cycle,
@@ -6,15 +8,14 @@ from matching.algorithms.stable_roommates import (
     stable_roommates,
 )
 
-from .params import STABLE_ROOMMATES, make_players
+from .util import players
 
 
-@STABLE_ROOMMATES
-def test_first_phase(player_names, seed):
+@given(players=players())
+def test_first_phase(players):
     """ Verify that the first phase of the algorithm produces a valid set of
     reduced preference players. """
 
-    players = make_players(player_names, seed)
     players = first_phase(players)
 
     for player in players:
@@ -22,12 +23,11 @@ def test_first_phase(player_names, seed):
         assert {p.name for p in player.prefs}.issubset(player._pref_names)
 
 
-@STABLE_ROOMMATES
-def test_locate_all_or_nothing_cycle(player_names, seed):
+@given(players=players())
+def test_locate_all_or_nothing_cycle(players):
     """ Verify that a cycle of (least-preferred, second-choice) players can be
     identified from a set of players. """
 
-    players = make_players(player_names, seed)
     player = players[-1]
     cycle = locate_all_or_nothing_cycle(player)
 
@@ -35,12 +35,11 @@ def test_locate_all_or_nothing_cycle(player_names, seed):
         assert second.prefs.index(last) == len(second.prefs) - 1
 
 
-@STABLE_ROOMMATES
-def test_second_phase(player_names, seed):
+@given(players=players())
+def test_second_phase(players):
     """ Verify that the second phase of the algorithm produces a valid set of
     players with appropriate matches. """
 
-    players = make_players(player_names, seed)
     try:
         players = second_phase(players)
 
@@ -50,14 +49,13 @@ def test_second_phase(player_names, seed):
             else:
                 assert player.matching is None
     except (IndexError, ValueError):
-        pass
+        assume(False)
 
 
-@STABLE_ROOMMATES
-def test_stable_roommates(player_names, seed):
+@given(players=players())
+def test_stable_roommates(players):
     """ Verify that the algorithm can terminate with a valid matching. """
 
-    players = make_players(player_names, seed)
     matching = stable_roommates(players)
 
     for player, other in matching.items():

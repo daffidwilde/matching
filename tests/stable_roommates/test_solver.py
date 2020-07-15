@@ -1,68 +1,62 @@
 """ Unit tests for the SR solver. """
 import pytest
+from hypothesis import given
 
-from matching import SingleMatching
+from matching import Player, SingleMatching
 from matching.exceptions import MatchingError
 from matching.games import StableRoommates
 
-from .params import STABLE_ROOMMATES, make_players, make_prefs
+from .util import connections, games, players
 
 
-@STABLE_ROOMMATES
-def test_init(player_names, seed):
-    """ Test that the StableRoommates solver takes a set of preformed players
-    correctly. """
+@given(players=players())
+def test_init(players):
+    """ Test that the StableRoommates solver has the correct attributes at
+    instantiation. """
 
-    players = make_players(player_names, seed)
     game = StableRoommates(players)
 
     for player, game_player in zip(players, game.players):
         assert player.name == game_player.name
         assert player._pref_names == game_player._pref_names
 
-    assert all([player.matching is None for player in game.players])
     assert game.matching is None
 
 
-@STABLE_ROOMMATES
-def test_create_from_dictionary(player_names, seed):
+@given(preferences=connections())
+def test_create_from_dictionary(preferences):
     """ Test that StableRoommates solver can take a preference dictionary
     correctly. """
 
-    player_prefs = make_prefs(player_names, seed)
-    game = StableRoommates.create_from_dictionary(player_prefs)
+    game = StableRoommates.create_from_dictionary(preferences)
 
     for player in game.players:
-        assert player_prefs[player.name] == player._pref_names
+        assert preferences[player.name] == player._pref_names
         assert player.matching is None
 
     assert game.matching is None
 
 
-@STABLE_ROOMMATES
-def test_check_inputs(player_names, seed):
+@given(players=players())
+def test_check_inputs(players):
     """ Test StableRoommates raises a ValueError when a player has not ranked
     all other players. """
 
-    players = make_players(player_names, seed)
     players[0].prefs = players[0].prefs[:-1]
 
     with pytest.raises(Exception):
         StableRoommates(players)
 
 
-@STABLE_ROOMMATES
-def test_solve(player_names, seed):
-    """ Test that StableRoommates can solve games correctly when passed players.
+@given(game=games())
+def test_solve(game):
+    """ Test that StableRoommates can solve games correctly.
     """
-
-    players = make_players(player_names, seed)
-    game = StableRoommates(players)
 
     matching = game.solve()
     assert isinstance(matching, SingleMatching)
 
-    players = sorted(players, key=lambda p: p.name)
+    players = sorted(game.players, key=lambda p: p.name)
     matching_keys = sorted(matching.keys(), key=lambda k: k.name)
 
     for game_player, player in zip(matching_keys, players):
@@ -73,13 +67,10 @@ def test_solve(player_names, seed):
         assert match is None or match in game.players
 
 
-@STABLE_ROOMMATES
-def test_check_validity(player_names, seed):
+@given(game=games())
+def test_check_validity(game):
     """ Test that StableRoommates can raise a ValueError if any players are left
     unmatched. """
-
-    players = make_players(player_names, seed)
-    game = StableRoommates(players)
 
     matching = game.solve()
     if None in matching.values():
@@ -93,8 +84,6 @@ def test_check_validity(player_names, seed):
 def test_stability():
     """ Test that StableRoommates can recognise whether a matching is stable.
     """
-
-    from matching import Player
 
     players = [Player("A"), Player("B"), Player("C"), Player("D")]
     a, b, c, d = players
