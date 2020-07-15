@@ -1,7 +1,6 @@
 """ A collection of dictionary-like objects for storing matchings. """
-
-from matching.players import Player
 from matching import BaseMatching
+from matching.players import Player
 
 
 class SingleMatching(BaseMatching):

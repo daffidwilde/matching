@@ -1,8 +1,7 @@
 """ The SM game class and supporting functions. """
-
 import copy
 
-from matching import BaseGame, SingleMatching, Player
+from matching import BaseGame, Player, SingleMatching
 from matching.algorithms import stable_marriage
 from matching.exceptions import MatchingError
 

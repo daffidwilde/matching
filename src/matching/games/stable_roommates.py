@@ -1,8 +1,7 @@
 """ The SR game class and supporting functions. """
-
 import copy
 
-from matching import BaseGame, SingleMatching, Player
+from matching import BaseGame, Player, SingleMatching
 from matching.algorithms import stable_roommates
 from matching.exceptions import MatchingError
 
