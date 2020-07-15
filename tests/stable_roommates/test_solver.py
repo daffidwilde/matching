@@ -1,7 +1,7 @@
 """ Unit tests for the SR solver. """
 import pytest
 
-from matching import Matching
+from matching import SingleMatching
 from matching.exceptions import MatchingError
 from matching.games import StableRoommates
 
@@ -18,7 +18,7 @@ def test_init(player_names, seed):
 
     for player, game_player in zip(players, game.players):
         assert player.name == game_player.name
-        assert player.pref_names == game_player.pref_names
+        assert player._pref_names == game_player._pref_names
 
     assert all([player.matching is None for player in game.players])
     assert game.matching is None
@@ -33,7 +33,7 @@ def test_create_from_dictionary(player_names, seed):
     game = StableRoommates.create_from_dictionary(player_prefs)
 
     for player in game.players:
-        assert player_prefs[player.name] == player.pref_names
+        assert player_prefs[player.name] == player._pref_names
         assert player.matching is None
 
     assert game.matching is None
@@ -60,14 +60,14 @@ def test_solve(player_names, seed):
     game = StableRoommates(players)
 
     matching = game.solve()
-    assert isinstance(matching, Matching)
+    assert isinstance(matching, SingleMatching)
 
     players = sorted(players, key=lambda p: p.name)
     matching_keys = sorted(matching.keys(), key=lambda k: k.name)
 
     for game_player, player in zip(matching_keys, players):
         assert game_player.name == player.name
-        assert game_player.pref_names == player.pref_names
+        assert game_player._pref_names == player._pref_names
 
     for match in matching.values():
         assert match is None or match in game.players
