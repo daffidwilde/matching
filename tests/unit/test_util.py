@@ -2,7 +2,6 @@
 
 from hypothesis import given
 from hypothesis.strategies import lists, text
-
 from matching import Player
 from matching.games.util import delete_pair, match_pair
 

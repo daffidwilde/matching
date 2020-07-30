@@ -2,7 +2,6 @@
 
 from hypothesis import given
 from hypothesis.strategies import integers, lists, text
-
 from matching import Player as Resident
 from matching.players import Hospital
 

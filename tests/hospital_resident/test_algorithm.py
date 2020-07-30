@@ -1,7 +1,6 @@
 """ Tests for the Hospital-Resident algorithm. """
 
 import numpy as np
-
 from matching.games import hospital_resident
 
 from .params import HOSPITAL_RESIDENT, make_players

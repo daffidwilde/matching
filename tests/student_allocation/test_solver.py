@@ -2,7 +2,6 @@
 import warnings
 
 import pytest
-
 from matching import Matching
 from matching import Player as Student
 from matching.exceptions import (

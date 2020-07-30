@@ -6,7 +6,6 @@ from collections import defaultdict
 import numpy as np
 from hypothesis import given
 from hypothesis.strategies import booleans, integers, lists, sampled_from
-
 from matching import Player as Student
 from matching.games import StudentAllocation
 from matching.players import Project, Supervisor
