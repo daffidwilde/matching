@@ -1,6 +1,7 @@
 """ Tests for the Student Allocation algorithm. """
 
 import numpy as np
+
 from matching.games import student_allocation
 
 from .params import STUDENT_ALLOCATION, make_players

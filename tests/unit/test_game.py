@@ -4,6 +4,7 @@ import warnings
 import pytest
 from hypothesis import given
 from hypothesis.strategies import booleans, lists, text
+
 from matching import BaseGame, Player
 from matching.exceptions import PreferencesChangedWarning
 

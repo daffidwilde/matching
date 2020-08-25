@@ -1,6 +1,7 @@
 """ Unit tests for the Matching class. """
 
 import pytest
+
 from matching import Matching, Player
 
 suitors = [Player("A"), Player("B"), Player("C")]
