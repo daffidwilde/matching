@@ -7,8 +7,8 @@ from .params import STABLE_MARRIAGE, make_players
 
 @STABLE_MARRIAGE
 def test_suitor_optimal(player_names, seed):
-    """ Verify that the suitor-oriented Gale-Shapley algorithm produces a valid,
-    suitor-optimal matching for an instance of SM. """
+    """Verify that the suitor-oriented Gale-Shapley algorithm produces a valid,
+    suitor-optimal matching for an instance of SM."""
 
     suitors, reviewers = make_players(player_names, seed)
     matching = stable_marriage(suitors, reviewers, optimal="suitor")
@@ -26,8 +26,8 @@ def test_suitor_optimal(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_reviewer_optimal(player_names, seed):
-    """ Verify that the reviewer-oriented Gale-Shapley algorithm produces a
-    valid, reviewer-optimal matching for an instance of SM. """
+    """Verify that the reviewer-oriented Gale-Shapley algorithm produces a
+    valid, reviewer-optimal matching for an instance of SM."""
 
     suitors, reviewers = make_players(player_names, seed)
     matching = stable_marriage(suitors, reviewers, optimal="reviewer")

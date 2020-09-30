@@ -5,8 +5,8 @@ from matching.games import stable_roommates
 
 
 def test_original_paper():
-    """ Verify that the matching found is consistent with the example in the
-    original paper. """
+    """Verify that the matching found is consistent with the example in the
+    original paper."""
 
     players = [Player(name) for name in ("A", "B", "C", "D", "E", "F")]
     a, b, c, d, e, f = players
@@ -23,8 +23,8 @@ def test_original_paper():
 
 
 def test_example_in_issue():
-    """ Verify that the matching found is consistent with the example provided
-    in #64. """
+    """Verify that the matching found is consistent with the example provided
+    in #64."""
 
     players = [
         Player(name)

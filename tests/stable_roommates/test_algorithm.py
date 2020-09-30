@@ -11,8 +11,8 @@ from .params import STABLE_ROOMMATES, make_players
 
 @STABLE_ROOMMATES
 def test_first_phase(player_names, seed):
-    """ Verify that the first phase of the algorithm produces a valid set of
-    reduced preference players. """
+    """Verify that the first phase of the algorithm produces a valid set of
+    reduced preference players."""
 
     players = make_players(player_names, seed)
     players = first_phase(players)
@@ -24,8 +24,8 @@ def test_first_phase(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_locate_all_or_nothing_cycle(player_names, seed):
-    """ Verify that a cycle of (least-preferred, second-choice) players can be
-    identified from a set of players. """
+    """Verify that a cycle of (least-preferred, second-choice) players can be
+    identified from a set of players."""
 
     players = make_players(player_names, seed)
     player = players[-1]
@@ -37,8 +37,8 @@ def test_locate_all_or_nothing_cycle(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_second_phase(player_names, seed):
-    """ Verify that the second phase of the algorithm produces a valid set of
-    players with appropriate matches. """
+    """Verify that the second phase of the algorithm produces a valid set of
+    players with appropriate matches."""
 
     players = make_players(player_names, seed)
     try:

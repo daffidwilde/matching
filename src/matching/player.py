@@ -2,7 +2,7 @@
 
 
 class Player:
-    """ A class to represent a player within the matching game.
+    """A class to represent a player within the matching game.
 
     Parameters
     ----------
@@ -69,8 +69,8 @@ class Player:
         self.matching = None
 
     def forget(self, other):
-        """ Forget another player by removing them from the player's preference
-        list. """
+        """Forget another player by removing them from the player's preference
+        list."""
 
         prefs = self.prefs[:]
         prefs.remove(other)
@@ -83,15 +83,15 @@ class Player:
         return self.prefs[idx + 1 :]
 
     def prefers(self, player, other):
-        """ Determines whether the player prefers a player over some other
-        player. """
+        """Determines whether the player prefers a player over some other
+        player."""
 
         prefs = self._original_prefs
         return prefs.index(player) < prefs.index(other)
 
     def check_if_match_is_unacceptable(self, unmatched_okay=False):
-        """ Check the acceptability of the current match, with the stipulation
-        that being unmatched is okay (or not). """
+        """Check the acceptability of the current match, with the stipulation
+        that being unmatched is okay (or not)."""
 
         other = self.matching
 

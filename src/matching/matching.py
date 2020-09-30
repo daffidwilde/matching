@@ -4,7 +4,7 @@ from .player import Player
 
 
 class Matching(dict):
-    """ A class to store, and allow for the easy updating of, matchings found by
+    """A class to store, and allow for the easy updating of, matchings found by
     a game solver.
 
     Attributes

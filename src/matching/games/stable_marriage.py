@@ -9,7 +9,7 @@ from .util import delete_pair, match_pair
 
 
 class StableMarriage(BaseGame):
-    """ A class for solving instances of the stable marriage problem (SM).
+    """A class for solving instances of the stable marriage problem (SM).
 
     Parameters
     ----------
@@ -50,8 +50,8 @@ class StableMarriage(BaseGame):
         return game
 
     def solve(self, optimal="suitor"):
-        """ Solve the instance of SM using either the suitor- or
-        reviewer-oriented Gale-Shapley algorithm. Return the matching. """
+        """Solve the instance of SM using either the suitor- or
+        reviewer-oriented Gale-Shapley algorithm. Return the matching."""
 
         self.matching = Matching(
             stable_marriage(self.suitors, self.reviewers, optimal)
@@ -75,8 +75,8 @@ class StableMarriage(BaseGame):
         return True
 
     def check_stability(self):
-        """ Check for the existence of any blocking pairs in the current
-        matching, thus determining the stability of the matching. """
+        """Check for the existence of any blocking pairs in the current
+        matching, thus determining the stability of the matching."""
 
         blocking_pairs = []
         for suitor in self.suitors:
@@ -115,8 +115,8 @@ class StableMarriage(BaseGame):
         return issues
 
     def _check_for_inconsistent_matches(self):
-        """ Check that the game matching is consistent with those of the
-        players. """
+        """Check that the game matching is consistent with those of the
+        players."""
 
         issues = []
         for suitor, reviewer in self.matching.items():
@@ -129,8 +129,8 @@ class StableMarriage(BaseGame):
         return issues
 
     def check_inputs(self):
-        """ Raise an error if any of the conditions of the game have been
-        broken. """
+        """Raise an error if any of the conditions of the game have been
+        broken."""
 
         self._check_num_players()
         for suitor in self.suitors:
@@ -169,7 +169,7 @@ def unmatch_pair(suitor, reviewer):
 
 
 def stable_marriage(suitors, reviewers, optimal="suitor"):
-    """ An extended version of the original Gale-Shapley algorithm which makes
+    """An extended version of the original Gale-Shapley algorithm which makes
     use of the inherent structures of SM instances. A unique, stable and optimal
     matching is found for any valid set of suitors and reviewers. The optimality
     of the matching is with respect to one party and is subsequently the worst
@@ -219,8 +219,8 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
 
 
 def _make_players(suitor_prefs, reviewer_prefs):
-    """ Make a set of ``Player`` instances each for suitors and reviewers from
-    the dictionaries given. Add their preferences. """
+    """Make a set of ``Player`` instances each for suitors and reviewers from
+    the dictionaries given. Add their preferences."""
 
     suitor_dict, reviewer_dict = _make_instances(suitor_prefs, reviewer_prefs)
 

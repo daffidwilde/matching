@@ -20,8 +20,8 @@ from .params import STUDENT_ALLOCATION, make_connections, make_game
 def test_init(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that an instance of StudentAllocation is created correctly when
-    passed a set of players. """
+    """Test that an instance of StudentAllocation is created correctly when
+    passed a set of players."""
 
     students, projects, supervisors, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -58,8 +58,8 @@ def test_init(
 def test_create_from_dictionaries(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation is created correctly when passed
-    dictionaries of preferences and affiliations for each party. """
+    """Test that StudentAllocation is created correctly when passed
+    dictionaries of preferences and affiliations for each party."""
 
     stud_prefs, sup_prefs, proj_sups, proj_caps, sup_caps = make_connections(
         student_names, project_names, supervisor_names, capacities, seed
@@ -89,8 +89,8 @@ def test_create_from_dictionaries(
 def test_remove_supervisor_and_projects(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that a supervisor and its projects can be removed from an instance
-    of SA. """
+    """Test that a supervisor and its projects can be removed from an instance
+    of SA."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -143,9 +143,9 @@ def test_check_inputs(
 def test_check_inputs_project_prefs_all_reciprocated(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that each project has ranked only those students that have ranked
+    """Test that each project has ranked only those students that have ranked
     it. If not, check that a warning is caught and the project has forgotten any
-    such students. """
+    such students."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -169,9 +169,9 @@ def test_check_inputs_project_prefs_all_reciprocated(
 def test_check_inputs_supervisor_prefs_all_reciprocated(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that each supervisor has ranked only those students that have
+    """Test that each supervisor has ranked only those students that have
     ranked it. If not, check that a warning is caught and the supervisor and
-    its projects have forgotten any such students. """
+    its projects have forgotten any such students."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -202,9 +202,9 @@ def test_check_inputs_supervisor_prefs_all_reciprocated(
 def test_check_inputs_project_reciprocated_all_prefs(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that each project has ranked all those students that have ranked
+    """Test that each project has ranked all those students that have ranked
     it. If not, check that a warning is caught and any such student has
-    forgotten the project. """
+    forgotten the project."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -228,9 +228,9 @@ def test_check_inputs_project_reciprocated_all_prefs(
 def test_check_inputs_supervisor_reciprocated_all_prefs(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that each supervisor has ranked all those students that have ranked
+    """Test that each supervisor has ranked all those students that have ranked
     at least one of its projects. If not, check that a warning is caught and any
-    such student has forgotten all projects belonging to that supervisor. """
+    such student has forgotten all projects belonging to that supervisor."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -260,9 +260,9 @@ def test_check_inputs_supervisor_reciprocated_all_prefs(
 def test_check_inputs_supervisor_capacities_sufficient(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that each project has a capacity no larger than its supervisor. If
+    """Test that each project has a capacity no larger than its supervisor. If
     not, check that a warning is caught and that their capacity is updated to
-    their supervisor's. """
+    their supervisor's."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -287,9 +287,9 @@ def test_check_inputs_supervisor_capacities_sufficient(
 def test_check_inputs_supervisor_capacities_necessary(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that each project does not have a higher capacity than the sum of
+    """Test that each project does not have a higher capacity than the sum of
     its projects. If not, check that a warning is caught and that their capacity
-    is updated to the sum of its projects. """
+    is updated to the sum of its projects."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -314,8 +314,8 @@ def test_check_inputs_supervisor_capacities_necessary(
 def test_solve(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation can solve games correctly when passed a set
-    of players. """
+    """Test that StudentAllocation can solve games correctly when passed a set
+    of players."""
 
     for optimal in ["student", "supervisor"]:
         students, projects, _, game = make_game(
@@ -357,8 +357,8 @@ def test_solve(
 def test_check_validity(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation finds a valid matching when the game is
-    solved. """
+    """Test that StudentAllocation finds a valid matching when the game is
+    solved."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -372,8 +372,8 @@ def test_check_validity(
 def test_check_for_unacceptable_matches_students(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation recognises a valid matching requires each
-    student to have a preference of their match, if they have one. """
+    """Test that StudentAllocation recognises a valid matching requires each
+    student to have a preference of their match, if they have one."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -396,8 +396,8 @@ def test_check_for_unacceptable_matches_students(
 def test_check_for_unacceptable_matches_projects(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation recognises a valid matching requires each
-    project to have a preference of each of their matches, if they have any. """
+    """Test that StudentAllocation recognises a valid matching requires each
+    project to have a preference of each of their matches, if they have any."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -420,9 +420,9 @@ def test_check_for_unacceptable_matches_projects(
 def test_check_for_unacceptable_matches_supervisors(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation recognises a valid matching requires each
+    """Test that StudentAllocation recognises a valid matching requires each
     supervisor to have a preference of each of their matches, if they have
-    any. """
+    any."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -445,8 +445,8 @@ def test_check_for_unacceptable_matches_supervisors(
 def test_check_for_oversubscribed_projects(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation recognises a valid matching requires all
-    projects to not be over-subscribed. """
+    """Test that StudentAllocation recognises a valid matching requires all
+    projects to not be over-subscribed."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -468,8 +468,8 @@ def test_check_for_oversubscribed_projects(
 def test_check_for_oversubscribed_supervisors(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that StudentAllocation recognises a valid matching requires all
-    supervisors to not be over-subscribed. """
+    """Test that StudentAllocation recognises a valid matching requires all
+    supervisors to not be over-subscribed."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -488,8 +488,8 @@ def test_check_for_oversubscribed_supervisors(
 
 
 def test_check_stability():
-    """ Test that StudentAllocation can recognise whether a matching is stable
-    or not. """
+    """Test that StudentAllocation can recognise whether a matching is stable
+    or not."""
 
     students = [Student("A"), Student("B"), Student("C")]
     projects = [Project("P", 2), Project("Q", 2)]

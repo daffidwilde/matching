@@ -5,9 +5,9 @@ from matching.games import stable_marriage
 
 
 def test_pride_and_prejudice():
-    """ Verify that the matching found is consistent with the one adapted from
+    """Verify that the matching found is consistent with the one adapted from
     Jane Austen's Pride and Prejudice. Also used in
-    `docs/discussion/stable_marriage/example.rst`. """
+    `docs/discussion/stable_marriage/example.rst`."""
 
     suitors = [
         Player(name="Bingley"),

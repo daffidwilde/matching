@@ -7,7 +7,7 @@ from matching.exceptions import MatchingError
 
 
 class StableRoommates(BaseGame):
-    """ A class for solving instances of the stable roommates problem (SR).
+    """A class for solving instances of the stable roommates problem (SR).
 
     Parameters
     ----------
@@ -39,15 +39,15 @@ class StableRoommates(BaseGame):
         return game
 
     def solve(self):
-        """ Solve the instance of SR using Irving's algorithm. Return the
-        matching. """
+        """Solve the instance of SR using Irving's algorithm. Return the
+        matching."""
 
         self.matching = Matching(stable_roommates(self.players))
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. Raise `MatchingError`
-        detailing the issues if not. """
+        """Check whether the current matching is valid. Raise `MatchingError`
+        detailing the issues if not."""
 
         issues = []
         for player in self.players:
@@ -61,9 +61,9 @@ class StableRoommates(BaseGame):
         return True
 
     def check_stability(self):
-        """ Check for the existence of any blocking pairs in the current
+        """Check for the existence of any blocking pairs in the current
         matching. Then the stability of the matching holds when there are no
-        blocking pairs and all players have been matched. """
+        blocking pairs and all players have been matched."""
 
         if None in self.matching.values():
             return False
@@ -105,8 +105,8 @@ def forget_pair(player, other):
 
 
 def forget_successors(players):
-    """ Make each player forget those players that they like less than their
-    current proposal. """
+    """Make each player forget those players that they like less than their
+    current proposal."""
 
     for player in players:
         if player.matching:
@@ -119,10 +119,10 @@ def forget_successors(players):
 
 
 def first_phase(players):
-    """ Conduct the first phase of the algorithm where one-way proposals are
+    """Conduct the first phase of the algorithm where one-way proposals are
     made, and unpreferable pairs are forgotten. This phase terminates when
     either all players have been proposed to, or if one player has been rejected
-    by everyone leaving their preference list empty. """
+    by everyone leaving their preference list empty."""
 
     proposed_to = set()
     for player in players:
@@ -151,7 +151,7 @@ def first_phase(players):
 
 
 def locate_all_or_nothing_cycle(player):
-    """ Locate a cycle of (least-preferable, second-choice) pairs to be removed
+    """Locate a cycle of (least-preferable, second-choice) pairs to be removed
     from the game."""
 
     lasts = [player]
@@ -174,9 +174,9 @@ def locate_all_or_nothing_cycle(player):
 
 
 def second_phase(players):
-    """ Conduct the second phase of the algorithm where all or nothing cycles
+    """Conduct the second phase of the algorithm where all or nothing cycles
     (rotations) are located and removed from the game. These reduced preference
-    lists form a matching. """
+    lists form a matching."""
 
     player_with_second_preference = next(p for p in players if len(p.prefs) > 1)
     while True:
@@ -200,7 +200,7 @@ def second_phase(players):
 
 
 def stable_roommates(players):
-    """ Irving's algorithm :cite:`Irv85` that finds stable solutions to
+    """Irving's algorithm :cite:`Irv85` that finds stable solutions to
     instances of SR if one exists. Otherwise, an incomplete matching is found.
 
     Parameters
@@ -223,8 +223,8 @@ def stable_roommates(players):
 
 
 def _make_players(player_prefs):
-    """ Make a set of ``Player`` instances from the dictionary given. Add their
-    preferences. """
+    """Make a set of ``Player`` instances from the dictionary given. Add their
+    preferences."""
 
     player_dict = {}
     for player_name in player_prefs:

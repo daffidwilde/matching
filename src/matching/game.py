@@ -6,7 +6,7 @@ from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
 
 
 class BaseGame(metaclass=abc.ABCMeta):
-    """ An abstract base class for facilitating various matching games.
+    """An abstract base class for facilitating various matching games.
 
     Attributes
     ----------
@@ -39,9 +39,9 @@ class BaseGame(metaclass=abc.ABCMeta):
                 other.forget(player)
 
     def _check_inputs_player_prefs_unique(self, party):
-        """ Check that each player in :code:`party` has not ranked another
+        """Check that each player in :code:`party` has not ranked another
         player more than once. If so, and :code:`clean` is :code:`True`, then
-        take the first instance they appear in the preference list. """
+        take the first instance they appear in the preference list."""
 
         for player in vars(self)[party]:
             unique_prefs = []
@@ -59,9 +59,9 @@ class BaseGame(metaclass=abc.ABCMeta):
                 player.set_prefs(unique_prefs)
 
     def _check_inputs_player_prefs_all_in_party(self, party, other_party):
-        """ Check that each player in :code:`party` has ranked only players in
+        """Check that each player in :code:`party` has ranked only players in
         :code:`other_party`. If :code:`clean`, then forget any extra
-        preferences. """
+        preferences."""
 
         players = vars(self)[party]
         others = vars(self)[other_party]
@@ -79,9 +79,9 @@ class BaseGame(metaclass=abc.ABCMeta):
                         player.forget(other)
 
     def _check_inputs_player_prefs_nonempty(self, party, other_party):
-        """ Make sure that each player in :code:`party` has a nonempty
+        """Make sure that each player in :code:`party` has a nonempty
         preference list of players in :code:`other_party`. If :code:`clean`,
-        remove any such player. """
+        remove any such player."""
 
         for player in vars(self)[party]:
 

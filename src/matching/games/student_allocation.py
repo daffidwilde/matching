@@ -16,7 +16,7 @@ from .util import delete_pair, match_pair
 
 
 class StudentAllocation(HospitalResident):
-    """ A class for solving instances of the student-allocation problem (SA)
+    """A class for solving instances of the student-allocation problem (SA)
     using an adapted Gale-Shapley algorithm.
 
     In this case, a blocking pair is defined as any student-project pair that
@@ -81,8 +81,8 @@ class StudentAllocation(HospitalResident):
         self.check_inputs()
 
     def _remove_player(self, player, player_party, other_party=None):
-        """ Remove players from the game normally unless the player is a
-        supervisor. """
+        """Remove players from the game normally unless the player is a
+        supervisor."""
 
         if player_party == "supervisors":
             self.supervisors.remove(player)
@@ -105,8 +105,8 @@ class StudentAllocation(HospitalResident):
         supervisor_capacities,
         clean=False,
     ):
-        """ Create an instance of SA from two preference dictionaries,
-        affiliations and capacities. """
+        """Create an instance of SA from two preference dictionaries,
+        affiliations and capacities."""
 
         students, projects, supervisors = _make_players(
             student_prefs,
@@ -120,8 +120,8 @@ class StudentAllocation(HospitalResident):
         return game
 
     def solve(self, optimal="student"):
-        """ Solve the instance of SA using either the student- or
-        supervisor-optimal algorithm. """
+        """Solve the instance of SA using either the student- or
+        supervisor-optimal algorithm."""
 
         self.matching = Matching(
             student_allocation(
@@ -131,8 +131,8 @@ class StudentAllocation(HospitalResident):
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. Raise a `MatchingError`
-        detailing the issues if not. """
+        """Check whether the current matching is valid. Raise a `MatchingError`
+        detailing the issues if not."""
 
         unacceptable_issues = (
             self._check_for_unacceptable_matches("students")
@@ -153,8 +153,8 @@ class StudentAllocation(HospitalResident):
         return True
 
     def check_stability(self):
-        """ Check for the existence of any blocking pairs in the current
-        matching, thus determining the stability of the matching. """
+        """Check for the existence of any blocking pairs in the current
+        matching, thus determining the stability of the matching."""
 
         blocking_pairs = []
         for student in self.students:
@@ -170,9 +170,9 @@ class StudentAllocation(HospitalResident):
         return not any(blocking_pairs)
 
     def check_inputs(self):
-        """ Give out warnings if any of the conditions of the game have been
+        """Give out warnings if any of the conditions of the game have been
         broken. If the :code:`clean` attribute is :code:`True`, then remove any
-        such situations from the game. """
+        such situations from the game."""
 
         self._check_inputs_player_prefs_unique("students")
         self._check_inputs_player_prefs_unique("projects")
@@ -200,8 +200,8 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_supervisor_capacities_necessary()
 
     def _check_inputs_player_prefs_all_reciprocated(self, party):
-        """ Check that each player in :code:`party` has ranked only those
-        players that have ranked it, directly or via a project. """
+        """Check that each player in :code:`party` has ranked only those
+        players that have ranked it, directly or via a project."""
 
         if party == "supervisors":
             for supervisor in self.supervisors:
@@ -225,8 +225,8 @@ class StudentAllocation(HospitalResident):
             super()._check_inputs_player_prefs_all_reciprocated(party)
 
     def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
-        """ Check that each player in :code:`party` has ranked all those players
-        in :code:`other_party` that ranked it, directly or via a project. """
+        """Check that each player in :code:`party` has ranked all those players
+        in :code:`other_party` that ranked it, directly or via a project."""
 
         if party == "supervisors":
             for supervisor in self.supervisors:
@@ -261,8 +261,8 @@ class StudentAllocation(HospitalResident):
             )
 
     def _check_inputs_supervisor_capacities_sufficient(self):
-        """ Check that each supervisor has the capacity to support its largest
-        project(s). """
+        """Check that each supervisor has the capacity to support its largest
+        project(s)."""
 
         for supervisor in self.supervisors:
 
@@ -280,8 +280,8 @@ class StudentAllocation(HospitalResident):
                         project.capacity = supervisor.capacity
 
     def _check_inputs_supervisor_capacities_necessary(self):
-        """ Check that each supervisor has at most the necessary capacity for
-        all of their projects. """
+        """Check that each supervisor has at most the necessary capacity for
+        all of their projects."""
 
         for supervisor in self.supervisors:
 
@@ -303,8 +303,8 @@ class StudentAllocation(HospitalResident):
 
 
 def _check_student_unhappy(student, project):
-    """ Determine whether ``student`` is unhappy either because they are
-    unmatched or because they prefer ``project`` to their current matching. """
+    """Determine whether ``student`` is unhappy either because they are
+    unmatched or because they prefer ``project`` to their current matching."""
 
     return student.matching is None or student.prefers(
         project, student.matching
@@ -312,13 +312,13 @@ def _check_student_unhappy(student, project):
 
 
 def _check_project_unhappy(project, student):
-    """ Determine whether ``project`` is unhappy because either:
-        - they and their supervisor are under-subscribed;
-        - they are under-subscribed, their supervisor is full, and either
-          ``student`` is in the supervisor's matching or the supervisor prefers
-          ``student`` to their worst current matching;
-        - ``project`` is full and their supervisor prefers ``student`` to the
-          worst student in the matching of ``project``.
+    """Determine whether ``project`` is unhappy because either:
+    - they and their supervisor are under-subscribed;
+    - they are under-subscribed, their supervisor is full, and either
+      ``student`` is in the supervisor's matching or the supervisor prefers
+      ``student`` to their worst current matching;
+    - ``project`` is full and their supervisor prefers ``student`` to the
+      worst student in the matching of ``project``.
     """
 
     supervisor = project.supervisor
@@ -356,7 +356,7 @@ def unmatch_pair(student, project):
 
 
 def student_allocation(students, projects, supervisors, optimal="student"):
-    """ Solve an instance of SA by treating it as a bi-level HR. A unique,
+    """Solve an instance of SA by treating it as a bi-level HR. A unique,
     stable and optimal matching is found for the given set of students, projects
     and supervisors. The optimality of the matching is found with respect to one
     party and is subsequently the worst stable matching for the other.
@@ -391,7 +391,7 @@ def student_allocation(students, projects, supervisors, optimal="student"):
 
 
 def student_optimal(students, projects):
-    """ Solve the instance of SA to be student-optimal. The algorithm is as
+    """Solve the instance of SA to be student-optimal. The algorithm is as
     follows:
 
         0. Set all students to be unassigned, and every project (and supervisor)
@@ -468,7 +468,7 @@ def student_optimal(students, projects):
 
 
 def supervisor_optimal(projects, supervisors):
-    """ Solve the instance of SA to be supervisor-optimal. The algorithm is as
+    """Solve the instance of SA to be supervisor-optimal. The algorithm is as
     follows:
 
         0. Set all students to be unassigned, and every project (and supervisor)
@@ -523,9 +523,9 @@ def _make_players(
     project_capacities,
     supervisor_capacities,
 ):
-    """ Make a set of ``Player``, ``Project`` and ``Supervisor`` instances,
+    """Make a set of ``Player``, ``Project`` and ``Supervisor`` instances,
     respectively for the students, projects and supervisors from the
-    dictionaries given, and add their preferences. """
+    dictionaries given, and add their preferences."""
 
     student_dict, project_dict, supervisor_dict = _make_instances(
         student_prefs,
@@ -555,8 +555,8 @@ def _make_instances(
     project_capacities,
     supervisor_capacities,
 ):
-    """ Create ``Player``, ``Project`` and ``Supervisor`` instances for the
-    names in each dictionary. """
+    """Create ``Player``, ``Project`` and ``Supervisor`` instances for the
+    names in each dictionary."""
 
     student_dict, project_dict, supervisor_dict = {}, {}, {}
 
