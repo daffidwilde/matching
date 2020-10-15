@@ -111,7 +111,6 @@ def forget_successors(players):
     for player in players:
         if player.matching:
             successors = player.get_successors()
-            player.unmatch()
             for successor in successors:
                 forget_pair(player, successor)
 
@@ -177,6 +176,9 @@ def second_phase(players):
     """Conduct the second phase of the algorithm where all or nothing cycles
     (rotations) are located and removed from the game. These reduced preference
     lists form a matching."""
+
+    for player in players:
+        player.unmatch()
 
     player_with_second_preference = next(p for p in players if len(p.prefs) > 1)
     while True:

@@ -18,7 +18,11 @@ def test_first_phase(player_names, seed):
     players = first_phase(players)
 
     for player in players:
-        assert player.matching is None
+        if player.matching is None:
+            assert player.prefs == []
+        else:
+            assert player.matching in player.prefs
+
         assert {p.name for p in player.prefs}.issubset(player.pref_names)
 
 
@@ -60,7 +64,10 @@ def test_stable_roommates(player_names, seed):
     players = make_players(player_names, seed)
     matching = stable_roommates(players)
 
-    for player, other in matching.items():
-        if other is not None:
+    if None in matching.values():
+        assert all(val is None for val in matching.values())
+
+    else:
+        for player, other in matching.items():
             assert player.prefs == [other]
             assert other.matching == player
