@@ -22,7 +22,7 @@ def test_original_paper():
     assert matching == {a: f, b: c, c: b, d: e, e: d, f: a}
 
 
-def test_example_in_issue():
+def test_example_in_issue_64():
     """Verify that the matching found is consistent with the example provided
     in #64."""
 
@@ -48,3 +48,41 @@ def test_example_in_issue():
         kelly: peter,
         sam: charlie,
     }
+
+
+def test_examples_in_issue_124():
+    """Verify that the matching is consistent with the examples provided in
+    #124."""
+
+    a, b, c, d = players = [Player(name) for name in ("a", "b", "c", "d")]
+
+    a.set_prefs([b, c, d])
+    b.set_prefs([a, c, d])
+    c.set_prefs([a, b, d])
+    d.set_prefs([a, b, c])
+
+    matching = stable_roommates(players)
+    assert matching == {a: b, b: a, c: d, d: c}
+
+    for player in players:
+        player.unmatch()
+
+    a.set_prefs([b, c, d])
+    b.set_prefs([a, c, d])
+    c.set_prefs([d, b, a])
+    d.set_prefs([c, b, a])
+
+    matching = stable_roommates(players)
+    assert matching == {a: b, b: a, c: d, d: c}
+
+
+def test_trivial_case():
+    """ Verify that a matching is given when there are only two players. """
+
+    p1, p2 = players = [Player(1), Player(2)]
+
+    p1.set_prefs([p2])
+    p2.set_prefs([p1])
+
+    matching = stable_roommates(players)
+    assert matching == {p1: p2, p2: p1}
