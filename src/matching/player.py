@@ -43,6 +43,16 @@ class Player:
         prefs.remove(other)
         self.prefs = prefs
 
+    def _match(self, other):
+        """ Assign the player to be matched to some other player. """
+
+        self.matching = other
+
+    def _unmatch(self):
+        """ Set the player to be unmatched. """
+
+        self.matching = None
+
     def unmatched_message(self):
 
         return f"{self} is unmatched."
@@ -65,16 +75,6 @@ class Player:
         """ Get the player's favourite player. """
 
         return self.prefs[0]
-
-    def match(self, other):
-        """ Assign the player to be matched to some other player. """
-
-        self.matching = other
-
-    def unmatch(self):
-        """ Set the player to be unmatched. """
-
-        self.matching = None
 
     def get_successors(self):
         """ Get all the successors to the current match of the player. """
