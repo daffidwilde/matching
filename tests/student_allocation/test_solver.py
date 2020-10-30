@@ -153,7 +153,7 @@ def test_check_inputs_project_prefs_all_reciprocated(
 
     project = game.projects[0]
     student = project.prefs[0]
-    student.forget(project)
+    student._forget(project)
     with warnings.catch_warnings(record=True) as w:
         game._check_inputs_player_prefs_all_reciprocated("projects")
 
@@ -182,7 +182,7 @@ def test_check_inputs_supervisor_prefs_all_reciprocated(
     projects = supervisor.projects
     for project in student.prefs:
         if project in projects:
-            student.forget(project)
+            student._forget(project)
 
     with warnings.catch_warnings(record=True) as w:
         game._check_inputs_player_prefs_all_reciprocated("supervisors")
@@ -212,7 +212,7 @@ def test_check_inputs_project_reciprocated_all_prefs(
 
     project = game.projects[0]
     student = project.prefs[0]
-    project.forget(student)
+    project._forget(student)
     with warnings.catch_warnings(record=True) as w:
         game._check_inputs_player_reciprocated_all_prefs("projects", "students")
 
