@@ -47,7 +47,7 @@ class Supervisor(Hospital):
             ]
             project.set_prefs(acceptable)
 
-    def forget(self, student):
+    def _forget(self, student):
         """Only forget ``student`` if it is not ranked by any of the
         supervisor's projects."""
 

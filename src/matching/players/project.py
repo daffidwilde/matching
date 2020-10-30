@@ -57,7 +57,7 @@ class Project(Hospital):
         self.matching = matching
         self.supervisor.unmatch(student)
 
-    def forget(self, student):
+    def _forget(self, student):
         """Remove ``student`` from the preference list of the project and its
         supervisor."""
 
@@ -65,4 +65,4 @@ class Project(Hospital):
             prefs = self.prefs[:]
             prefs.remove(student)
             self.prefs = prefs
-            self.supervisor.forget(student)
+            self.supervisor._forget(student)
