@@ -100,8 +100,8 @@ class StableRoommates(BaseGame):
 def forget_pair(player, other):
     """ Remove a (player, other) pair from the game. """
 
-    player.forget(other)
-    other.forget(player)
+    player._forget(other)
+    other._forget(player)
 
 
 def forget_successors(players):
@@ -184,8 +184,8 @@ def second_phase(players):
     while True:
         cycle = locate_all_or_nothing_cycle(player_with_second_preference)
         for player, other in cycle:
-            player.forget(other)
-            other.forget(player)
+            player._forget(other)
+            other._forget(player)
 
         try:
             player_with_second_preference = next(
