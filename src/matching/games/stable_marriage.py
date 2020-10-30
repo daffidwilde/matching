@@ -164,8 +164,8 @@ class StableMarriage(BaseGame):
 def unmatch_pair(suitor, reviewer):
     """ Unmatch a (suitor, reviewer) pair. """
 
-    suitor.unmatch()
-    reviewer.unmatch()
+    suitor._unmatch()
+    reviewer._unmatch()
 
 
 def stable_marriage(suitors, reviewers, optimal="suitor"):

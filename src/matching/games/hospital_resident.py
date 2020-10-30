@@ -250,8 +250,8 @@ def _check_hospital_unhappy(resident, hospital):
 def unmatch_pair(resident, hospital):
     """ Unmatch a (resident, hospital)-pair. """
 
-    resident.unmatch()
-    hospital.unmatch(resident)
+    resident._unmatch()
+    hospital._unmatch(resident)
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):

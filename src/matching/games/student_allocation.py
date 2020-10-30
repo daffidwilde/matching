@@ -351,8 +351,8 @@ def _check_project_unhappy(project, student):
 def unmatch_pair(student, project):
     """ Unmatch a student-project pair. """
 
-    student.unmatch()
-    project.unmatch(student)
+    student._unmatch()
+    project._unmatch(student)
 
 
 def student_allocation(students, projects, supervisors, optimal="student"):

@@ -129,11 +129,11 @@ def first_phase(players):
         while True:
             fave = proposer.get_favourite()
             if not fave.matching:
-                fave.match(proposer)
+                fave._match(proposer)
             else:
                 current = fave.matching
                 if fave.prefers(proposer, current):
-                    fave.match(proposer)
+                    fave._match(proposer)
                     forget_pair(fave, current)
 
                     proposer = current
@@ -178,7 +178,7 @@ def second_phase(players):
     lists form a matching."""
 
     for player in players:
-        player.unmatch()
+        player._unmatch()
 
     player_with_second_preference = next(p for p in players if len(p.prefs) > 1)
     while True:
@@ -196,7 +196,7 @@ def second_phase(players):
 
     for player in players:
         if player.prefs:
-            player.match(player.get_favourite())
+            player._match(player.get_favourite())
 
     return players
 
