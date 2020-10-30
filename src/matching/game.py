@@ -1,4 +1,5 @@
 """ The base game class for facilitating and solving matching games. """
+
 import abc
 import warnings
 

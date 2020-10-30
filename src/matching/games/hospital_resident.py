@@ -11,7 +11,7 @@ from matching.exceptions import (
 )
 from matching.players import Hospital
 
-from .util import delete_pair, match_pair
+from .util import _delete_pair, _match_pair
 
 
 class HospitalResident(BaseGame):
@@ -316,7 +316,7 @@ def resident_optimal(residents, hospitals):
         resident = free_residents.pop()
         hospital = resident.get_favourite()
 
-        match_pair(resident, hospital)
+        _match_pair(resident, hospital)
 
         if len(hospital.matching) > hospital.capacity:
             worst = hospital.get_worst_match()
@@ -326,7 +326,7 @@ def resident_optimal(residents, hospitals):
         if len(hospital.matching) == hospital.capacity:
             successors = hospital.get_successors()
             for successor in successors:
-                delete_pair(hospital, successor)
+                _delete_pair(hospital, successor)
                 if not successor.prefs:
                     free_residents.remove(successor)
 
@@ -366,7 +366,7 @@ def hospital_optimal(hospitals):
             if curr_match not in free_hospitals:
                 free_hospitals.append(curr_match)
 
-        match_pair(resident, hospital)
+        _match_pair(resident, hospital)
         if len(hospital.matching) < hospital.capacity and [
             res for res in hospital.prefs if res not in hospital.matching
         ]:
@@ -374,7 +374,7 @@ def hospital_optimal(hospitals):
 
         successors = resident.get_successors()
         for successor in successors:
-            delete_pair(resident, successor)
+            _delete_pair(resident, successor)
             if (
                 not [
                     res

@@ -5,7 +5,7 @@ import copy
 from matching import BaseGame, Matching, Player
 from matching.exceptions import MatchingError
 
-from .util import delete_pair, match_pair
+from .util import _delete_pair, _match_pair
 
 
 class StableMarriage(BaseGame):
@@ -206,11 +206,11 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
             unmatch_pair(curr_match, reviewer)
             free_suitors.append(curr_match)
 
-        match_pair(suitor, reviewer)
+        _match_pair(suitor, reviewer)
 
         successors = reviewer.get_successors()
         for successor in successors:
-            delete_pair(successor, reviewer)
+            _delete_pair(successor, reviewer)
 
     if optimal.lower() == "reviewer":
         suitors, reviewers = reviewers, suitors

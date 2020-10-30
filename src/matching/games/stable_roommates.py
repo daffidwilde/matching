@@ -5,6 +5,8 @@ import copy
 from matching import BaseGame, Matching, Player
 from matching.exceptions import MatchingError
 
+from .util import _delete_pair
+
 
 class StableRoommates(BaseGame):
     """A class for solving instances of the stable roommates problem (SR).
@@ -97,13 +99,6 @@ class StableRoommates(BaseGame):
         return True
 
 
-def forget_pair(player, other):
-    """ Remove a (player, other) pair from the game. """
-
-    player._forget(other)
-    other._forget(player)
-
-
 def forget_successors(players):
     """Make each player forget those players that they like less than their
     current proposal."""
@@ -112,7 +107,7 @@ def forget_successors(players):
         if player.matching:
             successors = player.get_successors()
             for successor in successors:
-                forget_pair(player, successor)
+                _delete_pair(player, successor)
 
     return players
 
@@ -134,11 +129,11 @@ def first_phase(players):
                 current = fave.matching
                 if fave.prefers(proposer, current):
                     fave._match(proposer)
-                    forget_pair(fave, current)
+                    _delete_pair(fave, current)
 
                     proposer = current
                 else:
-                    forget_pair(fave, proposer)
+                    _delete_pair(fave, proposer)
 
             if fave not in proposed_to or not proposer.prefs:
                 break
