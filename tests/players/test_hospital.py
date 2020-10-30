@@ -87,7 +87,8 @@ def test_get_worst_match(name, capacity, pref_names):
 
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_successors(name, capacity, pref_names):
-    """Check that a hospital can get the successors to its worst current match."""
+    """Check that a hospital can get the successors to its worst current match.
+    If no such successors exist, check for an empty list."""
 
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]

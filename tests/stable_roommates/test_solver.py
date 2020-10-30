@@ -53,7 +53,8 @@ def test_check_inputs(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_solve(player_names, seed):
-    """Test that StableRoommates can solve games correctly when passed players."""
+    """Test that StableRoommates can solve games correctly when passed a set of
+    players."""
 
     players = make_players(player_names, seed)
     game = StableRoommates(players)

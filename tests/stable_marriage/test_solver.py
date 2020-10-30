@@ -82,7 +82,8 @@ def test_inputs_player_ranks(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_solve(player_names, seed):
-    """Test that StableMarriage can solve games correctly when passed players."""
+    """Test that StableMarriage can solve games correctly when passed a set of
+    players."""
 
     for optimal in ["suitor", "reviewer"]:
         suitors, reviewers = make_players(player_names, seed)
