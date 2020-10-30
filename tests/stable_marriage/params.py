@@ -9,8 +9,8 @@ from matching import Player
 
 @composite
 def get_player_names(draw, suitor_pool, reviewer_pool):
-    """ A custom strategy for drawing lists of suitor and reviewer names of
-    equal size from their respective pools. """
+    """A custom strategy for drawing lists of suitor and reviewer names of
+    equal size from their respective pools."""
 
     suitor_names = draw(
         lists(
@@ -50,8 +50,8 @@ def make_players(player_names, seed):
 
 
 def make_prefs(player_names, seed):
-    """ Given some names, make a valid set of preferences for each the suitors
-    and reviewers. """
+    """Given some names, make a valid set of preferences for each the suitors
+    and reviewers."""
 
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names

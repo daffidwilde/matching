@@ -4,7 +4,7 @@ from matching import BasePlayer
 
 
 class Hospital(BasePlayer):
-    """ A class to represent a hospital in an instance of HR. Also used as a
+    """A class to represent a hospital in an instance of HR. Also used as a
     parent class to ``Project`` and ``Supervisor``.
 
     Parameters
@@ -47,8 +47,8 @@ class Hospital(BasePlayer):
         )
 
     def get_favourite(self):
-        """ Get the hospital's favourite resident with whom they are not
-        currently matched. If no such resident exists, return ``None``. """
+        """Get the hospital's favourite resident with whom they are not
+        currently matched. If no such resident exists, return ``None``."""
 
         for player in self.prefs:
             if player not in self.matching:
@@ -70,8 +70,8 @@ class Hospital(BasePlayer):
         self.matching = matching
 
     def get_worst_match(self):
-        """ Get the player's worst current match. This assumes that the matching
-        is in order of preference. """
+        """Get the player's worst current match. This assumes that the matching
+        is in order of preference."""
 
         return self.matching[-1]
 

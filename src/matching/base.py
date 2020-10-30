@@ -6,7 +6,7 @@ from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
 
 
 class BasePlayer:
-    """ An abstract base class to represent a player within a matching game.
+    """An abstract base class to represent a player within a matching game.
 
     Parameters
     ----------
@@ -62,48 +62,48 @@ class BasePlayer:
             self._original_prefs = players[:]
 
     def forget(self, other):
-        """ Forget another player by removing them from the player's preference
-        list. """
+        """Forget another player by removing them from the player's preference
+        list."""
 
         prefs = self.prefs[:]
         prefs.remove(other)
         self.prefs = prefs
 
     def prefers(self, player, other):
-        """ Determines whether the player prefers a player over some other
-        player. """
+        """Determines whether the player prefers a player over some other
+        player."""
 
         prefs = self._original_prefs
         return prefs.index(player) < prefs.index(other)
 
     @abc.abstractmethod
     def get_favourite(self):
-        """ A placeholder function for getting the player's favourite, feasible
-        player. """
+        """A placeholder function for getting the player's favourite, feasible
+        player."""
 
     @abc.abstractmethod
     def match(self, other):
-        """ A placeholder function for assigning the player to be matched to
-        some other player. """
+        """A placeholder function for assigning the player to be matched to
+        some other player."""
 
     @abc.abstractmethod
     def unmatch(self, other):
-        """ A placeholder function for unassigning the player from its match
-        with some other player. """
+        """A placeholder function for unassigning the player from its match
+        with some other player."""
 
     @abc.abstractmethod
     def get_successors(self):
-        """ A placeholder function for getting the logically feasible
-        'successors' of the player. """
+        """A placeholder function for getting the logically feasible
+        'successors' of the player."""
 
     @abc.abstractmethod
     def check_if_match_is_unacceptable(self):
-        """ A placeholder for chacking the acceptability of the current
-        match(es) of the player. """
+        """A placeholder for chacking the acceptability of the current
+        match(es) of the player."""
 
 
 class BaseGame(metaclass=abc.ABCMeta):
-    """ An abstract base class for facilitating various matching games.
+    """An abstract base class for facilitating various matching games.
 
     Parameters
     ----------
@@ -120,7 +120,7 @@ class BaseGame(metaclass=abc.ABCMeta):
         After checking the stability of the game instance, a list of any pairs
         that block the stability of the matching is found here. Otherwise,
         :code:`None`.
-   """
+    """
 
     def __init__(self, clean=False):
 
@@ -129,8 +129,8 @@ class BaseGame(metaclass=abc.ABCMeta):
         self.clean = clean
 
     def _remove_player(self, player, player_party, other_party):
-        """ Remove a player from the game instance as well as any relevant
-        player preference lists. """
+        """Remove a player from the game instance as well as any relevant
+        player preference lists."""
 
         party = vars(self)[player_party][:]
         party.remove(player)
@@ -140,9 +140,9 @@ class BaseGame(metaclass=abc.ABCMeta):
                 other.forget(player)
 
     def _check_inputs_player_prefs_unique(self, party):
-        """ Check that each player in :code:`party` has not ranked another
+        """Check that each player in :code:`party` has not ranked another
         player more than once. If so, and :code:`clean` is :code:`True`, then
-        take the first instance they appear in the preference list. """
+        take the first instance they appear in the preference list."""
 
         for player in vars(self)[party]:
             unique_prefs = []
@@ -160,9 +160,9 @@ class BaseGame(metaclass=abc.ABCMeta):
                 player.set_prefs(unique_prefs)
 
     def _check_inputs_player_prefs_all_in_party(self, party, other_party):
-        """ Check that each player in :code:`party` has ranked only players in
+        """Check that each player in :code:`party` has ranked only players in
         :code:`other_party`. If :code:`clean`, then forget any extra
-        preferences. """
+        preferences."""
 
         players = vars(self)[party]
         others = vars(self)[other_party]
@@ -180,9 +180,9 @@ class BaseGame(metaclass=abc.ABCMeta):
                         player.forget(other)
 
     def _check_inputs_player_prefs_nonempty(self, party, other_party):
-        """ Make sure that each player in :code:`party` has a nonempty
+        """Make sure that each player in :code:`party` has a nonempty
         preference list of players in :code:`other_party`. If :code:`clean`,
-        remove any such player. """
+        remove any such player."""
 
         for player in vars(self)[party]:
 
@@ -209,7 +209,7 @@ class BaseGame(metaclass=abc.ABCMeta):
 
 
 class BaseMatching(dict, metaclass=abc.ABCMeta):
-    """ An abstract base class for the storing and updating of a matching.
+    """An abstract base class for the storing and updating of a matching.
 
     Attributes
     ----------
@@ -253,8 +253,8 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
             raise ValueError(f"{player} is not a key in this matching.")
 
     def _check_new_valid_type(self, new, types):
-        """ Raise an error is :code:`new` is not an instance of one of
-        :code:`types`. """
+        """Raise an error is :code:`new` is not an instance of one of
+        :code:`types`."""
 
         if not isinstance(new, types):
             raise ValueError(f"{new} is not one of {types} and is not valid.")

@@ -13,8 +13,8 @@ from .util import players
 
 @given(players=players())
 def test_first_phase(players):
-    """ Verify that the first phase of the algorithm produces a valid set of
-    reduced preference players. """
+    """Verify that the first phase of the algorithm produces a valid set of
+    reduced preference players."""
 
     players = first_phase(players)
 
@@ -25,8 +25,8 @@ def test_first_phase(players):
 
 @given(players=players())
 def test_locate_all_or_nothing_cycle(players):
-    """ Verify that a cycle of (least-preferred, second-choice) players can be
-    identified from a set of players. """
+    """Verify that a cycle of (least-preferred, second-choice) players can be
+    identified from a set of players."""
 
     player = players[-1]
     cycle = locate_all_or_nothing_cycle(player)
@@ -37,8 +37,8 @@ def test_locate_all_or_nothing_cycle(players):
 
 @given(players=players())
 def test_second_phase(players):
-    """ Verify that the second phase of the algorithm produces a valid set of
-    players with appropriate matches. """
+    """Verify that the second phase of the algorithm produces a valid set of
+    players with appropriate matches."""
 
     try:
         players = second_phase(players)

@@ -11,7 +11,7 @@ def unmatch_pair(suitor, reviewer):
 
 
 def stable_marriage(suitors, reviewers, optimal="suitor"):
-    """ An extended version of the original Gale-Shapley algorithm which makes
+    """An extended version of the original Gale-Shapley algorithm which makes
     use of the inherent structures of SM instances. A unique, stable and optimal
     matching is found for any valid set of suitors and reviewers. The optimality
     of the matching is with respect to one party and is subsequently the worst

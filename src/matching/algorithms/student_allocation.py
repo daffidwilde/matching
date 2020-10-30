@@ -11,7 +11,7 @@ def unmatch_pair(student, project):
 
 
 def student_allocation(students, projects, supervisors, optimal="student"):
-    """ Solve an instance of SA by treating it as a bi-level HR. A unique,
+    """Solve an instance of SA by treating it as a bi-level HR. A unique,
     stable and optimal matching is found for the given set of students, projects
     and supervisors. The optimality of the matching is found with respect to one
     party and is subsequently the worst stable matching for the other.
@@ -46,7 +46,7 @@ def student_allocation(students, projects, supervisors, optimal="student"):
 
 
 def student_optimal(students, projects):
-    """ Solve the instance of SA to be student-optimal. The algorithm is as
+    """Solve the instance of SA to be student-optimal. The algorithm is as
     follows:
 
         0. Set all students to be unassigned, and every project (and supervisor)
@@ -123,7 +123,7 @@ def student_optimal(students, projects):
 
 
 def supervisor_optimal(projects, supervisors):
-    """ Solve the instance of SA to be supervisor-optimal. The algorithm is as
+    """Solve the instance of SA to be supervisor-optimal. The algorithm is as
     follows:
 
         0. Set all students to be unassigned, and every project (and supervisor)

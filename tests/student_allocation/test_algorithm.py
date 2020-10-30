@@ -14,8 +14,8 @@ from .params import STUDENT_ALLOCATION, make_players
 def test_student_allocation(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Verify that the student allocation algorithm produces a valid solution
-    to an instance of SA. """
+    """Verify that the student allocation algorithm produces a valid solution
+    to an instance of SA."""
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(
@@ -37,8 +37,8 @@ def test_student_allocation(
 def test_student_optimal(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Verify that the student-optimal algorithm produces a solution that is
-    indeed student-optimal. """
+    """Verify that the student-optimal algorithm produces a solution that is
+    indeed student-optimal."""
 
     np.random.seed(seed)
     students, projects, _ = make_players(
@@ -65,8 +65,8 @@ def test_student_optimal(
 def test_supervisor_optimal(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Verify that the supervisor-optimal algorithm produces a solution that is
-    indeed supervisor-optimal. """
+    """Verify that the supervisor-optimal algorithm produces a solution that is
+    indeed supervisor-optimal."""
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(

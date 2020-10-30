@@ -4,7 +4,7 @@ from matching.players import Player
 
 
 class SingleMatching(BaseMatching):
-    """ A dictionary-like object for storing and updating a matching with
+    """A dictionary-like object for storing and updating a matching with
     singular matches such as those in an instance of SM or SR.
 
     Parameters
@@ -31,7 +31,7 @@ class SingleMatching(BaseMatching):
 
 
 class MultipleMatching(BaseMatching):
-    """ A dictionary-like object for storing and updating a matching with
+    """A dictionary-like object for storing and updating a matching with
     multiple matches such as those in an instance of HR or SA.
 
     Parameters

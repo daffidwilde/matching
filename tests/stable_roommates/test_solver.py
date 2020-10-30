@@ -11,8 +11,8 @@ from .util import connections, games, players
 
 @given(players=players())
 def test_init(players):
-    """ Test that the StableRoommates solver has the correct attributes at
-    instantiation. """
+    """Test that the StableRoommates solver has the correct attributes at
+    instantiation."""
 
     game = StableRoommates(players)
 
@@ -25,8 +25,8 @@ def test_init(players):
 
 @given(preferences=connections())
 def test_create_from_dictionary(preferences):
-    """ Test that StableRoommates solver can take a preference dictionary
-    correctly. """
+    """Test that StableRoommates solver can take a preference dictionary
+    correctly."""
 
     game = StableRoommates.create_from_dictionary(preferences)
 
@@ -39,8 +39,8 @@ def test_create_from_dictionary(preferences):
 
 @given(players=players())
 def test_check_inputs(players):
-    """ Test StableRoommates raises a ValueError when a player has not ranked
-    all other players. """
+    """Test StableRoommates raises a ValueError when a player has not ranked
+    all other players."""
 
     players[0].prefs = players[0].prefs[:-1]
 
@@ -50,8 +50,7 @@ def test_check_inputs(players):
 
 @given(game=games())
 def test_solve(game):
-    """ Test that StableRoommates can solve games correctly.
-    """
+    """Test that StableRoommates can solve games correctly."""
 
     matching = game.solve()
     assert isinstance(matching, SingleMatching)
@@ -69,8 +68,8 @@ def test_solve(game):
 
 @given(game=games())
 def test_check_validity(game):
-    """ Test that StableRoommates can raise a ValueError if any players are left
-    unmatched. """
+    """Test that StableRoommates can raise a ValueError if any players are left
+    unmatched."""
 
     matching = game.solve()
     if None in matching.values():
@@ -82,8 +81,7 @@ def test_check_validity(game):
 
 
 def test_stability():
-    """ Test that StableRoommates can recognise whether a matching is stable.
-    """
+    """Test that StableRoommates can recognise whether a matching is stable."""
 
     players = [Player("A"), Player("B"), Player("C"), Player("D")]
     a, b, c, d = players

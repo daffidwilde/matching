@@ -9,8 +9,7 @@ from matching.players import Project, Supervisor
 
 @given(name=text(), capacity=integers())
 def test_init(name, capacity):
-    """ Make an instance of Supervisor and check their attributes are correct.
-    """
+    """Make an instance of Supervisor and check their attributes are correct."""
 
     supervisor = Supervisor(name, capacity)
 
@@ -25,8 +24,8 @@ def test_init(name, capacity):
 
 @given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
 def test_set_prefs(name, capacity, pref_names):
-    """ Test that a Supervisor can set its preferences correctly, and the
-    preferences of its project(s). """
+    """Test that a Supervisor can set its preferences correctly, and the
+    preferences of its project(s)."""
 
     supervisor = Supervisor(name, capacity)
     projects = [Project(i, capacity) for i in range(3)]

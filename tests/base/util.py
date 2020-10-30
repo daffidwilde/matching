@@ -12,8 +12,8 @@ def player_others(
     min_size=1,
     max_size=10,
 ):
-    """ A custom strategy for creating a player and a set of other players, all
-    of whom are `BasePlayer` instances. """
+    """A custom strategy for creating a player and a set of other players, all
+    of whom are `BasePlayer` instances."""
 
     size = draw(integers(min_value=min_size, max_value=max_size))
     player = BasePlayer(draw(player_name_from))

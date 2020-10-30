@@ -8,8 +8,8 @@ from matching.players import Hospital, Player
 
 @composite
 def singles(draw, names_from=text(), min_size=2, max_size=5):
-    """ A custom strategy for generating a matching for `SingleMatching` out of
-    Player instances. """
+    """A custom strategy for generating a matching for `SingleMatching` out of
+    Player instances."""
 
     size = draw(integers(min_value=min_size, max_value=max_size))
     players = [Player(draw(names_from)) for _ in range(size)]
@@ -31,7 +31,7 @@ def multiples(
     min_players=10,
     max_players=20,
 ):
-    """ A custom strategy for generating a matching for `MultipleMatching` out
+    """A custom strategy for generating a matching for `MultipleMatching` out
     of `Hospital` and lists of `Player` instances."""
 
     num_hosts = draw(integers(min_value=min_hosts, max_value=max_hosts))
@@ -52,8 +52,8 @@ def multiples(
 
 @given(dictionary=singles())
 def test_single_setitem_none(dictionary):
-    """ Test that a player key in a `SingleMatching` instance can have its
-    value set to `None`. """
+    """Test that a player key in a `SingleMatching` instance can have its
+    value set to `None`."""
 
     matching = SingleMatching(dictionary)
     key = list(dictionary.keys())[0]
@@ -65,8 +65,8 @@ def test_single_setitem_none(dictionary):
 
 @given(dictionary=singles())
 def test_single_setitem_player(dictionary):
-    """ Test that a player key in a `SingleMatching` instance can have its
-    value set to another player. """
+    """Test that a player key in a `SingleMatching` instance can have its
+    value set to another player."""
 
     matching = SingleMatching(dictionary)
     key = list(dictionary.keys())[0]
@@ -80,8 +80,8 @@ def test_single_setitem_player(dictionary):
 
 @given(dictionary=multiples())
 def test_multiple_setitem(dictionary):
-    """ Test that a host player key in a `MultipleMatching` instance can have
-    its value set to a sublist of the matching's values. """
+    """Test that a host player key in a `MultipleMatching` instance can have
+    its value set to a sublist of the matching's values."""
 
     matching = MultipleMatching(dictionary)
     host = list(dictionary.keys())[0]

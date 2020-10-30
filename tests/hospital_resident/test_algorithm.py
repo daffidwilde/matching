@@ -13,8 +13,8 @@ from .util import players
 
 @given(players=players())
 def test_hospital_resident(players):
-    """ Test that the hospital-resident algorithm produces a valid solution
-    for an instance of HR. """
+    """Test that the hospital-resident algorithm produces a valid solution
+    for an instance of HR."""
 
     residents, hospitals = players
 
@@ -31,8 +31,8 @@ def test_hospital_resident(players):
 
 @given(players=players())
 def test_resident_optimal(players):
-    """ Test that the resident-optimal algorithm produces a solution that is
-    indeed resident-optimal. """
+    """Test that the resident-optimal algorithm produces a solution that is
+    indeed resident-optimal."""
 
     residents, hospitals = players
 
@@ -55,8 +55,8 @@ def test_resident_optimal(players):
 
 @given(players=players())
 def test_hospital_optimal(players):
-    """ Verify that the hospital-optimal algorithm produces a solution that is
-    indeed hospital-optimal. """
+    """Verify that the hospital-optimal algorithm produces a solution that is
+    indeed hospital-optimal."""
 
     _, hospitals = players
 

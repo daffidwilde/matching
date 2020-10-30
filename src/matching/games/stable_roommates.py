@@ -7,7 +7,7 @@ from matching.exceptions import MatchingError
 
 
 class StableRoommates(BaseGame):
-    """ A class for solving instances of the stable roommates problem (SR).
+    """A class for solving instances of the stable roommates problem (SR).
 
     Parameters
     ----------
@@ -39,15 +39,15 @@ class StableRoommates(BaseGame):
         return game
 
     def solve(self):
-        """ Solve the instance of SR using Irving's algorithm. Return the
-        matching. """
+        """Solve the instance of SR using Irving's algorithm. Return the
+        matching."""
 
         self.matching = SingleMatching(stable_roommates(self.players))
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. Raise `MatchingError`
-        detailing the issues if not. """
+        """Check whether the current matching is valid. Raise `MatchingError`
+        detailing the issues if not."""
 
         issues = []
         for player in self.players:
@@ -61,9 +61,9 @@ class StableRoommates(BaseGame):
         return True
 
     def check_stability(self):
-        """ Check for the existence of any blocking pairs in the current
+        """Check for the existence of any blocking pairs in the current
         matching. Then the stability of the matching holds when there are no
-        blocking pairs and all players have been matched. """
+        blocking pairs and all players have been matched."""
 
         if None in self.matching.values():
             return False
@@ -98,8 +98,8 @@ class StableRoommates(BaseGame):
 
 
 def _make_players(player_prefs):
-    """ Make a set of ``Player`` instances from the dictionary given. Add their
-    preferences. """
+    """Make a set of ``Player`` instances from the dictionary given. Add their
+    preferences."""
 
     player_dict = {}
     for player_name in player_prefs:

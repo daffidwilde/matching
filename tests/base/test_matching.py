@@ -6,7 +6,12 @@ from hypothesis.strategies import dictionaries, text
 from matching import BaseMatching
 
 DICTIONARIES = given(
-    dictionary=dictionaries(keys=text(), values=text(), min_size=1, max_size=3,)
+    dictionary=dictionaries(
+        keys=text(),
+        values=text(),
+        min_size=1,
+        max_size=3,
+    )
 )
 
 
@@ -66,8 +71,8 @@ def test_getitem(dictionary):
 
 @DICTIONARIES
 def test_setitem_check_player_in_keys(dictionary):
-    """ Check that a `ValueError` is raised if trying to add a new item to a
-    matching. """
+    """Check that a `ValueError` is raised if trying to add a new item to a
+    matching."""
 
     key = list(dictionary.keys())[0]
     matching = BaseMatching(dictionary)
@@ -79,8 +84,8 @@ def test_setitem_check_player_in_keys(dictionary):
 
 @DICTIONARIES
 def test_setitem_check_new_valid_type(dictionary):
-    """ Check that a `ValueError` is raised if a new match is not one of the
-    provided types. """
+    """Check that a `ValueError` is raised if a new match is not one of the
+    provided types."""
 
     val = list(dictionary.values())[0]
     matching = BaseMatching(dictionary)

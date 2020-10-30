@@ -11,7 +11,7 @@ def unmatch_pair(resident, hospital):
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):
-    """ Solve an instance of HR using an adapted Gale-Shapley algorithm
+    """Solve an instance of HR using an adapted Gale-Shapley algorithm
     :cite:`Rot84`. A unique, stable and optimal matching is found for the given
     set of residents and hospitals. The optimality of the matching is found with
     respect to one party and is subsequently the worst stable matching for the
@@ -43,7 +43,7 @@ def hospital_resident(residents, hospitals, optimal="resident"):
 
 
 def resident_optimal(residents, hospitals):
-    """ Solve the instance of HR to be resident-optimal. The algorithm is as
+    """Solve the instance of HR to be resident-optimal. The algorithm is as
     follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -90,7 +90,7 @@ def resident_optimal(residents, hospitals):
 
 
 def hospital_optimal(hospitals):
-    """ Solve the instance of HR to be hospital-optimal. The algorithm is as
+    """Solve the instance of HR to be hospital-optimal. The algorithm is as
     follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally

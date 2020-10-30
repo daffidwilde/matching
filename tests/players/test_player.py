@@ -43,8 +43,8 @@ def test_unmatch(name, pref_names):
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_successors(name, pref_names):
-    """ Test that the correct successors to another player in a player's
-    preference list are found. """
+    """Test that the correct successors to another player in a player's
+    preference list are found."""
 
     player = Player(name)
     others = [Player(other) for other in pref_names]

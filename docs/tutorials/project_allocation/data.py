@@ -24,10 +24,10 @@ supervisor_names = list(string.ascii_uppercase)
 
 
 def create_supervisor_to_projects_map():
-    """ Create a dictionary mapping supervisor names to their projects.
+    """Create a dictionary mapping supervisor names to their projects.
     To do this, first sample the number of projects that each supervisor will
     have from the discretised triangular distribution with mode
-    ``.75 * MAX_SUPERVISOR_PROJECTS``. """
+    ``.75 * MAX_SUPERVISOR_PROJECTS``."""
 
     mode = MAX_SUPERVISOR_PROJECTS * 0.75
 
@@ -54,8 +54,8 @@ def create_supervisor_to_projects_map():
 
 
 def create_player_to_capacity_maps(supervisor_to_projects):
-    """ Create dictionaries mapping supervisor names and project codes to their
-    respective capacities. """
+    """Create dictionaries mapping supervisor names and project codes to their
+    respective capacities."""
 
     supervisor_to_capacity, project_to_capacity = {}, {}
     for supervisor, projects in supervisor_to_projects.items():
@@ -71,8 +71,8 @@ def create_player_to_capacity_maps(supervisor_to_projects):
 
 
 def get_all_projects(supervisor_to_projects):
-    """ Get all of the project codes available using the supervisor to projects
-    map. """
+    """Get all of the project codes available using the supervisor to projects
+    map."""
 
     return (
         project
@@ -82,10 +82,10 @@ def get_all_projects(supervisor_to_projects):
 
 
 def create_student_to_choices_map(projects):
-    """ Create a dictionary mapping student names to their choices of the
+    """Create a dictionary mapping student names to their choices of the
     available projects. To do so, first sample the number of choices each
     student makes from the discretised right-triangular distribution with
-    a maximum of ``MAX_STUDENT_CHOICES``. """
+    a maximum of ``MAX_STUDENT_CHOICES``."""
 
     students_number_of_choices = (
         np.random.triangular(
@@ -109,8 +109,8 @@ def create_student_to_choices_map(projects):
 
 
 def create_student_dataframe(student_to_choices):
-    """ Create a dataframe detailing the students' choices and assign them each
-    a rank. """
+    """Create a dataframe detailing the students' choices and assign them each
+    a rank."""
 
     choice_columns = list(range(MAX_STUDENT_CHOICES))
     df_students = pd.DataFrame(columns=["name"] + choice_columns)
@@ -146,8 +146,7 @@ def create_supervisor_dataframe(supervisor_to_capacity):
 
 
 def create_project_dataframe(project_to_capacity, supervisor_to_projects):
-    """ Create a dataframe detailing the projects' capacities and supervisor.
-    """
+    """Create a dataframe detailing the projects' capacities and supervisor."""
 
     df_project_capacities = pd.DataFrame.from_dict(
         project_to_capacity, orient="index", columns=["capacity"]
@@ -181,8 +180,8 @@ def save_dataframes(student_dataframe, supervisor_dataframe, project_dataframe):
 
 
 def main():
-    """ Create the required maps to form the player dataframes, and then save
-    them. """
+    """Create the required maps to form the player dataframes, and then save
+    them."""
 
     np.random.seed(SEED)
     print("Seed set:", SEED)

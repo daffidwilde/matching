@@ -76,8 +76,8 @@ def test_check_inputs_player_prefs_unique(player_others, clean):
 
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_all_in_party(player_others, clean):
-    """" Test that a game can verify its players have only got preferences in
-    the correct party. """
+    """ " Test that a game can verify its players have only got preferences in
+    the correct party."""
 
     player, others = player_others
 
@@ -102,8 +102,8 @@ def test_check_inputs_player_prefs_all_in_party(player_others, clean):
 
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_nonempty(player_others, clean):
-    """" Test that a game can verify its players have got nonempty preference
-    lists. """
+    """ " Test that a game can verify its players have got nonempty preference
+    lists."""
 
     player, others = player_others
 

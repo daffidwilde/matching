@@ -4,7 +4,7 @@ from matching import BasePlayer
 
 
 class Player(BasePlayer):
-    """ A class to represent a player within the matching game.
+    """A class to represent a player within the matching game.
 
     Parameters
     ----------
@@ -47,8 +47,8 @@ class Player(BasePlayer):
         return self.prefs[idx + 1 :]
 
     def check_if_match_is_unacceptable(self, unmatched_okay=False):
-        """ Check the acceptability of the current match, with the stipulation
-        that being unmatched is okay (or not). """
+        """Check the acceptability of the current match, with the stipulation
+        that being unmatched is okay (or not)."""
 
         other = self.matching
 

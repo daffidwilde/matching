@@ -21,8 +21,8 @@ def test_init(name):
 
 @given(name=text())
 def test_repr(name):
-    """ Test that a Player instance is represented by the string version of
-    their name. """
+    """Test that a Player instance is represented by the string version of
+    their name."""
 
     player = BasePlayer(name)
     assert repr(player) == name
@@ -33,8 +33,8 @@ def test_repr(name):
 
 @given(name=text())
 def test_unmatched_message(name):
-    """ Test that a Player instance can return a message saying they are
-    unmatched. This is could be a lie. """
+    """Test that a Player instance can return a message saying they are
+    unmatched. This is could be a lie."""
 
     player = BasePlayer(name)
 
@@ -45,9 +45,9 @@ def test_unmatched_message(name):
 
 @given(player_others=player_others())
 def test_not_in_preferences_message(player_others):
-    """ Test that a Player instance can return a message saying they are matched
+    """Test that a Player instance can return a message saying they are matched
     to another player who does not appear in their preferences. This could be a
-    lie. """
+    lie."""
 
     player, others = player_others
 
@@ -73,8 +73,8 @@ def test_set_prefs(player_others):
 
 @given(player_others=player_others())
 def test_keep_original_prefs(player_others):
-    """ Test that a Player instance keeps a record of their original preference
-    list even when their preferences are updated. """
+    """Test that a Player instance keeps a record of their original preference
+    list even when their preferences are updated."""
 
     player, others = player_others
 
@@ -103,8 +103,8 @@ def test_forget(player_others):
 
 @given(player_others=player_others())
 def test_prefers(player_others):
-    """ Test that a Player instance can compare its preference between two
-    players. """
+    """Test that a Player instance can compare its preference between two
+    players."""
 
     player, others = player_others
 
