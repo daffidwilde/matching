@@ -4,11 +4,11 @@ from hypothesis import given
 from hypothesis.strategies import lists, text
 
 from matching import Player
-from matching.games.util import delete_pair, match_pair
+from matching.games.util import _delete_pair, _match_pair
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
-def test_delete_pair(name, pref_names):
+def test__delete_pair(name, pref_names):
     """ Verify that two players can forget each other. """
 
     others = [Player(other) for other in pref_names]
@@ -18,7 +18,7 @@ def test_delete_pair(name, pref_names):
         other.set_prefs([player])
         player.set_prefs(others)
 
-        delete_pair(player, other)
+        _delete_pair(player, other)
         assert player.prefs == [o for o in others if o != other]
         assert other.prefs == []
 
@@ -34,6 +34,6 @@ def test_match_pair(name, pref_names):
         other.set_prefs([player])
         player.set_prefs(others)
 
-        match_pair(player, other)
+        _match_pair(player, other)
         assert player.matching == other
         assert other.matching == player
