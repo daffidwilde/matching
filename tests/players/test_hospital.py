@@ -48,10 +48,10 @@ def test_match(name, capacity, pref_names):
 
     hospital.set_prefs(others)
     for i, other in enumerate(others[:-1]):
-        hospital.match(other)
+        hospital._match(other)
         assert hospital.matching == others[: i + 1]
 
-    hospital.match(others[-1])
+    hospital._match(others[-1])
     assert hospital.matching == others
 
 
@@ -64,10 +64,10 @@ def test_unmatch(name, capacity, pref_names):
 
     hospital.matching = others
     for i, other in enumerate(others[:-1]):
-        hospital.unmatch(other)
+        hospital._unmatch(other)
         assert hospital.matching == others[i + 1 :]
 
-    hospital.unmatch(others[-1])
+    hospital._unmatch(others[-1])
     assert hospital.matching == []
 
 
@@ -87,8 +87,8 @@ def test_get_worst_match(name, capacity, pref_names):
 
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_successors(name, capacity, pref_names):
-    """Check that a hospital can get the successors to its worst current
-    match."""
+    """Check that a hospital can get the successors to its worst current match.
+    If no such successors exist, check for an empty list."""
 
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]

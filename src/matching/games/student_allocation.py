@@ -218,7 +218,7 @@ class StudentAllocation(HospitalResident):
 
                         if self.clean:
                             for project in supervisor.projects:
-                                project.forget(student)
+                                project._forget(student)
 
         else:
             super()._check_inputs_player_prefs_all_reciprocated(party)
@@ -252,7 +252,7 @@ class StudentAllocation(HospitalResident):
                             for project in set(supervisor.projects) & set(
                                 student.prefs
                             ):
-                                student.forget(project)
+                                student._forget(project)
 
         else:
             super()._check_inputs_player_reciprocated_all_prefs(

@@ -11,12 +11,12 @@ from matching.algorithms.hospital_resident import (
 from .util import players
 
 
-@given(players=players())
-def test_hospital_resident(players):
+@given(players_=players())
+def test_hospital_resident(players_):
     """Test that the hospital-resident algorithm produces a valid solution
     for an instance of HR."""
 
-    residents, hospitals = players
+    residents, hospitals = players_
 
     matching = hospital_resident(residents, hospitals)
     assert set(hospitals) == set(matching.keys())
@@ -29,12 +29,12 @@ def test_hospital_resident(players):
             assert resident not in matched_residents
 
 
-@given(players=players())
-def test_resident_optimal(players):
+@given(players_=players())
+def test_resident_optimal(players_):
     """Test that the resident-optimal algorithm produces a solution that is
     indeed resident-optimal."""
 
-    residents, hospitals = players
+    residents, hospitals = players_
 
     matching = resident_optimal(residents, hospitals)
     assert set(hospitals) == set(matching.keys())
@@ -53,12 +53,12 @@ def test_resident_optimal(players):
             assert resident.prefs.index(resident.matching) == 0
 
 
-@given(players=players())
-def test_hospital_optimal(players):
+@given(players_=players())
+def test_hospital_optimal(players_):
     """Verify that the hospital-optimal algorithm produces a solution that is
     indeed hospital-optimal."""
 
-    _, hospitals = players
+    _, hospitals = players_
 
     matching = hospital_optimal(hospitals)
     assert set(hospitals) == set(matching.keys())

@@ -19,7 +19,11 @@ def test_first_phase(players):
     players = first_phase(players)
 
     for player in players:
-        assert player.matching is None
+        if player.matching is None:
+            assert player.prefs == []
+        else:
+            assert player.matching in player.prefs
+
         assert {p.name for p in player.prefs}.issubset(player._pref_names)
 
 
@@ -59,6 +63,8 @@ def test_stable_roommates(players):
     matching = stable_roommates(players)
 
     for player, other in matching.items():
-        if other is not None:
+        if other is None:
+            assert player.prefs == []
+        else:
             assert player.prefs == [other]
             assert other.matching == player

@@ -14,8 +14,8 @@ from .params import STUDENT_ALLOCATION, make_players
 def test_student_allocation(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """Verify that the student allocation algorithm produces a valid solution
-    to an instance of SA."""
+    """Verify that the student allocation algorithm produces a valid solution to
+    an instance of SA."""
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(

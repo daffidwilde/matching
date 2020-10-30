@@ -1,13 +1,13 @@
 """ Strategies for SR tests. """
 
-from hypothesis.strategies import composite, integers, lists, permutations, text
+from hypothesis.strategies import composite, integers, lists, permutations
 
 from matching import Player
 from matching.games import StableRoommates
 
 
 @composite
-def connections(draw, players_from=text(), min_players=4, max_players=10):
+def connections(draw, players_from=integers(), min_players=4, max_players=10):
     """ A strategy for making a set of connections between players. """
 
     num_players = draw(integers(min_players, max_players))
@@ -36,19 +36,19 @@ def players(draw, **kwargs):
 
     preferences = draw(connections(**kwargs))
 
-    players = [Player(name) for name in preferences]
-    for player in players:
+    players_ = [Player(name) for name in preferences]
+    for player in players_:
         names = preferences[player.name]
         prefs = []
         for name in names:
-            for other in players:
+            for other in players_:
                 if other.name == name:
                     prefs.append(other)
                     break
 
         player.set_prefs(prefs)
 
-    return players
+    return players_
 
 
 @composite

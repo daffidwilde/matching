@@ -25,7 +25,7 @@ def test_match(name, pref_names):
     player = Player(name)
     other = Player(pref_names[0])
 
-    player.match(other)
+    player._match(other)
     assert player.matching == other
 
 
@@ -37,7 +37,7 @@ def test_unmatch(name, pref_names):
     other = Player(pref_names[0])
 
     player.matching = other
-    player.unmatch()
+    player._unmatch()
     assert player.matching is None
 
 
@@ -69,7 +69,7 @@ def test_check_if_match_unacceptable(name, pref_names):
     assert player.check_if_match_is_unacceptable() == message
 
     player.set_prefs(others[:-1])
-    player.match(others[-1])
+    player._match(others[-1])
     message = player.not_in_preferences_message(others[-1])
     assert player.check_if_match_is_unacceptable() == message
 

@@ -41,6 +41,14 @@ class BasePlayer:
 
         return str(self.name)
 
+    def _forget(self, other):
+        """Forget another player by removing them from the player's preference
+        list."""
+
+        prefs = self.prefs[:]
+        prefs.remove(other)
+        self.prefs = prefs
+
     def unmatched_message(self):
 
         return f"{self} is unmatched."
@@ -61,14 +69,6 @@ class BasePlayer:
         if self._original_prefs is None:
             self._original_prefs = players[:]
 
-    def forget(self, other):
-        """Forget another player by removing them from the player's preference
-        list."""
-
-        prefs = self.prefs[:]
-        prefs.remove(other)
-        self.prefs = prefs
-
     def prefers(self, player, other):
         """Determines whether the player prefers a player over some other
         player."""
@@ -77,19 +77,19 @@ class BasePlayer:
         return prefs.index(player) < prefs.index(other)
 
     @abc.abstractmethod
-    def get_favourite(self):
-        """A placeholder function for getting the player's favourite, feasible
-        player."""
-
-    @abc.abstractmethod
-    def match(self, other):
+    def _match(self, other):
         """A placeholder function for assigning the player to be matched to
         some other player."""
 
     @abc.abstractmethod
-    def unmatch(self, other):
+    def _unmatch(self, other):
         """A placeholder function for unassigning the player from its match
         with some other player."""
+
+    @abc.abstractmethod
+    def get_favourite(self):
+        """A placeholder function for getting the player's favourite, feasible
+        player."""
 
     @abc.abstractmethod
     def get_successors(self):
@@ -137,7 +137,7 @@ class BaseGame(metaclass=abc.ABCMeta):
         vars(self)[player_party].remove(player)
         for other in vars(self)[other_party]:
             if player in other.prefs:
-                other.forget(player)
+                other._forget(player)
 
     def _check_inputs_player_prefs_unique(self, party):
         """Check that each player in :code:`party` has not ranked another
@@ -177,7 +177,7 @@ class BaseGame(metaclass=abc.ABCMeta):
                         )
                     )
                     if self.clean:
-                        player.forget(other)
+                        player._forget(other)
 
     def _check_inputs_player_prefs_nonempty(self, party, other_party):
         """Make sure that each player in :code:`party` has a nonempty

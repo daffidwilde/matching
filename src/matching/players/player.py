@@ -25,20 +25,20 @@ class Player(BasePlayer):
         The original set of player preferences.
     """
 
-    def get_favourite(self):
-        """ Get the player's favourite player. """
-
-        return self.prefs[0]
-
-    def match(self, other):
+    def _match(self, other):
         """ Assign the player to be matched to some other player. """
 
         self.matching = other
 
-    def unmatch(self):
+    def _unmatch(self):
         """ Set the player to be unmatched. """
 
         self.matching = None
+
+    def get_favourite(self):
+        """ Get the player's favourite player. """
+
+        return self.prefs[0]
 
     def get_successors(self):
         """ Get all the successors to the current match of the player. """

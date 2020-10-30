@@ -1,13 +1,13 @@
 """ Functions for the SA algorithm. """
 
-from .util import delete_pair, match_pair
+from .util import _delete_pair, _match_pair
 
 
 def unmatch_pair(student, project):
     """ Unmatch a student-project pair. """
 
-    student.unmatch()
-    project.unmatch(student)
+    student._unmatch()
+    project._unmatch(student)
 
 
 def student_allocation(students, projects, supervisors, optimal="student"):
@@ -84,7 +84,7 @@ def student_optimal(students, projects):
         project = student.get_favourite()
         supervisor = project.supervisor
 
-        match_pair(student, project)
+        _match_pair(student, project)
 
         if len(project.matching) > project.capacity:
             worst = project.get_worst_match()
@@ -100,7 +100,7 @@ def student_optimal(students, projects):
         if len(project.matching) == project.capacity:
             successors = project.get_successors()
             for successor in successors:
-                delete_pair(project, successor)
+                _delete_pair(project, successor)
                 if not successor.prefs:
                     free_students.remove(successor)
 
@@ -115,7 +115,7 @@ def student_optimal(students, projects):
                 ]
 
                 for project in supervisor_projects:
-                    delete_pair(project, successor)
+                    _delete_pair(project, successor)
                 if not successor.prefs:
                     free_students.remove(successor)
 
@@ -156,11 +156,11 @@ def supervisor_optimal(projects, supervisors):
             curr_match = student.matching
             unmatch_pair(student, curr_match)
 
-        match_pair(student, project)
+        _match_pair(student, project)
 
         successors = student.get_successors()
         for successor in successors:
-            delete_pair(student, successor)
+            _delete_pair(student, successor)
 
         free_supervisors = [
             supervisor

@@ -20,8 +20,6 @@
 import os
 import sys
 
-import matching
-
 sys.path.insert(0, os.path.abspath("."))
 
 # -- General configuration ------------------------------------------------
@@ -68,9 +66,14 @@ author = "Henry Wilde"
 # built documents.
 #
 # The short X.Y version.
-version = matching.__version__
+version = {}
+with open("../src/matching/version.py", "r") as f:
+    exec(f.read(), version)
+
+version = version["__version__"]
 if version.count(".") > 1:
     version = ".".join(version.split(".")[:-1])
+
 # The full version, including alpha/beta/rc tags.
 release = version
 

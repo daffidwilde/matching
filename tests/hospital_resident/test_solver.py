@@ -123,7 +123,7 @@ def test_check_inputs_hospital_prefs_all_reciprocated(game):
 
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
-    resident.forget(hospital)
+    resident._forget(hospital)
     with warnings.catch_warnings(record=True) as w:
         game._check_inputs_player_prefs_all_reciprocated("hospitals")
 
@@ -143,7 +143,7 @@ def test_check_inputs_hospital_reciprocated_all_prefs(game):
 
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
-    hospital.forget(resident)
+    hospital._forget(resident)
     with warnings.catch_warnings(record=True) as w:
         game._check_inputs_player_reciprocated_all_prefs(
             "hospitals", "residents"

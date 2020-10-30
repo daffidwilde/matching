@@ -1,48 +1,19 @@
 """ Functions for the SR algorithm. """
 
-
-def forget_pair(player, other):
-    """ Remove a (player, other) pair from the game. """
-
-    player.forget(other)
-    other.forget(player)
+from .util import _delete_pair
 
 
-def forget_successors(players):
+def _forget_successors(players):
     """Make each player forget those players that they like less than their
     current proposal."""
 
     for player in players:
         if player.matching:
             successors = player.get_successors()
-            player.unmatch()
             for successor in successors:
-                forget_pair(player, successor)
+                _delete_pair(player, successor)
 
     return players
-
-
-def stable_roommates(players):
-    """Irving's algorithm :cite:`Irv85` that finds stable solutions to
-    instances of SR if one exists. Otherwise, an incomplete matching is found.
-
-    Parameters
-    ----------
-    players : list of Player
-        The players in the game. Each must rank all other players.
-
-    Returns
-    -------
-    matching : dict
-        A dictionary of matches where the keys and values are given by the
-        members of ``players``.
-    """
-
-    players = first_phase(players)
-    if any(len(p.prefs) > 1 for p in players):
-        players = second_phase(players)
-
-    return {player: player.matching for player in players}
 
 
 def first_phase(players):
@@ -57,23 +28,23 @@ def first_phase(players):
         while True:
             fave = proposer.get_favourite()
             if not fave.matching:
-                fave.match(proposer)
+                fave._match(proposer)
             else:
                 current = fave.matching
                 if fave.prefers(proposer, current):
-                    fave.match(proposer)
-                    forget_pair(fave, current)
+                    fave._match(proposer)
+                    _delete_pair(fave, current)
 
                     proposer = current
                 else:
-                    forget_pair(fave, proposer)
+                    _delete_pair(fave, proposer)
 
             if fave not in proposed_to or not proposer.prefs:
                 break
 
         proposed_to.add(fave)
 
-    players = forget_successors(players)
+    players = _forget_successors(players)
     return players
 
 
@@ -106,12 +77,15 @@ def second_phase(players):
     (rotations) are located and removed from the game. These reduced preference
     lists form a matching."""
 
+    for player in players:
+        player._unmatch()
+
     player_with_second_preference = next(p for p in players if len(p.prefs) > 1)
     while True:
         cycle = locate_all_or_nothing_cycle(player_with_second_preference)
         for player, other in cycle:
-            player.forget(other)
-            other.forget(player)
+            player._forget(other)
+            other._forget(player)
 
         try:
             player_with_second_preference = next(
@@ -122,6 +96,29 @@ def second_phase(players):
 
     for player in players:
         if player.prefs:
-            player.match(player.get_favourite())
+            player._match(player.get_favourite())
 
     return players
+
+
+def stable_roommates(players):
+    """Irving's algorithm :cite:`Irv85` that finds stable solutions to
+    instances of SR if one exists. Otherwise, an incomplete matching is found.
+
+    Parameters
+    ----------
+    players : list of Player
+        The players in the game. Each must rank all other players.
+
+    Returns
+    -------
+    matching : dict
+        A dictionary of matches where the keys and values are given by the
+        members of ``players``.
+    """
+
+    players = first_phase(players)
+    if any(len(p.prefs) > 1 for p in players):
+        players = second_phase(players)
+
+    return {player: player.matching for player in players}

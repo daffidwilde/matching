@@ -5,7 +5,7 @@ dependencies:
     - matplotlib>=3
     - numpy>=1.16
     - pandas>=0.24
-    - ipython>=7.6
+    - ipython=7.10
     - python>=3.6
     - pip>=19
     - sphinx=2.4.0

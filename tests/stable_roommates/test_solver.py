@@ -52,6 +52,10 @@ def test_check_inputs(players):
 def test_solve(game):
     """Test that StableRoommates can solve games correctly."""
 
+    print("THE GAME\n========")
+    for player in game.players:
+        print(player, player.prefs)
+
     matching = game.solve()
     assert isinstance(matching, SingleMatching)
 
@@ -72,6 +76,7 @@ def test_check_validity(game):
     unmatched."""
 
     matching = game.solve()
+
     if None in matching.values():
         with pytest.raises(MatchingError):
             game.check_validity()

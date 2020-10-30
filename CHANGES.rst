@@ -1,6 +1,12 @@
 History
 =======
 
+v1.3.3 - 2020-10-15
+-------------------
+
+- Move unmatching to second phase in SR (allows for simple games.)
+- Minor docs fixes.
+
 v1.3.2 - 2020-07-05
 -------------------
 

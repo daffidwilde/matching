@@ -185,7 +185,7 @@ class HospitalResident(BaseGame):
                         )
                     )
                     if self.clean:
-                        player.forget(other)
+                        player._forget(other)
 
     def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
         """Make sure that each player in :code:`party` has ranked all those
@@ -206,7 +206,7 @@ class HospitalResident(BaseGame):
                         )
                     )
                     if self.clean:
-                        other.forget(player)
+                        other._forget(player)
 
     def _check_inputs_player_capacity(self, party, other_party):
         """Check that each player in :code:`party` has a capacity of at least

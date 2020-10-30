@@ -48,11 +48,11 @@ def test_match(name, capacity, pref_names):
     project.prefs = students
     supervisor.prefs = students
     for i, student in enumerate(students[:-1]):
-        project.match(student)
+        project._match(student)
         assert project.matching == students[: i + 1]
         assert supervisor.matching == students[: i + 1]
 
-    project.match(students[-1])
+    project._match(students[-1])
     assert project.matching == students
     assert supervisor.matching == students
 
@@ -70,10 +70,10 @@ def test_unmatch(name, capacity, pref_names):
     project.matching = students
     supervisor.matching = students
     for i, student in enumerate(students[:-1]):
-        project.unmatch(student)
+        project._unmatch(student)
         assert project.matching == students[i + 1 :]
         assert supervisor.matching == students[i + 1 :]
 
-    project.unmatch(students[-1])
+    project._unmatch(students[-1])
     assert project.matching == []
     assert supervisor.matching == []
