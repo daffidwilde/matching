@@ -35,6 +35,14 @@ class Player:
 
         return str(self.name)
 
+    def _forget(self, other):
+        """Forget another player by removing them from the player's preference
+        list."""
+
+        prefs = self.prefs[:]
+        prefs.remove(other)
+        self.prefs = prefs
+
     def unmatched_message(self):
 
         return f"{self} is unmatched."
@@ -67,14 +75,6 @@ class Player:
         """ Set the player to be unmatched. """
 
         self.matching = None
-
-    def forget(self, other):
-        """Forget another player by removing them from the player's preference
-        list."""
-
-        prefs = self.prefs[:]
-        prefs.remove(other)
-        self.prefs = prefs
 
     def get_successors(self):
         """ Get all the successors to the current match of the player. """

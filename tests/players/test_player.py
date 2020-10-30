@@ -83,10 +83,10 @@ def test_forget(name, pref_names):
 
     player.set_prefs(others)
     for i, other in enumerate(others[:-1]):
-        player.forget(other)
+        player._forget(other)
         assert player.prefs == others[i + 1 :]
 
-    player.forget(others[-1])
+    player._forget(others[-1])
     assert player.prefs == []
     assert player._original_prefs == others
 
