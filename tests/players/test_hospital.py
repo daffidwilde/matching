@@ -48,10 +48,10 @@ def test_match(name, capacity, pref_names):
 
     hospital.set_prefs(others)
     for i, other in enumerate(others[:-1]):
-        hospital.match(other)
+        hospital._match(other)
         assert hospital.matching == others[: i + 1]
 
-    hospital.match(others[-1])
+    hospital._match(others[-1])
     assert hospital.matching == others
 
 
@@ -64,10 +64,10 @@ def test_unmatch(name, capacity, pref_names):
 
     hospital.matching = others
     for i, other in enumerate(others[:-1]):
-        hospital.unmatch(other)
+        hospital._unmatch(other)
         assert hospital.matching == others[i + 1 :]
 
-    hospital.unmatch(others[-1])
+    hospital._unmatch(others[-1])
     assert hospital.matching == []
 
 
