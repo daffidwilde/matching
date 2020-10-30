@@ -5,8 +5,8 @@ def delete_pair(player, successor):
     """Make a player forget one its "successors", effectively deleting the pair
     from further further consideration in the game."""
 
-    player.forget(successor)
-    successor.forget(player)
+    player._forget(successor)
+    successor._forget(player)
 
 
 def match_pair(suitor, reviewer):

@@ -36,7 +36,7 @@ class BaseGame(metaclass=abc.ABCMeta):
         vars(self)[player_party].remove(player)
         for other in vars(self)[other_party]:
             if player in other.prefs:
-                other.forget(player)
+                other._forget(player)
 
     def _check_inputs_player_prefs_unique(self, party):
         """Check that each player in :code:`party` has not ranked another
@@ -76,7 +76,7 @@ class BaseGame(metaclass=abc.ABCMeta):
                         )
                     )
                     if self.clean:
-                        player.forget(other)
+                        player._forget(other)
 
     def _check_inputs_player_prefs_nonempty(self, party, other_party):
         """Make sure that each player in :code:`party` has a nonempty
