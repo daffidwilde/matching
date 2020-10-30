@@ -11,21 +11,25 @@ from .params import STABLE_ROOMMATES, make_players
 
 @STABLE_ROOMMATES
 def test_first_phase(player_names, seed):
-    """ Verify that the first phase of the algorithm produces a valid set of
-    reduced preference players. """
+    """Verify that the first phase of the algorithm produces a valid set of
+    reduced preference players."""
 
     players = make_players(player_names, seed)
     players = first_phase(players)
 
     for player in players:
-        assert player.matching is None
+        if player.matching is None:
+            assert player.prefs == []
+        else:
+            assert player.matching in player.prefs
+
         assert {p.name for p in player.prefs}.issubset(player.pref_names)
 
 
 @STABLE_ROOMMATES
 def test_locate_all_or_nothing_cycle(player_names, seed):
-    """ Verify that a cycle of (least-preferred, second-choice) players can be
-    identified from a set of players. """
+    """Verify that a cycle of (least-preferred, second-choice) players can be
+    identified from a set of players."""
 
     players = make_players(player_names, seed)
     player = players[-1]
@@ -37,8 +41,8 @@ def test_locate_all_or_nothing_cycle(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_second_phase(player_names, seed):
-    """ Verify that the second phase of the algorithm produces a valid set of
-    players with appropriate matches. """
+    """Verify that the second phase of the algorithm produces a valid set of
+    players with appropriate matches."""
 
     players = make_players(player_names, seed)
     try:
@@ -60,7 +64,10 @@ def test_stable_roommates(player_names, seed):
     players = make_players(player_names, seed)
     matching = stable_roommates(players)
 
-    for player, other in matching.items():
-        if other is not None:
+    if None in matching.values():
+        assert all(val is None for val in matching.values())
+
+    else:
+        for player, other in matching.items():
             assert player.prefs == [other]
             assert other.matching == player

@@ -14,8 +14,8 @@ from .params import HOSPITAL_RESIDENT, make_players
 def test_hospital_resident(
     resident_names, hospital_names, capacities, seed, clean
 ):
-    """ Verify that the hospital-resident algorithm produces a valid solution
-    for an instance of HR. """
+    """Verify that the hospital-resident algorithm produces a valid solution
+    for an instance of HR."""
 
     np.random.seed(seed)
     residents, hospitals = make_players(
@@ -37,8 +37,8 @@ def test_hospital_resident(
 def test_resident_optimal(
     resident_names, hospital_names, capacities, seed, clean
 ):
-    """ Verify that the resident-optimal algorithm produces a solution that is
-    indeed resident-optimal. """
+    """Verify that the hospital-resident algorithm produces a valid,
+    resident-optimal matching for an instance of HR."""
 
     np.random.seed(seed)
     residents, hospitals = make_players(
@@ -65,8 +65,8 @@ def test_resident_optimal(
 def test_hospital_optimal(
     resident_names, hospital_names, capacities, seed, clean
 ):
-    """ Verify that the hospital-optimal algorithm produces a solution that is
-    indeed hospital-optimal. """
+    """Verify that the hospital-resident algorithm produces a valid,
+    hospital-optimal matching for an instance of HR."""
 
     np.random.seed(seed)
     _, hospitals = make_players(resident_names, hospital_names, capacities)

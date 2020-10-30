@@ -14,7 +14,7 @@ from matching.players import Hospital
 
 
 class HospitalResident(BaseGame):
-    """ A class for solving instances of the hospital-resident assignment
+    """A class for solving instances of the hospital-resident assignment
     problem (HR).
 
     In this case, a blocking pair is any resident-hospital pair that satisfies
@@ -68,10 +68,10 @@ class HospitalResident(BaseGame):
     def create_from_dictionaries(
         cls, resident_prefs, hospital_prefs, capacities, clean=False
     ):
-        """ Create an instance of :code:`HospitalResident` from two preference
+        """Create an instance of :code:`HospitalResident` from two preference
         dictionaries and capacities. If :code:`clean=True` then remove players
         from the game and/or player preferences if they do not satisfy the
-        conditions of the game. """
+        conditions of the game."""
 
         residents, hospitals = _make_players(
             resident_prefs, hospital_prefs, capacities
@@ -81,8 +81,8 @@ class HospitalResident(BaseGame):
         return game
 
     def solve(self, optimal="resident"):
-        """ Solve the instance of HR using either the resident- or
-        hospital-oriented algorithm. Return the matching. """
+        """Solve the instance of HR using either the resident- or
+        hospital-oriented algorithm. Return the matching."""
 
         self.matching = Matching(
             hospital_resident(self.residents, self.hospitals, optimal)
@@ -109,8 +109,8 @@ class HospitalResident(BaseGame):
         return True
 
     def _check_for_unacceptable_matches(self, party):
-        """ Check that no player in `party` is matched to an unacceptable
-        player. """
+        """Check that no player in `party` is matched to an unacceptable
+        player."""
 
         issues = []
         for player in vars(self)[party]:
@@ -134,8 +134,8 @@ class HospitalResident(BaseGame):
         return issues
 
     def check_stability(self):
-        """ Check for the existence of any blocking pairs in the current
-        matching, thus determining the stability of the matching. """
+        """Check for the existence of any blocking pairs in the current
+        matching, thus determining the stability of the matching."""
 
         blocking_pairs = []
         for resident in self.residents:
@@ -151,9 +151,9 @@ class HospitalResident(BaseGame):
         return not any(blocking_pairs)
 
     def check_inputs(self):
-        """ Give out warnings if any of the conditions of the game have been
+        """Give out warnings if any of the conditions of the game have been
         broken. If the :code:`clean` attribute is :code:`True`, then remove any
-        such situations from the game. """
+        such situations from the game."""
 
         self._check_inputs_player_prefs_unique("residents")
         self._check_inputs_player_prefs_unique("hospitals")
@@ -172,8 +172,8 @@ class HospitalResident(BaseGame):
         self._check_inputs_player_capacity("hospitals", "residents")
 
     def _check_inputs_player_prefs_all_reciprocated(self, party):
-        """ Make sure that each player in :code:`party` has ranked only those
-        players that have ranked it. """
+        """Make sure that each player in :code:`party` has ranked only those
+        players that have ranked it."""
 
         for player in vars(self)[party]:
 
@@ -185,11 +185,11 @@ class HospitalResident(BaseGame):
                         )
                     )
                     if self.clean:
-                        player.forget(other)
+                        player._forget(other)
 
     def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
-        """ Make sure that each player in :code:`party` has ranked all those
-        players in :code:`other_party` that have ranked it. """
+        """Make sure that each player in :code:`party` has ranked all those
+        players in :code:`other_party` that have ranked it."""
 
         players = vars(self)[party]
         others = vars(self)[other_party]
@@ -206,12 +206,12 @@ class HospitalResident(BaseGame):
                         )
                     )
                     if self.clean:
-                        other.forget(player)
+                        other._forget(player)
 
     def _check_inputs_player_capacity(self, party, other_party):
-        """ Check that each player in :code:`party` has a capacity of at least
+        """Check that each player in :code:`party` has a capacity of at least
         one. If the :code:`clean` attribute is :code:`True`, remove any hospital
-        that does not have such a capacity from the game. """
+        that does not have such a capacity from the game."""
 
         for player in vars(self)[party]:
             if player.capacity < 1:
@@ -228,8 +228,8 @@ def _check_mutual_preference(resident, hospital):
 
 
 def _check_resident_unhappy(resident, hospital):
-    """ Determine whether a resident is unhappy because they are unmatched, or
-    they prefer the hospital to their current match. """
+    """Determine whether a resident is unhappy because they are unmatched, or
+    they prefer the hospital to their current match."""
 
     return resident.matching is None or resident.prefers(
         hospital, resident.matching
@@ -237,9 +237,9 @@ def _check_resident_unhappy(resident, hospital):
 
 
 def _check_hospital_unhappy(resident, hospital):
-    """ Determine whether a hospital is unhappy because they are
+    """Determine whether a hospital is unhappy because they are
     under-subscribed, or they prefer the resident to at least one of their
-    current matches. """
+    current matches."""
 
     return len(hospital.matching) < hospital.capacity or any(
         [hospital.prefers(resident, match) for match in hospital.matching]
@@ -247,8 +247,8 @@ def _check_hospital_unhappy(resident, hospital):
 
 
 def _make_players(resident_prefs, hospital_prefs, capacities):
-    """ Make a set of residents and hospitals from the dictionaries given, and
-    add their preferences. """
+    """Make a set of residents and hospitals from the dictionaries given, and
+    add their preferences."""
 
     resident_dict, hospital_dict = _make_instances(
         resident_prefs, hospital_prefs, capacities
@@ -269,8 +269,8 @@ def _make_players(resident_prefs, hospital_prefs, capacities):
 
 
 def _make_instances(resident_prefs, hospital_prefs, capacities):
-    """ Create ``Player`` (resident) and ``Hospital`` instances for the names in
-    each dictionary. """
+    """Create ``Player`` (resident) and ``Hospital`` instances for the names in
+    each dictionary."""
 
     resident_dict, hospital_dict = {}, {}
     for resident_name in resident_prefs:

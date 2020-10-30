@@ -22,8 +22,8 @@ hospital_names = [
 
 
 def create_resident_to_preferences_map():
-    """ Create a map from resident names to an ordered subset of the hospital
-    names. """
+    """Create a map from resident names to an ordered subset of the hospital
+    names."""
 
     resident_to_preference_size = {
         resident: np.random.randint(1, len(hospital_names) + 1)
@@ -46,8 +46,8 @@ def create_resident_to_preferences_map():
 
 
 def create_hospital_to_preferences_map(resident_to_preferences):
-    """ Create a map from hospital names to a permutation of all those residents
-    who ranked them. """
+    """Create a map from hospital names to a permutation of all those residents
+    who ranked them."""
 
     hospital_to_residents = defaultdict(set)
     for resident, hospitals in resident_to_preferences.items():

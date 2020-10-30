@@ -2,7 +2,7 @@
 
 
 class Player:
-    """ A class to represent a player within the matching game.
+    """A class to represent a player within the matching game.
 
     Parameters
     ----------
@@ -35,6 +35,24 @@ class Player:
 
         return str(self.name)
 
+    def _forget(self, other):
+        """Forget another player by removing them from the player's preference
+        list."""
+
+        prefs = self.prefs[:]
+        prefs.remove(other)
+        self.prefs = prefs
+
+    def _match(self, other):
+        """ Assign the player to be matched to some other player. """
+
+        self.matching = other
+
+    def _unmatch(self):
+        """ Set the player to be unmatched. """
+
+        self.matching = None
+
     def unmatched_message(self):
 
         return f"{self} is unmatched."
@@ -58,24 +76,6 @@ class Player:
 
         return self.prefs[0]
 
-    def match(self, other):
-        """ Assign the player to be matched to some other player. """
-
-        self.matching = other
-
-    def unmatch(self):
-        """ Set the player to be unmatched. """
-
-        self.matching = None
-
-    def forget(self, other):
-        """ Forget another player by removing them from the player's preference
-        list. """
-
-        prefs = self.prefs[:]
-        prefs.remove(other)
-        self.prefs = prefs
-
     def get_successors(self):
         """ Get all the successors to the current match of the player. """
 
@@ -83,15 +83,15 @@ class Player:
         return self.prefs[idx + 1 :]
 
     def prefers(self, player, other):
-        """ Determines whether the player prefers a player over some other
-        player. """
+        """Determines whether the player prefers a player over some other
+        player."""
 
         prefs = self._original_prefs
         return prefs.index(player) < prefs.index(other)
 
     def check_if_match_is_unacceptable(self, unmatched_okay=False):
-        """ Check the acceptability of the current match, with the stipulation
-        that being unmatched is okay (or not). """
+        """Check the acceptability of the current match, with the stipulation
+        that being unmatched is okay (or not)."""
 
         other = self.matching
 

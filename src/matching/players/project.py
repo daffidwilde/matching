@@ -4,7 +4,7 @@ from .hospital import Hospital
 
 
 class Project(Hospital):
-    """ A class to represent a project in an instance of SA.
+    """A class to represent a project in an instance of SA.
 
     Parameters
     ----------
@@ -32,37 +32,37 @@ class Project(Hospital):
         super().__init__(name, capacity)
         self.supervisor = None
 
-    def set_supervisor(self, supervisor):
-        """ Set the project's supervisor and add the project to their list
-        of active projects. """
-
-        self.supervisor = supervisor
-        if self not in supervisor.projects:
-            supervisor.projects.append(self)
-
-    def match(self, student):
-        """ Match the project to ``student``, and update the project
-        supervisor's matching to include ``student``, too. """
-
-        self.matching.append(student)
-        self.matching.sort(key=self.prefs.index)
-        self.supervisor.match(student)
-
-    def unmatch(self, student):
-        """ Break the matching between the project and ``student``, and the
-        matching between ``student`` and the project supervisor. """
-
-        matching = self.matching[:]
-        matching.remove(student)
-        self.matching = matching
-        self.supervisor.unmatch(student)
-
-    def forget(self, student):
-        """ Remove ``student`` from the preference list of the project and its
-        supervisor. """
+    def _forget(self, student):
+        """Remove ``student`` from the preference list of the project and its
+        supervisor."""
 
         if student in self.prefs:
             prefs = self.prefs[:]
             prefs.remove(student)
             self.prefs = prefs
-            self.supervisor.forget(student)
+            self.supervisor._forget(student)
+
+    def _match(self, student):
+        """Match the project to ``student``, and update the project
+        supervisor's matching to include ``student``, too."""
+
+        self.matching.append(student)
+        self.matching.sort(key=self.prefs.index)
+        self.supervisor._match(student)
+
+    def _unmatch(self, student):
+        """Break the matching between the project and ``student``, and the
+        matching between ``student`` and the project supervisor."""
+
+        matching = self.matching[:]
+        matching.remove(student)
+        self.matching = matching
+        self.supervisor._unmatch(student)
+
+    def set_supervisor(self, supervisor):
+        """Set the project's supervisor and add the project to their list
+        of active projects."""
+
+        self.supervisor = supervisor
+        if self not in supervisor.projects:
+            supervisor.projects.append(self)

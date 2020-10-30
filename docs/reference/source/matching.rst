@@ -5,7 +5,6 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
    matching.algorithms
    matching.games

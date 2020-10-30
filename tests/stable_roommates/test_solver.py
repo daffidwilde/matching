@@ -10,8 +10,8 @@ from .params import STABLE_ROOMMATES, make_players, make_prefs
 
 @STABLE_ROOMMATES
 def test_init(player_names, seed):
-    """ Test that the StableRoommates solver takes a set of preformed players
-    correctly. """
+    """Test that the StableRoommates solver takes a set of preformed players
+    correctly."""
 
     players = make_players(player_names, seed)
     game = StableRoommates(players)
@@ -26,8 +26,8 @@ def test_init(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_create_from_dictionary(player_names, seed):
-    """ Test that StableRoommates solver can take a preference dictionary
-    correctly. """
+    """Test that StableRoommates solver can take a preference dictionary
+    correctly."""
 
     player_prefs = make_prefs(player_names, seed)
     game = StableRoommates.create_from_dictionary(player_prefs)
@@ -41,8 +41,8 @@ def test_create_from_dictionary(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_check_inputs(player_names, seed):
-    """ Test StableRoommates raises a ValueError when a player has not ranked
-    all other players. """
+    """Test StableRoommates raises a ValueError when a player has not ranked
+    all other players."""
 
     players = make_players(player_names, seed)
     players[0].prefs = players[0].prefs[:-1]
@@ -53,8 +53,8 @@ def test_check_inputs(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_solve(player_names, seed):
-    """ Test that StableRoommates can solve games correctly when passed players.
-    """
+    """Test that StableRoommates can solve games correctly when passed a set of
+    players."""
 
     players = make_players(player_names, seed)
     game = StableRoommates(players)
@@ -75,8 +75,8 @@ def test_solve(player_names, seed):
 
 @STABLE_ROOMMATES
 def test_check_validity(player_names, seed):
-    """ Test that StableRoommates can raise a ValueError if any players are left
-    unmatched. """
+    """Test that StableRoommates can raise a ValueError if any players are left
+    unmatched."""
 
     players = make_players(player_names, seed)
     game = StableRoommates(players)
@@ -91,8 +91,7 @@ def test_check_validity(player_names, seed):
 
 
 def test_stability():
-    """ Test that StableRoommates can recognise whether a matching is stable.
-    """
+    """Test that StableRoommates can recognise whether a matching is stable."""
 
     from matching import Player
 

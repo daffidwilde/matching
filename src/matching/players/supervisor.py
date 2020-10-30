@@ -4,7 +4,7 @@ from .hospital import Hospital
 
 
 class Supervisor(Hospital):
-    """ A class to represent a supervisor in an instance of SA.
+    """A class to represent a supervisor in an instance of SA.
 
     Parameters
     ----------
@@ -33,9 +33,20 @@ class Supervisor(Hospital):
         super().__init__(name, capacity)
         self.projects = []
 
+    def _forget(self, student):
+        """Only forget ``student`` if it is not ranked by any of the
+        supervisor's projects."""
+
+        if student in self.prefs and not any(
+            [student in project.prefs for project in self.projects]
+        ):
+            prefs = self.prefs[:]
+            prefs.remove(student)
+            self.prefs = prefs
+
     def set_prefs(self, students):
-        """ Set the preference of the supervisor, and pass those on to its
-        projects. """
+        """Set the preference of the supervisor, and pass those on to its
+        projects."""
 
         self.prefs = students
         self.pref_names = [student.name for student in students]
@@ -47,19 +58,8 @@ class Supervisor(Hospital):
             ]
             project.set_prefs(acceptable)
 
-    def forget(self, student):
-        """ Only forget ``student`` if it is not ranked by any of the
-        supervisor's projects. """
-
-        if student in self.prefs and not any(
-            [student in project.prefs for project in self.projects]
-        ):
-            prefs = self.prefs[:]
-            prefs.remove(student)
-            self.prefs = prefs
-
     def get_favourite(self):
-        """ Find the supervisor's favourite student that it is not currently
+        """Find the supervisor's favourite student that it is not currently
         matched to, but has a preference of, one of the supervisor's
         under-subscribed projects. Also return the student's favourite
         under-subscribed project. If no such student exists, return ``None``.

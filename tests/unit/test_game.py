@@ -57,8 +57,8 @@ def test_check_inputs_player_prefs_unique(name, other_names, clean):
 
 
 def test_no_solve():
-    """ Verify BaseGame raises a NotImplementedError when calling the `solve`
-    method. """
+    """Verify BaseGame raises a NotImplementedError when calling the `solve`
+    method."""
 
     with pytest.raises(NotImplementedError):
         match = DummyGame()
@@ -66,8 +66,8 @@ def test_no_solve():
 
 
 def test_no_check_stability():
-    """ Verify BaseGame raises a NotImplementedError when calling the
-    `check_stability` method. """
+    """Verify BaseGame raises a NotImplementedError when calling the
+    `check_stability` method."""
 
     with pytest.raises(NotImplementedError):
         match = DummyGame()
@@ -75,8 +75,8 @@ def test_no_check_stability():
 
 
 def test_no_check_validity():
-    """ Verify BaseGame raises a NotImplementError when calling the
-    `check_validity` method. """
+    """Verify BaseGame raises a NotImplementError when calling the
+    `check_validity` method."""
 
     with pytest.raises(NotImplementedError):
         match = DummyGame()

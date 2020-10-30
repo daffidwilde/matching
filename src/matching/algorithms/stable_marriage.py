@@ -1,17 +1,17 @@
 """ Functions for the SM algorithms. """
 
-from .util import delete_pair, match_pair
+from .util import _delete_pair, _match_pair
 
 
-def unmatch_pair(suitor, reviewer):
+def _unmatch_pair(suitor, reviewer):
     """ Unmatch a (suitor, reviewer) pair. """
 
-    suitor.unmatch()
-    reviewer.unmatch()
+    suitor._unmatch()
+    reviewer._unmatch()
 
 
 def stable_marriage(suitors, reviewers, optimal="suitor"):
-    """ An extended version of the original Gale-Shapley algorithm which makes
+    """An extended version of the original Gale-Shapley algorithm which makes
     use of the inherent structures of SM instances. A unique, stable and optimal
     matching is found for any valid set of suitors and reviewers. The optimality
     of the matching is with respect to one party and is subsequently the worst
@@ -45,14 +45,14 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
 
         if reviewer.matching:
             curr_match = reviewer.matching
-            unmatch_pair(curr_match, reviewer)
+            _unmatch_pair(curr_match, reviewer)
             free_suitors.append(curr_match)
 
-        match_pair(suitor, reviewer)
+        _match_pair(suitor, reviewer)
 
         successors = reviewer.get_successors()
         for successor in successors:
-            delete_pair(successor, reviewer)
+            _delete_pair(successor, reviewer)
 
     if optimal.lower() == "reviewer":
         suitors, reviewers = reviewers, suitors

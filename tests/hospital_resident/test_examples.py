@@ -32,8 +32,7 @@ def test_readme_example():
 
 
 def test_example_in_issue():
-    """ Verify that the matching found is consistent with the example in #67.
-    """
+    """Verify that the matching found is consistent with the example in #67."""
 
     group_prefs = {
         "Group 1": ["Intellectual property", "Privacy"],
@@ -60,8 +59,8 @@ def test_example_in_issue():
 
 
 def test_resident_loses_all_preferences():
-    """ An example that forces a resident to be removed from the game as all of
-    their preferences have been forgotten. """
+    """An example that forces a resident to be removed from the game as all of
+    their preferences have been forgotten."""
 
     resident_prefs = {"A": ["X"], "B": ["X", "Y"]}
     hospital_prefs = {"X": ["B", "A"], "Y": ["B"]}

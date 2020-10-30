@@ -39,8 +39,8 @@ def make_players(resident_names, hospital_names, capacities):
 
 
 def get_possible_prefs(players):
-    """ Generate the list of all possible non-empty preference lists made from a
-    list of players. """
+    """Generate the list of all possible non-empty preference lists made from a
+    list of players."""
 
     all_ordered_subsets = {
         tuple(set(sub)) for sub in it.product(players, repeat=len(players))
@@ -100,7 +100,9 @@ HOSPITAL_RESIDENT = given(
         unique=True,
     ),
     capacities=lists(
-        elements=integers(min_value=2, max_value=4), min_size=3, max_size=3,
+        elements=integers(min_value=2, max_value=4),
+        min_size=3,
+        max_size=3,
     ),
     seed=integers(min_value=0, max_value=2 ** 32 - 1),
     clean=booleans(),

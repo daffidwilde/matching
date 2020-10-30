@@ -19,8 +19,8 @@ dictionary = dict(zip(suitors, reviewers))
 
 
 def test_init():
-    """ Make an instance of the Matching class and check their attributes are
-    correct. """
+    """Make an instance of the Matching class and check their attributes are
+    correct."""
 
     matching = Matching()
     assert matching == {}
@@ -68,8 +68,8 @@ def test_getitem():
 
 
 def test_setitem_key_error():
-    """ Check that a ValueError is raised if trying to add a new item to a
-    Matching. """
+    """Check that a ValueError is raised if trying to add a new item to a
+    Matching."""
 
     matching = Matching(dictionary)
 
@@ -78,8 +78,8 @@ def test_setitem_key_error():
 
 
 def test_setitem_single():
-    """ Check that a key in Matching can have its value changed to another
-    Player instance. """
+    """Check that a key in Matching can have its value changed to another
+    Player instance."""
 
     matching = Matching(dictionary)
     suitor, reviewer = suitors[0], reviewers[-1]
@@ -115,8 +115,8 @@ def test_setitem_multiple():
 
 
 def test_setitem_val_error():
-    """ Check that a ValueError is raised if trying to set an item with some
-    illegal new matching. """
+    """Check that a ValueError is raised if trying to set an item with some
+    illegal new matching."""
 
     matching = Matching(dictionary)
     suitor = suitors[0]

@@ -1,17 +1,17 @@
 """ Functions for the HR algorithms. """
 
-from .util import delete_pair, match_pair
+from .util import _delete_pair, _match_pair
 
 
-def unmatch_pair(resident, hospital):
+def _unmatch_pair(resident, hospital):
     """ Unmatch a (resident, hospital)-pair. """
 
-    resident.unmatch()
-    hospital.unmatch(resident)
+    resident._unmatch()
+    hospital._unmatch(resident)
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):
-    """ Solve an instance of HR using an adapted Gale-Shapley algorithm
+    """Solve an instance of HR using an adapted Gale-Shapley algorithm
     :cite:`Rot84`. A unique, stable and optimal matching is found for the given
     set of residents and hospitals. The optimality of the matching is found with
     respect to one party and is subsequently the worst stable matching for the
@@ -43,7 +43,7 @@ def hospital_resident(residents, hospitals, optimal="resident"):
 
 
 def resident_optimal(residents, hospitals):
-    """ Solve the instance of HR to be resident-optimal. The algorithm is as
+    """Solve the instance of HR to be resident-optimal. The algorithm is as
     follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -72,17 +72,17 @@ def resident_optimal(residents, hospitals):
         resident = free_residents.pop()
         hospital = resident.get_favourite()
 
-        match_pair(resident, hospital)
+        _match_pair(resident, hospital)
 
         if len(hospital.matching) > hospital.capacity:
             worst = hospital.get_worst_match()
-            unmatch_pair(worst, hospital)
+            _unmatch_pair(worst, hospital)
             free_residents.append(worst)
 
         if len(hospital.matching) == hospital.capacity:
             successors = hospital.get_successors()
             for successor in successors:
-                delete_pair(hospital, successor)
+                _delete_pair(hospital, successor)
                 if not successor.prefs:
                     free_residents.remove(successor)
 
@@ -90,7 +90,7 @@ def resident_optimal(residents, hospitals):
 
 
 def hospital_optimal(hospitals):
-    """ Solve the instance of HR to be hospital-optimal. The algorithm is as
+    """Solve the instance of HR to be hospital-optimal. The algorithm is as
     follows:
 
         0. Set all residents to be unmatched, and all hospitals to be totally
@@ -118,11 +118,11 @@ def hospital_optimal(hospitals):
 
         if resident.matching:
             curr_match = resident.matching
-            unmatch_pair(resident, curr_match)
+            _unmatch_pair(resident, curr_match)
             if curr_match not in free_hospitals:
                 free_hospitals.append(curr_match)
 
-        match_pair(resident, hospital)
+        _match_pair(resident, hospital)
         if len(hospital.matching) < hospital.capacity and [
             res for res in hospital.prefs if res not in hospital.matching
         ]:
@@ -130,7 +130,7 @@ def hospital_optimal(hospitals):
 
         successors = resident.get_successors()
         for successor in successors:
-            delete_pair(resident, successor)
+            _delete_pair(resident, successor)
             if (
                 not [
                     res

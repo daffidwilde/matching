@@ -13,8 +13,8 @@ from matching.players import Project, Supervisor
 
 
 def get_possible_prefs(players):
-    """ Generate the list of all possible non-empty preference lists made from a
-    list of players. """
+    """Generate the list of all possible non-empty preference lists made from a
+    list of players."""
 
     all_ordered_subsets = {
         tuple(set(sub)) for sub in it.product(players, repeat=len(players))
@@ -88,8 +88,7 @@ def make_game(
 def make_connections(
     student_names, project_names, supervisor_names, capacities, seed
 ):
-    """ Make a valid set of preferences and affiliations given a set of names.
-    """
+    """Make a valid set of preferences and affiliations given a set of names."""
 
     np.random.seed(seed)
     project_supervisors = {}

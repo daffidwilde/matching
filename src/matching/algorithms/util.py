@@ -1,16 +1,16 @@
 """ Useful functions for the running of the various core algorithms. """
 
 
-def delete_pair(player, successor):
-    """ Make a player forget one its "successors", effectively deleting the pair
-    from further further consideration in the game. """
+def _delete_pair(player, other):
+    """Make a player forget another (and vice versa), deleting the pair from
+    further consideration in the game."""
 
-    player.forget(successor)
-    successor.forget(player)
+    player._forget(other)
+    other._forget(player)
 
 
-def match_pair(suitor, reviewer):
-    """ Match the players given by `suitor` and `reviewer`. """
+def _match_pair(player, other):
+    """Match the players given by `player` and `other`."""
 
-    suitor.match(reviewer)
-    reviewer.match(suitor)
+    player._match(other)
+    other._match(player)

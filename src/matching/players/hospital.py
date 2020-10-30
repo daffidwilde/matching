@@ -4,7 +4,7 @@ from matching import Player
 
 
 class Hospital(Player):
-    """ A class to represent a hospital in an instance of HR. Also used as a
+    """A class to represent a hospital in an instance of HR. Also used as a
     parent class to ``Project`` and ``Supervisor``.
 
     Parameters
@@ -39,6 +39,19 @@ class Hospital(Player):
         self._original_capacity = capacity
         self.matching = []
 
+    def _match(self, resident):
+        """ Add ``resident`` to the hospital's matching, and then sort it. """
+
+        self.matching.append(resident)
+        self.matching.sort(key=self.prefs.index)
+
+    def _unmatch(self, resident):
+        """ Remove ``resident`` from the hospital's matching. """
+
+        matching = self.matching[:]
+        matching.remove(resident)
+        self.matching = matching
+
     def oversubscribed_message(self):
 
         return (
@@ -47,8 +60,8 @@ class Hospital(Player):
         )
 
     def get_favourite(self):
-        """ Get the hospital's favourite resident with whom they are not
-        currently matched. If no such resident exists, return ``None``. """
+        """Get the hospital's favourite resident with whom they are not
+        currently matched. If no such resident exists, return ``None``."""
 
         for player in self.prefs:
             if player not in self.matching:
@@ -56,22 +69,9 @@ class Hospital(Player):
 
         return None
 
-    def match(self, resident):
-        """ Add ``resident`` to the hospital's matching, and then sort it. """
-
-        self.matching.append(resident)
-        self.matching.sort(key=self.prefs.index)
-
-    def unmatch(self, resident):
-        """ Remove ``resident`` from the hospital's matching. """
-
-        matching = self.matching[:]
-        matching.remove(resident)
-        self.matching = matching
-
     def get_worst_match(self):
-        """ Get the player's worst current match. This assumes that the matching
-        is in order of preference. """
+        """Get the player's worst current match. This assumes that the matching
+        is in order of preference."""
 
         return self.matching[-1]
 

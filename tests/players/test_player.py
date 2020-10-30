@@ -58,7 +58,7 @@ def test_match(name, pref_names):
     player = Player(name)
     other = Player(pref_names[0])
 
-    player.match(other)
+    player._match(other)
     assert player.matching == other
 
 
@@ -70,7 +70,7 @@ def test_unmatch(name, pref_names):
     other = Player(pref_names[0])
 
     player.matching = other
-    player.unmatch()
+    player._unmatch()
     assert player.matching is None
 
 
@@ -83,18 +83,18 @@ def test_forget(name, pref_names):
 
     player.set_prefs(others)
     for i, other in enumerate(others[:-1]):
-        player.forget(other)
+        player._forget(other)
         assert player.prefs == others[i + 1 :]
 
-    player.forget(others[-1])
+    player._forget(others[-1])
     assert player.prefs == []
     assert player._original_prefs == others
 
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_successors(name, pref_names):
-    """ Test that the correct successors to another player in a player's
-    preference list are found. """
+    """Test that the correct successors to another player in a player's
+    preference list are found."""
 
     player = Player(name)
     others = [Player(other) for other in pref_names]
@@ -110,8 +110,8 @@ def test_get_successors(name, pref_names):
 
 @given(name=text(), pref_names=lists(text(), min_size=1, unique=True))
 def test_prefers(name, pref_names):
-    """ Test that a comparison of preference between two other players can be
-    found for a player. """
+    """Test that a comparison of preference between two other players can be
+    found for a player."""
 
     player = Player(name)
     others = [Player(other) for other in pref_names]
@@ -132,7 +132,7 @@ def test_check_if_match_unacceptable(name, pref_names):
     assert player.check_if_match_is_unacceptable() == message
 
     player.set_prefs(others[:-1])
-    player.match(others[-1])
+    player._match(others[-1])
     message = player.not_in_preferences_message(others[-1])
     assert player.check_if_match_is_unacceptable() == message
 
