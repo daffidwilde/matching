@@ -1,10 +1,36 @@
 """ Tests for the Hospital-Resident algorithm. """
-
 import numpy as np
 
-from matching.games import hospital_resident
+from matching.algorithms.hospital_resident import (
+    hospital_optimal,
+    hospital_resident,
+    resident_optimal,
+)
 
 from .params import HOSPITAL_RESIDENT, make_players
+
+
+@HOSPITAL_RESIDENT
+def test_hospital_resident(
+    resident_names, hospital_names, capacities, seed, clean
+):
+    """Verify that the hospital-resident algorithm produces a valid solution
+    for an instance of HR."""
+
+    np.random.seed(seed)
+    residents, hospitals = make_players(
+        resident_names, hospital_names, capacities
+    )
+    matching = hospital_resident(residents, hospitals)
+
+    assert set(hospitals) == set(matching.keys())
+
+    matched_residents = {r for rs in matching.values() for r in rs}
+    for resident in residents:
+        if resident.matching:
+            assert resident in matched_residents
+        else:
+            assert resident not in matched_residents
 
 
 @HOSPITAL_RESIDENT
@@ -18,7 +44,7 @@ def test_resident_optimal(
     residents, hospitals = make_players(
         resident_names, hospital_names, capacities
     )
-    matching = hospital_resident(residents, hospitals, optimal="resident")
+    matching = resident_optimal(residents, hospitals)
 
     assert set(hospitals) == set(matching.keys())
     assert all(
@@ -43,10 +69,8 @@ def test_hospital_optimal(
     hospital-optimal matching for an instance of HR."""
 
     np.random.seed(seed)
-    residents, hospitals = make_players(
-        resident_names, hospital_names, capacities
-    )
-    matching = hospital_resident(residents, hospitals, optimal="hospital")
+    _, hospitals = make_players(resident_names, hospital_names, capacities)
+    matching = hospital_optimal(hospitals)
 
     assert set(hospitals) == set(matching.keys())
 

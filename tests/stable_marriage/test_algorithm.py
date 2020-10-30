@@ -1,13 +1,13 @@
 """ Integration tests for the Stable Marriage Problem algorithm. """
 
-from matching.games import stable_marriage
+from matching.algorithms import stable_marriage
 
 from .params import STABLE_MARRIAGE, make_players
 
 
 @STABLE_MARRIAGE
 def test_suitor_optimal(player_names, seed):
-    """Verify that the suitor-oriented Gale-Shapley algorithm produces a valid,
+    """Verify that the suitor-optimal algorithm produces a valid,
     suitor-optimal matching for an instance of SM."""
 
     suitors, reviewers = make_players(player_names, seed)
@@ -26,8 +26,8 @@ def test_suitor_optimal(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_reviewer_optimal(player_names, seed):
-    """Verify that the reviewer-oriented Gale-Shapley algorithm produces a
-    valid, reviewer-optimal matching for an instance of SM."""
+    """Verify that the reviewer-optimal algorithm produces a valid,
+    reviewer-optimal matching for an instance of SM."""
 
     suitors, reviewers = make_players(player_names, seed)
     matching = stable_marriage(suitors, reviewers, optimal="reviewer")

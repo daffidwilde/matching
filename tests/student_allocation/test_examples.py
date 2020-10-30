@@ -1,6 +1,7 @@
 """ A collection of example tests. """
 
-from matching.games import StudentAllocation, student_allocation
+from matching.algorithms import student_allocation
+from matching.games import StudentAllocation
 
 
 def test_example_in_docs():
