@@ -65,7 +65,7 @@ def test_examples_in_issue_124():
     assert matching == {a: b, b: a, c: d, d: c}
 
     for player in players:
-        player.unmatch()
+        player._unmatch()
 
     a.set_prefs([b, c, d])
     b.set_prefs([a, c, d])
