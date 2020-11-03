@@ -53,21 +53,18 @@ def locate_all_or_nothing_cycle(player):
 
 def get_pairs_to_delete(cycle):
     """Based on an all-or-nothing cycle :math:`(x_1, y_1), \\ldots, (x_n, y_n)`,
-    for each :math:`i = 1, \\ldots, n`, delete from the game all pairs
+    for each :math:`i = 1, \\ldots, n`, one must delete from the game all pairs
     :math:`(y_i, z)` such that :math:`y_i` prefers :math:`x_{i-1}` to :math:`z`
     where subscripts are taken modulo :math:`n`.
 
     This is an important point that is omitted from the original paper, but may
-    be found in:
+    be found in :cite:`GI89` (Section 4.2.3).
 
-        Gusfield and Irving. 'The Stable Marriage Problem: Structure and
-        Algorithms'. Foundations of Computing, MIT Press (1989).
-
-    The essential difference between the two statements of this algorithm is the
-    removal of pairs identified by each all-or-nothing cycle, in addition to
-    those contained in the cycle. Without doing so, tails of cycles can be
-    removed rather than whole cycles, leaving some conflicting pairs in the
-    game."""
+    The essential difference between this statement and that in :cite:`Irv85` is
+    the removal of unpreferable pairs, identified using an all-or-nothing cycle,
+    in addition to those contained in the cycle. Without doing so, tails of
+    cycles can be removed rather than whole cycles, leaving some conflicting
+    pairs in the game."""
 
     pairs = []
     for i, (_, right) in enumerate(cycle):
@@ -75,10 +72,8 @@ def get_pairs_to_delete(cycle):
         left = cycle[(i - 1) % len(cycle)][0]
         successors = right.prefs[right.prefs.index(left) + 1 :]
         for successor in successors:
-            if (right, successor) not in pairs and (
-                successor,
-                right,
-            ) not in pairs:
+            pair = (right, successor)
+            if pair not in pairs and pair[::-1] not in pairs:
                 pairs.append((right, successor))
 
     return pairs
@@ -106,35 +101,6 @@ def second_phase(players):
 
     for player in players:
         player._unmatch()
-        if player.prefs:
-            player._match(player.get_favourite())
-
-    return players
-
-
-def _second_phase(players):
-    """Conduct the second phase of the algorithm where all or nothing cycles
-    (rotations) are located and removed from the game. These reduced preference
-    lists form a matching."""
-
-    for player in players:
-        player._unmatch()
-
-    player_with_second_preference = next(p for p in players if len(p.prefs) > 1)
-    while True:
-        cycle = locate_all_or_nothing_cycle(player_with_second_preference)
-        for player, other in cycle:
-            player._forget(other)
-            other._forget(player)
-
-        try:
-            player_with_second_preference = next(
-                p for p in players if len(p.prefs) > 1
-            )
-        except StopIteration:
-            break
-
-    for player in players:
         if player.prefs:
             player._match(player.get_favourite())
 
