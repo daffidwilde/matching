@@ -42,9 +42,14 @@ def test_locate_all_or_nothing_cycle(player_names, seed):
     for last, second in cycle:
         assert second.prefs.index(last) == len(second.prefs) - 1
 
+
 def status(players):
     for player in players:
-        print(f"{player.name:>5}", f"{str(player.prefs):>30}", f"{str(player.matching):>5}")
+        print(
+            f"{player.name:>5}",
+            f"{str(player.prefs):>30}",
+            f"{str(player.matching):>5}",
+        )
 
 
 @STABLE_ROOMMATES
@@ -69,7 +74,7 @@ def test_get_pairs_to_delete(player_names, seed):
 
     for i, (_, right) in enumerate(cycle):
         left = cycle[(i - 1) % len(cycle)][0]
-        others = right.prefs[right.prefs.index(left) + 1:]
+        others = right.prefs[right.prefs.index(left) + 1 :]
         for other in others:
             assert (right, other) in pairs or (other, right) in pairs
 
