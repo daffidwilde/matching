@@ -37,16 +37,16 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
     if optimal.lower() == "reviewer":
         suitors, reviewers = reviewers, suitors
 
-    free_suitors = [s for s in suitors if not s.matching]
+    free_suitors = suitors[:]
     while free_suitors:
 
         suitor = free_suitors.pop()
         reviewer = suitor.get_favourite()
 
         if reviewer.matching:
-            curr_match = reviewer.matching
-            _unmatch_pair(curr_match, reviewer)
-            free_suitors.append(curr_match)
+            current_match = reviewer.matching
+            _unmatch_pair(current_match, reviewer)
+            free_suitors.append(current_match)
 
         _match_pair(suitor, reviewer)
 
