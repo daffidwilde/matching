@@ -18,6 +18,9 @@ def test_first_phase(players):
 
     players = first_phase(players)
 
+    player_matched = {player: player.matching is not None for player in players}
+    assert sum(player_matched.values()) >= len(players) - 1
+
     for player in players:
         if player.matching is None:
             assert player.prefs == []
