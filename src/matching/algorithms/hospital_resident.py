@@ -10,6 +10,14 @@ def _unmatch_pair(resident, hospital):
     hospital._unmatch(resident)
 
 
+def _check_available(hospital):
+    """ Check whether a hospital is willing and able to take an applicant. """
+
+    return len(hospital.matching) < hospital.capacity and set(
+        hospital.prefs
+    ).difference(hospital.matching)
+
+
 def hospital_resident(residents, hospitals, optimal="resident"):
     """Solve an instance of HR using an adapted Gale-Shapley algorithm
     :cite:`Rot84`. A unique, stable and optimal matching is found for the given
@@ -72,12 +80,12 @@ def resident_optimal(residents, hospitals):
         resident = free_residents.pop()
         hospital = resident.get_favourite()
 
-        _match_pair(resident, hospital)
-
-        if len(hospital.matching) > hospital.capacity:
+        if len(hospital.matching) == hospital.capacity:
             worst = hospital.get_worst_match()
             _unmatch_pair(worst, hospital)
             free_residents.append(worst)
+
+        _match_pair(resident, hospital)
 
         if len(hospital.matching) == hospital.capacity:
             successors = hospital.get_successors()
@@ -117,28 +125,19 @@ def hospital_optimal(hospitals):
         resident = hospital.get_favourite()
 
         if resident.matching:
-            curr_match = resident.matching
-            _unmatch_pair(resident, curr_match)
-            if curr_match not in free_hospitals:
-                free_hospitals.append(curr_match)
+            current_match = resident.matching
+            _unmatch_pair(resident, current_match)
+            if current_match not in free_hospitals:
+                free_hospitals.append(current_match)
 
         _match_pair(resident, hospital)
-        if len(hospital.matching) < hospital.capacity and [
-            res for res in hospital.prefs if res not in hospital.matching
-        ]:
+        if _check_available(hospital):
             free_hospitals.append(hospital)
 
         successors = resident.get_successors()
         for successor in successors:
             _delete_pair(resident, successor)
-            if (
-                not [
-                    res
-                    for res in successor.prefs
-                    if res not in successor.matching
-                ]
-                and successor in free_hospitals
-            ):
+            if not _check_available(successor) and successor in free_hospitals:
                 free_hospitals.remove(successor)
 
     return {r: r.matching for r in hospitals}

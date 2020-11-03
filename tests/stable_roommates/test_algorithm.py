@@ -1,6 +1,9 @@
 """ Integration and unit tests for the SR algorithm. """
+from hypothesis import assume
+
 from matching.algorithms.stable_roommates import (
     first_phase,
+    get_pairs_to_delete,
     locate_all_or_nothing_cycle,
     second_phase,
     stable_roommates,
@@ -35,8 +38,40 @@ def test_locate_all_or_nothing_cycle(player_names, seed):
     player = players[-1]
     cycle = locate_all_or_nothing_cycle(player)
 
+    assert isinstance(cycle, list)
     for last, second in cycle:
         assert second.prefs.index(last) == len(second.prefs) - 1
+
+def status(players):
+    for player in players:
+        print(f"{player.name:>5}", f"{str(player.prefs):>30}", f"{str(player.matching):>5}")
+
+
+@STABLE_ROOMMATES
+def test_get_pairs_to_delete(player_names, seed):
+    """Verify that all necessary pairs are identified to remove a cycle from the
+    game."""
+
+    assert get_pairs_to_delete([]) == []
+
+    players = make_players(player_names, seed)
+
+    players = first_phase(players)
+    assume(any(len(p.prefs) > 1 for p in players))
+
+    player = next(p for p in players if len(p.prefs) > 1)
+    cycle = locate_all_or_nothing_cycle(player)
+
+    pairs = get_pairs_to_delete(cycle)
+
+    for pair in cycle:
+        assert pair in pairs or pair[::-1] in pairs
+
+    for i, (_, right) in enumerate(cycle):
+        left = cycle[(i - 1) % len(cycle)][0]
+        others = right.prefs[right.prefs.index(left) + 1:]
+        for other in others:
+            assert (right, other) in pairs or (other, right) in pairs
 
 
 @STABLE_ROOMMATES
@@ -45,16 +80,16 @@ def test_second_phase(player_names, seed):
     players with appropriate matches."""
 
     players = make_players(player_names, seed)
-    try:
-        players = second_phase(players)
+    players = first_phase(players)
+    assume(any(len(p.prefs) > 1 for p in players))
 
-        for player in players:
-            if player.prefs:
-                assert player.prefs == [player.matching]
-            else:
-                assert player.matching is None
-    except (IndexError, ValueError):
-        pass
+    players = second_phase(players)
+
+    for player in players:
+        if player.prefs:
+            assert player.prefs == [player.matching]
+        else:
+            assert player.matching is None
 
 
 @STABLE_ROOMMATES
