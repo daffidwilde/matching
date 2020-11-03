@@ -81,7 +81,7 @@ def test_second_phase(players):
 
     for player in players:
         if player.prefs:
-            assert player.prefs == [player.matching]
+            assert player.prefs[0] == player.matching
         else:
             assert player.matching is None
 
@@ -92,9 +92,10 @@ def test_stable_roommates(players):
 
     matching = stable_roommates(players)
 
-    for player, other in matching.items():
-        if other is None:
-            assert player.prefs == []
+    assert isinstance(matching, dict)
+
+    for player, match in matching.items():
+        if match is None:
+            assert not player.prefs
         else:
-            assert player.prefs == [other]
-            assert other.matching == player
+            assert match == player.prefs[0]
