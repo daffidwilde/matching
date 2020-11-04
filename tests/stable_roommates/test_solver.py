@@ -1,9 +1,11 @@
 """ Unit tests for the SR solver. """
+import warnings
+
 import pytest
 from hypothesis import given
 
 from matching import Player, SingleMatching
-from matching.exceptions import MatchingError
+from matching.exceptions import MatchingError, NoStableMatchingWarning
 from matching.games import StableRoommates
 
 from .util import connections, games, players
@@ -52,11 +54,9 @@ def test_check_inputs(players):
 def test_solve(game):
     """Test that StableRoommates can solve games correctly."""
 
-    print("THE GAME\n========")
-    for player in game.players:
-        print(player, player.prefs)
+    with warnings.catch_warnings(record=True) as w:
+        matching = game.solve()
 
-    matching = game.solve()
     assert isinstance(matching, SingleMatching)
 
     players = sorted(game.players, key=lambda p: p.name)
@@ -66,8 +66,13 @@ def test_solve(game):
         assert game_player.name == player.name
         assert game_player._pref_names == player._pref_names
 
-    for match in matching.values():
-        assert match is None or match in game.players
+    for player, match in matching.items():
+        if match is None:
+            message = w[-1].message
+            assert str(player) in str(message)
+            assert player.prefs == []
+        else:
+            assert match in game.players
 
 
 @given(game=games())
@@ -75,9 +80,12 @@ def test_check_validity(game):
     """Test that StableRoommates can raise a ValueError if any players are left
     unmatched."""
 
-    matching = game.solve()
+    with warnings.catch_warnings(record=True) as w:
+        matching = game.solve()
 
     if None in matching.values():
+        message = w[-1].message
+        assert isinstance(message, NoStableMatchingWarning)
         with pytest.raises(MatchingError):
             game.check_validity()
 
