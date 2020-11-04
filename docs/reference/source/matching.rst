@@ -6,11 +6,20 @@ Subpackages
 
 .. toctree::
 
+   matching.algorithms
    matching.games
    matching.players
 
 Submodules
 ----------
+
+matching.exceptions module
+--------------------------
+
+.. automodule:: matching.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 matching.game module
 --------------------

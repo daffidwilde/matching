@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@master
@@ -27,20 +27,25 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install -r requirements.txt
         python -m pip install -q --no-cache-dir -e .
-        python -m pip install -q --no-cache-dir pytest pytest-cov isort black
+        python -m pip install -q --no-cache-dir pytest pytest-cov
+        python -m pip install -q --no-cache-dir isort black flake8
         python -m pip install -q --no-cache-dir sphinx sphinx_rtd_theme
         python -m pip install -q --no-cache-dir nbval sphinxcontrib-bibtex
         python -m pip install -q --no-cache-dir matplotlib pandas PyYAML
         python -m pip install -q --no-cache-dir ipython==7.10
         python -m pip list
     - name: Lint with Black
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
+      if: matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'
       run: |
         python -m black --check --diff -l 80 .
     - name: Lint imports with isort
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
+      if: matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'
       run: |
         python -m isort -w 80 -m 3 --trailing-comma --check-only .
+    - name: Lint with flake8
+      if: matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'
+      run: |
+        python -m flake8 --max-line-length=80 --ignore=E203,W503 .
     - name: Test with pytest 
       run: |
         python -m pytest --cov=matching --cov-fail-under=100 tests

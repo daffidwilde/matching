@@ -33,21 +33,7 @@ class Supervisor(Hospital):
         super().__init__(name, capacity)
         self.projects = []
 
-    def set_prefs(self, students):
-        """Set the preference of the supervisor, and pass those on to its
-        projects."""
-
-        self.prefs = students
-        self.pref_names = [student.name for student in students]
-        self._original_prefs = students[:]
-
-        for project in self.projects:
-            acceptable = [
-                student for student in students if project in student.prefs
-            ]
-            project.set_prefs(acceptable)
-
-    def forget(self, student):
+    def _forget(self, student):
         """Only forget ``student`` if it is not ranked by any of the
         supervisor's projects."""
 
@@ -57,6 +43,20 @@ class Supervisor(Hospital):
             prefs = self.prefs[:]
             prefs.remove(student)
             self.prefs = prefs
+
+    def set_prefs(self, students):
+        """Set the preference of the supervisor, and pass those on to its
+        projects."""
+
+        self.prefs = students
+        self._pref_names = [student.name for student in students]
+        self._original_prefs = students[:]
+
+        for project in self.projects:
+            acceptable = [
+                student for student in students if project in student.prefs
+            ]
+            project.set_prefs(acceptable)
 
     def get_favourite(self):
         """Find the supervisor's favourite student that it is not currently

@@ -36,14 +36,6 @@ matching.games.student\_allocation module
    :undoc-members:
    :show-inheritance:
 
-matching.games.util module
---------------------------
-
-.. automodule:: matching.games.util
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 Module contents
 ---------------

@@ -1,9 +1,9 @@
 """ The Hospital class for use in instances of HR. """
 
-from matching import Player
+from matching import BasePlayer
 
 
-class Hospital(Player):
+class Hospital(BasePlayer):
     """A class to represent a hospital in an instance of HR. Also used as a
     parent class to ``Project`` and ``Supervisor``.
 
@@ -39,6 +39,19 @@ class Hospital(Player):
         self._original_capacity = capacity
         self.matching = []
 
+    def _match(self, resident):
+        """ Add ``resident`` to the hospital's matching, and then sort it. """
+
+        self.matching.append(resident)
+        self.matching.sort(key=self.prefs.index)
+
+    def _unmatch(self, resident):
+        """ Remove ``resident`` from the hospital's matching. """
+
+        matching = self.matching[:]
+        matching.remove(resident)
+        self.matching = matching
+
     def oversubscribed_message(self):
 
         return (
@@ -55,19 +68,6 @@ class Hospital(Player):
                 return player
 
         return None
-
-    def match(self, resident):
-        """ Add ``resident`` to the hospital's matching, and then sort it. """
-
-        self.matching.append(resident)
-        self.matching.sort(key=self.prefs.index)
-
-    def unmatch(self, resident):
-        """ Remove ``resident`` from the hospital's matching. """
-
-        matching = self.matching[:]
-        matching.remove(resident)
-        self.matching = matching
 
     def get_worst_match(self):
         """Get the player's worst current match. This assumes that the matching

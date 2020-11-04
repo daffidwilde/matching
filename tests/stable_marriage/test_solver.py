@@ -1,7 +1,7 @@
 """ Unit tests for the SM solver. """
 import pytest
 
-from matching import Matching, Player
+from matching import Player, SingleMatching
 from matching.exceptions import MatchingError
 from matching.games import StableMarriage
 
@@ -20,7 +20,7 @@ def test_init(player_names, seed):
         suitors + reviewers, game.suitors + game.reviewers
     ):
         assert player.name == game_player.name
-        assert player.pref_names == game_player.pref_names
+        assert player._pref_names == game_player._pref_names
 
     assert all(
         [player.matching is None for player in game.suitors + game.reviewers]
@@ -37,11 +37,11 @@ def test_create_from_dictionaries(player_names, seed):
     game = StableMarriage.create_from_dictionaries(suitor_prefs, reviewer_prefs)
 
     for suitor in game.suitors:
-        assert suitor_prefs[suitor.name] == suitor.pref_names
+        assert suitor_prefs[suitor.name] == suitor._pref_names
         assert suitor.matching is None
 
     for reviewer in game.reviewers:
-        assert reviewer_prefs[reviewer.name] == reviewer.pref_names
+        assert reviewer_prefs[reviewer.name] == reviewer._pref_names
         assert reviewer.matching is None
 
     assert game.matching is None
@@ -82,14 +82,15 @@ def test_inputs_player_ranks(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_solve(player_names, seed):
-    """Test that StableMarriage can solve games correctly when passed players."""
+    """Test that StableMarriage can solve games correctly when passed a set of
+    players."""
 
     for optimal in ["suitor", "reviewer"]:
         suitors, reviewers = make_players(player_names, seed)
         game = StableMarriage(suitors, reviewers)
 
         matching = game.solve(optimal)
-        assert isinstance(matching, Matching)
+        assert isinstance(matching, SingleMatching)
 
         suitors = sorted(suitors, key=lambda s: s.name)
         reviewers = sorted(reviewers, key=lambda r: r.name)
@@ -99,11 +100,11 @@ def test_solve(player_names, seed):
 
         for game_suitor, suitor in zip(matching_keys, suitors):
             assert game_suitor.name == suitor.name
-            assert game_suitor.pref_names == suitor.pref_names
+            assert game_suitor._pref_names == suitor._pref_names
 
         for game_reviewer, reviewer in zip(matching_values, reviewers):
             assert game_reviewer.name == reviewer.name
-            assert game_reviewer.pref_names == reviewer.pref_names
+            assert game_reviewer._pref_names == reviewer._pref_names
 
 
 @STABLE_MARRIAGE

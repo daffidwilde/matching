@@ -1,10 +1,16 @@
 """ A collection of example tests. """
+import warnings
+
+from hypothesis import given
+from hypothesis.strategies import permutations
 
 from matching import Player
-from matching.games import stable_roommates
+from matching.algorithms import stable_roommates
+from matching.exceptions import NoStableMatchingWarning
+from matching.games.stable_roommates import _make_players
 
 
-def test_original_paper():
+def test_original_paper_stable():
     """Verify that the matching found is consistent with the example in the
     original paper."""
 
@@ -20,6 +26,64 @@ def test_original_paper():
 
     matching = stable_roommates(players)
     assert matching == {a: f, b: c, c: b, d: e, e: d, f: a}
+
+
+@given(last_player_prefs=permutations([1, 2, 3]))
+def test_gale_shapley_no_stable_matching(last_player_prefs):
+    """Verify that the example from [GS62] throws up a warning that there is no
+    stable matching."""
+
+    preferences = {
+        1: [2, 3, 4],
+        2: [3, 1, 4],
+        3: [1, 2, 4],
+        4: last_player_prefs,
+    }
+
+    players = _make_players(preferences)
+
+    with warnings.catch_warnings(record=True) as w:
+        stable_roommates(players)
+
+    message = w[-1].message
+    assert isinstance(message, NoStableMatchingWarning)
+    assert "4" in str(message)
+
+
+def test_large_example_from_book():
+    """Verify that the matching found is consistent with the example of size ten
+    in [GI89] (Section 4.2.3)."""
+
+    preferences = {
+        1: [8, 2, 9, 3, 6, 4, 5, 7, 10],
+        2: [4, 3, 8, 9, 5, 1, 10, 6, 7],
+        3: [5, 6, 8, 2, 1, 7, 10, 4, 9],
+        4: [10, 7, 9, 3, 1, 6, 2, 5, 8],
+        5: [7, 4, 10, 8, 2, 6, 3, 1, 9],
+        6: [2, 8, 7, 3, 4, 10, 1, 5, 9],
+        7: [2, 1, 8, 3, 5, 10, 4, 6, 9],
+        8: [10, 4, 2, 5, 6, 7, 1, 3, 9],
+        9: [6, 7, 2, 5, 10, 3, 4, 8, 1],
+        10: [3, 1, 6, 5, 2, 9, 8, 4, 7],
+    }
+
+    players = _make_players(preferences)
+    one, two, three, four, five, six, seven, eight, nine, ten = players
+
+    matching = stable_roommates(players)
+
+    assert matching == {
+        one: seven,
+        two: eight,
+        three: six,
+        four: nine,
+        five: ten,
+        six: three,
+        seven: one,
+        eight: two,
+        nine: four,
+        ten: five,
+    }
 
 
 def test_example_in_issue_64():
@@ -65,7 +129,7 @@ def test_examples_in_issue_124():
     assert matching == {a: b, b: a, c: d, d: c}
 
     for player in players:
-        player.unmatch()
+        player._unmatch()
 
     a.set_prefs([b, c, d])
     b.set_prefs([a, c, d])

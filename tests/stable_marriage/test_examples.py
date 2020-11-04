@@ -1,7 +1,7 @@
 """ A collection of example tests. """
 
 from matching import Player
-from matching.games import stable_marriage
+from matching.algorithms import stable_marriage
 
 
 def test_pride_and_prejudice():
