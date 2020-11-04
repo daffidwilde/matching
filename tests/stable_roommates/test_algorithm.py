@@ -1,4 +1,6 @@
 """ Integration and unit tests for the SR algorithm. """
+import warnings
+
 from hypothesis import assume, given
 
 from matching.algorithms.stable_roommates import (
@@ -8,6 +10,7 @@ from matching.algorithms.stable_roommates import (
     second_phase,
     stable_roommates,
 )
+from matching.exceptions import NoStableMatchingWarning
 
 from .util import players
 
@@ -77,12 +80,17 @@ def test_second_phase(players):
     players = first_phase(players)
     assume(any(len(p.prefs) > 1 for p in players))
 
-    players = second_phase(players)
+    with warnings.catch_warnings(record=True) as w:
+        players = second_phase(players)
 
     for player in players:
         if player.prefs:
             assert player.prefs[0] == player.matching
         else:
+            message = w[-1].message
+
+            assert isinstance(message, NoStableMatchingWarning)
+            assert str(player.name) in str(message)
             assert player.matching is None
 
 
@@ -90,12 +98,15 @@ def test_second_phase(players):
 def test_stable_roommates(players):
     """ Verify that the algorithm can terminate with a valid matching. """
 
-    matching = stable_roommates(players)
+    with warnings.catch_warnings(record=True) as w:
+        matching = stable_roommates(players)
 
     assert isinstance(matching, dict)
 
     for player, match in matching.items():
         if match is None:
+            message = w[-1].message
+            assert str(player) in str(message)
             assert not player.prefs
         else:
             assert match == player.prefs[0]

@@ -13,6 +13,10 @@ class MatchingError(Exception):
         super().__init__(self.message)
 
 
+class NoStableMatchingWarning(UserWarning):
+    """ A warning for when a game does not have a complete stable matching. """
+
+
 class PreferencesChangedWarning(UserWarning):
     """ A warning for when the preferences of a player are invalid. """
 
