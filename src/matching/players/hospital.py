@@ -1,9 +1,9 @@
 """ The Hospital class for use in instances of HR. """
 
-from matching import Player
+from matching import BasePlayer
 
 
-class Hospital(Player):
+class Hospital(BasePlayer):
     """A class to represent a hospital in an instance of HR. Also used as a
     parent class to ``Project`` and ``Supervisor``.
 

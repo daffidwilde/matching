@@ -1,5 +1,5 @@
 """ Integration and unit tests for the SR algorithm. """
-from hypothesis import assume
+from hypothesis import assume, given
 
 from matching.algorithms.stable_roommates import (
     first_phase,
@@ -9,16 +9,18 @@ from matching.algorithms.stable_roommates import (
     stable_roommates,
 )
 
-from .params import STABLE_ROOMMATES, make_players
+from .util import players
 
 
-@STABLE_ROOMMATES
-def test_first_phase(player_names, seed):
+@given(players=players())
+def test_first_phase(players):
     """Verify that the first phase of the algorithm produces a valid set of
     reduced preference players."""
 
-    players = make_players(player_names, seed)
     players = first_phase(players)
+
+    player_matched = {player: player.matching is not None for player in players}
+    assert sum(player_matched.values()) >= len(players) - 1
 
     for player in players:
         if player.matching is None:
@@ -26,15 +28,14 @@ def test_first_phase(player_names, seed):
         else:
             assert player.matching in player.prefs
 
-        assert {p.name for p in player.prefs}.issubset(player.pref_names)
+        assert {p.name for p in player.prefs}.issubset(player._pref_names)
 
 
-@STABLE_ROOMMATES
-def test_locate_all_or_nothing_cycle(player_names, seed):
+@given(players=players())
+def test_locate_all_or_nothing_cycle(players):
     """Verify that a cycle of (least-preferred, second-choice) players can be
     identified from a set of players."""
 
-    players = make_players(player_names, seed)
     player = players[-1]
     cycle = locate_all_or_nothing_cycle(player)
 
@@ -43,23 +44,12 @@ def test_locate_all_or_nothing_cycle(player_names, seed):
         assert second.prefs.index(last) == len(second.prefs) - 1
 
 
-def status(players):
-    for player in players:
-        print(
-            f"{player.name:>5}",
-            f"{str(player.prefs):>30}",
-            f"{str(player.matching):>5}",
-        )
-
-
-@STABLE_ROOMMATES
-def test_get_pairs_to_delete(player_names, seed):
+@given(players=players())
+def test_get_pairs_to_delete(players):
     """Verify that all necessary pairs are identified to remove a cycle from the
     game."""
 
     assert get_pairs_to_delete([]) == []
-
-    players = make_players(player_names, seed)
 
     players = first_phase(players)
     assume(any(len(p.prefs) > 1 for p in players))
@@ -79,12 +69,11 @@ def test_get_pairs_to_delete(player_names, seed):
             assert (right, other) in pairs or (other, right) in pairs
 
 
-@STABLE_ROOMMATES
-def test_second_phase(player_names, seed):
+@given(players=players())
+def test_second_phase(players):
     """Verify that the second phase of the algorithm produces a valid set of
     players with appropriate matches."""
 
-    players = make_players(player_names, seed)
     players = first_phase(players)
     assume(any(len(p.prefs) > 1 for p in players))
 
@@ -92,22 +81,21 @@ def test_second_phase(player_names, seed):
 
     for player in players:
         if player.prefs:
-            assert player.prefs == [player.matching]
+            assert player.prefs[0] == player.matching
         else:
             assert player.matching is None
 
 
-@STABLE_ROOMMATES
-def test_stable_roommates(player_names, seed):
+@given(players=players())
+def test_stable_roommates(players):
     """ Verify that the algorithm can terminate with a valid matching. """
 
-    players = make_players(player_names, seed)
     matching = stable_roommates(players)
 
-    if None in matching.values():
-        assert all(val is None for val in matching.values())
+    assert isinstance(matching, dict)
 
-    else:
-        for player, other in matching.items():
-            assert player.prefs == [other]
-            assert other.matching == player
+    for player, match in matching.items():
+        if match is None:
+            assert not player.prefs
+        else:
+            assert match == player.prefs[0]

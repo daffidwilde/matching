@@ -3,7 +3,7 @@ import warnings
 
 import pytest
 
-from matching import Matching
+from matching import MultipleMatching
 from matching import Player as Student
 from matching.exceptions import (
     CapacityChangedWarning,
@@ -29,17 +29,17 @@ def test_init(
 
     for student, game_student in zip(students, game.students):
         assert student.name == game_student.name
-        assert student.pref_names == game_student.pref_names
+        assert student._pref_names == game_student._pref_names
 
     for project, game_project in zip(projects, game.projects):
         assert project.name == game_project.name
-        assert project.pref_names == game_project.pref_names
+        assert project._pref_names == game_project._pref_names
         assert project.capacity == game_project.capacity
         assert project.supervisor.name == game_project.supervisor.name
 
     for supervisor, game_supervisor in zip(supervisors, game.supervisors):
         assert supervisor.name == game_supervisor.name
-        assert supervisor.pref_names == game_supervisor.pref_names
+        assert supervisor._pref_names == game_supervisor._pref_names
         assert supervisor.capacity == game_supervisor.capacity
 
         supervisor_projects = [p.name for p in supervisor.projects]
@@ -70,7 +70,7 @@ def test_create_from_dictionaries(
     )
 
     for student in game.students:
-        assert student.pref_names == stud_prefs[student.name]
+        assert student._pref_names == stud_prefs[student.name]
         assert student.matching is None
 
     for project in game.projects:
@@ -78,7 +78,7 @@ def test_create_from_dictionaries(
         assert project.matching == []
 
     for supervisor in game.supervisors:
-        assert supervisor.pref_names == sup_prefs[supervisor.name]
+        assert supervisor._pref_names == sup_prefs[supervisor.name]
         assert supervisor.matching == []
 
     assert game.matching is None
@@ -328,13 +328,13 @@ def test_solve(
         )
 
         matching = game.solve(optimal)
-        assert isinstance(matching, Matching)
+        assert isinstance(matching, MultipleMatching)
 
         projects = sorted(projects, key=lambda p: p.name)
         matching_keys = sorted(matching.keys(), key=lambda k: k.name)
         for game_project, project in zip(matching_keys, projects):
             assert game_project.name == project.name
-            assert game_project.pref_names == project.pref_names
+            assert game_project._pref_names == project._pref_names
             assert game_project.capacity == project.capacity
             assert game_project.supervisor.name == project.supervisor.name
 

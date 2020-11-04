@@ -1,8 +1,8 @@
-""" The SA solver and algorithm. """
+""" The SA game class and supporting functions. """
 import copy
 import warnings
 
-from matching import Matching
+from matching import MultipleMatching
 from matching import Player as Student
 from matching.algorithms import student_allocation
 from matching.exceptions import (
@@ -122,7 +122,7 @@ class StudentAllocation(HospitalResident):
         """Solve the instance of SA using either the student- or
         supervisor-optimal algorithm."""
 
-        self.matching = Matching(
+        self.matching = MultipleMatching(
             student_allocation(
                 self.students, self.projects, self.supervisors, optimal
             )

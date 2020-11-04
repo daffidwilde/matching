@@ -2,7 +2,7 @@
 import copy
 import warnings
 
-from matching import BaseGame, Matching
+from matching import BaseGame, MultipleMatching
 from matching import Player as Resident
 from matching.algorithms import hospital_resident
 from matching.exceptions import (
@@ -84,7 +84,7 @@ class HospitalResident(BaseGame):
         """Solve the instance of HR using either the resident- or
         hospital-oriented algorithm. Return the matching."""
 
-        self.matching = Matching(
+        self.matching = MultipleMatching(
             hospital_resident(self.residents, self.hospitals, optimal)
         )
         return self.matching

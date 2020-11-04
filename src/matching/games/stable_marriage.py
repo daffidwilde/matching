@@ -1,8 +1,7 @@
 """ The SM game class and supporting functions. """
-
 import copy
 
-from matching import BaseGame, Matching, Player
+from matching import BaseGame, Player, SingleMatching
 from matching.algorithms import stable_marriage
 from matching.exceptions import MatchingError
 
@@ -52,7 +51,7 @@ class StableMarriage(BaseGame):
         """Solve the instance of SM using either the suitor- or
         reviewer-oriented Gale-Shapley algorithm. Return the matching."""
 
-        self.matching = Matching(
+        self.matching = SingleMatching(
             stable_marriage(self.suitors, self.reviewers, optimal)
         )
         return self.matching

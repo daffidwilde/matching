@@ -49,7 +49,7 @@ class Supervisor(Hospital):
         projects."""
 
         self.prefs = students
-        self.pref_names = [student.name for student in students]
+        self._pref_names = [student.name for student in students]
         self._original_prefs = students[:]
 
         for project in self.projects:
