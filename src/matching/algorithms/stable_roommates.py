@@ -1,4 +1,7 @@
 """ Functions for the SR algorithm. """
+import warnings
+
+from matching.exceptions import NoStableMatchingWarning
 
 from .util import _delete_pair
 
@@ -93,6 +96,12 @@ def second_phase(players):
             _delete_pair(player, other)
 
         if any(p.prefs == [] for p in players):
+            warnings.warn(
+                NoStableMatchingWarning(
+                    "The following players have emptied their preference list: "
+                    f"{[p for p in players if not p.prefs]}"
+                )
+            )
             break
 
         try:
@@ -125,6 +134,16 @@ def stable_roommates(players):
     """
 
     players = first_phase(players)
+
+    if any(p.prefs == [] for p in players):
+        warnings.warn(
+            NoStableMatchingWarning(
+                "The following players have been rejected by all others, "
+                "emptying their preference list: "
+                f"{[p for p in players if not p.prefs]}"
+            )
+        )
+
     if any(len(p.prefs) > 1 for p in players):
         players = second_phase(players)
 
