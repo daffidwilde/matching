@@ -1,6 +1,13 @@
 History
 =======
 
+v1.4 - 2020-11-04
+-----------------
+
+- Add abstract classes for players, games and matchings.
+- Implement extended algorithm for SR, and clean up HR/SM algorithms.
+- Move all of the algorithms to their own module, `matching.algorithms`.
+
 v1.3.3 - 2020-10-15
 -------------------
 
