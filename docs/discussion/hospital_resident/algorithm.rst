@@ -8,8 +8,11 @@ medical students in the US to hospitals. An algorithm which solves HR was
 originally presented in :cite:`GS62` but further work was done to improve on
 these algorithms in later years :cite:`DF81`, :cite:`Rot84`. Unlike the
 algorithm for SM, this algorithm takes a different form depending on the desired
-optimality of the solution. Below are the resident-optimal and hospital-optimal
-algorithms for finding a unique, stable matching for an instance of HR.
+optimality of the solution.
+
+Below are resident-optimal and hospital-optimal algorithms for finding a unique,
+stable matching for an instance of HR. Each algorithm was taken from
+:cite:`GI89`.
 
 Resident-optimal
 ++++++++++++++++
