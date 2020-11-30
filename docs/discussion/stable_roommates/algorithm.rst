@@ -44,8 +44,8 @@ a player has appeared twice as the worst choice for some player(s), a cycle has
 been found. All cycles begin by taking any player in the game with a second
 choice in their preference list as the first worst choice.
 
-Based on an all-or-nothing cycle :math:`(x_1, y_1), \\ldots, (x_n, y_n)`, for
-each :math:`i = 1, \\ldots, n`, one must delete from the game all pairs
+Based on an all-or-nothing cycle :math:`(x_1, y_1), \ldots, (x_n, y_n)`, for
+each :math:`i = 1, \ldots, n`, one must delete from the game all pairs
 :math:`(y_i, z)` such that :math:`y_i` prefers :math:`x_{i-1}` to :math:`z`
 where subscripts are taken modulo :math:`n`.
 
