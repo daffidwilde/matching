@@ -108,7 +108,7 @@ def test_remove_supervisor_and_projects(
 def test_remove_student(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that a student can be removed from an instance of SA. """
+    """Test that a student can be removed from an instance of SA."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean
@@ -124,7 +124,7 @@ def test_remove_student(
 def test_check_inputs(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Test that inputs to an instance of SA can be verified. """
+    """Test that inputs to an instance of SA can be verified."""
 
     _, _, _, game = make_game(
         student_names, project_names, supervisor_names, capacities, seed, clean

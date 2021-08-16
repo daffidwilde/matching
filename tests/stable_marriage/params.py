@@ -34,7 +34,7 @@ def get_player_names(draw, suitor_pool, reviewer_pool):
 
 
 def make_players(player_names, seed):
-    """ Given some names, make a valid set each of suitors and reviewers. """
+    """Given some names, make a valid set each of suitors and reviewers."""
 
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names

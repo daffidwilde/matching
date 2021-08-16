@@ -30,7 +30,7 @@ def get_possible_prefs(players):
 
 
 def make_players(student_names, project_names, supervisor_names, capacities):
-    """ Given some names and capacities, make a set of players for SA. """
+    """Given some names and capacities, make a set of players for SA."""
 
     students = [Student(name) for name in student_names]
     projects = [
@@ -74,7 +74,7 @@ def make_players(student_names, project_names, supervisor_names, capacities):
 def make_game(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """ Make all of the players and the game itself. """
+    """Make all of the players and the game itself."""
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(

@@ -40,7 +40,7 @@ class StableMarriage(BaseGame):
 
     @classmethod
     def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
-        """ Create an instance of SM from two preference dictionaries. """
+        """Create an instance of SM from two preference dictionaries."""
 
         suitors, reviewers = _make_players(suitor_prefs, reviewer_prefs)
         game = cls(suitors, reviewers)
@@ -57,7 +57,7 @@ class StableMarriage(BaseGame):
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. """
+        """Check whether the current matching is valid."""
 
         unmatched_issues = self._check_for_unmatched_players()
         not_in_matching_issues = self._check_for_players_not_in_matching()
@@ -88,7 +88,7 @@ class StableMarriage(BaseGame):
         return not any(blocking_pairs)
 
     def _check_for_unmatched_players(self):
-        """ Check everyone has a match. """
+        """Check everyone has a match."""
 
         issues = []
         for player in self.suitors + self.reviewers:
@@ -99,7 +99,7 @@ class StableMarriage(BaseGame):
         return issues
 
     def _check_for_players_not_in_matching(self):
-        """ Check that everyone appears in the matching. """
+        """Check that everyone appears in the matching."""
 
         players_in_matching = set(self.matching.keys()) | set(
             self.matching.values()
@@ -137,7 +137,7 @@ class StableMarriage(BaseGame):
             self._check_player_ranks(reviewer)
 
     def _check_num_players(self):
-        """ Check that the number of suitors and reviewers are equal. """
+        """Check that the number of suitors and reviewers are equal."""
 
         if len(self.suitors) != len(self.reviewers):
             raise ValueError(
@@ -147,7 +147,7 @@ class StableMarriage(BaseGame):
         return True
 
     def _check_player_ranks(self, player):
-        """ Check that a player has ranked all of the other group. """
+        """Check that a player has ranked all of the other group."""
 
         others = self.reviewers if player in self.suitors else self.suitors
         if set(player.prefs) != set(others):
@@ -180,7 +180,7 @@ def _make_players(suitor_prefs, reviewer_prefs):
 
 
 def _make_instances(suitor_prefs, reviewer_prefs):
-    """ Create ``Player`` instances for the names in each dictionary. """
+    """Create ``Player`` instances for the names in each dictionary."""
 
     suitor_dict, reviewer_dict = {}, {}
     for suitor_name in suitor_prefs:

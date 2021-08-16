@@ -15,7 +15,7 @@ from matching.players import Hospital
 
 @composite
 def names(draw, taken_from, size):
-    """ A strategy for getting player names. """
+    """A strategy for getting player names."""
 
     names = draw(lists(taken_from, min_size=size, max_size=size, unique=True))
     return names
@@ -31,7 +31,7 @@ def connections(
     min_hospitals=1,
     max_hospitals=3,
 ):
-    """ A custom strategy for making a set of connections between players. """
+    """A custom strategy for making a set of connections between players."""
 
     num_residents = draw(integers(min_residents, max_residents))
     num_hospitals = draw(integers(min_hospitals, max_hospitals))
@@ -61,7 +61,7 @@ def connections(
 
 @composite
 def players(draw, **kwargs):
-    """ A custom strategy for making a set of residents and hospitals. """
+    """A custom strategy for making a set of residents and hospitals."""
 
     resident_prefs, hospital_prefs, capacities = draw(connections(**kwargs))
 
@@ -75,7 +75,7 @@ def players(draw, **kwargs):
 
 
 def _get_preferences(party, others, preferences):
-    """ Get and assign preference instances. """
+    """Get and assign preference instances."""
 
     for player in party:
         names = preferences[player.name]
@@ -93,7 +93,7 @@ def _get_preferences(party, others, preferences):
 
 @composite
 def games(draw, clean=booleans(), **kwargs):
-    """ A custom strategy for making a game instance. """
+    """A custom strategy for making a game instance."""
 
     residents, hospitals = draw(players(**kwargs))
     return HospitalResident(residents, hospitals, clean)

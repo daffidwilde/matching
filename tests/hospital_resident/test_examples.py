@@ -4,7 +4,7 @@ from matching.games import HospitalResident
 
 
 def test_readme_example():
-    """ Verify the example used in the repo README. """
+    """Verify the example used in the repo README."""
 
     resident_prefs = {
         "A": ["C"],

@@ -31,7 +31,7 @@ class StableRoommates(BaseGame):
 
     @classmethod
     def create_from_dictionary(cls, player_prefs):
-        """ Create an instance of SR from a preference dictionary. """
+        """Create an instance of SR from a preference dictionary."""
 
         players = _make_players(player_prefs)
         game = cls(players)
@@ -84,7 +84,7 @@ class StableRoommates(BaseGame):
         return not any(blocking_pairs)
 
     def check_inputs(self):
-        """ Check that all players have ranked all other players. """
+        """Check that all players have ranked all other players."""
 
         for player in self.players:
             others = {p for p in self.players if p != player}

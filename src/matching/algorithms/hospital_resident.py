@@ -4,14 +4,14 @@ from .util import _delete_pair, _match_pair
 
 
 def _unmatch_pair(resident, hospital):
-    """ Unmatch a (resident, hospital)-pair. """
+    """Unmatch a (resident, hospital)-pair."""
 
     resident._unmatch()
     hospital._unmatch(resident)
 
 
 def _check_available(hospital):
-    """ Check whether a hospital is willing and able to take an applicant. """
+    """Check whether a hospital is willing and able to take an applicant."""
 
     return len(hospital.matching) < hospital.capacity and set(
         hospital.prefs

@@ -96,7 +96,7 @@ def test_second_phase(players):
 
 @given(players=players())
 def test_stable_roommates(players):
-    """ Verify that the algorithm can terminate with a valid matching. """
+    """Verify that the algorithm can terminate with a valid matching."""
 
     with warnings.catch_warnings(record=True) as w:
         matching = stable_roommates(players)

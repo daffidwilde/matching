@@ -67,7 +67,7 @@ def test_create_from_dictionaries(connections, clean):
 
 @given(game=games())
 def test_check_inputs(game):
-    """ Test that inputs to an instance of HR can be verified. """
+    """Test that inputs to an instance of HR can be verified."""
 
     with warnings.catch_warnings(record=True) as w:
         game.check_inputs()
@@ -213,7 +213,7 @@ def test_check_inputs_hospital_capacity(game):
 
 @given(game=games(), optimal=sampled_from(["resident", "hospital"]))
 def test_solve(game, optimal):
-    """ Test that HospitalResident can solve games correctly. """
+    """Test that HospitalResident can solve games correctly."""
 
     matching = game.solve(optimal)
     assert isinstance(matching, MultipleMatching)

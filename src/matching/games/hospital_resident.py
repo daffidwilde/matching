@@ -90,7 +90,7 @@ class HospitalResident(BaseGame):
         return self.matching
 
     def check_validity(self):
-        """ Check whether the current matching is valid. """
+        """Check whether the current matching is valid."""
 
         unacceptable_issues = self._check_for_unacceptable_matches(
             "residents"
@@ -123,7 +123,7 @@ class HospitalResident(BaseGame):
         return issues
 
     def _check_for_oversubscribed_players(self, party):
-        """ Check that no player in `party` is oversubscribed. """
+        """Check that no player in `party` is oversubscribed."""
 
         issues = []
         for player in vars(self)[party]:
@@ -222,7 +222,7 @@ class HospitalResident(BaseGame):
 
 
 def _check_mutual_preference(resident, hospital):
-    """ Determine whether two players each have a preference of the other. """
+    """Determine whether two players each have a preference of the other."""
 
     return resident in hospital.prefs and hospital in resident.prefs
 

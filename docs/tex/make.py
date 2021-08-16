@@ -3,7 +3,7 @@ from glob import iglob
 
 
 def main():
-    """ Make all images in current directory. """
+    """Make all images in current directory."""
 
     for tex_file in iglob("./*.tex"):
         jobname = tex_file.split("/")[-1][:-4]

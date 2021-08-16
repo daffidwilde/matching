@@ -46,7 +46,7 @@ def test_pride_and_prejudice():
 
 
 def test_readme_example():
-    """ Verify the example used in the repo README. """
+    """Verify the example used in the repo README."""
 
     suitors = [Player(name="A"), Player(name="B"), Player(name="C")]
     reviewers = [Player(name="D"), Player(name="E"), Player(name="F")]
