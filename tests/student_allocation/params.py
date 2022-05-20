@@ -163,6 +163,6 @@ STUDENT_ALLOCATION = given(
     capacities=lists(
         integers(min_value=1, max_value=2), min_size=5, max_size=5
     ),
-    seed=integers(min_value=0, max_value=2 ** 32 - 1),
+    seed=integers(min_value=0, max_value=2**32 - 1),
     clean=booleans(),
 )
