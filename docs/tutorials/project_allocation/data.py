@@ -133,7 +133,7 @@ def create_student_dataframe(student_to_choices):
 
 
 def create_supervisor_dataframe(supervisor_to_capacity):
-    """ Create a dataframe detailing the supervisors' capacities. """
+    """Create a dataframe detailing the supervisors' capacities."""
 
     df_supervisors = pd.DataFrame.from_dict(
         supervisor_to_capacity, orient="index", columns=["capacity"]
@@ -170,7 +170,7 @@ def create_project_dataframe(project_to_capacity, supervisor_to_projects):
 
 
 def save_dataframes(student_dataframe, supervisor_dataframe, project_dataframe):
-    """ Save the player dataframes. """
+    """Save the player dataframes."""
 
     for df, name in zip(
         (student_dataframe, supervisor_dataframe, project_dataframe),

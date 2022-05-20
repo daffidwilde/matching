@@ -61,7 +61,7 @@ class BasePlayer:
         )
 
     def set_prefs(self, players):
-        """ Set the player's preferences to be a list of players. """
+        """Set the player's preferences to be a list of players."""
 
         self.prefs = players
         self._pref_names = [player.name for player in players]
@@ -197,15 +197,15 @@ class BaseGame(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def solve(self):
-        """ Placeholder for solving the given matching game. """
+        """Placeholder for solving the given matching game."""
 
     @abc.abstractmethod
     def check_stability(self):
-        """ Placeholder for checking the stability of the current matching. """
+        """Placeholder for checking the stability of the current matching."""
 
     @abc.abstractmethod
     def check_validity(self):
-        """ Placeholder for checking the validity of the current matching. """
+        """Placeholder for checking the validity of the current matching."""
 
 
 class BaseMatching(dict, metaclass=abc.ABCMeta):
@@ -244,10 +244,10 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def __setitem__(self, player, new_match):
-        """ A placeholder function for how to update the matching. """
+        """A placeholder function for how to update the matching."""
 
     def _check_player_in_keys(self, player):
-        """ Raise an error if :code:`player` is not in the dictionary. """
+        """Raise an error if :code:`player` is not in the dictionary."""
 
         if player not in self._data.keys():
             raise ValueError(f"{player} is not a key in this matching.")

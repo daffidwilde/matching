@@ -4,7 +4,7 @@ from .util import _delete_pair, _match_pair
 
 
 def _unmatch_pair(suitor, reviewer):
-    """ Unmatch a (suitor, reviewer) pair. """
+    """Unmatch a (suitor, reviewer) pair."""
 
     suitor._unmatch()
     reviewer._unmatch()

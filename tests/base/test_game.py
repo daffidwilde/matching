@@ -23,7 +23,7 @@ class DummyGame(BaseGame):
 
 @given(clean=booleans())
 def test_init(clean):
-    """ Make a BaseGame instance and test it has the correct attributes. """
+    """Make a BaseGame instance and test it has the correct attributes."""
 
     game = DummyGame(clean)
 
@@ -35,7 +35,7 @@ def test_init(clean):
 
 @given(player_others=player_others())
 def test_remove_player(player_others):
-    """ Test that a player can be removed from a game and its players. """
+    """Test that a player can be removed from a game and its players."""
 
     player, others = player_others
 
@@ -54,7 +54,7 @@ def test_remove_player(player_others):
 
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_unique(player_others, clean):
-    """ Test that a game can verify its players have unique preferences. """
+    """Test that a game can verify its players have unique preferences."""
 
     player, others = player_others
 

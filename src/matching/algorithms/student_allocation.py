@@ -4,7 +4,7 @@ from .util import _delete_pair, _match_pair
 
 
 def unmatch_pair(student, project):
-    """ Unmatch a student-project pair. """
+    """Unmatch a student-project pair."""
 
     student._unmatch()
     project._unmatch(student)

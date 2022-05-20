@@ -141,7 +141,7 @@ def test_examples_in_issue_124():
 
 
 def test_trivial_case():
-    """ Verify that a matching is given when there are only two players. """
+    """Verify that a matching is given when there are only two players."""
 
     p1, p2 = players = [Player(1), Player(2)]
 

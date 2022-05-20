@@ -8,7 +8,7 @@ from matching import Player
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_get_favourite(name, pref_names):
-    """ Check the correct player is returned as the favourite of a player. """
+    """Check the correct player is returned as the favourite of a player."""
 
     player = Player(name)
     others = [Player(other) for other in pref_names]
@@ -20,7 +20,7 @@ def test_get_favourite(name, pref_names):
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_match(name, pref_names):
-    """ Check that a player can match to another player correctly. """
+    """Check that a player can match to another player correctly."""
 
     player = Player(name)
     other = Player(pref_names[0])
@@ -31,7 +31,7 @@ def test_match(name, pref_names):
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_unmatch(name, pref_names):
-    """ Check that a player can unmatch from another player correctly. """
+    """Check that a player can unmatch from another player correctly."""
 
     player = Player(name)
     other = Player(pref_names[0])
@@ -60,7 +60,7 @@ def test_get_successors(name, pref_names):
 
 @given(name=text(), pref_names=lists(text(), min_size=1, unique=True))
 def test_check_if_match_unacceptable(name, pref_names):
-    """ Test that the acceptability of a match is caught correctly. """
+    """Test that the acceptability of a match is caught correctly."""
 
     player = Player(name)
     others = [Player(other) for other in pref_names]
