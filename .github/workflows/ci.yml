@@ -32,7 +32,7 @@ jobs:
         python -m pip install -q --no-cache-dir sphinx sphinx_rtd_theme
         python -m pip install -q --no-cache-dir nbval sphinxcontrib-bibtex
         python -m pip install -q --no-cache-dir matplotlib pandas PyYAML
-        python -m pip install -q --no-cache-dir ipython==7.10
+        python -m pip install -q --no-cache-dir ipython
         python -m pip list
     - name: Lint with Black
       if: matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'

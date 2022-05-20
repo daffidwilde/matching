@@ -9,7 +9,7 @@ from matching.algorithms.util import _delete_pair, _match_pair
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_delete_pair(name, pref_names):
-    """ Verify that two players can forget each other. """
+    """Verify that two players can forget each other."""
 
     others = [Player(other) for other in pref_names]
 
@@ -25,7 +25,7 @@ def test_delete_pair(name, pref_names):
 
 @given(name=text(), pref_names=lists(text(), min_size=1))
 def test_match_pair(name, pref_names):
-    """ Verify that two players can be matched to one another. """
+    """Verify that two players can be matched to one another."""
 
     others = [Player(other) for other in pref_names]
 

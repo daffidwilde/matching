@@ -63,7 +63,7 @@ def create_hospital_to_preferences_map(resident_to_preferences):
 
 
 def create_hospital_to_capacity_map():
-    """ Create a map from hospital names to their capacity. """
+    """Create a map from hospital names to their capacity."""
 
     hospital_to_capacity = {hospital: CAPACITY for hospital in hospital_names}
 
@@ -83,7 +83,7 @@ def save_dictionaries_to_yaml(
 
 
 def main():
-    """ Create the required maps to form the players, and then save them. """
+    """Create the required maps to form the players, and then save them."""
 
     np.random.seed(SEED)
     print("Seed set:", SEED)

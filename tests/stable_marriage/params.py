@@ -34,7 +34,7 @@ def get_player_names(draw, suitor_pool, reviewer_pool):
 
 
 def make_players(player_names, seed):
-    """ Given some names, make a valid set each of suitors and reviewers. """
+    """Given some names, make a valid set each of suitors and reviewers."""
 
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names
@@ -71,5 +71,5 @@ STABLE_MARRIAGE = given(
     player_names=get_player_names(
         suitor_pool=["A", "B", "C"], reviewer_pool=["X", "Y", "Z"]
     ),
-    seed=integers(min_value=0, max_value=2 ** 32 - 1),
+    seed=integers(min_value=0, max_value=2**32 - 1),
 )

@@ -9,7 +9,7 @@ from .util import player_others
 
 @given(name=text())
 def test_init(name):
-    """ Make a Player instance and test that their attributes are correct. """
+    """Make a Player instance and test that their attributes are correct."""
 
     player = BasePlayer(name)
     assert player.name == name
@@ -61,7 +61,7 @@ def test_not_in_preferences_message(player_others):
 
 @given(player_others=player_others())
 def test_set_prefs(player_others):
-    """ Test that a Player instance can set its preferences correctly. """
+    """Test that a Player instance can set its preferences correctly."""
 
     player, others = player_others
 
@@ -87,7 +87,7 @@ def test_keep_original_prefs(player_others):
 
 @given(player_others=player_others())
 def test_forget(player_others):
-    """ Test that a Player instance can forget another player. """
+    """Test that a Player instance can forget another player."""
 
     player, others = player_others
     player.set_prefs(others)

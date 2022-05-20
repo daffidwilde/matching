@@ -109,7 +109,7 @@ def test_solve(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_check_validity(player_names, seed):
-    """ Test that StableMarriage finds no errors when the game is solved. """
+    """Test that StableMarriage finds no errors when the game is solved."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -172,7 +172,7 @@ def test_matching_consistent(player_names, seed):
 
 
 def test_check_stability():
-    """ Test that StableMarriage can recognise whether a matching is stable. """
+    """Test that StableMarriage can recognise whether a matching is stable."""
 
     suitors = [Player("A"), Player("B")]
     reviewers = [Player("X"), Player("Y")]

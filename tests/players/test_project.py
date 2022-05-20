@@ -9,7 +9,7 @@ from matching.players import Project, Supervisor
 
 @given(name=text(), capacity=integers())
 def test_init(name, capacity):
-    """ Make an instance of Project and check their attributes are correct. """
+    """Make an instance of Project and check their attributes are correct."""
 
     project = Project(name, capacity)
 
