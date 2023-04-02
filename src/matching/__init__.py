@@ -7,10 +7,13 @@ if not sys.warnoptions:
 
     warnings.simplefilter("always")
 
+from importlib.metadata import version
+
 from .base import BaseGame, BaseMatching, BasePlayer
 from .matchings import MultipleMatching, SingleMatching
 from .players import Player
-from .version import __version__
+
+__version__ = version(__package__)
 
 __all__ = [
     "BaseGame",
