@@ -1,4 +1,5 @@
-""" The SM game class and supporting functions. """
+"""The SM game class and supporting functions."""
+
 import copy
 
 from matching import BaseGame, Player, SingleMatching
@@ -7,7 +8,7 @@ from matching.exceptions import MatchingError
 
 
 class StableMarriage(BaseGame):
-    """A class for solving instances of the stable marriage problem (SM).
+    """Solver for the stable marriage problem (SM).
 
     Parameters
     ----------
@@ -15,18 +16,18 @@ class StableMarriage(BaseGame):
         The suitors in the game. Each suitor must rank all elements in
         ``reviewers``.
     reviewers : list of Player
-        The reviewers in the game. Each reviewer must rank all elements in
-        ``suitors``.
+        The reviewers in the game. Each reviewer must rank all elements
+        in ``suitors``.
 
     Attributes
     ----------
-    matching : Matching or None
-        Once the game is solved, a matching is available. This uses the suitors
-        and reviewers as keys and values, respectively, in a ``Matching``
-        object. Initialises as `None`.
+    matching : SingleMatching or None
+        Once the game is solved, a matching is available. This uses the
+        suitors and reviewers as keys and values, respectively, in a
+        ``SingleMatching`` object. Initialises as ``None``.
     blocking_pairs : list of (Player, Player)
-        The suitor-reviewer pairs that both prefer one another to their current
-        match. Initialises as ``None``.
+        The suitor-reviewer pairs that both prefer one another to their
+        current match. Initialises as ``None``.
     """
 
     def __init__(self, suitors, reviewers):
@@ -47,8 +48,11 @@ class StableMarriage(BaseGame):
         return game
 
     def solve(self, optimal="suitor"):
-        """Solve the instance of SM using either the suitor- or
-        reviewer-oriented Gale-Shapley algorithm. Return the matching."""
+        """Solve the instance of SM. Return the matching.
+
+        The party optimality can be controlled using the ``optimal``
+        parameter.
+        """
 
         self.matching = SingleMatching(
             stable_marriage(self.suitors, self.reviewers, optimal)
@@ -72,8 +76,7 @@ class StableMarriage(BaseGame):
         return True
 
     def check_stability(self):
-        """Check for the existence of any blocking pairs in the current
-        matching, thus determining the stability of the matching."""
+        """Check for the existence of any blocking pairs."""
 
         blocking_pairs = []
         for suitor in self.suitors:
@@ -112,8 +115,7 @@ class StableMarriage(BaseGame):
         return issues
 
     def _check_for_inconsistent_matches(self):
-        """Check that the game matching is consistent with those of the
-        players."""
+        """Check the matching is consistent with the players'."""
 
         issues = []
         for suitor, reviewer in self.matching.items():
@@ -126,8 +128,7 @@ class StableMarriage(BaseGame):
         return issues
 
     def check_inputs(self):
-        """Raise an error if any of the conditions of the game have been
-        broken."""
+        """Raise an error if any of the game's rules do not hold."""
 
         self._check_num_players()
         for suitor in self.suitors:
@@ -159,8 +160,7 @@ class StableMarriage(BaseGame):
 
 
 def _make_players(suitor_prefs, reviewer_prefs):
-    """Make a set of ``Player`` instances each for suitors and reviewers from
-    the dictionaries given. Add their preferences."""
+    """Make a set of suitors and reviewers from two dictionaries."""
 
     suitor_dict, reviewer_dict = _make_instances(suitor_prefs, reviewer_prefs)
 

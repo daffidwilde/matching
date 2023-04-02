@@ -1,4 +1,5 @@
 """ Functions for the SR algorithm. """
+
 import warnings
 
 from matching.exceptions import NoStableMatchingWarning
@@ -7,8 +8,7 @@ from .util import _delete_pair
 
 
 def first_phase(players):
-    """Conduct the first phase of the algorithm where one-way proposals are
-    made, and unpreferable pairs are forgotten."""
+    """Make one-way proposals and forget unpreferable pairs."""
 
     free_players = players[:]
     while free_players:
@@ -31,8 +31,9 @@ def first_phase(players):
 
 
 def locate_all_or_nothing_cycle(player):
-    """Locate a cycle of (least-preferable, second-choice) pairs to be removed
-    from the game."""
+    """Locate a cycle of (least-preferable, second-choice) pairs.
+
+    Any such cycle will be removed from the game."""
 
     lasts = [player]
     seconds = []
@@ -55,19 +56,22 @@ def locate_all_or_nothing_cycle(player):
 
 
 def get_pairs_to_delete(cycle):
-    """Based on an all-or-nothing cycle :math:`(x_1, y_1), \\ldots, (x_n, y_n)`,
-    for each :math:`i = 1, \\ldots, n`, one must delete from the game all pairs
-    :math:`(y_i, z)` such that :math:`y_i` prefers :math:`x_{i-1}` to :math:`z`
-    where subscripts are taken modulo :math:`n`.
+    """Find the set of pairs to remove given an all-or-nothing cycle.
 
-    This is an important point that is omitted from the original paper, but may
-    be found in :cite:`GI89` (Section 4.2.3).
+    Based on an all-or-nothing cycle (also referred to as a "rotation")
+    :math:`(x_1, y_1), \\ldots, (x_n, y_n)`, for each
+    :math:`i = 1, \\ldots, n`, one must delete from the game all pairs
+    :math:`(y_i, z)` such that :math:`y_i` prefers :math:`x_{i-1}` to
+    :math:`z` where subscripts are taken modulo :math:`n`.
 
-    The essential difference between this statement and that in :cite:`Irv85` is
-    the removal of unpreferable pairs, identified using an all-or-nothing cycle,
-    in addition to those contained in the cycle. Without doing so, tails of
-    cycles can be removed rather than whole cycles, leaving some conflicting
-    pairs in the game."""
+    This is an important point that is omitted from the original paper,
+    but may be found in :cite:`GI89` (Section 4.2.3).
+
+    The essential difference between this statement and that in
+    :cite:`Irv85` is the removal of unpreferable pairs, identified using
+    an all-or-nothing cycle, in addition to those contained in the
+    cycle. Without doing so, tails of cycles can be removed rather than
+    whole cycles, leaving some conflicting pairs in the game."""
 
     pairs = []
     for i, (_, right) in enumerate(cycle):
@@ -82,8 +86,7 @@ def get_pairs_to_delete(cycle):
 
 
 def second_phase(players):
-    """Conduct the second phase of the algorithm where all-or-nothing cycles
-    (rotations) are located and removed from the game."""
+    """Locate and remove all-or-nothing cycles from the game."""
 
     player = next(p for p in players if len(p.prefs) > 1)
     while True:
@@ -95,7 +98,7 @@ def second_phase(players):
         if any(p.prefs == [] for p in players):
             warnings.warn(
                 NoStableMatchingWarning(
-                    "The following players have emptied their preference list: "
+                    "The following players have emptied their preferences: "
                     f"{[p for p in players if not p.prefs]}"
                 )
             )
@@ -115,8 +118,10 @@ def second_phase(players):
 
 
 def stable_roommates(players):
-    """Irving's algorithm :cite:`Irv85` that finds stable solutions to
-    instances of SR if one exists. Otherwise, an incomplete matching is found.
+    """Irving's algorithm for finding a stable solution to SR.
+
+    The algorithm :cite:`Irv85` finds stable solutions to instances of
+    SR if one exists. Otherwise, an incomplete matching is found.
 
     Parameters
     ----------
@@ -126,8 +131,8 @@ def stable_roommates(players):
     Returns
     -------
     matching : dict
-        A dictionary of matches where the keys and values are given by the
-        members of ``players``.
+        A dictionary of matches where the keys and values are given by
+        the members of ``players``.
     """
 
     players = first_phase(players)

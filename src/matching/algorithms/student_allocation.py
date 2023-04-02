@@ -11,10 +11,12 @@ def unmatch_pair(student, project):
 
 
 def student_allocation(students, projects, supervisors, optimal="student"):
-    """Solve an instance of SA by treating it as a bi-level HR. A unique,
-    stable and optimal matching is found for the given set of students, projects
-    and supervisors. The optimality of the matching is found with respect to one
-    party and is subsequently the worst stable matching for the other.
+    """Solve an instance of SA by treating it as a bi-level HR instance.
+
+    A unique, stable and optimal matching is found for the given set of
+    students, projects and supervisors. The optimality of the matching
+    is found with respect to one party and is subsequently the worst
+    stable matching for the other.
 
     Parameters
     ----------
@@ -22,21 +24,21 @@ def student_allocation(students, projects, supervisors, optimal="student"):
         The students in the game. Each student must rank a subset of the
         elements of ``projects``.
     projects : list of Project
-        The projects in the game. Each project is offered by a supervisor that
-        governs its preferences.
+        The projects in the game. Each project is offered by a
+        supervisor that governs its preferences.
     supervisor : list of Supervisor
-        The supervisors in the game. Each supervisor offers a unique subset of
-        ``projects`` and ranks all the students that have ranked at least one of
-        these projects.
+        The supervisors in the game. Each supervisor offers a unique
+        subset of ``projects`` and ranks all the students that have
+        ranked at least one of these projects.
     optimal : str, optional
         Which party the matching should be optimised for. Must be one of
         ``"student"`` and ``"supervisor"``. Defaults to the former.
 
     Returns
-    =======
+    -------
     matching : Matching
-        A dictionary-like object where the keys are the members of ``projects``
-        and their student matches are the values.
+        A dictionary-like object where the keys are the members of
+        ``projects`` and their student matches are the values.
     """
 
     if optimal == "student":
@@ -46,33 +48,35 @@ def student_allocation(students, projects, supervisors, optimal="student"):
 
 
 def student_optimal(students, projects):
-    """Solve the instance of SA to be student-optimal. The algorithm is as
-    follows:
+    """Solve the instance of SA to be student-optimal.
 
-        0. Set all students to be unassigned, and every project (and supervisor)
-        to be totally unsubscribed.
+    The student-optimal algorithm is as follows:
 
-        1. Take any student, :math:`s`, that is unassigned and has a non-empty
-        preference list, and consider their most preferred project, :math:`p`.
-        Let :math:`f` denote the supervisor that offers :math:`p`. Assign
-        :math:`s` to be matched to :math:`p` (and thus :math:`f`).
+        0. Set all students to be unassigned, and every project and
+           supervisor to be totally unsubscribed.
 
-        2. If :math:`p` is now over-subscribed, find its worst current match,
-        :math:`s'`. Unmatch :math:`p` and :math:`s'`. Else if :math:`f` is
-        over-subscribed, find their worst current match, :math:`s''`, and the
-        project they are currently subscribed to, :math:`p'`. Unmatch :math:`p'`
-        and :math:`s''`.
+        1. Take any student, :math:`s`, that is unassigned and has a
+           non-empty preference list, and consider their most preferred
+           project, :math:`p`. Let :math:`f` denote the supervisor that
+           offers :math:`p`. Assign :math:`s` to be matched to :math:`p`
+           (and thus :math:`f`).
 
-        3. If :math:`p` is now at capacity, find their worst current match,
-        :math:`s'`. For each successor, :math:`t`, to :math:`s'` in the
-        preference list of :math:`p`, delete the pair :math:`(p, t)` from the
-        game.
+        2. If :math:`p` is now over-subscribed, find its worst current
+           match, :math:`s'`. Unmatch :math:`p` and :math:`s'`. Else if
+           :math:`f` is over-subscribed, find their worst current match,
+           :math:`s''`, and the project they are currently subscribed
+           to, :math:`p'`. Unmatch :math:`p'` and :math:`s''`.
+
+        3. If :math:`p` is now at capacity, find their worst current
+           match, :math:`s'`. For each successor, :math:`t`, to
+           :math:`s'` in the preference list of :math:`p`, delete the
+           pair :math:`(p, t)` from the game.
 
         4. If :math:`f` is at capacity, find their worst current match,
-        :math:`s'`. For each successor, :math:`t`, to :math:`s'` in the
-        preference list of :math:`f`, for each project, :math:`p'`, offered by
-        :math:`f` that :math:`t` finds acceptable, delete the pair
-        :math:`(p', t)` from the game.
+           :math:`s'`. For each successor, :math:`t`, to :math:`s'` in
+           the preference list of :math:`f`, for each project,
+           :math:`p'`, offered by :math:`f` that :math:`t` finds
+           acceptable, delete the pair :math:`(p', t)` from the game.
 
         5. Go to 1 until there are no such students left, then end.
     """
@@ -121,25 +125,28 @@ def student_optimal(students, projects):
 
 
 def supervisor_optimal(projects, supervisors):
-    """Solve the instance of SA to be supervisor-optimal. The algorithm is as
-    follows:
+    """Solve the instance of SA to be supervisor-optimal.
 
-        0. Set all students to be unassigned, and every project (and supervisor)
-        to be totally unsubscribed.
+    The supervisor-optimal algorithm is as follows:
 
-        1. Take any supervisor member, :math:`f`, that is under-subscribed and
-        whose preference list contains at least one student that is not
-        currently matched to at least one acceptable (though currently
-        under-subscribed) project offered by :math:`f`. Consider the
-        supervisor's most preferred such student, :math:`s`, and that student's
-        most preferred such project, :math:`p`.
+        0. Set all students to be unassigned, and every project and
+           supervisor to be totally unsubscribed.
 
-        2. If :math:`s` is matched to some other project, :math:`p'`, then
-        unmatch them. In any case, match :math:`s` and :math:`p` (and thus
-        :math:`f`).
+        1. Take any supervisor member, :math:`f`, that is
+           under-subscribed and whose preference list contains at least
+           one student that is not currently matched to at least one
+           acceptable (though currently under-subscribed) project
+           offered by :math:`f`. Consider the supervisor's most
+           preferred such student, :math:`s`, and that student's most
+           preferred such project, :math:`p`.
 
-        3. For each successor, :math:`p'`, to :math:`p` in the preference list
-        of :math:`s`, delete the pair :math:`(p', s)` from the game.
+        2. If :math:`s` is matched to some other project, :math:`p'`,
+           then unmatch them. In any case, match :math:`s` and :math:`p`
+           (and thus :math:`f`).
+
+        3. For each successor, :math:`p'`, to :math:`p` in the
+           preference list of :math:`s`, delete the pair :math:`(p', s)`
+           from the game.
 
         4. Go to 1 until there are no such supervisors, then end.
     """
