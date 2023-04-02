@@ -79,7 +79,6 @@ def student_optimal(students, projects):
 
     free_students = students[:]
     while free_students:
-
         student = free_students.pop()
         project = student.get_favourite()
         supervisor = project.supervisor
@@ -107,7 +106,6 @@ def student_optimal(students, projects):
         if len(supervisor.matching) == supervisor.capacity:
             successors = supervisor.get_successors()
             for successor in successors:
-
                 supervisor_projects = [
                     project
                     for project in supervisor.projects
@@ -148,7 +146,6 @@ def supervisor_optimal(projects, supervisors):
 
     free_supervisors = supervisors[:]
     while free_supervisors:
-
         supervisor = free_supervisors.pop()
         student, project = supervisor.get_favourite()
 

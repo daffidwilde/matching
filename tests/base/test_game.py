@@ -5,7 +5,10 @@ from hypothesis import given
 from hypothesis.strategies import booleans
 
 from matching import BaseGame, Player
-from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
+from matching.exceptions import (
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 
 from .util import player_others
 

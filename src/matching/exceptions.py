@@ -5,7 +5,6 @@ class MatchingError(Exception):
     """A generic error for when something is wrong with an internal object."""
 
     def __init__(self, **kwargs):
-
         for key, val in kwargs.items():
             self.__setattr__(key, val)
 

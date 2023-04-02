@@ -214,7 +214,9 @@ def test_check_inputs_project_reciprocated_all_prefs(
     student = project.prefs[0]
     project._forget(student)
     with warnings.catch_warnings(record=True) as w:
-        game._check_inputs_player_reciprocated_all_prefs("projects", "students")
+        game._check_inputs_player_reciprocated_all_prefs(
+            "projects", "students"
+        )
 
         message = w[-1].message
         assert isinstance(message, PreferencesChangedWarning)

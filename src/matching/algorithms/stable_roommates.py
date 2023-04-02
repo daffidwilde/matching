@@ -12,7 +12,6 @@ def first_phase(players):
 
     free_players = players[:]
     while free_players:
-
         player = free_players.pop()
         favourite = player.get_favourite()
 
@@ -72,7 +71,6 @@ def get_pairs_to_delete(cycle):
 
     pairs = []
     for i, (_, right) in enumerate(cycle):
-
         left = cycle[(i - 1) % len(cycle)][0]
         successors = right.prefs[right.prefs.index(left) + 1 :]
         for successor in successors:
@@ -89,7 +87,6 @@ def second_phase(players):
 
     player = next(p for p in players if len(p.prefs) > 1)
     while True:
-
         cycle = locate_all_or_nothing_cycle(player)
         pairs = get_pairs_to_delete(cycle)
         for player, other in pairs:

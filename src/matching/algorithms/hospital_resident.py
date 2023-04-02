@@ -76,7 +76,6 @@ def resident_optimal(residents, hospitals):
 
     free_residents = residents[:]
     while free_residents:
-
         resident = free_residents.pop()
         hospital = resident.get_favourite()
 
@@ -120,7 +119,6 @@ def hospital_optimal(hospitals):
 
     free_hospitals = hospitals[:]
     while free_hospitals:
-
         hospital = free_hospitals.pop()
         resident = hospital.get_favourite()
 

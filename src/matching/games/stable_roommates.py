@@ -22,7 +22,6 @@ class StableRoommates(BaseGame):
     """
 
     def __init__(self, players):
-
         players = copy.deepcopy(players)
         self.players = players
 

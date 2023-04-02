@@ -62,7 +62,6 @@ class StudentAllocation(HospitalResident):
     """
 
     def __init__(self, students, projects, supervisors, clean=False):
-
         students, projects, supervisors = copy.deepcopy(
             [students, projects, supervisors]
         )
@@ -184,7 +183,9 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("projects")
-        self._check_inputs_player_reciprocated_all_prefs("projects", "students")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "projects", "students"
+        )
         self._check_inputs_player_prefs_nonempty("projects", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("supervisors")
@@ -229,7 +230,6 @@ class StudentAllocation(HospitalResident):
 
         if party == "supervisors":
             for supervisor in self.supervisors:
-
                 students_that_ranked = [
                     student
                     for student in self.students
@@ -264,7 +264,6 @@ class StudentAllocation(HospitalResident):
         project(s)."""
 
         for supervisor in self.supervisors:
-
             for project in supervisor.projects:
                 if project.capacity > supervisor.capacity:
                     warnings.warn(
@@ -283,7 +282,6 @@ class StudentAllocation(HospitalResident):
         all of their projects."""
 
         for supervisor in self.supervisors:
-
             total_project_capacity = sum(
                 p.capacity for p in supervisor.projects
             )

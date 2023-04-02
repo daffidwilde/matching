@@ -36,7 +36,9 @@ def make_players(student_names, project_names, supervisor_names, capacities):
     projects = [
         Project(name, cap) for name, cap in zip(project_names, capacities)
     ]
-    supervisors = [Supervisor(name, capacity=None) for name in supervisor_names]
+    supervisors = [
+        Supervisor(name, capacity=None) for name in supervisor_names
+    ]
 
     if len(students) > len(projects):
         students = students[: len(projects)]

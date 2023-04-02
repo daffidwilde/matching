@@ -64,7 +64,9 @@ def test_getitem(dictionary):
     """Check that you can access items in a matching correctly."""
 
     matching = BaseMatching(dictionary)
-    for (mkey, mval), (dkey, dval) in zip(matching.items(), dictionary.items()):
+    for (mkey, mval), (dkey, dval) in zip(
+        matching.items(), dictionary.items()
+    ):
         assert matching[mkey] == mval
         assert (mkey, mval) == (dkey, dval)
 

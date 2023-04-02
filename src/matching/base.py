@@ -2,7 +2,10 @@
 import abc
 import warnings
 
-from matching.exceptions import PlayerExcludedWarning, PreferencesChangedWarning
+from matching.exceptions import (
+    PlayerExcludedWarning,
+    PreferencesChangedWarning,
+)
 
 
 class BasePlayer:
@@ -29,7 +32,6 @@ class BasePlayer:
     """
 
     def __init__(self, name):
-
         self.name = name
         self.prefs = []
         self.matching = None
@@ -38,7 +40,6 @@ class BasePlayer:
         self._original_prefs = None
 
     def __repr__(self):
-
         return str(self.name)
 
     def _forget(self, other):
@@ -50,11 +51,9 @@ class BasePlayer:
         self.prefs = prefs
 
     def unmatched_message(self):
-
         return f"{self} is unmatched."
 
     def not_in_preferences_message(self, other):
-
         return (
             f"{self} is matched to {other} but they do not appear in their "
             f"preference list: {self.prefs}."
@@ -123,7 +122,6 @@ class BaseGame(metaclass=abc.ABCMeta):
     """
 
     def __init__(self, clean=False):
-
         self.matching = None
         self.blocking_pairs = None
         self.clean = clean
@@ -167,7 +165,6 @@ class BaseGame(metaclass=abc.ABCMeta):
         players = vars(self)[party]
         others = vars(self)[other_party]
         for player in players:
-
             for other in player.prefs:
                 if other not in others:
                     warnings.warn(
@@ -185,7 +182,6 @@ class BaseGame(metaclass=abc.ABCMeta):
         remove any such player."""
 
         for player in vars(self)[party]:
-
             if not player.prefs:
                 warnings.warn(
                     PlayerExcludedWarning(
@@ -219,7 +215,6 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
     """
 
     def __init__(self, dictionary=None):
-
         self._data = {}
         if dictionary is not None:
             self._data.update(dictionary)
@@ -227,19 +222,15 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
         super().__init__(self._data)
 
     def __repr__(self):
-
         return repr(self._data)
 
     def keys(self):
-
         return self._data.keys()
 
     def values(self):
-
         return self._data.values()
 
     def __getitem__(self, player):
-
         return self._data[player]
 
     @abc.abstractmethod

@@ -15,11 +15,9 @@ class SingleMatching(BaseMatching):
     """
 
     def __init__(self, dictionary):
-
         super().__init__(dictionary)
 
     def __setitem__(self, player, new):
-
         self._check_player_in_keys(player)
         self._check_new_valid_type(new, (type(None), Player))
 
@@ -42,11 +40,9 @@ class MultipleMatching(BaseMatching):
     """
 
     def __init__(self, dictionary):
-
         super().__init__(dictionary)
 
     def __setitem__(self, player, new):
-
         self._check_player_in_keys(player)
         self._check_new_valid_type(new, (list, tuple))
         for other in new:

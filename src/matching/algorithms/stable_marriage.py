@@ -39,7 +39,6 @@ def stable_marriage(suitors, reviewers, optimal="suitor"):
 
     free_suitors = suitors[:]
     while free_suitors:
-
         suitor = free_suitors.pop()
         reviewer = suitor.get_favourite()
 

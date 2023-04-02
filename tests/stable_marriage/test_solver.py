@@ -34,7 +34,9 @@ def test_create_from_dictionaries(player_names, seed):
     correctly."""
 
     suitor_prefs, reviewer_prefs = make_prefs(player_names, seed)
-    game = StableMarriage.create_from_dictionaries(suitor_prefs, reviewer_prefs)
+    game = StableMarriage.create_from_dictionaries(
+        suitor_prefs, reviewer_prefs
+    )
 
     for suitor in game.suitors:
         assert suitor_prefs[suitor.name] == suitor._pref_names

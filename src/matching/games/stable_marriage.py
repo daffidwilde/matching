@@ -30,7 +30,6 @@ class StableMarriage(BaseGame):
     """
 
     def __init__(self, suitors, reviewers):
-
         suitors, reviewers = copy.deepcopy([suitors, reviewers])
         self.suitors = suitors
         self.reviewers = reviewers

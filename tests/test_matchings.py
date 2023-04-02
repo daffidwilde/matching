@@ -1,6 +1,12 @@
 """ Tests for the matching classes. """
 from hypothesis import given
-from hypothesis.strategies import composite, integers, lists, sampled_from, text
+from hypothesis.strategies import (
+    composite,
+    integers,
+    lists,
+    sampled_from,
+    text,
+)
 
 from matching import MultipleMatching, SingleMatching
 from matching.players import Hospital, Player

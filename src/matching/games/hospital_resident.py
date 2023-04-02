@@ -52,7 +52,6 @@ class HospitalResident(BaseGame):
     """
 
     def __init__(self, residents, hospitals, clean=False):
-
         residents, hospitals = copy.deepcopy([residents, hospitals])
         self.residents = residents
         self.hospitals = hospitals
@@ -176,7 +175,6 @@ class HospitalResident(BaseGame):
         players that have ranked it."""
 
         for player in vars(self)[party]:
-
             for other in player.prefs:
                 if player not in other.prefs:
                     warnings.warn(
@@ -194,7 +192,6 @@ class HospitalResident(BaseGame):
         players = vars(self)[party]
         others = vars(self)[other_party]
         for player in players:
-
             others_that_ranked = [
                 other for other in others if player in other.prefs
             ]

@@ -28,7 +28,6 @@ class Project(Hospital):
     """
 
     def __init__(self, name, capacity):
-
         super().__init__(name, capacity)
         self.supervisor = None
 

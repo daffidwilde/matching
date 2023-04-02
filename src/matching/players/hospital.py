@@ -1,4 +1,4 @@
-""" The Hospital class for use in instances of HR. """
+"""The Hospital class for use in instances of HR."""
 
 from matching import BasePlayer
 
@@ -33,7 +33,6 @@ class Hospital(BasePlayer):
     """
 
     def __init__(self, name, capacity):
-
         super().__init__(name)
         self.capacity = capacity
         self._original_capacity = capacity
@@ -53,7 +52,6 @@ class Hospital(BasePlayer):
         self.matching = matching
 
     def oversubscribed_message(self):
-
         return (
             f"{self} is matched to {self.matching} which is over their "
             f"capacity of {self.capacity}."
