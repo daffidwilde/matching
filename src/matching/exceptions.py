@@ -1,8 +1,8 @@
-""" Exceptions for game solver checks. """
+"""Exceptions for game solver checks."""
 
 
 class MatchingError(Exception):
-    """A generic error for when something is wrong with an internal object."""
+    """A generic exception for erroneous ``matching`` objects."""
 
     def __init__(self, **kwargs):
         for key, val in kwargs.items():
@@ -13,16 +13,16 @@ class MatchingError(Exception):
 
 
 class NoStableMatchingWarning(UserWarning):
-    """A warning for when a game does not have a complete stable matching."""
+    """For when a game does not have a complete stable matching."""
 
 
 class PreferencesChangedWarning(UserWarning):
-    """A warning for when the preferences of a player are invalid."""
+    """For when a player has an invalid preference list."""
 
 
 class CapacityChangedWarning(UserWarning):
-    """A warning for when the capacity of a player is invalid."""
+    """For when a player has an invalid capacity."""
 
 
 class PlayerExcludedWarning(UserWarning):
-    """A warning for when a player is to be excluded from a game."""
+    """For when a player should be excluded from a game."""
