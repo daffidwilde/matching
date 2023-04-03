@@ -55,6 +55,8 @@ class Hospital(BasePlayer):
         self.matching = matching
 
     def oversubscribed_message(self):
+        """Message to say the hospital has too many matches."""
+
         return (
             f"{self} is matched to {self.matching} which is over their "
             f"capacity of {self.capacity}."
