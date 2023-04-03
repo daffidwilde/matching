@@ -1,4 +1,5 @@
-""" Tests for the Student Allocation algorithm. """
+"""Tests for the Student Allocation algorithm."""
+
 import numpy as np
 
 from matching.algorithms.student_allocation import (
@@ -7,15 +8,14 @@ from matching.algorithms.student_allocation import (
     supervisor_optimal,
 )
 
-from .params import STUDENT_ALLOCATION, make_players
+from .util import STUDENT_ALLOCATION, make_players
 
 
 @STUDENT_ALLOCATION
 def test_student_allocation(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """Verify that the student allocation algorithm produces a valid solution to
-    an instance of SA."""
+    """Test for a valid output from the student allocation algorithm."""
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(
@@ -37,8 +37,7 @@ def test_student_allocation(
 def test_student_optimal(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """Verify that the student-optimal algorithm produces a solution that is
-    indeed student-optimal."""
+    """Test that the student-optimal algorithm is student-optimal."""
 
     np.random.seed(seed)
     students, projects, _ = make_players(
@@ -65,8 +64,7 @@ def test_student_optimal(
 def test_supervisor_optimal(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
-    """Verify that the supervisor-optimal algorithm produces a solution that is
-    indeed supervisor-optimal."""
+    """Test the supervisor-optimal algorithm is supervisor-optimal."""
 
     np.random.seed(seed)
     students, projects, supervisors = make_players(

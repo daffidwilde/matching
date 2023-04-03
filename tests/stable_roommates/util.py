@@ -1,4 +1,4 @@
-""" Strategies for SR tests. """
+"""Strategies for SR tests."""
 
 from hypothesis.strategies import composite, integers, lists, permutations
 

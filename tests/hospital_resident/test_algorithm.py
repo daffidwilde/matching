@@ -1,4 +1,5 @@
-""" Tests for the Hospital-Resident algorithm. """
+"""Tests for the Hospital-Resident algorithm."""
+
 import numpy as np
 from hypothesis import given
 
@@ -13,8 +14,7 @@ from .util import players
 
 @given(players_=players())
 def test_hospital_resident(players_):
-    """Test that the hospital-resident algorithm produces a valid solution
-    for an instance of HR."""
+    """Test the algorithm produces a valid solution."""
 
     residents, hospitals = players_
 
@@ -31,8 +31,7 @@ def test_hospital_resident(players_):
 
 @given(players_=players())
 def test_resident_optimal(players_):
-    """Test that the resident-optimal algorithm produces a solution that is
-    indeed resident-optimal."""
+    """Test that the resident-optimal algorithm is resident-optimal."""
 
     residents, hospitals = players_
 
@@ -55,8 +54,7 @@ def test_resident_optimal(players_):
 
 @given(players_=players())
 def test_hospital_optimal(players_):
-    """Verify that the hospital-optimal algorithm produces a solution that is
-    indeed hospital-optimal."""
+    """Test that the hospital-optimal algorithm is hospital-optimal."""
 
     _, hospitals = players_
 

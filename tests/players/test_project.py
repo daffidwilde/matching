@@ -1,4 +1,4 @@
-""" Unit tests for the `Project` class of players. """
+"""Unit tests for the `Project` player class."""
 
 from hypothesis import given
 from hypothesis.strategies import integers, lists, text
@@ -9,7 +9,7 @@ from matching.players import Project, Supervisor
 
 @given(name=text(), capacity=integers())
 def test_init(name, capacity):
-    """Make an instance of Project and check their attributes are correct."""
+    """Test for correct project instantiation."""
 
     project = Project(name, capacity)
 
@@ -24,8 +24,7 @@ def test_init(name, capacity):
 
 @given(name=text(), capacity=integers())
 def test_set_supervisor(name, capacity):
-    """Check that a project can update its supervisor member and that it is added
-    to the supervisor's project list."""
+    """Test that a project can set its supervisor and their projects."""
 
     project = Project(name, capacity)
     supervisor = Supervisor("foo", capacity)
@@ -37,8 +36,10 @@ def test_set_supervisor(name, capacity):
 
 @given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
 def test_match(name, capacity, pref_names):
-    """Check that a project can match to a student, and match its supervisor to
-    them, too."""
+    """Test that a project can match to a student.
+
+    This also means matching its supervisor to the student.
+    """
 
     project = Project(name, capacity)
     supervisor = Supervisor("foo", capacity)
@@ -59,8 +60,11 @@ def test_match(name, capacity, pref_names):
 
 @given(name=text(), capacity=integers(), pref_names=lists(text(), min_size=1))
 def test_unmatch(name, capacity, pref_names):
-    """Check that a project can break a matching with a student, and break that
-    matching for their supervisor member, too."""
+    """Test that a project can break a matching with a student.
+
+    This also means potentially breaking that matching for their
+    supervisor.
+    """
 
     project = Project(name, capacity)
     supervisor = Supervisor("foo", capacity)

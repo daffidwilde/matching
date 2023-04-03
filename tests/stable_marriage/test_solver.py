@@ -5,13 +5,12 @@ from matching import Player, SingleMatching
 from matching.exceptions import MatchingError
 from matching.games import StableMarriage
 
-from .params import STABLE_MARRIAGE, make_players, make_prefs
+from .util import STABLE_MARRIAGE, make_players, make_prefs
 
 
 @STABLE_MARRIAGE
 def test_init(player_names, seed):
-    """Test that the StableMarriage solver takes two sets of preformed players
-    correctly."""
+    """Test for correct instantiation given a set of players."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -30,8 +29,7 @@ def test_init(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_create_from_dictionaries(player_names, seed):
-    """Test that the StableMarriage solver can take two preference dictionaries
-    correctly."""
+    """Test for correct instantiation given a set of dictionaries."""
 
     suitor_prefs, reviewer_prefs = make_prefs(player_names, seed)
     game = StableMarriage.create_from_dictionaries(
@@ -51,8 +49,7 @@ def test_create_from_dictionaries(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_inputs_num_players(player_names, seed):
-    """Test StableMarriage raises a ValueError when a different number of
-    suitors and reviewers are passed."""
+    """Test for error when the player sets are not the same size."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -67,8 +64,7 @@ def test_inputs_num_players(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_inputs_player_ranks(player_names, seed):
-    """Test StableMarriage raises a ValueError when a player has not ranked all
-    members of the opposing party."""
+    """Test for error when a player has incomplete preferences."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -84,8 +80,7 @@ def test_inputs_player_ranks(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_solve(player_names, seed):
-    """Test that StableMarriage can solve games correctly when passed a set of
-    players."""
+    """Test that the class solves games correctly."""
 
     for optimal in ["suitor", "reviewer"]:
         suitors, reviewers = make_players(player_names, seed)
@@ -111,7 +106,7 @@ def test_solve(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_check_validity(player_names, seed):
-    """Test that StableMarriage finds no errors when the game is solved."""
+    """Test for a valid matching when the game is solved."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -122,8 +117,7 @@ def test_check_validity(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_check_for_unmatched_players(player_names, seed):
-    """Test that StableMarriage recognises a valid matching requires all
-    players to be matched as players."""
+    """Test that all players must be matched to another player."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -140,8 +134,7 @@ def test_check_for_unmatched_players(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_check_for_players_not_in_matching(player_names, seed):
-    """Test that StableMarriage recognises a valid matching requires all
-    players to be matched in the matching."""
+    """Test that all players must be matched in the matching."""
 
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
@@ -158,8 +151,7 @@ def test_check_for_players_not_in_matching(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_matching_consistent(player_names, seed):
-    """Test that StableMarriage recognises a valid matching requires there to
-    be consistency between the game's matching and its players' matches."""
+    """Test that the game's matching must match the players' matches."""
 
     suitors, reviewers = make_players(player_names, seed)
 
@@ -174,7 +166,7 @@ def test_matching_consistent(player_names, seed):
 
 
 def test_check_stability():
-    """Test that StableMarriage can recognise whether a matching is stable."""
+    """Test checker for whether a matching is stable."""
 
     suitors = [Player("A"), Player("B")]
     reviewers = [Player("X"), Player("Y")]

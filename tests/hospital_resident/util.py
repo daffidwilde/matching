@@ -1,4 +1,5 @@
-""" Strategies for HR tests. """
+"""Strategies for HR tests."""
+
 from hypothesis.strategies import (
     booleans,
     composite,
@@ -31,7 +32,7 @@ def connections(
     min_hospitals=1,
     max_hospitals=3,
 ):
-    """A custom strategy for making a set of connections between players."""
+    """A custom strategy for connecting players."""
 
     num_residents = draw(integers(min_residents, max_residents))
     num_hospitals = draw(integers(min_hospitals, max_hospitals))
