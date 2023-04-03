@@ -78,6 +78,8 @@ line_length = 79
 
 [tool.interrogate]
 ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
 fail-under = 100
 verbose = 1
 
