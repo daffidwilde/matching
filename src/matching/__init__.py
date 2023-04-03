@@ -1,4 +1,4 @@
-""" Top-level imports for the library. """
+"""Top-level imports for the library."""
 
 import sys
 
