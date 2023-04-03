@@ -250,7 +250,7 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
         """A placeholder function for how to update the matching."""
 
     def _check_player_in_keys(self, player):
-        """Raise an error if :code:`player` is not in the dictionary."""
+        """Raise an error if ``player`` is not in the dictionary."""
 
         if player not in self._data.keys():
             raise ValueError(f"{player} is not a key in this matching.")
