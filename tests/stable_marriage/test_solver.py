@@ -1,4 +1,5 @@
-""" Unit tests for the SM solver. """
+"""Unit tests for the SM solver."""
+
 import pytest
 
 from matching import Player, SingleMatching
