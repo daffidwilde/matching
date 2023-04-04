@@ -38,7 +38,7 @@ test = [
     "hypothesis>=6.31.6",
     "nbval>=0.10.0",
     "pytest>=6.2.5",
-    "pytest-cov==3.0.0",
+    "pytest-cov>=3.0.0",
     "pytest-randomly>=3.10",
 ]
 docs = [
