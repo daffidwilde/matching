@@ -68,12 +68,12 @@ def test_create_from_dictionaries(connections, clean):
 def test_check_inputs(game):
     """Test that inputs to an instance of HR can be verified."""
 
-    with warnings.catch_warnings(record=True) as w:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
         game.check_inputs()
 
-        assert not w
-        assert game.residents == game._all_residents
-        assert game.hospitals == game._all_hospitals
+    assert game.residents == game._all_residents
+    assert game.hospitals == game._all_hospitals
 
 
 @given(game=games())
@@ -86,15 +86,19 @@ def test_check_inputs_resident_prefs_all_hospitals(game):
 
     resident = game.residents[0]
     resident.prefs = [Resident("foo")]
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_all_in_party("residents", "hospitals")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert resident.name in str(message)
-        assert "foo" in str(message)
-        if game.clean:
-            assert resident.prefs == []
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert resident.name in message
+    assert "foo" in message
+
+    if game.clean:
+        assert resident.prefs == []
 
 
 @given(game=games())
@@ -107,15 +111,19 @@ def test_check_inputs_hospital_prefs_all_residents(game):
 
     hospital = game.hospitals[0]
     hospital.prefs = [Resident("foo")]
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_all_in_party("hospitals", "residents")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert hospital.name in str(message)
-        assert "foo" in str(message)
-        if game.clean:
-            assert hospital.prefs == []
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert hospital.name in message
+    assert "foo" in message
+
+    if game.clean:
+        assert hospital.prefs == []
 
 
 @given(game=games())
@@ -129,15 +137,19 @@ def test_check_inputs_hospital_prefs_all_reciprocated(game):
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
     resident._forget(hospital)
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_all_reciprocated("hospitals")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert hospital.name in str(message)
-        assert resident.name in str(message)
-        if game.clean:
-            assert resident not in hospital.prefs
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert hospital.name in message
+    assert resident.name in message
+
+    if game.clean:
+        assert resident not in hospital.prefs
 
 
 @given(game=games())
@@ -151,17 +163,21 @@ def test_check_inputs_hospital_reciprocated_all_prefs(game):
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
     hospital._forget(resident)
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_reciprocated_all_prefs(
             "hospitals", "residents"
         )
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert hospital.name in str(message)
-        assert resident.name in str(message)
-        if game.clean:
-            assert hospital not in resident.prefs
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert hospital.name in message
+    assert resident.name in message
+
+    if game.clean:
+        assert hospital not in resident.prefs
 
 
 @given(game=games())
@@ -174,14 +190,15 @@ def test_check_inputs_resident_prefs_all_nonempty(game):
 
     resident = game.residents[0]
     resident.prefs = []
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PlayerExcludedWarning) as record:
         game._check_inputs_player_prefs_nonempty("residents", "hospitals")
 
-        message = w[-1].message
-        assert isinstance(message, PlayerExcludedWarning)
-        assert resident.name in str(message)
-        if game.clean:
-            assert resident not in game.residents
+    assert len(record) == 1
+    assert resident.name in str(record[0].message)
+
+    if game.clean:
+        assert resident not in game.residents
 
 
 @given(game=games())
@@ -194,14 +211,15 @@ def test_check_inputs_hospital_prefs_all_nonempty(game):
 
     hospital = game.hospitals[0]
     hospital.prefs = []
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PlayerExcludedWarning) as record:
         game._check_inputs_player_prefs_nonempty("hospitals", "residents")
 
-        message = w[-1].message
-        assert isinstance(message, PlayerExcludedWarning)
-        assert hospital.name in str(message)
-        if game.clean:
-            assert hospital not in game.hospitals
+    assert len(record) == 1
+    assert hospital.name in str(record[0].message)
+
+    if game.clean:
+        assert hospital not in game.hospitals
 
 
 @given(game=games())
@@ -214,15 +232,17 @@ def test_check_inputs_hospital_capacity(game):
     hospital = game.hospitals[0]
     capacity = hospital.capacity
     hospital.capacity = 0
+
     assert hospital._original_capacity == capacity
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PlayerExcludedWarning) as record:
         game._check_inputs_player_capacity("hospitals", "residents")
 
-        message = w[-1].message
-        assert isinstance(message, PlayerExcludedWarning)
-        assert hospital.name in str(message)
-        if game.clean:
-            assert hospital not in game.hospitals
+    assert len(record) == 1
+    assert hospital.name in str(record[0].message)
+
+    if game.clean:
+        assert hospital not in game.hospitals
 
 
 @given(game=games(), optimal=sampled_from(["resident", "hospital"]))

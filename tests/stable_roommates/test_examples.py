@@ -1,7 +1,6 @@
 """A collection of example tests for SR."""
 
-import warnings
-
+import pytest
 from hypothesis import given
 from hypothesis.strategies import permutations
 
@@ -41,12 +40,10 @@ def test_gale_shapley_no_stable_matching(last_player_prefs):
 
     players = _make_players(preferences)
 
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(NoStableMatchingWarning) as record:
         stable_roommates(players)
 
-    message = w[-1].message
-    assert isinstance(message, NoStableMatchingWarning)
-    assert "4" in str(message)
+    assert "4" in str(record[0].message)
 
 
 def test_large_example_from_book():

@@ -129,12 +129,12 @@ def test_check_inputs(
     )
 
     with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("error")
         game.check_inputs()
 
-        assert not w
-        assert game.students == game._all_students
-        assert game.projects == game._all_projects
-        assert game.supervisors == game._all_supervisors
+    assert game.students == game._all_students
+    assert game.projects == game._all_projects
+    assert game.supervisors == game._all_supervisors
 
 
 @STUDENT_ALLOCATION
@@ -154,15 +154,19 @@ def test_check_inputs_project_prefs_all_reciprocated(
     project = game.projects[0]
     student = project.prefs[0]
     student._forget(project)
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_all_reciprocated("projects")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert str(message).startswith(project.name)
-        assert student.name in str(message)
-        if clean:
-            assert student not in project.prefs
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(project.name)
+    assert student.name in message
+
+    if clean:
+        assert student not in project.prefs
 
 
 @STUDENT_ALLOCATION
@@ -186,18 +190,21 @@ def test_check_inputs_supervisor_prefs_all_reciprocated(
         if project in projects:
             student._forget(project)
 
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_all_reciprocated("supervisors")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert str(message).startswith(supervisor.name)
-        assert student.name in str(message)
-        if clean:
-            assert student not in supervisor.prefs
-            assert all(
-                student not in project.prefs for project in supervisor.projects
-            )
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(supervisor.name)
+    assert student.name in message
+
+    if clean:
+        assert student not in supervisor.prefs
+        assert all(
+            student not in project.prefs for project in supervisor.projects
+        )
 
 
 @STUDENT_ALLOCATION
@@ -217,17 +224,21 @@ def test_check_inputs_project_reciprocated_all_prefs(
     project = game.projects[0]
     student = project.prefs[0]
     project._forget(student)
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_reciprocated_all_prefs(
             "projects", "students"
         )
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert str(message).startswith(student.name)
-        assert project.name in str(message)
-        if clean:
-            assert project not in student.prefs
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(student.name)
+    assert project.name in message
+
+    if clean:
+        assert project not in student.prefs
 
 
 @STUDENT_ALLOCATION
@@ -249,20 +260,23 @@ def test_check_inputs_supervisor_reciprocated_all_prefs(
     student = supervisor.prefs[0]
     supervisor.prefs.remove(student)
 
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_reciprocated_all_prefs(
             "supervisors", "students"
         )
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert str(message).startswith(student.name)
-        assert supervisor.name in str(message)
-        if clean:
-            assert supervisor not in student.prefs
-            assert all(
-                project not in student.prefs for project in supervisor.projects
-            )
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(student.name)
+    assert supervisor.name in message
+
+    if clean:
+        assert supervisor not in student.prefs
+        assert all(
+            project not in student.prefs for project in supervisor.projects
+        )
 
 
 @STUDENT_ALLOCATION
@@ -282,16 +296,20 @@ def test_check_inputs_supervisor_capacities_sufficient(
     project = game.projects[0]
     supervisor_capacity = project.supervisor.capacity
     project.capacity = supervisor_capacity + 1
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(CapacityChangedWarning) as record:
         game._check_inputs_supervisor_capacities_sufficient()
 
-        message = w[-1].message
-        assert isinstance(message, CapacityChangedWarning)
-        assert str(message).startswith(project.name)
-        assert str(project.capacity) in str(message)
-        assert str(supervisor_capacity) in str(message)
-        if clean:
-            assert project.capacity == supervisor_capacity
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(project.name)
+    assert str(project.capacity) in message
+    assert str(supervisor_capacity) in message
+
+    if clean:
+        assert project.capacity == supervisor_capacity
 
 
 @STUDENT_ALLOCATION
@@ -311,16 +329,20 @@ def test_check_inputs_supervisor_capacities_necessary(
     supervisor = game.supervisors[0]
     total_project_capacity = sum(p.capacity for p in supervisor.projects)
     supervisor.capacity = total_project_capacity + 1
-    with warnings.catch_warnings(record=True) as w:
+
+    with pytest.warns(CapacityChangedWarning) as record:
         game._check_inputs_supervisor_capacities_necessary()
 
-        message = w[-1].message
-        assert isinstance(message, CapacityChangedWarning)
-        assert str(message).startswith(supervisor.name)
-        assert str(supervisor.capacity) in str(message)
-        assert str(total_project_capacity) in str(message)
-        if clean:
-            assert supervisor.capacity == total_project_capacity
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(supervisor.name)
+    assert str(supervisor.capacity) in message
+    assert str(total_project_capacity) in message
+
+    if clean:
+        assert supervisor.capacity == total_project_capacity
 
 
 @STUDENT_ALLOCATION
