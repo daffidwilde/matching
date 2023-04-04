@@ -128,7 +128,7 @@ def test_check_inputs(
         student_names, project_names, supervisor_names, capacities, seed, clean
     )
 
-    with warnings.catch_warnings(record=True) as w:
+    with warnings.catch_warnings(record=True):
         warnings.simplefilter("error")
         game.check_inputs()
 
