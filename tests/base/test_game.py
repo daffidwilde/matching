@@ -1,7 +1,6 @@
 """Tests for the BaseGame class."""
 
-import warnings
-
+import pytest
 from hypothesis import given
 from hypothesis.strategies import booleans
 
@@ -54,6 +53,7 @@ def test_remove_player(player_others):
     game.others = others
 
     game._remove_player(player, "players", "others")
+
     assert player not in game.players
     assert all(player not in other.prefs for other in game.others)
 
@@ -69,15 +69,18 @@ def test_check_inputs_player_prefs_unique(player_others, clean):
     game = DummyGame(clean)
     game.players = [player]
 
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_unique("players")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert str(message).startswith(player.name)
-        assert others[0].name in str(message)
-        if clean:
-            assert player._pref_names == [o.name for o in others]
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(player.name)
+    assert others[0].name in message
+
+    if clean:
+        assert player._pref_names == [o.name for o in others]
 
 
 @given(player_others=player_others(), clean=booleans())
@@ -93,16 +96,19 @@ def test_check_inputs_player_prefs_all_in_party(player_others, clean):
     game.players = [player]
     game.others = others
 
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(PreferencesChangedWarning) as record:
         game._check_inputs_player_prefs_all_in_party("players", "others")
 
-        message = w[-1].message
-        assert isinstance(message, PreferencesChangedWarning)
-        assert str(message).startswith(player.name)
-        assert "non-other" in str(message)
-        assert outsider.name in str(message)
-        if clean:
-            assert outsider not in player.prefs
+    assert len(record) == 1
+
+    message = str(record[0].message)
+
+    assert message.startswith(player.name)
+    assert "non-other" in message
+    assert outsider.name in message
+
+    if clean:
+        assert outsider not in player.prefs
 
 
 @given(player_others=player_others(), clean=booleans())
@@ -118,13 +124,15 @@ def test_check_inputs_player_prefs_nonempty(player_others, clean):
     game.players = [player]
     game.others = [other]
 
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(PlayerExcludedWarning) as record:
         game._check_inputs_player_prefs_nonempty("others", "players")
 
-        message = w[-1].message
-        assert isinstance(message, PlayerExcludedWarning)
-        assert str(message).startswith(other.name)
+    assert len(record) == 1
 
-        if clean:
-            assert other not in game.others
-            assert player.prefs == others[1:]
+    message = str(record[0].message)
+
+    assert message.startswith(other.name)
+
+    if clean:
+        assert other not in game.others
+        assert player.prefs == others[1:]

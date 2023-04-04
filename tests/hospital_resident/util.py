@@ -97,4 +97,4 @@ def games(draw, clean=booleans(), **kwargs):
     """A custom strategy for making a game instance."""
 
     residents, hospitals = draw(players(**kwargs))
-    return HospitalResident(residents, hospitals, clean)
+    return HospitalResident(residents, hospitals, draw(clean))
