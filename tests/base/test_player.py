@@ -1,4 +1,5 @@
-""" Tests for the BasePlayer class. """
+"""Tests for the BasePlayer class."""
+
 from hypothesis import given
 from hypothesis.strategies import text
 
@@ -9,7 +10,7 @@ from .util import player_others
 
 @given(name=text())
 def test_init(name):
-    """Make a Player instance and test that their attributes are correct."""
+    """Make a player and test that their attributes are correct."""
 
     player = BasePlayer(name)
     assert player.name == name
@@ -21,8 +22,7 @@ def test_init(name):
 
 @given(name=text())
 def test_repr(name):
-    """Test that a Player instance is represented by the string version of
-    their name."""
+    """Test the string representation of a player."""
 
     player = BasePlayer(name)
     assert repr(player) == name
@@ -33,8 +33,7 @@ def test_repr(name):
 
 @given(name=text())
 def test_unmatched_message(name):
-    """Test that a Player instance can return a message saying they are
-    unmatched. This is could be a lie."""
+    """Test that a player can say they are unmatched (true or nay)."""
 
     player = BasePlayer(name)
 
@@ -45,9 +44,11 @@ def test_unmatched_message(name):
 
 @given(player_others=player_others())
 def test_not_in_preferences_message(player_others):
-    """Test that a Player instance can return a message saying they are matched
-    to another player who does not appear in their preferences. This could be a
-    lie."""
+    """Test that a player can say they have an invalid match.
+
+    An invalid match is one that does not appear in the player's
+    preference list. This could be a lie.
+    """
 
     player, others = player_others
 
@@ -61,7 +62,7 @@ def test_not_in_preferences_message(player_others):
 
 @given(player_others=player_others())
 def test_set_prefs(player_others):
-    """Test that a Player instance can set its preferences correctly."""
+    """Test that a player can set its preferences correctly."""
 
     player, others = player_others
 
@@ -73,8 +74,10 @@ def test_set_prefs(player_others):
 
 @given(player_others=player_others())
 def test_keep_original_prefs(player_others):
-    """Test that a Player instance keeps a record of their original preference
-    list even when their preferences are updated."""
+    """Test that a player keeps a record of their preferences.
+
+    Also ensure this record holds even when updating their preferences.
+    """
 
     player, others = player_others
 
@@ -87,7 +90,7 @@ def test_keep_original_prefs(player_others):
 
 @given(player_others=player_others())
 def test_forget(player_others):
-    """Test that a Player instance can forget another player."""
+    """Test that a player can forget another player."""
 
     player, others = player_others
     player.set_prefs(others)
@@ -103,8 +106,7 @@ def test_forget(player_others):
 
 @given(player_others=player_others())
 def test_prefers(player_others):
-    """Test that a Player instance can compare its preference between two
-    players."""
+    """Test that a player can compare a set of players."""
 
     player, others = player_others
 

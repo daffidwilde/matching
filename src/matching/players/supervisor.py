@@ -1,10 +1,10 @@
-""" The supervisor class for instances of SA. """
+"""The Supervisor class for use in instances of SA."""
 
 from .hospital import Hospital
 
 
 class Supervisor(Hospital):
-    """A class to represent a supervisor in an instance of SA.
+    """Supervisor player class for instances of SA.
 
     Parameters
     ----------
@@ -16,16 +16,18 @@ class Supervisor(Hospital):
     Attributes
     ----------
     projects : list of Project
-        The projects that the supervisor runs. Defaults to an empty list.
+        The projects that the supervisor runs. Defaults to an empty
+        list.
     prefs : list of Player
-        The supervisor's preferences. Defaults to ``None`` and is updated via
-        the ``set_prefs`` method.
+        The supervisor's preferences. Defaults to ``None`` and is
+        updated via the ``set_prefs`` method.
     pref_names : list
         A list of the names in ``prefs``. Updates with ``prefs`` via
         ``set_prefs``.
     matching : list of Player
-        The current matches of the supervisor. An empty list if currently
-        unsubscribed, and updated through its projects' matching updates.
+        The current matches of the supervisor. An empty list if
+        currently unsubscribed, and updated through its projects'
+        matching updates.
     """
 
     def __init__(self, name, capacity):
@@ -33,8 +35,11 @@ class Supervisor(Hospital):
         self.projects = []
 
     def _forget(self, student):
-        """Only forget ``student`` if it is not ranked by any of the
-        supervisor's projects."""
+        """Attempt to forget the student.
+
+        A student is only removed if it is not ranked by any of the
+        supervisor's projects.
+        """
 
         if student in self.prefs and not any(
             [student in project.prefs for project in self.projects]
@@ -44,8 +49,11 @@ class Supervisor(Hospital):
             self.prefs = prefs
 
     def set_prefs(self, students):
-        """Set the preference of the supervisor, and pass those on to its
-        projects."""
+        """Set the preference list for the supervisor.
+
+        This method also passes the preferences on to its projects
+        according to those students who ranked each project.
+        """
 
         self.prefs = students
         self._pref_names = [student.name for student in students]
@@ -58,10 +66,13 @@ class Supervisor(Hospital):
             project.set_prefs(acceptable)
 
     def get_favourite(self):
-        """Find the supervisor's favourite student that it is not currently
-        matched to, but has a preference of, one of the supervisor's
-        under-subscribed projects. Also return the student's favourite
-        under-subscribed project. If no such student exists, return ``None``.
+        """Get the supervisor's favourite viable student.
+
+        A student is viable if they are not currently matched to, but
+        have a preference of, one of the supervisor's under-subscribed
+        projects. This method also returns the student's favourite
+        under-subscribed project. If no such student exists, return
+        ``None``.
         """
 
         if len(self.matching) < self.capacity:

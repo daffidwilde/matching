@@ -4,8 +4,11 @@ from matching import BasePlayer
 
 
 class Hospital(BasePlayer):
-    """A class to represent a hospital in an instance of HR. Also used as a
-    parent class to ``Project`` and ``Supervisor``.
+    """Hospital player class for instances of HR.
+
+    A hospital can take multiple simultaneous matches and has a
+    capacity. The classes for projects and supervisors in SA inherit
+    from this class.
 
     Parameters
     ----------
@@ -13,23 +16,23 @@ class Hospital(BasePlayer):
         An identifier. This should be unique and descriptive.
     capacity : int
         The maximum number of matches the hospital can have.
-    _original_capacity : int
-        A record of the player's original capacity in case it is altered when
-        passed to a game.
 
     Attributes
     ----------
     prefs : list of Player
-        The hospital's preferences. Defaults to ``None`` and is updated using
-        the ``set_prefs`` method.
-    _original_prefs : list of Player
-        A record of the player's original preferences.
+        The hospital's preferences. Defaults to ``None`` and is updated
+        using the ``set_prefs`` method.
     pref_names : list
         A list of the names in ``prefs``. Updates with ``prefs`` via the
         ``set_prefs`` method.
     matching : list of Player
         The current matches of the hospital. An empty list if currently
         unsubscribed.
+    _original_capacity : int
+        A record of the player's original capacity in case it is altered
+        when passed to a game.
+    _original_prefs : list of Player
+        A record of the player's original preferences.
     """
 
     def __init__(self, name, capacity):
@@ -39,27 +42,31 @@ class Hospital(BasePlayer):
         self.matching = []
 
     def _match(self, resident):
-        """Add ``resident`` to the hospital's matching, and then sort it."""
+        """Add resident to the hospital's matching, and then sort it."""
 
         self.matching.append(resident)
         self.matching.sort(key=self.prefs.index)
 
     def _unmatch(self, resident):
-        """Remove ``resident`` from the hospital's matching."""
+        """Remove resident from the hospital's matching."""
 
         matching = self.matching[:]
         matching.remove(resident)
         self.matching = matching
 
     def oversubscribed_message(self):
+        """Message to say the hospital has too many matches."""
+
         return (
             f"{self} is matched to {self.matching} which is over their "
             f"capacity of {self.capacity}."
         )
 
     def get_favourite(self):
-        """Get the hospital's favourite resident with whom they are not
-        currently matched. If no such resident exists, return ``None``."""
+        """Get the hospital's favourite resident outside their matching.
+
+        If no such resident exists, return ``None``.
+        """
 
         for player in self.prefs:
             if player not in self.matching:
@@ -68,8 +75,11 @@ class Hospital(BasePlayer):
         return None
 
     def get_worst_match(self):
-        """Get the player's worst current match. This assumes that the matching
-        is in order of preference."""
+        """Get the player's worst current match.
+
+        This method assumes that the hospital's matching is in order of
+        their preference list.
+        """
 
         return self.matching[-1]
 

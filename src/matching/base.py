@@ -1,4 +1,5 @@
-""" Abstract base classes for inheritance. """
+"""Abstract base classes for inheritance."""
+
 import abc
 import warnings
 
@@ -51,9 +52,13 @@ class BasePlayer:
         self.prefs = prefs
 
     def unmatched_message(self):
+        """Message to say the player is not matched."""
+
         return f"{self} is unmatched."
 
     def not_in_preferences_message(self, other):
+        """Message to say another player is an unacceptable match."""
+
         return (
             f"{self} is matched to {other} but they do not appear in their "
             f"preference list: {self.prefs}."
@@ -77,28 +82,23 @@ class BasePlayer:
 
     @abc.abstractmethod
     def _match(self, other):
-        """A placeholder function for assigning the player to be matched to
-        some other player."""
+        """Placeholder for matching the player to another."""
 
     @abc.abstractmethod
     def _unmatch(self, other):
-        """A placeholder function for unassigning the player from its match
-        with some other player."""
+        """Placeholder for unmatching the player from another."""
 
     @abc.abstractmethod
     def get_favourite(self):
-        """A placeholder function for getting the player's favourite, feasible
-        player."""
+        """Placeholder for getting the player's favourite player."""
 
     @abc.abstractmethod
     def get_successors(self):
-        """A placeholder function for getting the logically feasible
-        'successors' of the player."""
+        """Placeholder for getting the successors of a match."""
 
     @abc.abstractmethod
     def check_if_match_is_unacceptable(self):
-        """A placeholder for chacking the acceptability of the current
-        match(es) of the player."""
+        """Placeholder for checking player's match is acceptable."""
 
 
 class BaseGame(metaclass=abc.ABCMeta):
@@ -106,19 +106,20 @@ class BaseGame(metaclass=abc.ABCMeta):
 
     Parameters
     ----------
-    clean
-        Defaults to :code:`False`. If :code:`True`, when passing a set of
-        players to create a game instance, they will be automatically cleaned.
+    clean : bool
+        Defaults to ``False``. If ``True``, when passing a set of
+        players to create a game instance, they will be automatically
+        cleaned.
 
     Attributes
     ----------
-    matching
-        After solving the game, a :code:`Matching` object is found here.
-        Otherwise, :code:`None`.
-    blocking_pairs
-        After checking the stability of the game instance, a list of any pairs
-        that block the stability of the matching is found here. Otherwise,
-        :code:`None`.
+    matching : BaseMatching or None
+        After solving the game, an object whose class inherits from
+        ``BaseMatching`` is found here. Otherwise, ``None``.
+    blocking_pairs : list of (BasePlayer, BasePlayer) or None
+        After checking the stability of the game instance, a list of any
+        pairs that block the stability of the matching is found here.
+        Otherwise, ``None``.
     """
 
     def __init__(self, clean=False):
@@ -127,8 +128,11 @@ class BaseGame(metaclass=abc.ABCMeta):
         self.clean = clean
 
     def _remove_player(self, player, player_party, other_party):
-        """Remove a player from the game instance as well as any relevant
-        player preference lists."""
+        """Remove a player from the game.
+
+        This method also removes the player from any relevant player
+        preference lists, removing their memory from the game.
+        """
 
         party = vars(self)[player_party][:]
         party.remove(player)
@@ -138,9 +142,11 @@ class BaseGame(metaclass=abc.ABCMeta):
                 other._forget(player)
 
     def _check_inputs_player_prefs_unique(self, party):
-        """Check that each player in :code:`party` has not ranked another
-        player more than once. If so, and :code:`clean` is :code:`True`, then
-        take the first instance they appear in the preference list."""
+        """Check that noone has ranked another player more than once.
+
+        If so, and ``clean`` is ``True``, then take the first instance
+        they appear in the preference list.
+        """
 
         for player in vars(self)[party]:
             unique_prefs = []
@@ -158,9 +164,10 @@ class BaseGame(metaclass=abc.ABCMeta):
                 player.set_prefs(unique_prefs)
 
     def _check_inputs_player_prefs_all_in_party(self, party, other_party):
-        """Check that each player in :code:`party` has ranked only players in
-        :code:`other_party`. If :code:`clean`, then forget any extra
-        preferences."""
+        """Check that everyone has ranked a subset of the other party.
+
+        If ``clean`` is ``True``, then forget any extra preferences.
+        """
 
         players = vars(self)[party]
         others = vars(self)[other_party]
@@ -177,9 +184,10 @@ class BaseGame(metaclass=abc.ABCMeta):
                         player._forget(other)
 
     def _check_inputs_player_prefs_nonempty(self, party, other_party):
-        """Make sure that each player in :code:`party` has a nonempty
-        preference list of players in :code:`other_party`. If :code:`clean`,
-        remove any such player."""
+        """Check that everyone has a nonempty preference list.
+
+        If ``clean`` is ``True``, remove any player with an empty list.
+        """
 
         for player in vars(self)[party]:
             if not player.prefs:
@@ -193,25 +201,25 @@ class BaseGame(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def solve(self):
-        """Placeholder for solving the given matching game."""
+        """Placeholder for solving the game instance."""
 
     @abc.abstractmethod
     def check_stability(self):
-        """Placeholder for checking the stability of the current matching."""
+        """Placeholder for checking the stability of the matching."""
 
     @abc.abstractmethod
     def check_validity(self):
-        """Placeholder for checking the validity of the current matching."""
+        """Placeholder for checking the validity of the matching."""
 
 
 class BaseMatching(dict, metaclass=abc.ABCMeta):
-    """An abstract base class for the storing and updating of a matching.
+    """An abstract base class for storing and updating a matching.
 
     Attributes
     ----------
     dictionary : dict or None
-        If not ``None``, a dictionary mapping a ``Player`` to one of: ``None``,
-        a single ``Player`` or a list of ``Player`` instances.
+        If not ``None``, a dictionary mapping a ``Player`` to one of:
+        ``None``, a single ``Player`` or a list of ``Player`` instances.
     """
 
     def __init__(self, dictionary=None):
@@ -225,9 +233,13 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
         return repr(self._data)
 
     def keys(self):
+        """Get the underlying dictionary keys."""
+
         return self._data.keys()
 
     def values(self):
+        """Get the underlying dictionary values."""
+
         return self._data.values()
 
     def __getitem__(self, player):
@@ -238,14 +250,13 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
         """A placeholder function for how to update the matching."""
 
     def _check_player_in_keys(self, player):
-        """Raise an error if :code:`player` is not in the dictionary."""
+        """Raise an error if ``player`` is not in the dictionary."""
 
         if player not in self._data.keys():
             raise ValueError(f"{player} is not a key in this matching.")
 
     def _check_new_valid_type(self, new, types):
-        """Raise an error is :code:`new` is not an instance of one of
-        :code:`types`."""
+        """Ensure ``new`` is an instance of one of ``types``."""
 
         if not isinstance(new, types):
             raise ValueError(f"{new} is not one of {types} and is not valid.")

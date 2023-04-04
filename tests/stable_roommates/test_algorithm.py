@@ -1,4 +1,5 @@
-""" Integration and unit tests for the SR algorithm. """
+"""Integration and unit tests for the SR algorithm."""
+
 import warnings
 
 from hypothesis import assume, given
@@ -17,8 +18,7 @@ from .util import players
 
 @given(players=players())
 def test_first_phase(players):
-    """Verify that the first phase of the algorithm produces a valid set of
-    reduced preference players."""
+    """Test the first phase gives a valid set of reduced preferences."""
 
     players = first_phase(players)
 
@@ -38,8 +38,7 @@ def test_first_phase(players):
 
 @given(players=players())
 def test_locate_all_or_nothing_cycle(players):
-    """Verify that a cycle of (least-preferred, second-choice) players can be
-    identified from a set of players."""
+    """Test that a cycle of players can be identified."""
 
     player = players[-1]
     cycle = locate_all_or_nothing_cycle(player)
@@ -51,8 +50,7 @@ def test_locate_all_or_nothing_cycle(players):
 
 @given(players=players())
 def test_get_pairs_to_delete(players):
-    """Verify that all necessary pairs are identified to remove a cycle from the
-    game."""
+    """Test that all pairs to remove are identified from a cycle."""
 
     assert get_pairs_to_delete([]) == []
 
@@ -76,8 +74,11 @@ def test_get_pairs_to_delete(players):
 
 @given(players=players())
 def test_second_phase(players):
-    """Verify that the second phase of the algorithm produces a valid set of
-    players with appropriate matches."""
+    """Test that the second phase gives a valid set of players.
+
+    These players will either be matched to their favourite player or
+    a warning that no stable matching exists will occur.
+    """
 
     players = first_phase(players)
     assume(any(len(p.prefs) > 1 for p in players))
@@ -98,7 +99,7 @@ def test_second_phase(players):
 
 @given(players=players())
 def test_stable_roommates(players):
-    """Verify that the algorithm can terminate with a valid matching."""
+    """Test that the algorithm can terminate with a valid matching."""
 
     with warnings.catch_warnings(record=True) as w:
         matching = stable_roommates(players)

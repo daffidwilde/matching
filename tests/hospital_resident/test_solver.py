@@ -1,4 +1,5 @@
-""" Unit tests for the HR solver. """
+"""Unit tests for the HR solver."""
+
 import warnings
 
 import pytest
@@ -20,8 +21,7 @@ from .util import connections, games, players
 
 @given(players=players(), clean=booleans())
 def test_init(players, clean):
-    """Test that an instance of HospitalResident is created correctly when
-    passed a set of players."""
+    """Test for correct instantiation given a set of players."""
 
     residents, hospitals = players
 
@@ -43,8 +43,7 @@ def test_init(players, clean):
 
 @given(connections=connections(), clean=booleans())
 def test_create_from_dictionaries(connections, clean):
-    """Test that HospitalResident is created correctly when passed a set of
-    dictionaries for each party."""
+    """Test for correct instantiation given a set of dictionaries."""
 
     resident_prefs, hospital_prefs, capacities = connections
 
@@ -79,9 +78,11 @@ def test_check_inputs(game):
 
 @given(game=games())
 def test_check_inputs_resident_prefs_all_hospitals(game):
-    """Test that every resident has only hospitals in its preference list. If
-    not, check that a warning is caught and the player's preferences are
-    changed."""
+    """Test each resident has only hospitals in its preference list.
+
+    If not, check that a warning is caught and the resident's
+    preferences are changed.
+    """
 
     resident = game.residents[0]
     resident.prefs = [Resident("foo")]
@@ -98,9 +99,11 @@ def test_check_inputs_resident_prefs_all_hospitals(game):
 
 @given(game=games())
 def test_check_inputs_hospital_prefs_all_residents(game):
-    """Test that every hospital has only residents in its preference list. If
-    not, check that a warning is caught and the player's preferences are
-    changed."""
+    """Test each hospital has only residents in its preference list.
+
+    If not, check that a warning is caught and the hospitals's
+    preferences are changed.
+    """
 
     hospital = game.hospitals[0]
     hospital.prefs = [Resident("foo")]
@@ -117,9 +120,11 @@ def test_check_inputs_hospital_prefs_all_residents(game):
 
 @given(game=games())
 def test_check_inputs_hospital_prefs_all_reciprocated(game):
-    """Test that each hospital has ranked only those residents that have ranked
-    it. If not, check that a warning is caught and the hospital has forgotten
-    any such players."""
+    """Test each hospital has ranked only residents that have ranked it.
+
+    If not, check that a warning is caught and the hospital has
+    forgotten any such residents.
+    """
 
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
@@ -137,9 +142,11 @@ def test_check_inputs_hospital_prefs_all_reciprocated(game):
 
 @given(game=games())
 def test_check_inputs_hospital_reciprocated_all_prefs(game):
-    """Test that each hospital has ranked all those residents that have ranked
-    it. If not, check that a warning is caught and any such resident has
-    forgotten the hospital."""
+    """Test each hospital has ranked all residents that have ranked it.
+
+    If not, check that a warning is caught and any such resident has
+    forgotten the hospital.
+    """
 
     hospital = game.hospitals[0]
     resident = hospital.prefs[0]
@@ -159,8 +166,11 @@ def test_check_inputs_hospital_reciprocated_all_prefs(game):
 
 @given(game=games())
 def test_check_inputs_resident_prefs_all_nonempty(game):
-    """Test that every resident has a non-empty preference list. If not, check
-    that a warning is caught and the player has been removed from the game."""
+    """Test that each resident has a non-empty preference list.
+
+    If not, check that a warning is caught and the resident has been
+    removed from the game.
+    """
 
     resident = game.residents[0]
     resident.prefs = []
@@ -176,8 +186,11 @@ def test_check_inputs_resident_prefs_all_nonempty(game):
 
 @given(game=games())
 def test_check_inputs_hospital_prefs_all_nonempty(game):
-    """Test that every hospital has a non-empty preference list. If not, check
-    that a warning is caught and the player has been removed from the game."""
+    """Test that each hospital has a non-empty preference list.
+
+    If not, check that a warning is caught and the player has been
+    removed from the game.
+    """
 
     hospital = game.hospitals[0]
     hospital.prefs = []
@@ -193,9 +206,10 @@ def test_check_inputs_hospital_prefs_all_nonempty(game):
 
 @given(game=games())
 def test_check_inputs_hospital_capacity(game):
-    """Test that each hospital has enough space to accommodate their largest
-    project, but does not offer a surplus of spaces from their projects.
-    Otherwise, raise an Exception."""
+    """Test each hospital has a positive integer capacity.
+
+    If not, raise an Exception detailing the hospital.
+    """
 
     hospital = game.hospitals[0]
     capacity = hospital.capacity
@@ -213,7 +227,7 @@ def test_check_inputs_hospital_capacity(game):
 
 @given(game=games(), optimal=sampled_from(["resident", "hospital"]))
 def test_solve(game, optimal):
-    """Test that HospitalResident can solve games correctly."""
+    """Test for the correct solving of games."""
 
     matching = game.solve(optimal)
     assert isinstance(matching, MultipleMatching)
@@ -239,8 +253,7 @@ def test_solve(game, optimal):
 
 @given(game=games())
 def test_check_validity(game):
-    """Test that HospitalResident finds a valid matching when the game is
-    solved."""
+    """Test for a valid matching when the game is solved."""
 
     game.solve()
     assert game.check_validity()
@@ -248,8 +261,7 @@ def test_check_validity(game):
 
 @given(game=games())
 def test_check_for_unacceptable_matches_residents(game):
-    """Test that HospitalResident recognises a valid matching requires each
-    resident to have a preference of their match, if they have one."""
+    """Test that matched residents have a preference of their match."""
 
     resident = game.residents[0]
     hospital = Hospital(name="foo", capacity=1)
@@ -271,8 +283,7 @@ def test_check_for_unacceptable_matches_residents(game):
 
 @given(game=games())
 def test_check_for_unacceptable_matches_hospitals(game):
-    """Test that HospitalResident recognises a valid matching requires each
-    hospital to have a preference of each of its matches, if any."""
+    """Test that each hospital has a preference of all its matches."""
 
     hospital = game.hospitals[0]
     resident = Resident(name="foo")
@@ -294,8 +305,7 @@ def test_check_for_unacceptable_matches_hospitals(game):
 
 @given(game=games())
 def test_check_for_oversubscribed_hospitals(game):
-    """Test that HospitalResident recognises a valid matching requires all
-    hospitals to not be oversubscribed."""
+    """Test that no hospitals can be oversubscribed."""
 
     hospital = game.hospitals[0]
     hospital.matching = range(hospital.capacity + 1)
@@ -315,8 +325,7 @@ def test_check_for_oversubscribed_hospitals(game):
 
 
 def test_check_stability():
-    """Test that HospitalResident can recognise whether a matching is stable or
-    not."""
+    """Test checker for whether matching is stable or not."""
 
     residents = [Resident("A"), Resident("B"), Resident("C")]
     hospitals = [Hospital("X", 2), Hospital("Y", 2)]

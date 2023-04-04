@@ -1,4 +1,4 @@
-""" Top-level imports for the library. """
+"""Top-level imports for the library."""
 
 import sys
 
@@ -7,13 +7,9 @@ if not sys.warnoptions:
 
     warnings.simplefilter("always")
 
-from importlib.metadata import version
-
 from .base import BaseGame, BaseMatching, BasePlayer
 from .matchings import MultipleMatching, SingleMatching
 from .players import Player
-
-__version__ = version(__package__)
 
 __all__ = [
     "BaseGame",
@@ -23,5 +19,4 @@ __all__ = [
     "MultipleMatching",
     "Player",
     "SingleMatching",
-    "__version__",
 ]

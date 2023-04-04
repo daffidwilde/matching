@@ -1,4 +1,5 @@
-""" Tests for the BaseGame class. """
+"""Tests for the BaseGame class."""
+
 import warnings
 
 from hypothesis import given
@@ -14,19 +15,21 @@ from .util import player_others
 
 
 class DummyGame(BaseGame):
+    """A blank game class for use in tests."""
+
     def solve(self):
-        pass
+        """Placeholder solver method."""
 
     def check_stability(self):
-        pass
+        """Placeholder stability-checker method."""
 
     def check_validity(self):
-        pass
+        """Placeholder validity-checker method."""
 
 
 @given(clean=booleans())
 def test_init(clean):
-    """Make a BaseGame instance and test it has the correct attributes."""
+    """Make an instance and test it has the correct attributes."""
 
     game = DummyGame(clean)
 
@@ -57,7 +60,7 @@ def test_remove_player(player_others):
 
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_unique(player_others, clean):
-    """Test that a game can verify its players have unique preferences."""
+    """Test that players have unique preferences."""
 
     player, others = player_others
 
@@ -79,8 +82,7 @@ def test_check_inputs_player_prefs_unique(player_others, clean):
 
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_all_in_party(player_others, clean):
-    """ " Test that a game can verify its players have only got preferences in
-    the correct party."""
+    """Test that players' preferences are subsets of the other party."""
 
     player, others = player_others
 
@@ -105,8 +107,7 @@ def test_check_inputs_player_prefs_all_in_party(player_others, clean):
 
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_nonempty(player_others, clean):
-    """ " Test that a game can verify its players have got nonempty preference
-    lists."""
+    """Test that players have got nonempty preference lists."""
 
     player, others = player_others
 

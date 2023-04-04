@@ -1,4 +1,5 @@
-""" A collection of example tests. """
+"""A collection of example tests for SR."""
+
 import warnings
 
 from hypothesis import given
@@ -11,8 +12,7 @@ from matching.games.stable_roommates import _make_players
 
 
 def test_original_paper_stable():
-    """Verify that the matching found is consistent with the example in the
-    original paper."""
+    """Test the example from the original paper."""
 
     players = [Player(name) for name in ("A", "B", "C", "D", "E", "F")]
     a, b, c, d, e, f = players
@@ -30,8 +30,7 @@ def test_original_paper_stable():
 
 @given(last_player_prefs=permutations([1, 2, 3]))
 def test_gale_shapley_no_stable_matching(last_player_prefs):
-    """Verify that the example from [GS62] throws up a warning that there is no
-    stable matching."""
+    """Test the example from [GS62] says there is no stable matching."""
 
     preferences = {
         1: [2, 3, 4],
@@ -51,8 +50,7 @@ def test_gale_shapley_no_stable_matching(last_player_prefs):
 
 
 def test_large_example_from_book():
-    """Verify that the matching found is consistent with the example of size ten
-    in [GI89] (Section 4.2.3)."""
+    """Test the example of size ten in [GI89] (Section 4.2.3)."""
 
     preferences = {
         1: [8, 2, 9, 3, 6, 4, 5, 7, 10],
@@ -87,8 +85,7 @@ def test_large_example_from_book():
 
 
 def test_example_in_issue_64():
-    """Verify that the matching found is consistent with the example provided
-    in #64."""
+    """Test the example provided in #64."""
 
     players = [
         Player(name)
@@ -115,8 +112,7 @@ def test_example_in_issue_64():
 
 
 def test_examples_in_issue_124():
-    """Verify that the matching is consistent with the examples provided in
-    #124."""
+    """Test the examples provided in #124."""
 
     a, b, c, d = players = [Player(name) for name in ("a", "b", "c", "d")]
 
@@ -141,7 +137,7 @@ def test_examples_in_issue_124():
 
 
 def test_trivial_case():
-    """Verify that a matching is given when there are only two players."""
+    """Test that a matching is given when there are only two players."""
 
     p1, p2 = players = [Player(1), Player(2)]
 

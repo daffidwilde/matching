@@ -1,14 +1,13 @@
-""" Integration tests for the Stable Marriage Problem algorithm. """
+"""Integration tests for the Stable Marriage Problem algorithm."""
 
 from matching.algorithms import stable_marriage
 
-from .params import STABLE_MARRIAGE, make_players
+from .util import STABLE_MARRIAGE, make_players
 
 
 @STABLE_MARRIAGE
 def test_suitor_optimal(player_names, seed):
-    """Verify that the suitor-optimal algorithm produces a valid,
-    suitor-optimal matching for an instance of SM."""
+    """Test that the suitor-optimal algorithm is suitor-optimal."""
 
     suitors, reviewers = make_players(player_names, seed)
     matching = stable_marriage(suitors, reviewers, optimal="suitor")
@@ -26,8 +25,7 @@ def test_suitor_optimal(player_names, seed):
 
 @STABLE_MARRIAGE
 def test_reviewer_optimal(player_names, seed):
-    """Verify that the reviewer-optimal algorithm produces a valid,
-    reviewer-optimal matching for an instance of SM."""
+    """Test that the reviewer-optimal algorithm is reviewer-optimal."""
 
     suitors, reviewers = make_players(player_names, seed)
     matching = stable_marriage(suitors, reviewers, optimal="reviewer")

@@ -1,4 +1,4 @@
-""" A collection of example tests. """
+"""A collection of example tests for SA."""
 
 from matching.algorithms import student_allocation
 from matching.games import StudentAllocation
