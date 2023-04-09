@@ -1,4 +1,4 @@
-""" Top-level imports for the `matching.algorithms` subpackage. """
+"""Top-level imports for the `matching.algorithms` subpackage."""
 
 from .hospital_resident import hospital_resident
 from .stable_marriage import stable_marriage

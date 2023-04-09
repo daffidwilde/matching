@@ -1,4 +1,4 @@
-""" Top-level imports for the `matching.players` subpackage. """
+"""Top-level imports for the `matching.players` subpackage."""
 
 from .hospital import Hospital
 from .player import Player
