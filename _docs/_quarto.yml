@@ -1,0 +1,24 @@
+project:
+  type: website
+
+website:
+  title: "matching"
+  navbar:
+    left:
+      - tutorials/index.qmd
+    right:
+      - icon: github
+        href: https://github.com/daffidwilde/matching
+  page-footer:
+    left: >
+      Copyright, Henry Wilde 2023.
+      Brought to you by [Quarto](https://quarto.org/docs/websites)
+      and [Diátaxis](https://diataxis.fr).
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+    toc: true

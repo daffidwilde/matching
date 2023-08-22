@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Assign a cohort of students their dissertations according to their grade">
+
+<title>matching - Producing a final-year project allocation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">matching</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html" rel="" target="">
+ <span class="menu-text">Tutorials</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/daffidwilde/matching" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#cleaning-the-data" id="toc-cleaning-the-data" class="nav-link active" data-scroll-target="#cleaning-the-data">Cleaning the data</a>
+  <ul class="collapse">
+  <li><a href="#students" id="toc-students" class="nav-link" data-scroll-target="#students">Students</a></li>
+  <li><a href="#projects" id="toc-projects" class="nav-link" data-scroll-target="#projects">Projects</a></li>
+  <li><a href="#supervisors" id="toc-supervisors" class="nav-link" data-scroll-target="#supervisors">Supervisors</a></li>
+  </ul></li>
+  <li><a href="#creating-the-dictionaries" id="toc-creating-the-dictionaries" class="nav-link" data-scroll-target="#creating-the-dictionaries">Creating the dictionaries</a>
+  <ul class="collapse">
+  <li><a href="#capacities-and-affiliations" id="toc-capacities-and-affiliations" class="nav-link" data-scroll-target="#capacities-and-affiliations">Capacities and affiliations</a></li>
+  <li><a href="#preference-lists-dictionaries" id="toc-preference-lists-dictionaries" class="nav-link" data-scroll-target="#preference-lists-dictionaries">Preference lists (dictionaries)</a></li>
+  </ul></li>
+  <li><a href="#final-clean-up" id="toc-final-clean-up" class="nav-link" data-scroll-target="#final-clean-up">Final clean up</a>
+  <ul class="collapse">
+  <li><a href="#removing-extra-players-from-the-game" id="toc-removing-extra-players-from-the-game" class="nav-link" data-scroll-target="#removing-extra-players-from-the-game">Removing extra players from the game</a></li>
+  <li><a href="#checking-and-adjusting-capacities" id="toc-checking-and-adjusting-capacities" class="nav-link" data-scroll-target="#checking-and-adjusting-capacities">Checking and adjusting capacities</a></li>
+  </ul></li>
+  <li><a href="#playing-the-game" id="toc-playing-the-game" class="nav-link" data-scroll-target="#playing-the-game">Playing the game</a></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a>
+  <ul class="collapse">
+  <li><a href="#supervisors-1" id="toc-supervisors-1" class="nav-link" data-scroll-target="#supervisors-1">Supervisors</a></li>
+  <li><a href="#projects-1" id="toc-projects-1" class="nav-link" data-scroll-target="#projects-1">Projects</a></li>
+  <li><a href="#students-1" id="toc-students-1" class="nav-link" data-scroll-target="#students-1">Students</a></li>
+  </ul></li>
+  <li><a href="#figuring-out-the-remaining-spaces" id="toc-figuring-out-the-remaining-spaces" class="nav-link" data-scroll-target="#figuring-out-the-remaining-spaces">Figuring out the remaining spaces</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Producing a final-year project allocation</h1>
+</div>
+
+<div>
+  <div class="description">
+    <p>Assign a cohort of students their dissertations according to their grade</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this tutorial we will be solving an instance of SA using raw, tabular data.</p>
+<p>This tutorial covers all aspects of the project allocation process, from wrangling the data, all the way through to analysing the results. In fact, this tutorial has been used to train staff at Cardiff University in performing automatic project allocation.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">"display.max_columns"</span>, <span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The data for this tutorial have been archived <a href="https://doi.org/10.5281/zenodo.3514287">on Zenodo</a>, and the source code used to generate them is <a href="https://github.com/daffidwilde/matching/blob/master/docs/tutorials/project_allocation/data.py">here</a>.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>raw_students <span class="op">=</span> pd.read_csv(<span class="st">"https://zenodo.org/record/3514287/files/students.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>raw_projects <span class="op">=</span> pd.read_csv(<span class="st">"https://zenodo.org/record/3514287/files/projects.csv"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>raw_supervisors <span class="op">=</span> pd.read_csv(<span class="st">"https://zenodo.org/record/3514287/files/supervisors.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="cleaning-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-the-data">Cleaning the data</h2>
+<p>In order to use Matching’s implementation of SA, we require the data to be “clean”. This process will require us to inspect the data and remove any erroneous rows from each of our datasets.</p>
+<section id="students" class="level3">
+<h3 class="anchored" data-anchor-id="students">Students</h3>
+<p>We begin with the students. The first thing we have to do is find out how many choices students were allowed to make:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>raw_students.columns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>Index(['name', 'rank', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+       '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22',
+       '23', '24'],
+      dtype='object')</code></pre>
+</div>
+</div>
+<p>We can see that students could make up to 25 selections, and the choice columns are numbered 0 through 24.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_choices <span class="op">=</span> <span class="dv">25</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>choices <span class="op">=</span> <span class="bu">map</span>(<span class="bu">str</span>, <span class="bu">range</span>(n_choices))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we want to get rid of any students that didn’t make any choices.</p>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>students <span class="op">=</span> raw_students.copy().dropna(subset<span class="op">=</span>choices, how<span class="op">=</span><span class="st">"all"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>students.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+<th data-quarto-table-cell-role="th">2</th>
+<th data-quarto-table-cell-role="th">3</th>
+<th data-quarto-table-cell-role="th">4</th>
+<th data-quarto-table-cell-role="th">5</th>
+<th data-quarto-table-cell-role="th">6</th>
+<th data-quarto-table-cell-role="th">7</th>
+<th data-quarto-table-cell-role="th">8</th>
+<th data-quarto-table-cell-role="th">9</th>
+<th data-quarto-table-cell-role="th">10</th>
+<th data-quarto-table-cell-role="th">11</th>
+<th data-quarto-table-cell-role="th">12</th>
+<th data-quarto-table-cell-role="th">13</th>
+<th data-quarto-table-cell-role="th">14</th>
+<th data-quarto-table-cell-role="th">15</th>
+<th data-quarto-table-cell-role="th">16</th>
+<th data-quarto-table-cell-role="th">17</th>
+<th data-quarto-table-cell-role="th">18</th>
+<th data-quarto-table-cell-role="th">19</th>
+<th data-quarto-table-cell-role="th">20</th>
+<th data-quarto-table-cell-role="th">21</th>
+<th data-quarto-table-cell-role="th">22</th>
+<th data-quarto-table-cell-role="th">23</th>
+<th data-quarto-table-cell-role="th">24</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>190000</td>
+<td>3</td>
+<td>G2</td>
+<td>P1</td>
+<td>V2</td>
+<td>S0</td>
+<td>A0</td>
+<td>O0</td>
+<td>L0</td>
+<td>D2</td>
+<td>K1</td>
+<td>V1</td>
+<td>R2</td>
+<td>G2</td>
+<td>Y2</td>
+<td>G2</td>
+<td>W0</td>
+<td>K0</td>
+<td>X0</td>
+<td>O1</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>190001</td>
+<td>56</td>
+<td>Q0</td>
+<td>P1</td>
+<td>P0</td>
+<td>M1</td>
+<td>N0</td>
+<td>P1</td>
+<td>T2</td>
+<td>N1</td>
+<td>I1</td>
+<td>K0</td>
+<td>P3</td>
+<td>X1</td>
+<td>F0</td>
+<td>P1</td>
+<td>S0</td>
+<td>C0</td>
+<td>Z0</td>
+<td>L0</td>
+<td>H2</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>190002</td>
+<td>60</td>
+<td>D0</td>
+<td>U0</td>
+<td>Y1</td>
+<td>E2</td>
+<td>R0</td>
+<td>P0</td>
+<td>V1</td>
+<td>R2</td>
+<td>X1</td>
+<td>Y0</td>
+<td>R1</td>
+<td>I1</td>
+<td>T1</td>
+<td>V1</td>
+<td>Y2</td>
+<td>A1</td>
+<td>I2</td>
+<td>N1</td>
+<td>A0</td>
+<td>J2</td>
+<td>A0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>190003</td>
+<td>67</td>
+<td>C0</td>
+<td>J1</td>
+<td>I2</td>
+<td>N1</td>
+<td>W1</td>
+<td>E1</td>
+<td>M1</td>
+<td>Z1</td>
+<td>Q0</td>
+<td>B1</td>
+<td>O0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>190004</td>
+<td>19</td>
+<td>I0</td>
+<td>M1</td>
+<td>C2</td>
+<td>D0</td>
+<td>W0</td>
+<td>F1</td>
+<td>B2</td>
+<td>O1</td>
+<td>T0</td>
+<td>L0</td>
+<td>W1</td>
+<td>X2</td>
+<td>W0</td>
+<td>N0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>We can see that, in fact, some students won’t be included in this game:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(raw_students) <span class="op">-</span> <span class="bu">len</span>(students)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>3</code></pre>
+</div>
+</div>
+</section>
+<section id="projects" class="level3">
+<h3 class="anchored" data-anchor-id="projects">Projects</h3>
+<p>Now that students are done, we can move onto the projects.</p>
+<p>Each project needs a code, a supervisor and a non-zero capacity. We drop any project that is missing any of these items.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>projects <span class="op">=</span> raw_projects.copy()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>projects <span class="op">=</span> projects.dropna()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>projects <span class="op">=</span> projects[projects[<span class="st">"capacity"</span>] <span class="op">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>projects.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">capacity</th>
+<th data-quarto-table-cell-role="th">supervisor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>A0</td>
+<td>2</td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>A1</td>
+<td>3</td>
+<td>A</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>A2</td>
+<td>2</td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>B0</td>
+<td>2</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>B1</td>
+<td>2</td>
+<td>B</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Verify that no projects were lost:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(raw_projects) <span class="op">==</span> <span class="bu">len</span>(projects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>True</code></pre>
+</div>
+</div>
+</section>
+<section id="supervisors" class="level3">
+<h3 class="anchored" data-anchor-id="supervisors">Supervisors</h3>
+<p>Each supervisor requires a unique name and a non-zero capacity. We drop any supervisor without either of these things.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>supervisors <span class="op">=</span> raw_supervisors.copy()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>supervisors <span class="op">=</span> supervisors.dropna()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>supervisors <span class="op">=</span> supervisors[supervisors[<span class="st">"capacity"</span>] <span class="op">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>supervisors.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">capacity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>A</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>B</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>C</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>D</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>E</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Verify no supervisors were lost:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(supervisors) <span class="op">==</span> <span class="bu">len</span>(raw_supervisors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>True</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="creating-the-dictionaries" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-dictionaries">Creating the dictionaries</h2>
+<p>With the now clean data, Python dictionaries must be created that we can pass to Matching. These dictionaries detail the following relationships:</p>
+<ul>
+<li>Project supervisor affiliations</li>
+<li>Project capacities</li>
+<li>Supervisor capacities</li>
+<li>Student preference lists</li>
+<li>Supervisor preference lists</li>
+</ul>
+<section id="capacities-and-affiliations" class="level3">
+<h3 class="anchored" data-anchor-id="capacities-and-affiliations">Capacities and affiliations</h3>
+<p>We’ll begin with the capacity and affiliation dictionaries for projects. With both dictionaries, a project is only added if both their capacity and the capacity of their supervisor is non-zero.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>supervisor_names <span class="op">=</span> supervisors[<span class="st">"name"</span>].values</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>project_codes <span class="op">=</span> projects[<span class="st">"code"</span>].values</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>project_to_capacity, project_to_supervisor <span class="op">=</span> {}, {}</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, (project, capacity, supervisor) <span class="kw">in</span> projects.iterrows():</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> project <span class="kw">in</span> project_codes <span class="kw">and</span> supervisor <span class="kw">in</span> supervisor_names:</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        project_to_supervisor[project] <span class="op">=</span> supervisor</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        project_to_capacity[project] <span class="op">=</span> capacity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can create the supervisor capacity dictionary. In this case, we only include a supervisor if they have at least one valid project.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>supervisor_to_capacity <span class="op">=</span> {}</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, (supervisor, capacity) <span class="kw">in</span> supervisors.iterrows():</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> supervisor <span class="kw">in</span> project_to_supervisor.values():</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        supervisor_to_capacity[supervisor] <span class="op">=</span> capacity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="preference-lists-dictionaries" class="level3">
+<h3 class="anchored" data-anchor-id="preference-lists-dictionaries">Preference lists (dictionaries)</h3>
+<p>The only remaining dictionaries are for the preference lists of the students and the supervisors.</p>
+<p>Let’s begin with the students.</p>
+<p>As is discussed <a href="../../discussion/student_allocation/index.rst#Key-definitions">here</a>, students must have a strict, unique preference of some non-empty subset of the projects. This means that if a student ranks no projects, they are excluded from the game.</p>
+<p>.. note:: In the case where a student ranks the same project more than once, we take their highest ranking of it and shift everything else up.</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>student_to_preferences <span class="op">=</span> {}</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, (student, _, <span class="op">*</span>prefs) <span class="kw">in</span> students.iterrows():</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    student_preferences <span class="op">=</span> []</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> project <span class="kw">in</span> prefs:</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> project <span class="kw">in</span> project_codes <span class="kw">and</span> project <span class="kw">not</span> <span class="kw">in</span> student_preferences:</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            student_preferences.append(project)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> student_preferences:</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        student_to_preferences[student] <span class="op">=</span> student_preferences</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With that done, we’re only left with the supervisors’ preferences.</p>
+<p>As is often the case in real-world instances of SA, each student is assigned a unique rank in their cohort. This ranking is typically done independently of the supervisors to make the game as fair as possible. In cases where “backroom” deals are allowed between supervisors and students, the overall effect is that everyone is worse off.</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sorted_students <span class="op">=</span> students.sort_values(<span class="st">"rank"</span>, ascending<span class="op">=</span><span class="va">True</span>)[<span class="st">"name"</span>].values</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This complete ranking of the students allows the supervisors to draw their preference list from the same source.</p>
+<p>As is discussed <a href="../../discussion/student_allocation/index.rst#Key-definitions">here</a>, each supervisor must rank all (and only) those students who have ranked at least one of their projects.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If a student has ranked multiple projects from the same supervisor, they still only appear once in the supervisor’s preference list. As with students, if a supervisor’s preference list is empty (i.e.&nbsp;none of their projects were ranked by any student) then they are excluded from the game.</p>
+</div>
+</div>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>supervisor_to_preferences <span class="op">=</span> {}</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> supervisor <span class="kw">in</span> supervisor_names:</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    supervisor_preferences <span class="op">=</span> []</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    supervisor_projects <span class="op">=</span> [p <span class="cf">for</span> p, s <span class="kw">in</span> project_to_supervisor.items() <span class="cf">if</span> s <span class="op">==</span> supervisor]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> student <span class="kw">in</span> sorted_students:</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        student_preferences <span class="op">=</span> student_to_preferences[student]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">set</span>(student_preferences).intersection(supervisor_projects):</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>            supervisor_preferences.append(student)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> supervisor_preferences:</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        supervisor_to_preferences[supervisor] <span class="op">=</span> supervisor_preferences</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="final-clean-up" class="level2">
+<h2 class="anchored" data-anchor-id="final-clean-up">Final clean up</h2>
+<p>We’re almost there but now we need to adjust the entries in our dictionaries that don’t make sense anymore.</p>
+<section id="removing-extra-players-from-the-game" class="level3">
+<h3 class="anchored" data-anchor-id="removing-extra-players-from-the-game">Removing extra players from the game</h3>
+<p>To begin, we have to go back through <code>supervisor_to_capacity</code> to remove any unranked supervisors. Likewise for unranked projects but we must also remove them from <code>project_to_supervisor</code>.</p>
+<p>It should follow that if a supervisor is unranked then none of their projects are either.</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>unranked_supervisors <span class="op">=</span> <span class="bu">set</span>(supervisor_names).difference(supervisor_to_preferences.keys())</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>unranked_projects <span class="op">=</span> <span class="bu">set</span>(project_codes).difference(</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    (project <span class="cf">for</span> prefs <span class="kw">in</span> student_to_preferences.values() <span class="cf">for</span> project <span class="kw">in</span> prefs)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>unranked_supervisors, unranked_projects</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>(set(), {'L1'})</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> supervisor <span class="kw">in</span> unranked_supervisors:</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">del</span> supervisor_to_capacity[supervisor]</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> project <span class="kw">in</span> unranked_projects:</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">del</span> project_to_capacity[project]</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">del</span> project_to_supervisor[project]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="checking-and-adjusting-capacities" class="level3">
+<h3 class="anchored" data-anchor-id="checking-and-adjusting-capacities">Checking and adjusting capacities</h3>
+<p>The final step is to adjust the capacities. There are some stipulations on the capacities of projects and their supervisors:</p>
+<ol type="1">
+<li><p>Each project’s capacity must be no larger than that of its supervisor.</p></li>
+<li><p>Each supervisor’s capacity must be:</p>
+<ul>
+<li>At least as large as its largest project’s capacity.</li>
+<li>No larger than the sum of its projects’ capacities.</li>
+</ul></li>
+</ol>
+<p>We begin by reducing the capacities of too-large projects. This means that no supervisor will have to increase their capacity for the sake of a single project, and we don’t need to worry about the first point in (2).</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> project, project_capacity <span class="kw">in</span> project_to_capacity.items():</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    supervisor <span class="op">=</span> project_to_supervisor[project]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    supervisor_capacity <span class="op">=</span> supervisor_to_capacity[supervisor]</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> project_capacity <span class="op">&gt;</span> supervisor_capacity:</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>project<span class="sc">}</span><span class="ss"> has a capacity of </span><span class="sc">{</span>project_capacity<span class="sc">}</span><span class="ss"> but"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>supervisor<span class="sc">}</span><span class="ss"> has capacity </span><span class="sc">{</span>supervisor_capacity<span class="sc">}</span><span class="ss">."</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        project_to_capacity[project] <span class="op">=</span> supervisor_capacity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>B0 has a capacity of 2 but B has capacity 1.
+B1 has a capacity of 2 but B has capacity 1.
+B2 has a capacity of 2 but B has capacity 1.
+E1 has a capacity of 3 but E has capacity 2.
+E2 has a capacity of 3 but E has capacity 2.
+F1 has a capacity of 3 but F has capacity 2.
+I1 has a capacity of 2 but I has capacity 1.
+I2 has a capacity of 2 but I has capacity 1.
+M0 has a capacity of 8 but M has capacity 7.
+O1 has a capacity of 2 but O has capacity 1.
+Q0 has a capacity of 2 but Q has capacity 1.
+R0 has a capacity of 2 but R has capacity 1.
+R2 has a capacity of 2 but R has capacity 1.
+S1 has a capacity of 7 but S has capacity 6.
+T2 has a capacity of 2 but T has capacity 1.
+U0 has a capacity of 6 but U has capacity 5.
+V1 has a capacity of 3 but V has capacity 2.
+V2 has a capacity of 3 but V has capacity 2.
+X0 has a capacity of 8 but X has capacity 7.</code></pre>
+</div>
+</div>
+<p>Now we can make sure that no supervisor is providing more spaces than they’re offering through their projects.</p>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> supervisor, supervisor_capacity <span class="kw">in</span> supervisor_to_capacity.items():</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    supervisor_projects <span class="op">=</span> [p <span class="cf">for</span> p, s <span class="kw">in</span> project_to_supervisor.items() <span class="cf">if</span> s <span class="op">==</span> supervisor]</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    supervisor_project_capacities <span class="op">=</span> [</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>        project_to_capacity[project] <span class="cf">for</span> project <span class="kw">in</span> supervisor_projects</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> supervisor_capacity <span class="op">&gt;</span> <span class="bu">sum</span>(supervisor_project_capacities):</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>supervisor<span class="sc">}</span><span class="ss"> has capacity </span><span class="sc">{</span>supervisor_capacity<span class="sc">}</span><span class="ss"> but their projects"</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span><span class="st">', '</span><span class="sc">.</span>join(supervisor_projects)<span class="sc">}</span><span class="ss"> have a total capacity of"</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span><span class="bu">sum</span>(supervisor_project_capacities)<span class="sc">}</span><span class="ss">."</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>        supervisor_to_capacity[supervisor] <span class="op">=</span> <span class="bu">sum</span>(supervisor_project_capacities)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>K has capacity 8 but their projects K0, K1, K2 have a total capacity of 6.
+L has capacity 2 but their projects L0 have a total capacity of 1.
+W has capacity 5 but their projects W0, W1 have a total capacity of 2.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="playing-the-game" class="level2">
+<h2 class="anchored" data-anchor-id="playing-the-game">Playing the game</h2>
+<p>Now that we have formulated our players according to the rules of the game, we are ready to play it.</p>
+<p>Matching has an implementation of the SA algorithm which takes the dictionaries we’ve built as parameters. From there, the game can be solved to be student- or supervisor-optimal. We’ll be using the former.</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matching.games <span class="im">import</span> StudentAllocation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>game <span class="op">=</span> StudentAllocation.create_from_dictionaries(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    student_to_preferences,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    supervisor_to_preferences,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    project_to_supervisor,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    project_to_capacity,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    supervisor_to_capacity,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>matching <span class="op">=</span> game.solve(optimal<span class="op">=</span><span class="st">"student"</span>)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> game.check_validity()</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> game.check_stability()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>matching</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>{A0: [], A1: [190019, 190034], A2: [190017], B0: [], B1: [190091], B2: [], C0: [190003, 190068], C1: [190070], C2: [190079, 190062], D0: [190015, 190039, 190009], D1: [190008, 190056], D2: [], E0: [], E1: [190063, 190022], E2: [], F0: [190011], F1: [190094], G0: [190096], G1: [], G2: [190000, 190045, 190077], H0: [], H1: [190078], H2: [190023, 190098], I0: [190004], I1: [], I2: [], J0: [190021], J1: [190097, 190089, 190061, 190014], J2: [190085, 190090], K0: [190074, 190095], K1: [190024, 190013], K2: [190052, 190006], L0: [190072], M0: [190086, 190053], M1: [190054, 190081, 190075], N0: [190049, 190032], N1: [190046, 190044, 190037, 190057], N2: [190031, 190060], O0: [190016], O1: [], P0: [190047], P1: [190076, 190027], P2: [190093], P3: [190071], Q0: [190001], R0: [190048], R1: [], R2: [], S0: [190069], S1: [190092, 190042, 190084, 190066, 190067], T0: [], T1: [], T2: [190036], U0: [190010, 190002, 190059, 190030], U1: [], U2: [190055], V0: [190073], V1: [], V2: [190018], W0: [190026], W1: [190058], X0: [190088, 190080, 190012], X1: [190028], X2: [190043, 190064, 190020], Y0: [190083, 190007, 190099], Y1: [190065, 190050], Y2: [190033], Z0: [190051], Z1: [190005, 190038]}</code></pre>
+</div>
+</div>
+</section>
+<section id="analysis" class="level2">
+<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
+<p>The raw matching provided above is less than easy to read, let alone interpret. So, let’s observe the data in a different form using some visualisation tools.</p>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter, defaultdict</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">"tableau-colorblind10"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="supervisors-1" class="level3">
+<h3 class="anchored" data-anchor-id="supervisors-1">Supervisors</h3>
+<p>Using the <code>matching.Game</code> instance we’ve created, we can extract the utilisation of our supervisors.</p>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>supervisor_free_spaces <span class="op">=</span> {</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    supervisor: supervisor.capacity <span class="op">-</span> <span class="bu">len</span>(supervisor.matching) <span class="cf">for</span> supervisor <span class="kw">in</span> game.supervisors</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>supervisor_utilisation <span class="op">=</span> {</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    supervisor: <span class="bu">len</span>(supervisor.matching) <span class="op">/</span> supervisor.capacity <span class="cf">for</span> supervisor <span class="kw">in</span> game.supervisors</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> Counter(supervisor_free_spaces.values())</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>ax.bar(data.keys(), data.values())</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"No. free spaces"</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="bu">max</span>(data.keys()) <span class="op">+</span> <span class="dv">1</span>))</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Supervisor free spaces"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>Text(0.5, 1.0, 'Supervisor free spaces')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="student_allocation_files/figure-html/cell-27-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> supervisor_utilisation.values()</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>ax.hist(values)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>ylims <span class="op">=</span> ax.get_ylim()</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>ax.vlines(np.mean(<span class="bu">list</span>(values)), <span class="op">*</span>ylims, <span class="st">"tab:orange"</span>, <span class="st">"dashed"</span>, label<span class="op">=</span><span class="st">"Mean"</span>, lw<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">*</span>ylims)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Utilisation"</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency"</span>)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Supervisor utilisation"</span>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<pre><code>&lt;matplotlib.legend.Legend at 0x7fda4126fca0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="student_allocation_files/figure-html/cell-28-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>So we can see that the supervisors are almost all working at capacity. This is a good thing so long as they accurately estimated their own workloads.</p>
+</section>
+<section id="projects-1" class="level3">
+<h3 class="anchored" data-anchor-id="projects-1">Projects</h3>
+<p>We can do the same visualisation with the projects that were included in the game. This is a nice way to observe the quantity of excess projects offered to students.</p>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>project_free_spaces <span class="op">=</span> {</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    project.name: project.capacity <span class="op">-</span> <span class="bu">len</span>(project.matching) <span class="cf">for</span> project <span class="kw">in</span> game.projects</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>project_utilisation <span class="op">=</span> {</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    project.name: <span class="bu">len</span>(project.matching) <span class="op">/</span> project.capacity <span class="cf">for</span> project <span class="kw">in</span> game.projects</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> Counter(project_free_spaces.values())</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>ax.bar(data.keys(), data.values())</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"No. free spaces"</span>)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency"</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="bu">max</span>(data.keys()) <span class="op">+</span> <span class="dv">1</span>))</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Project free spaces"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<pre><code>Text(0.5, 1.0, 'Project free spaces')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="student_allocation_files/figure-html/cell-30-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> project_utilisation.values()</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>ax.hist(values)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>ylims <span class="op">=</span> ax.get_ylim()</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>ax.vlines(np.mean(<span class="bu">list</span>(values)), <span class="op">*</span>ylims, <span class="st">"tab:orange"</span>, <span class="st">"dashed"</span>, label<span class="op">=</span><span class="st">"Mean"</span>, lw<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">*</span>ylims)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Utilisation"</span>)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency"</span>)</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Project utilisation"</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<pre><code>&lt;matplotlib.legend.Legend at 0x7fda715f64f0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="student_allocation_files/figure-html/cell-31-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The conclusion to draw from this is that the majority of projects seem to be split between two groups:</p>
+<ol type="1">
+<li>very popular (and busy) projects</li>
+<li>very unpopular (and are excessive) projects</li>
+</ol>
+<p>Results like this would help indicate where more projects should be offered in later years.</p>
+</section>
+<section id="students-1" class="level3">
+<h3 class="anchored" data-anchor-id="students-1">Students</h3>
+<p>Arguably, the most valuable analysis is of the students and their matchings. To do this, we will need to “invert” the matching found by Matching.</p>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>inverted_matching <span class="op">=</span> {}</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>student_preference_of_matching <span class="op">=</span> []</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> project, project_students <span class="kw">in</span> matching.items():</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> student <span class="kw">in</span> project_students:</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>        inverted_matching[student.name] <span class="op">=</span> project.name</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>        student_preference_of_matching.append(student._pref_names.index(project.name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This inverted matching can now be converted to a <code>pandas.DataFrame</code>. In this form, it is easy to link students between the matching data and the original as well as being able to extract those students who remain unmatched.</p>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>df_matching <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"name"</span>: <span class="bu">list</span>(inverted_matching.keys()),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_code"</span>: <span class="bu">list</span>(inverted_matching.values()),</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"preference"</span>: student_preference_of_matching,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>df_matching <span class="op">=</span> df_matching.sort_values(by<span class="op">=</span><span class="st">"name"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>name_indexed_df_matching <span class="op">=</span> df_matching.set_index(<span class="st">"name"</span>)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>name_indexed_raw_students <span class="op">=</span> raw_students.set_index(<span class="st">"name"</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>df_matching <span class="op">=</span> pd.concat(</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    (name_indexed_df_matching, name_indexed_raw_students[<span class="st">"rank"</span>]), axis<span class="op">=</span><span class="dv">1</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>unassigned_students <span class="op">=</span> df_matching[df_matching[<span class="st">"preference"</span>].isnull()]</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>unassigned_students</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">project_code</th>
+<th data-quarto-table-cell-role="th">preference</th>
+<th data-quarto-table-cell-role="th">rank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">93</td>
+<td>190025</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>89</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">94</td>
+<td>190029</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>97</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">95</td>
+<td>190035</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>99</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">96</td>
+<td>190040</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>98</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">97</td>
+<td>190041</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>72</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">98</td>
+<td>190082</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>82</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">99</td>
+<td>190087</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>65</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>assigned_students <span class="op">=</span> df_matching[df_matching[<span class="st">"preference"</span>].notnull()]</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>assigned_students <span class="op">=</span> assigned_students.astype({<span class="st">"preference"</span>: <span class="bu">int</span>})</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>assigned_students.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">project_code</th>
+<th data-quarto-table-cell-role="th">preference</th>
+<th data-quarto-table-cell-role="th">rank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>190000</td>
+<td>G2</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>190001</td>
+<td>Q0</td>
+<td>0</td>
+<td>56</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>190002</td>
+<td>U0</td>
+<td>1</td>
+<td>60</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>190003</td>
+<td>C0</td>
+<td>0</td>
+<td>67</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>190004</td>
+<td>I0</td>
+<td>0</td>
+<td>19</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Now the data from the matching we’ve found is more manageable, we can try to understand how “good” it is.</p>
+<p>Below is a bar chart showing the frequency of the students’ preference over their match.</p>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> Counter(assigned_students[<span class="st">"preference"</span>])</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>ax.bar(values.keys(), values.values())</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>ax.bar(<span class="op">-</span><span class="fl">1.5</span>, <span class="bu">len</span>(unassigned_students))</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>ax.set_xticks([<span class="op">-</span><span class="fl">1.5</span>] <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">2</span>)))</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels([<span class="st">"Unmatched"</span>] <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">2</span>)))</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Preference"</span>)</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency"</span>)</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Student matching preferences"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>Text(0.5, 1.0, 'Student matching preferences')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="student_allocation_files/figure-html/cell-36-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can see that the vast majority of students got their first or second choice which is great news.</p>
+<p>Another thing we should consider is how appropriate the ranking is. Ideally, a student who ranks amongst the best in the cohort should get one of their first choices, and as the rank of the students go down, as should their preference of their match (on average, anyway).</p>
+<p>Below is a scatter plot of student’s rank and their preference of the project they were allocated.</p>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>ax.scatter(</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    assigned_students[<span class="st">"rank"</span>],</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    assigned_students[<span class="st">"preference"</span>],</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">"."</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"matched students"</span>,</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>ax.scatter(</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    unassigned_students[<span class="st">"rank"</span>],</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    [<span class="op">-</span><span class="fl">0.5</span>] <span class="op">*</span> <span class="bu">len</span>(unassigned_students),</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">"|"</span>,</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>    lw<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"unmatched students"</span>,</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Student rank"</span>)</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Preference of matching"</span>)</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Student rank vs. their preference of their matching"</span>)</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>ax.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<pre><code>&lt;matplotlib.legend.Legend at 0x7fda20a271c0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="student_allocation_files/figure-html/cell-37-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>This is the kind of behaviour we want to see. There is a strong line along the bottom, as expected. Then, the cloud of less-preferable matches only grows towards the bottom of the ranking.</p>
+</section>
+</section>
+<section id="figuring-out-the-remaining-spaces" class="level2">
+<h2 class="anchored" data-anchor-id="figuring-out-the-remaining-spaces">Figuring out the remaining spaces</h2>
+<p>Alas, this is only a starting point. From here, adjustments can be made to the allocation – although this is not recommended as this could break its <a href="../../discussion/student_allocation/index.rst#The-algorithm">mathematical soundness</a>.</p>
+<p>One avenue to take would be to offer the unassigned students a project with space left over. To figure out where there are spaces, we can use the <code>StudentAllocation</code> object and the data we cleaned earlier.</p>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>project_with_space_names <span class="op">=</span> [</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    project.name <span class="cf">for</span> project <span class="kw">in</span> game.projects <span class="cf">if</span> <span class="bu">len</span>(project.matching) <span class="op">&lt;</span> project.capacity</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>] <span class="op">+</span> <span class="bu">list</span>(unranked_projects)</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>supervisor_with_space_names <span class="op">=</span> [</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    supervisor.name</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> supervisor <span class="kw">in</span> game.supervisors</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(supervisor.matching) <span class="op">&lt;</span> supervisor.capacity</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>] <span class="op">+</span> <span class="bu">list</span>(unranked_supervisors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_number_of_matches(name, party, game):</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> player <span class="kw">in</span> <span class="bu">vars</span>(game)[party]:</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> player.name <span class="op">==</span> name:</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">len</span>(player.matching)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_capacity(data, party, name):</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> party <span class="op">==</span> <span class="st">"project"</span>:</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>        column <span class="op">=</span> <span class="st">"code"</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>        column <span class="op">=</span> <span class="st">"name"</span></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data[data[column] <span class="op">==</span> name][<span class="st">"capacity"</span>].iloc[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>projects_with_space <span class="op">=</span> projects[</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>    (projects[<span class="st">"code"</span>].isin(project_with_space_names))</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span> (projects[<span class="st">"supervisor"</span>].isin(supervisor_with_space_names))</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>projects_with_space[<span class="st">"supervisor_capacity"</span>] <span class="op">=</span> projects_with_space[<span class="st">"supervisor"</span>].<span class="bu">apply</span>(</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: get_capacity(supervisors, <span class="st">"supervisor"</span>, x)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>projects_with_space[<span class="st">"project_matches"</span>] <span class="op">=</span> projects_with_space[<span class="st">"code"</span>].<span class="bu">apply</span>(</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: get_number_of_matches(x, <span class="st">"projects"</span>, game)</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>projects_with_space[<span class="st">"supervisor_matches"</span>] <span class="op">=</span> projects_with_space[<span class="st">"supervisor"</span>].<span class="bu">apply</span>(</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: get_number_of_matches(x, <span class="st">"supervisors"</span>, game)</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>projects_with_space <span class="op">=</span> projects_with_space[</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"code"</span>,</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"capacity"</span>,</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_matches"</span>,</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"supervisor"</span>,</span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"supervisor_capacity"</span>,</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"supervisor_matches"</span>,</span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[&quot;nbval-ignore-output&quot;]" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>projects_with_space <span class="op">=</span> projects_with_space.set_index([<span class="st">"supervisor"</span>, <span class="st">"code"</span>]).sort_index()</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>projects_with_space</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">capacity</th>
+<th data-quarto-table-cell-role="th">project_matches</th>
+<th data-quarto-table-cell-role="th">supervisor_capacity</th>
+<th data-quarto-table-cell-role="th">supervisor_matches</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">supervisor</th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="2" data-quarto-table-cell-role="th" data-valign="top">C</td>
+<td data-quarto-table-cell-role="th">C0</td>
+<td>8</td>
+<td>2</td>
+<td>8</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">C2</td>
+<td>4</td>
+<td>2</td>
+<td>8</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">M</td>
+<td data-quarto-table-cell-role="th">M0</td>
+<td>8</td>
+<td>2</td>
+<td>7</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Z</td>
+<td data-quarto-table-cell-role="th">Z0</td>
+<td>5</td>
+<td>1</td>
+<td>5</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>So, with that we have completed this tutorial. We have taken raw data and created a strong allocation of projects to students. Not only that, but we have offered some analysis of this data to demonstrate its effectiveness.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright, Henry Wilde 2023. Brought to you by <a href="https://quarto.org/docs/websites">Quarto</a> and <a href="https://diataxis.fr">Diátaxis</a>.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

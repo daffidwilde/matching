@@ -1,0 +1,18 @@
+---
+title: "Welcome to the `matching` documentation"
+---
+
+The `matching` package is all about solving matching games.
+
+Matching games allow for the allocation of resources and partnerships in a fair
+way. Typically, a matching game is defined by two sets of players that each
+have preferences over at least some of the elements of the other set. The
+objective of the game is then to find a mapping between the players in which
+everyone is **happy enough** with their match.
+
+In `matching`, we deal with the following types of game:
+
+- the stable marriage problem (SM)
+- the hospital-resident assignment problem (HR)
+- the student-allocation problem (SA)
+- the stable roommates problem (SR)
