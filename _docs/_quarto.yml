@@ -12,7 +12,7 @@ website:
   page-footer:
     left: >
       Copyright, Henry Wilde 2023.
-      Brought to you by [Quarto](https://quarto.org/docs/websites)
+      Powered by [Quarto](https://quarto.org/docs/websites)
       and [Diátaxis](https://diataxis.fr).
 
 format:
@@ -21,4 +21,4 @@ format:
       light: flatly
       dark: darkly
     css: styles.css
-    toc: true
+    mainfont: Arial
