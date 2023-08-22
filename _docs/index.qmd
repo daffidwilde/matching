@@ -1,18 +1,24 @@
 ---
-title: "Welcome to the `matching` documentation"
+title: "What is `matching`?"
 ---
 
-The `matching` package is all about solving matching games.
+The `matching` package is all about solving matching games in Python.
+
+# What is a matching game?
 
 Matching games allow for the allocation of resources and partnerships in a fair
-way. Typically, a matching game is defined by two sets of players that each
-have preferences over at least some of the elements of the other set. The
-objective of the game is then to find a mapping between the players in which
-everyone is **happy enough** with their match.
+way.
+Typically, a game is defined by two sets of players that each have
+preferences over at least some of the elements of the other set.
 
-In `matching`, we deal with the following types of game:
+The objective of the game is then to find a mapping between the players
+in which everyone is **happy enough** with their match.
+
+# What kind of games can I expect?
+
+In `matching`, we currently deal with the following types of game:
 
 - the stable marriage problem (SM)
-- the hospital-resident assignment problem (HR)
+- the hospital-resident problem (HR)
 - the student-allocation problem (SA)
 - the stable roommates problem (SR)
