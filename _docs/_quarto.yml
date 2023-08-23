@@ -5,7 +5,10 @@ website:
   title: "matching"
   navbar:
     left:
-      - tutorials/index.qmd
+      - href: tutorials/index.qmd
+        text: tutorials
+      - href: bibliography.qmd
+        text: bibliography
     right:
       - icon: github
         href: https://github.com/daffidwilde/matching

@@ -1,0 +1,9 @@
+---
+title: Bibliography
+bibliography: assets/bibliography.bib
+nocite: |
+    @*
+---
+
+Here is a collection of the references cited
+throughout this set of documentation.
