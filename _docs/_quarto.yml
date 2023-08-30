@@ -24,6 +24,18 @@ website:
         href: https://github.com/daffidwilde/matching
       - icon: journal-text
         href: https://doi.org/10.21105/joss.02169
+  sidebar:
+    - title: tutorials
+      style: docked
+      contents: tutorials
+    - title: how-to guides
+      contents: how-to
+    - title: discussion
+      contents: discussion
+    - title: reference
+      contents: reference
+      
+
   page-footer:
     left: >
       Copyright, Henry Wilde 2023.

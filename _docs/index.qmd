@@ -1,8 +1,23 @@
 ---
 title: Welcome to the `matching` documentation!
-title-block-banner: true
 toc: false
+about:
+    id: welcome
+    template: jolla
+    links:
+        - icon: github
+          text: GitHub repository
+          href: https://github.com/daffidwilde/matching
+        - icon: journal-text
+          text: JOSS paper
+          href: https://doi.org/10.21105/joss.02169
+        - icon: archive
+          text: Zenodo archive
+          href: https://doi.org/10.5281/zenodo.2553125
 ---
+
+:::{#welcome}
+:::
 
 ## What is `matching`?
 
