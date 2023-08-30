@@ -1,0 +1,165 @@
+# base { #matching.base }
+
+`base`
+
+Abstract base classes for inheritance.
+
+## Classes
+
+| Name | Description |
+| --- | --- |
+| [BaseGame](#matching.base.BaseGame) | An abstract base class for facilitating various matching games. |
+| [BaseMatching](#matching.base.BaseMatching) | An abstract base class for storing and updating a matching. |
+| [BasePlayer](#matching.base.BasePlayer) | An abstract base class to represent a player within a matching game. |
+
+### BaseGame { #matching.base.BaseGame }
+
+`base.BaseGame(self, clean=False)`
+
+An abstract base class for facilitating various matching games.
+
+#### Parameters
+
+| Name    | Type   | Description                                                                                                                      | Default   |
+|---------|--------|----------------------------------------------------------------------------------------------------------------------------------|-----------|
+| `clean` | bool   | Defaults to ``False``. If ``True``, when passing a set of players to create a game instance, they will be automatically cleaned. | `False`   |
+
+#### Attributes
+
+| Name           | Type                                     | Description                                                                                                                                         |
+|----------------|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| matching       | matching.base.BaseMatching or None       | After solving the game, an object whose class inherits from ``BaseMatching`` is found here. Otherwise, ``None``.                                    |
+| blocking_pairs | list of (BasePlayer, BasePlayer) or None | After checking the stability of the game instance, a list of any pairs that block the stability of the matching is found here. Otherwise, ``None``. |
+
+#### Methods
+
+| Name | Description |
+| --- | --- |
+| [check_stability](#matching.base.BaseGame.check_stability) | Placeholder for checking the stability of the matching. |
+| [check_validity](#matching.base.BaseGame.check_validity) | Placeholder for checking the validity of the matching. |
+| [solve](#matching.base.BaseGame.solve) | Placeholder for solving the game instance. |
+
+##### check_stability { #matching.base.BaseGame.check_stability }
+
+`base.BaseGame.check_stability(self)`
+
+Placeholder for checking the stability of the matching.
+
+##### check_validity { #matching.base.BaseGame.check_validity }
+
+`base.BaseGame.check_validity(self)`
+
+Placeholder for checking the validity of the matching.
+
+##### solve { #matching.base.BaseGame.solve }
+
+`base.BaseGame.solve(self)`
+
+Placeholder for solving the game instance.
+
+### BaseMatching { #matching.base.BaseMatching }
+
+`base.BaseMatching(self, dictionary=None)`
+
+An abstract base class for storing and updating a matching.
+
+#### Attributes
+
+| Name       | Type         | Description                                                                                                                    |
+|------------|--------------|--------------------------------------------------------------------------------------------------------------------------------|
+| dictionary | dict or None | If not ``None``, a dictionary mapping a ``Player`` to one of: ``None``, a single ``Player`` or a list of ``Player`` instances. |
+
+#### Methods
+
+| Name | Description |
+| --- | --- |
+| [keys](#matching.base.BaseMatching.keys) | Get the underlying dictionary keys. |
+| [values](#matching.base.BaseMatching.values) | Get the underlying dictionary values. |
+
+##### keys { #matching.base.BaseMatching.keys }
+
+`base.BaseMatching.keys(self)`
+
+Get the underlying dictionary keys.
+
+##### values { #matching.base.BaseMatching.values }
+
+`base.BaseMatching.values(self)`
+
+Get the underlying dictionary values.
+
+### BasePlayer { #matching.base.BasePlayer }
+
+`base.BasePlayer(self, name)`
+
+An abstract base class to represent a player within a matching game.
+
+#### Parameters
+
+| Name   | Type   | Description                                           | Default    |
+|--------|--------|-------------------------------------------------------|------------|
+| `name` | object | An identifier. This should be unique and descriptive. | _required_ |
+
+#### Attributes
+
+| Name            | Type                                         | Description                                                                                                                 |
+|-----------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| prefs           | List\[matching.base.BasePlayer\]             | The player's preferences. Defaults to ``None`` and is updated using the ``set_prefs`` method.                               |
+| matching        | Optional\[matching.base.BasePlayer\]         | The current match of the player. ``None`` if not currently matched.                                                         |
+| _pref_names     | Optional\[List\]                             | A list of the names in ``prefs``. Updates with ``prefs`` via ``set_prefs`` method.                                          |
+| _original_prefs | Optional\[List\[matching.base.BasePlayer\]\] | The original set of player preferences. Defaults to ``None`` and does not update after the first ``set_prefs`` method call. |
+
+#### Methods
+
+| Name | Description |
+| --- | --- |
+| [check_if_match_is_unacceptable](#matching.base.BasePlayer.check_if_match_is_unacceptable) | Placeholder for checking player's match is acceptable. |
+| [get_favourite](#matching.base.BasePlayer.get_favourite) | Placeholder for getting the player's favourite player. |
+| [get_successors](#matching.base.BasePlayer.get_successors) | Placeholder for getting the successors of a match. |
+| [not_in_preferences_message](#matching.base.BasePlayer.not_in_preferences_message) | Message to say another player is an unacceptable match. |
+| [prefers](#matching.base.BasePlayer.prefers) | Determines whether the player prefers a player over some other |
+| [set_prefs](#matching.base.BasePlayer.set_prefs) | Set the player's preferences to be a list of players. |
+| [unmatched_message](#matching.base.BasePlayer.unmatched_message) | Message to say the player is not matched. |
+
+##### check_if_match_is_unacceptable { #matching.base.BasePlayer.check_if_match_is_unacceptable }
+
+`base.BasePlayer.check_if_match_is_unacceptable(self)`
+
+Placeholder for checking player's match is acceptable.
+
+##### get_favourite { #matching.base.BasePlayer.get_favourite }
+
+`base.BasePlayer.get_favourite(self)`
+
+Placeholder for getting the player's favourite player.
+
+##### get_successors { #matching.base.BasePlayer.get_successors }
+
+`base.BasePlayer.get_successors(self)`
+
+Placeholder for getting the successors of a match.
+
+##### not_in_preferences_message { #matching.base.BasePlayer.not_in_preferences_message }
+
+`base.BasePlayer.not_in_preferences_message(self, other)`
+
+Message to say another player is an unacceptable match.
+
+##### prefers { #matching.base.BasePlayer.prefers }
+
+`base.BasePlayer.prefers(self, player, other)`
+
+Determines whether the player prefers a player over some other
+player.
+
+##### set_prefs { #matching.base.BasePlayer.set_prefs }
+
+`base.BasePlayer.set_prefs(self, players)`
+
+Set the player's preferences to be a list of players.
+
+##### unmatched_message { #matching.base.BasePlayer.unmatched_message }
+
+`base.BasePlayer.unmatched_message(self)`
+
+Message to say the player is not matched.

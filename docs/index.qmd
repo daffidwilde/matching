@@ -1,0 +1,43 @@
+---
+title: Welcome to the `matching` documentation!
+toc: false
+about:
+    id: welcome
+    template: jolla
+    links:
+        - icon: github
+          text: GitHub repository
+          href: https://github.com/daffidwilde/matching
+        - icon: journal-text
+          text: JOSS paper
+          href: https://doi.org/10.21105/joss.02169
+        - icon: archive
+          text: Zenodo archive
+          href: https://doi.org/10.5281/zenodo.2553125
+---
+
+:::{#welcome}
+:::
+
+## What is `matching`?
+
+The `matching` package is all about solving matching games in Python.
+
+## What is a matching game?
+
+Matching games allow for the allocation of resources and partnerships in a fair
+way.
+Typically, a game is built around a collection of players and their preferences
+over other players.
+
+The objective of the game is to find a mapping in which everyone is
+**happy enough** with their match.
+
+## What kind of games can I expect?
+
+In `matching`, we currently deal with the following types of game:
+
+- the stable marriage problem (SM)
+- the hospital-resident problem (HR)
+- the student-allocation problem (SA)
+- the stable roommates problem (SR)

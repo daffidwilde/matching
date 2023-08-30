@@ -1,0 +1,38 @@
+- title: "[Axelrod](https://axelrod.readthedocs.io/en/stable/)"
+  categories: [Python]
+  description: A research library aimed at the study of the Iterated Prisoners'
+    Dilemma.
+  paper: "@KCH+16"
+
+- title: "[Gambit](http://www.gambit-project.org)"
+  categories: [Python]
+  description: A C library with a Python API and an online interface for
+    computing large games.
+  paper: "@MMT16"
+
+- title: "[Nashpy](https://nashpy.readthedocs.io/en/stable/)"
+  categories: [Python]
+  description: Compute the Nash equilibria of two-player normal form games.
+  paper: "@KC18"
+
+- title: "[PyNFG](https://pypi.org/project/PyNFG/)"
+  categories: [Python]
+  description: For modelling network form games.
+
+- title: >
+    [EvolutionaryGames](https://cran.rstudio.com/web/packages/
+    EvolutionaryGames/)
+  categories: [R]
+  description: A comprehensive set of tools for evolutionary game theory.
+
+- title: "[gtree](https://skranz.github.io/gtree/index.html)"
+  categories: [R]
+  description: For specifying extensive form games, using Gambit
+    under the hood for computation.
+
+- title: >
+    [matchingR](https://jtilly.io/matchingR/vignettes/matchingR-intro.html)
+  categories: [R]
+  description: A backend in C++ provides fast solutions to many types of
+    matching problems, including stable marriages, college admissions, and
+    house allocations.

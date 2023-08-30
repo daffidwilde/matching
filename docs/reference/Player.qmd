@@ -1,0 +1,51 @@
+# Player { #matching.players.Player }
+
+`players.Player(self, name)`
+
+Generic single-match player class for instances of SM or SR.
+
+This class is also used for residents in HR and students in SA.
+
+## Parameters
+
+| Name   | Type   | Description                                           | Default    |
+|--------|--------|-------------------------------------------------------|------------|
+| `name` | object | An identifier. This should be unique and descriptive. | _required_ |
+
+## Attributes
+
+| Name            | Type                                   | Description                                                                                   |
+|-----------------|----------------------------------------|-----------------------------------------------------------------------------------------------|
+| prefs           | list of Player                         | The player's preferences. Defaults to ``None`` and is updated using the ``set_prefs`` method. |
+| pref_names      | list                                   | A list of the names in ``prefs``. Updates with ``prefs`` via ``set_prefs`` method.            |
+| matching        | matching.players.player.Player or None | The current match of the player. ``None`` if not currently matched.                           |
+| _original_prefs | list of Player                         | The original set of player preferences.                                                       |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [check_if_match_is_unacceptable](#matching.players.Player.check_if_match_is_unacceptable) | Check the acceptability of the current match. |
+| [get_favourite](#matching.players.Player.get_favourite) | Get the player's favourite player. |
+| [get_successors](#matching.players.Player.get_successors) | Get all the successors to the current match of the player. |
+
+### check_if_match_is_unacceptable { #matching.players.Player.check_if_match_is_unacceptable }
+
+`players.Player.check_if_match_is_unacceptable(self, unmatched_okay=False)`
+
+Check the acceptability of the current match.
+
+In some games, a player being unmatched does not invalidate the
+game. The ``unmatched_okay`` parameter controls this behaviour.
+
+### get_favourite { #matching.players.Player.get_favourite }
+
+`players.Player.get_favourite(self)`
+
+Get the player's favourite player.
+
+### get_successors { #matching.players.Player.get_successors }
+
+`players.Player.get_successors(self)`
+
+Get all the successors to the current match of the player.

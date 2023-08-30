@@ -1,0 +1,14 @@
+---
+title: Tutorials
+listing:
+    contents:
+        - "*.ipynb"
+        - "*.qmd"
+    sort: title
+    fields: [image, title, description]
+---
+
+In these tutorials, we walk through creating and solving various games with the
+`matching` package.
+
+<br>

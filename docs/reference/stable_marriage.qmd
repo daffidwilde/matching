@@ -1,0 +1,37 @@
+# stable_marriage { #matching.algorithms.stable_marriage }
+
+`algorithms.stable_marriage`
+
+Functions for the SM algorithms.
+
+## Functions
+
+| Name | Description |
+| --- | --- |
+| [stable_marriage](#matching.algorithms.stable_marriage.stable_marriage) | An extended version of the original Gale-Shapley algorithm. |
+
+### stable_marriage { #matching.algorithms.stable_marriage.stable_marriage }
+
+`algorithms.stable_marriage.stable_marriage(suitors, reviewers, optimal='suitor')`
+
+An extended version of the original Gale-Shapley algorithm.
+
+This version makes use of the inherent structures of SM instances. A
+unique, stable and optimal matching is found for any valid set of
+suitors and reviewers. The optimality of the matching is with
+respect to one party and is subsequently the worst stable matching
+for the other.
+
+#### Parameters
+
+| Name        | Type           | Description                                                                                                               | Default    |
+|-------------|----------------|---------------------------------------------------------------------------------------------------------------------------|------------|
+| `suitors`   | list of Player | The suitors in the game. Each must rank all of those in ``reviewers``.                                                    | _required_ |
+| `reviewers` | list of Player | The reviewers in the game. Each must rank all of those in ``suitors``.                                                    | _required_ |
+| `optimal`   | str            | Which party the matching should be optimised for. Must be one of ``"suitor"`` and ``"reviewer"``. Defaults to the former. | `'suitor'` |
+
+#### Returns
+
+| Type     | Description                                                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------|
+| Matching | A dictionary-like object where the keys are given by the members of ``suitors``, and the values are their match in ``reviewers``. |

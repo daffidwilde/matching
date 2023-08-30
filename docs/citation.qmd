@@ -1,0 +1,43 @@
+---
+title: Citations
+---
+
+If you use `matching` then we would appreciate you citing us in your work.
+To do that, you have a couple of options.
+
+## Citing the source code
+
+We maintain a DOI for each version of `matching` on Zenodo.
+Please see [our archive](https://doi.org/10.5281/zenodo.2553125)
+for the correct citation details. A generic citation is:
+
+```bib
+@misc{matching,
+    doi = {https://doi.org/10.5281/zenodo.2553125},
+    url = {https://github.com/daffidwilde/matching},
+    year = {2019},
+    title = {{Matching: A package for solving matching games}},
+    author = {{Henry Wilde and Vince Knight}}
+}
+```
+
+## Citing the paper
+
+The Journal of Open Source Software has published
+[a paper](https://doi.org/10.21105/joss.02169) on `matching`,
+so if you would prefer to cite that, these are the details:
+
+```bib
+@article{WKG20,
+    doi = {10.21105/joss.02169},
+    url = {https://doi.org/10.21105/joss.02169},
+    year = {2020},
+    publisher = {The Open Journal},
+    volume = {5},
+    number = {48},
+    pages = {2169},
+    author = {Henry Wilde and Vincent Knight and Jonathan Gillard},
+    title = {Matching: A Python library for solving matching games},
+    journal = {Journal of Open Source Software}
+}
+```

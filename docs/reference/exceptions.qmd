@@ -1,0 +1,45 @@
+# exceptions { #matching.exceptions }
+
+`exceptions`
+
+Exceptions for game solver checks.
+
+## Classes
+
+| Name | Description |
+| --- | --- |
+| [CapacityChangedWarning](#matching.exceptions.CapacityChangedWarning) | For when a player has an invalid capacity. |
+| [MatchingError](#matching.exceptions.MatchingError) | A generic exception for erroneous ``matching`` objects. |
+| [NoStableMatchingWarning](#matching.exceptions.NoStableMatchingWarning) | For when a game does not have a complete stable matching. |
+| [PlayerExcludedWarning](#matching.exceptions.PlayerExcludedWarning) | For when a player should be excluded from a game. |
+| [PreferencesChangedWarning](#matching.exceptions.PreferencesChangedWarning) | For when a player has an invalid preference list. |
+
+### CapacityChangedWarning { #matching.exceptions.CapacityChangedWarning }
+
+`exceptions.CapacityChangedWarning()`
+
+For when a player has an invalid capacity.
+
+### MatchingError { #matching.exceptions.MatchingError }
+
+`exceptions.MatchingError(self, **kwargs)`
+
+A generic exception for erroneous ``matching`` objects.
+
+### NoStableMatchingWarning { #matching.exceptions.NoStableMatchingWarning }
+
+`exceptions.NoStableMatchingWarning()`
+
+For when a game does not have a complete stable matching.
+
+### PlayerExcludedWarning { #matching.exceptions.PlayerExcludedWarning }
+
+`exceptions.PlayerExcludedWarning()`
+
+For when a player should be excluded from a game.
+
+### PreferencesChangedWarning { #matching.exceptions.PreferencesChangedWarning }
+
+`exceptions.PreferencesChangedWarning()`
+
+For when a player has an invalid preference list.

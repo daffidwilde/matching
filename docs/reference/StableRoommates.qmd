@@ -1,0 +1,60 @@
+# StableRoommates { #matching.games.StableRoommates }
+
+`games.StableRoommates(self, players)`
+
+Solver for the stable roommates problem (SR).
+
+## Parameters
+
+| Name      | Type           | Description                                                | Default    |
+|-----------|----------------|------------------------------------------------------------|------------|
+| `players` | list of Player | The players in the game. Each must rank all other players. | _required_ |
+
+## Attributes
+
+| Name     | Type                            | Description                                                                                                                                         |
+|----------|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| matching | matching.SingleMatching or None | Once the game is solved, a matching is available. This uses the players as keys and values in a ``SingleMatching`` object. Initialises as ``None``. |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [check_inputs](#matching.games.StableRoommates.check_inputs) | Check that all players have ranked all other players. |
+| [check_stability](#matching.games.StableRoommates.check_stability) | Check for the stability of the current matching. |
+| [check_validity](#matching.games.StableRoommates.check_validity) | Check whether the current matching is valid. |
+| [create_from_dictionary](#matching.games.StableRoommates.create_from_dictionary) | Create an instance of SR from a preference dictionary. |
+| [solve](#matching.games.StableRoommates.solve) | Attempt to solve the instance of SR. Return the matching. |
+
+### check_inputs { #matching.games.StableRoommates.check_inputs }
+
+`games.StableRoommates.check_inputs(self)`
+
+Check that all players have ranked all other players.
+
+### check_stability { #matching.games.StableRoommates.check_stability }
+
+`games.StableRoommates.check_stability(self)`
+
+Check for the stability of the current matching.
+
+SM stability requires there to be no blocking pairs and all
+players to be matched.
+
+### check_validity { #matching.games.StableRoommates.check_validity }
+
+`games.StableRoommates.check_validity(self)`
+
+Check whether the current matching is valid.
+
+### create_from_dictionary { #matching.games.StableRoommates.create_from_dictionary }
+
+`games.StableRoommates.create_from_dictionary(cls, player_prefs)`
+
+Create an instance of SR from a preference dictionary.
+
+### solve { #matching.games.StableRoommates.solve }
+
+`games.StableRoommates.solve(self)`
+
+Attempt to solve the instance of SR. Return the matching.

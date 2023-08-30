@@ -1,0 +1,78 @@
+# Hospital { #matching.players.Hospital }
+
+`players.Hospital(self, name, capacity)`
+
+Hospital player class for instances of HR.
+
+A hospital can take multiple simultaneous matches and has a
+capacity. The classes for projects and supervisors in SA inherit
+from this class.
+
+## Parameters
+
+| Name       | Type   | Description                                           | Default    |
+|------------|--------|-------------------------------------------------------|------------|
+| `name`     | object | An identifier. This should be unique and descriptive. | _required_ |
+| `capacity` | int    | The maximum number of matches the hospital can have.  | _required_ |
+
+## Attributes
+
+| Name               | Type           | Description                                                                                     |
+|--------------------|----------------|-------------------------------------------------------------------------------------------------|
+| prefs              | list of Player | The hospital's preferences. Defaults to ``None`` and is updated using the ``set_prefs`` method. |
+| pref_names         | list           | A list of the names in ``prefs``. Updates with ``prefs`` via the ``set_prefs`` method.          |
+| matching           | list of Player | The current matches of the hospital. An empty list if currently unsubscribed.                   |
+| _original_capacity | int            | A record of the player's original capacity in case it is altered when passed to a game.         |
+| _original_prefs    | list of Player | A record of the player's original preferences.                                                  |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [check_if_match_is_unacceptable](#matching.players.Hospital.check_if_match_is_unacceptable) | Check the acceptability of the current matches. |
+| [check_if_oversubscribed](#matching.players.Hospital.check_if_oversubscribed) | Check whether the player has too many matches. |
+| [get_favourite](#matching.players.Hospital.get_favourite) | Get the hospital's favourite resident outside their matching. |
+| [get_successors](#matching.players.Hospital.get_successors) | Get the successors to the player's worst current match. |
+| [get_worst_match](#matching.players.Hospital.get_worst_match) | Get the player's worst current match. |
+| [oversubscribed_message](#matching.players.Hospital.oversubscribed_message) | Message to say the hospital has too many matches. |
+
+### check_if_match_is_unacceptable { #matching.players.Hospital.check_if_match_is_unacceptable }
+
+`players.Hospital.check_if_match_is_unacceptable(self, **kwargs)`
+
+Check the acceptability of the current matches.
+
+### check_if_oversubscribed { #matching.players.Hospital.check_if_oversubscribed }
+
+`players.Hospital.check_if_oversubscribed(self)`
+
+Check whether the player has too many matches.
+
+### get_favourite { #matching.players.Hospital.get_favourite }
+
+`players.Hospital.get_favourite(self)`
+
+Get the hospital's favourite resident outside their matching.
+
+If no such resident exists, return ``None``.
+
+### get_successors { #matching.players.Hospital.get_successors }
+
+`players.Hospital.get_successors(self)`
+
+Get the successors to the player's worst current match.
+
+### get_worst_match { #matching.players.Hospital.get_worst_match }
+
+`players.Hospital.get_worst_match(self)`
+
+Get the player's worst current match.
+
+This method assumes that the hospital's matching is in order of
+their preference list.
+
+### oversubscribed_message { #matching.players.Hospital.oversubscribed_message }
+
+`players.Hospital.oversubscribed_message(self)`
+
+Message to say the hospital has too many matches.

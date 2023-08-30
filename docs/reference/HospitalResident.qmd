@@ -1,0 +1,80 @@
+# HospitalResident { #matching.games.HospitalResident }
+
+`games.HospitalResident(self, residents, hospitals, clean=False)`
+
+Solver for the hospital-resident assignment problem (HR).
+
+In this case, a blocking pair is any resident-hospital pair that
+satisfies **all** of the following:
+
+    - They are present in each other's preference lists;
+    - either the resident is unmatched, or they prefer the hospital
+      to their current match;
+    - either the hospital is under-subscribed, or they prefer the
+      resident to at least one of their current matches.
+
+## Parameters
+
+| Name        | Type             | Description                                                                                                                                                                                                          | Default    |
+|-------------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| `residents` | list of Player   | The residents in the matching game. Each resident must rank a subset of those in ``hospitals``.                                                                                                                      | _required_ |
+| `hospitals` | list of Hospital | The hospitals in the matching game. Each hospital must rank all of (and only) the residents which rank it.                                                                                                           | _required_ |
+| `clean`     | bool             | Indicator for whether the players of the game should be cleaned. Cleaning is reductive in nature, removing players from the game and/or other player's preferences if they do not meet the requirements of the game. | `False`    |
+
+## Attributes
+
+| Name           | Type                               | Description                                                                                                                                                                 |
+|----------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| matching       | matching.MultipleMatching or None  | Once the game is solved, a matching is available as a ``MultipleMatching`` object with the hospitals as keys and their resident matches as values. Initialises as ``None``. |
+| blocking_pairs | list of (Player, Hospital) or None | Initialises as ``None``. Otherwise, a list of the resident-hospital blocking pairs.                                                                                         |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [check_inputs](#matching.games.HospitalResident.check_inputs) | Check if any rules of the game have been broken. |
+| [check_stability](#matching.games.HospitalResident.check_stability) | Check for the existence of any blocking pairs. |
+| [check_validity](#matching.games.HospitalResident.check_validity) | Check whether the current matching is valid. |
+| [create_from_dictionaries](#matching.games.HospitalResident.create_from_dictionaries) | Create an instance from a set of dictionaries. |
+| [solve](#matching.games.HospitalResident.solve) | Solve the instance of HR. Return the matching. |
+
+### check_inputs { #matching.games.HospitalResident.check_inputs }
+
+`games.HospitalResident.check_inputs(self)`
+
+Check if any rules of the game have been broken.
+
+Any violations will be flagged as warnings. If the ``clean``
+attribute is in use, then any violations will be removed.
+
+### check_stability { #matching.games.HospitalResident.check_stability }
+
+`games.HospitalResident.check_stability(self)`
+
+Check for the existence of any blocking pairs.
+
+### check_validity { #matching.games.HospitalResident.check_validity }
+
+`games.HospitalResident.check_validity(self)`
+
+Check whether the current matching is valid.
+
+### create_from_dictionaries { #matching.games.HospitalResident.create_from_dictionaries }
+
+`games.HospitalResident.create_from_dictionaries(cls, resident_prefs, hospital_prefs, capacities, clean=False)`
+
+Create an instance from a set of dictionaries.
+
+A preference dictionary for residents and hospitals is required,
+along with a dictionary detailing the hospital capacities. If
+``clean``, then remove players from the game and/or player
+preferences if they do not satisfy the conditions of the game.
+
+### solve { #matching.games.HospitalResident.solve }
+
+`games.HospitalResident.solve(self, optimal='resident')`
+
+Solve the instance of HR. Return the matching.
+
+The party optimality can be controlled using the ``optimal``
+parameter.

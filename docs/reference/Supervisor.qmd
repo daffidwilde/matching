@@ -1,0 +1,49 @@
+# Supervisor { #matching.players.Supervisor }
+
+`players.Supervisor(self, name, capacity)`
+
+Supervisor player class for instances of SA.
+
+## Parameters
+
+| Name       | Type   | Description                                            | Default    |
+|------------|--------|--------------------------------------------------------|------------|
+| `name`     | object | An identifier. This should be unique and descriptive.  | _required_ |
+| `capacity` | int    | The maximum number of matches the supervisor can have. | _required_ |
+
+## Attributes
+
+| Name       | Type            | Description                                                                                                                         |
+|------------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| projects   | list of Project | The projects that the supervisor runs. Defaults to an empty list.                                                                   |
+| prefs      | list of Player  | The supervisor's preferences. Defaults to ``None`` and is updated via the ``set_prefs`` method.                                     |
+| pref_names | list            | A list of the names in ``prefs``. Updates with ``prefs`` via ``set_prefs``.                                                         |
+| matching   | list of Player  | The current matches of the supervisor. An empty list if currently unsubscribed, and updated through its projects' matching updates. |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [get_favourite](#matching.players.Supervisor.get_favourite) | Get the supervisor's favourite viable student. |
+| [set_prefs](#matching.players.Supervisor.set_prefs) | Set the preference list for the supervisor. |
+
+### get_favourite { #matching.players.Supervisor.get_favourite }
+
+`players.Supervisor.get_favourite(self)`
+
+Get the supervisor's favourite viable student.
+
+A student is viable if they are not currently matched to, but
+have a preference of, one of the supervisor's under-subscribed
+projects. This method also returns the student's favourite
+under-subscribed project. If no such student exists, return
+``None``.
+
+### set_prefs { #matching.players.Supervisor.set_prefs }
+
+`players.Supervisor.set_prefs(self, students)`
+
+Set the preference list for the supervisor.
+
+This method also passes the preferences on to its projects
+according to those students who ranked each project.

@@ -1,0 +1,77 @@
+# stable_roommates { #matching.algorithms.stable_roommates }
+
+`algorithms.stable_roommates`
+
+Functions for the SR algorithm.
+
+## Functions
+
+| Name | Description |
+| --- | --- |
+| [first_phase](#matching.algorithms.stable_roommates.first_phase) | Make one-way proposals and forget unpreferable pairs. |
+| [get_pairs_to_delete](#matching.algorithms.stable_roommates.get_pairs_to_delete) | Find the set of pairs to remove given an all-or-nothing cycle. |
+| [locate_all_or_nothing_cycle](#matching.algorithms.stable_roommates.locate_all_or_nothing_cycle) | Locate a cycle of (least-preferable, second-choice) pairs. |
+| [second_phase](#matching.algorithms.stable_roommates.second_phase) | Locate and remove all-or-nothing cycles from the game. |
+| [stable_roommates](#matching.algorithms.stable_roommates.stable_roommates) | Irving's algorithm for finding a stable solution to SR. |
+
+### first_phase { #matching.algorithms.stable_roommates.first_phase }
+
+`algorithms.stable_roommates.first_phase(players)`
+
+Make one-way proposals and forget unpreferable pairs.
+
+### get_pairs_to_delete { #matching.algorithms.stable_roommates.get_pairs_to_delete }
+
+`algorithms.stable_roommates.get_pairs_to_delete(cycle)`
+
+Find the set of pairs to remove given an all-or-nothing cycle.
+
+Based on an all-or-nothing cycle (also referred to as a "rotation")
+:math:`(x_1, y_1), \ldots, (x_n, y_n)`, for each
+:math:`i = 1, \ldots, n`, one must delete from the game all pairs
+:math:`(y_i, z)` such that :math:`y_i` prefers :math:`x_{i-1}` to
+:math:`z` where subscripts are taken modulo :math:`n`.
+
+This is an important point that is omitted from the original paper,
+but may be found in :cite:`GI89` (Section 4.2.3).
+
+The essential difference between this statement and that in
+:cite:`Irv85` is the removal of unpreferable pairs, identified using
+an all-or-nothing cycle, in addition to those contained in the
+cycle. Without doing so, tails of cycles can be removed rather than
+whole cycles, leaving some conflicting pairs in the game.
+
+### locate_all_or_nothing_cycle { #matching.algorithms.stable_roommates.locate_all_or_nothing_cycle }
+
+`algorithms.stable_roommates.locate_all_or_nothing_cycle(player)`
+
+Locate a cycle of (least-preferable, second-choice) pairs.
+
+Any such cycle will be removed from the game.
+
+### second_phase { #matching.algorithms.stable_roommates.second_phase }
+
+`algorithms.stable_roommates.second_phase(players)`
+
+Locate and remove all-or-nothing cycles from the game.
+
+### stable_roommates { #matching.algorithms.stable_roommates.stable_roommates }
+
+`algorithms.stable_roommates.stable_roommates(players)`
+
+Irving's algorithm for finding a stable solution to SR.
+
+The algorithm :cite:`Irv85` finds stable solutions to instances of
+SR if one exists. Otherwise, an incomplete matching is found.
+
+#### Parameters
+
+| Name      | Type           | Description                                                | Default    |
+|-----------|----------------|------------------------------------------------------------|------------|
+| `players` | list of Player | The players in the game. Each must rank all other players. | _required_ |
+
+#### Returns
+
+| Type   | Description                                                                                |
+|--------|--------------------------------------------------------------------------------------------|
+| dict   | A dictionary of matches where the keys and values are given by the members of ``players``. |
