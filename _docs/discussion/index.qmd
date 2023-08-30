@@ -8,8 +8,14 @@ listing:
       - "stable_roommates.md"
       - "*.md"
       - "*.qmd"
+   type: table
    sort: false
+   sort-ui: false
+   filter-ui: false
    fields: [title, description]
+   field-display-names:
+      title: " "
+      description: " "
    max-description-length: 500
 ---
 
