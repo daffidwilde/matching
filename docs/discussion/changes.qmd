@@ -1,0 +1,6 @@
+---
+title: CHANGES
+description: A summary of the changes between each version of `matching`
+---
+
+{{< include /CHANGES.md >}}
