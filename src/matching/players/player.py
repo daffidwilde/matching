@@ -28,6 +28,9 @@ class Player(BasePlayer):
         The original set of player preferences.
     """
 
+    def __init__(self, name):
+        super().__init__(name)
+
     def _match(self, other):
         """Assign the player to be matched to some other player."""
 

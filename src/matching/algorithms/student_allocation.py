@@ -26,7 +26,7 @@ def student_allocation(students, projects, supervisors, optimal="student"):
     projects : list of Project
         The projects in the game. Each project is offered by a
         supervisor that governs its preferences.
-    supervisor : list of Supervisor
+    supervisors : list of Supervisor
         The supervisors in the game. Each supervisor offers a unique
         subset of ``projects`` and ranks all the students that have
         ranked at least one of these projects.
