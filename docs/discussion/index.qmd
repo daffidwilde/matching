@@ -8,6 +8,7 @@ listing:
       - "stable_roommates.md"
       - "*.md"
       - "*.qmd"
+      - "changes.qmd"
    type: table
    sort: false
    sort-ui: false
