@@ -1,0 +1,11 @@
+# SingleMatching { #matching.matchings.SingleMatching }
+
+`matchings.SingleMatching(self, dictionary)`
+
+Matching class for games with singular matches like SM or SR.
+
+## Parameters
+
+| Name         | Type   | Description                                                   | Default    |
+|--------------|--------|---------------------------------------------------------------|------------|
+| `dictionary` |        | A dictionary comprised of ``Player, Optional[Player]`` pairs. | _required_ |

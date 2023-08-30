@@ -41,3 +41,47 @@ format:
 bibliography: assets/bibliography.bib
 
 toc: true
+
+metadata-files: 
+  - _sidebar.yml
+
+quartodoc:
+  title: API reference
+  package: matching
+  sidebar: _sidebar.yml
+  sections:
+    - title: Games
+      desc: Objects for handling game instances.
+      package: matching.games
+      contents:
+        - StableMarriage
+        - HospitalResident
+        - StudentAllocation
+        - StableRoommates
+    - title: Players
+      desc: Classes to represent the players who act in games.
+      package: matching.players
+      contents:
+        - Player
+        - Hospital
+        - Project
+        - Supervisor
+    - title: Algorithms
+      desc: Modules for the algorithms that solve matching games.
+      package: matching.algorithms
+      contents:
+        - stable_marriage
+        - hospital_resident
+        - student_allocation
+        - stable_roommates
+    - title: Matchings
+      desc: Dictionary-like objects for storing matchings.
+      package: matching.matchings
+      contents:
+        - SingleMatching
+        - MultipleMatching
+    - title: Auxiliary pieces
+      desc: Everything else exposed in the public API.
+      contents:
+        - exceptions
+        - base
