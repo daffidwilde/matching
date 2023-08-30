@@ -1,5 +1,3 @@
-# CHANGES
-
 ## v1.4.1 - 2023-08-30
 
 - Restructure the project to use `pyproject.toml` and `tox`
