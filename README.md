@@ -1,10 +1,8 @@
-![GitHub Action status](https://github.com/daffidwilde/matching/actions/workflows/ci.yml/badge.svg?branch=main)
+![CI status](https://github.com/daffidwilde/matching/actions/workflows/ci.yml/badge.svg?branch=main)
+[![Code style](https://img.shields.io/badge/code%20style-black-black)](https://github.com/ambv/black)
+[![Zenodo archive](https://zenodo.org/badge/DOI/10.5281/zenodo.2553125.svg)](https://doi.org/10.5281/zenodo.2553125)
+[![JOSS paper](https://joss.theoj.org/papers/10.21105/joss.02169/status.svg)](https://doi.org/10.21105/joss.02169)
 
-[![image](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-
-[![image](https://zenodo.org/badge/119597240.svg)](https://zenodo.org/badge/latestdoi/119597240)
-
-[![image](https://joss.theoj.org/papers/10.21105/joss.02169/status.svg)](https://doi.org/10.21105/joss.02169)
 
 # A package for solving matching games
 
