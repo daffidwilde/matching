@@ -59,7 +59,9 @@ metadata-files:
 quartodoc:
   title: API reference
   package: matching
+  dir: docs/reference
   sidebar: docs/_sidebar.yml
+  
   sections:
     - title: Games
       desc: Objects for handling game instances.
