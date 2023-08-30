@@ -59,8 +59,8 @@ dev = [
 
 [project.urls]
 homepage = "https://github.com/daffidwilde/matching"
-documentation = "https://matching.readthedocs.io"
-changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.rst"
+documentation = "https://daffidwilde.github.io/matching"
+changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.md"
 
 [tool.setuptools.dynamic]
 version = {attr = "matching.__version__"}
