@@ -16,3 +16,6 @@ htmlcov/
 
 
 !img/*.pdf
+
+/.quarto/
+/_site/

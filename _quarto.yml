@@ -5,20 +5,20 @@ website:
   title: "matching"
   navbar:
     left:
-      - href: tutorials/index.qmd
+      - href: docs/tutorials/index.qmd
         text: tutorials
-      - href: how-to/index.qmd
+      - href: docs/how-to/index.qmd
         text: how-to guides
-      - href: discussion/index.qmd
+      - href: docs/discussion/index.qmd
         text: discussion
-      - href: reference/index.qmd
+      - href: docs/reference/index.qmd
         text: reference
     right:
-      - href: citation.qmd
+      - href: docs/citation.qmd
         text: citations
-      - href: contributing.qmd
+      - href: docs/contributing.qmd
         text: contributing
-      - href: bibliography.qmd
+      - href: docs/bibliography.qmd
         text: bibliography
       - icon: github
         href: https://github.com/daffidwilde/matching
@@ -27,13 +27,13 @@ website:
   sidebar:
     - title: tutorials
       style: docked
-      contents: tutorials
+      contents: docs/tutorials
     - title: how-to guides
-      contents: how-to
+      contents: docs/how-to
     - title: discussion
-      contents: discussion
+      contents: docs/discussion
     - title: reference
-      contents: reference
+      contents: docs/reference
       
 
   page-footer:
@@ -47,20 +47,19 @@ format:
     theme:
       light: flatly
       dark: darkly
-    css: styles.css
     mainfont: Arial
 
-bibliography: assets/bibliography.bib
+bibliography: docs/assets/bibliography.bib
 
 toc: true
 
 metadata-files: 
-  - _sidebar.yml
+  - docs/_sidebar.yml
 
 quartodoc:
   title: API reference
   package: matching
-  sidebar: _sidebar.yml
+  sidebar: docs/_sidebar.yml
   sections:
     - title: Games
       desc: Objects for handling game instances.
