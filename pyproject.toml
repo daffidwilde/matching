@@ -62,7 +62,7 @@ homepage = "https://github.com/daffidwilde/matching"
 documentation = "https://matching.readthedocs.io"
 changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.rst"
 
-[tools.setuptools.dynamic]
+[tool.setuptools.dynamic]
 version = {attr = "matching.__version__"}
 
 [tool.black]
