@@ -11,9 +11,15 @@ website:
         text: how-to guides
       - href: discussion/index.qmd
         text: discussion
+      - href: reference/index.qmd
+        text: reference
+    right:
+      - href: citation.qmd
+        text: citations
+      - href: contributing.qmd
+        text: contributing
       - href: bibliography.qmd
         text: bibliography
-    right:
       - icon: github
         href: https://github.com/daffidwilde/matching
       - icon: journal-text
