@@ -1,35 +1,35 @@
 [
   {
-    "listing": "/discussion/other_packages/index.html",
+    "listing": "/docs/tutorials/index.html",
+    "items": [
+      "/docs/tutorials/hospital_resident.html",
+      "/docs/tutorials/stable_roommates.html",
+      "/docs/tutorials/stable_marriage.html",
+      "/docs/tutorials/student_allocation.html"
+    ]
+  },
+  {
+    "listing": "/docs/discussion/other_packages/index.html",
     "items": []
   },
   {
-    "listing": "/discussion/index.html",
+    "listing": "/docs/discussion/index.html",
     "items": [
-      "/discussion/stable_marriage.html",
-      "/discussion/hospital_resident.html",
-      "/discussion/student_allocation.html",
-      "/discussion/stable_roommates.html",
-      "/discussion/other_packages/index.html"
+      "/docs/discussion/stable_marriage.html",
+      "/docs/discussion/hospital_resident.html",
+      "/docs/discussion/student_allocation.html",
+      "/docs/discussion/stable_roommates.html",
+      "/docs/discussion/other_packages/index.html"
     ]
   },
   {
-    "listing": "/tutorials/index.html",
+    "listing": "/docs/how-to/index.html",
     "items": [
-      "/tutorials/hospital_resident.html",
-      "/tutorials/stable_roommates.html",
-      "/tutorials/stable_marriage.html",
-      "/tutorials/student_allocation.html"
-    ]
-  },
-  {
-    "listing": "/how-to/index.html",
-    "items": [
-      "/how-to/check_matching_status.html",
-      "/how-to/choose_optimality.html",
-      "/how-to/create_from_instances.html",
-      "/how-to/create_from_dictionaries.html",
-      "/how-to/remove_banned_pairs.html"
+      "/docs/how-to/check_matching_status.html",
+      "/docs/how-to/choose_optimality.html",
+      "/docs/how-to/create_from_instances.html",
+      "/docs/how-to/create_from_dictionaries.html",
+      "/docs/how-to/remove_banned_pairs.html"
     ]
   }
 ]

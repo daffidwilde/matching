@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>matching – hospital_resident</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">matching</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../docs/tutorials/index.html" rel="" target="">
+ <span class="menu-text">tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../docs/how-to/index.html" rel="" target="">
+ <span class="menu-text">how-to guides</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../docs/discussion/index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">discussion</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../docs/reference/index.html" rel="" target="">
+ <span class="menu-text">reference</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../docs/citation.html" rel="" target="">
+ <span class="menu-text">citations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../docs/contributing.html" rel="" target="">
+ <span class="menu-text">contributing</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../docs/bibliography.html" rel="" target="">
+ <span class="menu-text">bibliography</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/daffidwilde/matching" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://doi.org/10.21105/joss.02169" rel="" target=""><i class="bi bi-journal-text" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../docs/discussion/index.html">Discussion</a></li><li class="breadcrumb-item"><a href="../../docs/discussion/hospital_resident.html">The hospital-resident assignment problem</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../docs/discussion/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discussion</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/discussion/hospital_resident.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">The hospital-resident assignment problem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/discussion/other_packages/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Other packages</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/discussion/stable_marriage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The stable marriage problem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/discussion/stable_roommates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The stable roommates problem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/discussion/student_allocation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The student-allocation problem</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hospital-resident" id="toc-hospital-resident" class="nav-link active" data-scroll-target="#hospital-resident">The hospital-resident assignment problem</a>
+  <ul class="collapse">
+  <li><a href="#key-definitions" id="toc-key-definitions" class="nav-link" data-scroll-target="#key-definitions">Key definitions</a>
+  <ul class="collapse">
+  <li><a href="#the-game" id="toc-the-game" class="nav-link" data-scroll-target="#the-game">The game</a></li>
+  <li><a href="#matching" id="toc-matching" class="nav-link" data-scroll-target="#matching">Matching</a></li>
+  <li><a href="#blocking-pair" id="toc-blocking-pair" class="nav-link" data-scroll-target="#blocking-pair">Blocking pair</a></li>
+  </ul></li>
+  <li><a href="#an-example" id="toc-an-example" class="nav-link" data-scroll-target="#an-example">An example</a></li>
+  <li><a href="#the-algorithm" id="toc-the-algorithm" class="nav-link" data-scroll-target="#the-algorithm">The algorithm</a>
+  <ul class="collapse">
+  <li><a href="#resident-optimal" id="toc-resident-optimal" class="nav-link" data-scroll-target="#resident-optimal">Resident-optimal</a></li>
+  <li><a href="#hospital-optimal" id="toc-hospital-optimal" class="nav-link" data-scroll-target="#hospital-optimal">Hospital-optimal</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="hospital-resident" class="level1">
+<h1>The hospital-resident assignment problem</h1>
+<p>The hospital-resident assignment problem (HR) is an extension of SM where residents must be assigned to placements at hospitals.</p>
+<section id="key-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="key-definitions">Key definitions</h2>
+<section id="the-game" class="level3">
+<h3 class="anchored" data-anchor-id="the-game">The game</h3>
+<p>Consider two distinct sets, <span class="math inline">\(R\)</span> and <span class="math inline">\(H\)</span>, and let us refer to them as residents and hospitals. Each hospital <span class="math inline">\(h \in H\)</span> has a capacity associated with them <span class="math inline">\(c_h \in \mathbb{N}\)</span>.</p>
+<p>As in SM, each player has a preference list associated with them but they needn't be exhaustive of the other party. Instead:</p>
+<ul>
+<li>Each resident <span class="math inline">\(r \in R\)</span> must rank a non-empty subset of <span class="math inline">\(H\)</span>. We denote this preference by <span class="math inline">\(f(r)\)</span>.</li>
+<li>Each hospital <span class="math inline">\(h \in H\)</span> must rank <strong>all</strong> those residents that have ranked it. That is, the preference list of <span class="math inline">\(h\)</span>, denoted by <span class="math inline">\(g(h)\)</span>, is a permutation of the set given by <span class="math inline">\(\left\{r \in R \ | \ h \in f(r)\right\}\)</span>. If no residents rank a hospital then that hospital is removed from <span class="math inline">\(H\)</span>.</li>
+</ul>
+<p>This construction of residents, hospitals, capacities and preference lists is a game and is denoted by <span class="math inline">\((R,H)\)</span>. This game is used to model instances of HR.</p>
+</section>
+<section id="matching" class="level3">
+<h3 class="anchored" data-anchor-id="matching">Matching</h3>
+<p>A matching <span class="math inline">\(M\)</span> is any mapping between <span class="math inline">\(R\)</span> and <span class="math inline">\(H\)</span>. If a pair <span class="math inline">\((r, h) \in R \times H\)</span> are matched in <span class="math inline">\(M\)</span>, we say that <span class="math inline">\(M(r) = h\)</span> and <span class="math inline">\(r \in M^{-1}(h)\)</span>.</p>
+<p>A matching is only considered valid if <strong>all</strong> of the following are satisfied:</p>
+<blockquote class="blockquote">
+<ol type="1">
+<li>For all <span class="math inline">\(r \in R\)</span> with a match we have <span class="math inline">\(M(r) \in f(r)\)</span>.</li>
+<li>For all <span class="math inline">\(h \in H\)</span> with matches we have <span class="math inline">\(M^{-1}(h) \subseteq g(h)\)</span>.</li>
+<li>For all <span class="math inline">\(h \in H\)</span> we have <span class="math inline">\(|M^{-1}(h)| \leq c_h\)</span>.</li>
+</ol>
+</blockquote>
+<p>Again, a valid matching is considered stable if it does not contain any blocking pairs.</p>
+</section>
+<section id="blocking-pair" class="level3">
+<h3 class="anchored" data-anchor-id="blocking-pair">Blocking pair</h3>
+<p>A pair <span class="math inline">\((r, h)\)</span> is said to block a matching <span class="math inline">\(M\)</span> if <strong>all</strong> the following hold:</p>
+<blockquote class="blockquote">
+<ol type="1">
+<li>There is mutual preference, i.e.&nbsp;<span class="math inline">\(r \in g(h)\)</span> <strong>and</strong> <span class="math inline">\(h \in f(r)\)</span>.</li>
+<li>Either <span class="math inline">\(r\)</span> is unmatched or they prefer <span class="math inline">\(h\)</span> to <span class="math inline">\(M(r) = h'\)</span>.</li>
+<li>Either <span class="math inline">\(|M^{-1}(h)| &lt; c_h\)</span> or <span class="math inline">\(h\)</span> prefers <span class="math inline">\(r\)</span> to at least one <span class="math inline">\(r' \in M^{-1}(h)\)</span>.</li>
+</ol>
+</blockquote>
+<p>The notion of preference here is the same as in SM.</p>
+</section>
+</section>
+<section id="an-example" class="level2">
+<h2 class="anchored" data-anchor-id="an-example">An example</h2>
+<p>Consider the following instance of HR. There are five residents – Ada, Sam, Jo, Luc, Dani – applying to work at three hospitals: Mercy, City, General. Each hospital has two available positions, and the players' preferences of one another are described in the graph below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/discussion/hr_matching.svg" class="align-center img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">image</figcaption>
+</figure>
+</div>
+<p>As with SM, this representation is a easy way to keep track of the current state of the problem and the relationships between players. Consider the matching presented below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/discussion/hr_invalid.svg" class="align-center img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">image</figcaption>
+</figure>
+</div>
+<p>This matching is invalid. In fact, none of the conditions for validity have been met: City hospital is over-subscribed and Ada has been assigned to a hospital that they did not rank (likewise for Mercy). Some slight tinkering can produce a valid matching:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/discussion/hr_unstable.svg" class="align-center img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">image</figcaption>
+</figure>
+</div>
+<p>Even with this, the matching is not stable. There exists one blocking pair: <span class="math inline">\((L, M)\)</span>. Here, there is mutual preference, Luc prefers Mercy to General and Mercy has a space remaining. Hence, a stable solution would be as follows:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/discussion/hr_stable.svg" class="align-center img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">image</figcaption>
+</figure>
+</div>
+<p>It also so happens that this matching is both resident- and hospital-optimal.</p>
+</section>
+<section id="the-algorithm" class="level2">
+<h2 class="anchored" data-anchor-id="the-algorithm">The algorithm</h2>
+<p>Finding optimal, stable matchings for HR is of great importance as it solves real-world problems. For instance, the <a href="http://www.nrmp.org">National Resident Matching Program</a> uses an algorithm like the one presented here to assign medical students in the US to hospitals. An algorithm which solves HR was originally presented in <code class="interpreted-text" role="cite">GS62</code> but further work was done to improve on these algorithms in later years <code class="interpreted-text" role="cite">DF81</code>, <code class="interpreted-text" role="cite">Rot84</code>. Unlike the algorithm for SM, this algorithm takes a different form depending on the desired optimality of the solution.</p>
+<p>Below are resident-optimal and hospital-optimal algorithms for finding a unique, stable matching for an instance of HR. Each algorithm was taken from <code class="interpreted-text" role="cite">GI89</code>.</p>
+<section id="resident-optimal" class="level3">
+<h3 class="anchored" data-anchor-id="resident-optimal">Resident-optimal</h3>
+<ol start="0" type="1">
+<li>Assign all residents to be unmatched, and all hospitals to be totally unsubscribed.</li>
+<li>Take any unmatched resident with a non-empty preference list <span class="math inline">\(r\)</span>, and consider their most preferred hospital <span class="math inline">\(h\)</span>. Match them to one another.</li>
+<li>If <span class="math inline">\(|M^{-1}(h)| &gt; c_h\)</span>, find the worst resident <span class="math inline">\(r'\)</span> assigned to <span class="math inline">\(h\)</span> and unmatch the pair <span class="math inline">\((r', h)\)</span>.</li>
+<li>If <span class="math inline">\(|M^{-1}(h)| = c_h\)</span>, find the worst resident <span class="math inline">\(r'\)</span> assigned to <span class="math inline">\(h\)</span>. Then, for each successor <span class="math inline">\(s \in g(h)\)</span> to <span class="math inline">\(r'\)</span>, delete the pair <span class="math inline">\((s, h)\)</span> from the game by removing <span class="math inline">\(h\)</span> from <span class="math inline">\(f(s)\)</span> and <span class="math inline">\(s\)</span> from <span class="math inline">\(g(h)\)</span>.</li>
+<li>Go to 1 until there are no such residents left, then end.</li>
+</ol>
+</section>
+<section id="hospital-optimal" class="level3">
+<h3 class="anchored" data-anchor-id="hospital-optimal">Hospital-optimal</h3>
+<ol start="0" type="1">
+<li>Set all residents to be unmatched, and all hospitals to be totally unsubscribed.</li>
+<li>Take any hospital <span class="math inline">\(h\)</span> that is under-subscribed and whose preference list contains any resident they are not currently assigned to, and consider their most preferred such resident <span class="math inline">\(r\)</span>.</li>
+<li>If <span class="math inline">\(r\)</span> is currently matched to some other hospital <span class="math inline">\(h'\)</span>, then unmatch them from one another.</li>
+<li>Match <span class="math inline">\(r\)</span> with <span class="math inline">\(h\)</span>.</li>
+<li>For each successor <span class="math inline">\(s \in f(r)\)</span> to <span class="math inline">\(h\)</span>, delete the pair <span class="math inline">\((r, s)\)</span> from the game.</li>
+<li>Go to 1 until there are no such hospitals left, then end.</li>
+</ol>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Copyright, Henry Wilde 2023. Powered by <a href="https://quarto.org/docs/websites">Quarto</a> and <a href="https://diataxis.fr">Diátaxis</a>.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
