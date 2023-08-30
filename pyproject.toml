@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=62"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "matching"
+authors = [
+    { name="Henry Wilde", email="henrydavidwilde@gmail.com" },
+    { name="Vince Knight" },
+]
+description = "A package for solving matching games"
+readme = "README.rst"
+requires-python = ">=3.5"
+license = {text = "MIT License"}
+keywords = [
+    "game-theory",
+    "gale-shapley",
+    "matching-games",
+    "stable-marriage",
+    "hospital-resident",
+    "stable-roommates",
+    "project-allocation",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "numpy>=1.19.2"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+test = [
+    "hypothesis>=6.31.6",
+    "nbval>=0.10.0",
+    "pytest>=6.2.5",
+    "pytest-cov>=3.0.0",
+    "pytest-randomly>=3.10",
+]
+docs = [
+    "ipython>=7.10",
+    "matplotlib>=3",
+    "nbsphinx>=0.8.8",
+    "pandas>=1.1.5",
+    "PyYAML>=6",
+    "quartodoc>=0.5.0",
+]
+dev = [
+    "black>=22.6.0,<23",
+    "flake8>=4.0.1",
+    "interrogate>=1.5.0",
+    "isort>=5.10.1",
+    "matching[docs,test]",
+]
+
+[project.urls]
+homepage = "https://github.com/daffidwilde/matching"
+documentation = "https://matching.readthedocs.io"
+changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.rst"
+
+[tools.setuptools.dynamic]
+version = {attr = "matching.__version__"}
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
+fail-under = 100
+verbose = 1
+
+[tool.coverage.report]
+omit = ["src/**/__init__.py"]
