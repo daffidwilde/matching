@@ -1,0 +1,35 @@
+[
+  {
+    "listing": "/discussion/other_packages/index.html",
+    "items": []
+  },
+  {
+    "listing": "/discussion/index.html",
+    "items": [
+      "/discussion/stable_marriage.html",
+      "/discussion/hospital_resident.html",
+      "/discussion/student_allocation.html",
+      "/discussion/stable_roommates.html",
+      "/discussion/other_packages/index.html"
+    ]
+  },
+  {
+    "listing": "/tutorials/index.html",
+    "items": [
+      "/tutorials/hospital_resident.html",
+      "/tutorials/stable_roommates.html",
+      "/tutorials/stable_marriage.html",
+      "/tutorials/student_allocation.html"
+    ]
+  },
+  {
+    "listing": "/how-to/index.html",
+    "items": [
+      "/how-to/check_matching_status.html",
+      "/how-to/choose_optimality.html",
+      "/how-to/create_from_instances.html",
+      "/how-to/create_from_dictionaries.html",
+      "/how-to/remove_banned_pairs.html"
+    ]
+  }
+]
