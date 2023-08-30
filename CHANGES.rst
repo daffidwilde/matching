@@ -1,6 +1,14 @@
 History
 =======
 
+v1.4.1 - 2023-08-30
+-------------------
+
+- Restructure the project to use `pyproject.toml` and `tox`
+- Improve the documentation (reformatted doc-strings, migrating to Quarto and
+  GitHub Pages)
+- Minor fixes to ensure CI
+
 v1.4 - 2020-11-04
 -----------------
 
