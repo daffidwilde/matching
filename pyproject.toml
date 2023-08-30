@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "matching"
-version = "1.4.0"
 authors = [
     { name="Henry Wilde", email="henrydavidwilde@gmail.com" },
     { name="Vince Knight" },
@@ -32,6 +31,7 @@ classifiers = [
 dependencies = [
     "numpy>=1.19.2"
 ]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 test = [
@@ -47,18 +47,14 @@ docs = [
     "nbsphinx>=0.8.8",
     "pandas>=1.1.5",
     "PyYAML>=6",
-    "sphinx==4.3.2",
-    "sphinx-autoapi==1.8.4",
-    "sphinx-rtd-theme==1.0.0",
-    "sphinxcontrib-bibtex==2.5.0",
+    "quartodoc>=0.5.0",
 ]
 dev = [
-    "black>=22.3.0",
+    "black>=22.6.0,<23",
     "flake8>=4.0.1",
     "interrogate>=1.5.0",
     "isort>=5.10.1",
-    "matching[test]",
-    "matching[docs]",
+    "matching[docs,test]",
 ]
 
 [project.urls]
