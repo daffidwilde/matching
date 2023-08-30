@@ -4,7 +4,9 @@ from matching import BasePlayer
 
 
 class Player(BasePlayer):
-    """A class to represent a player within the matching game.
+    """Generic single-match player class for instances of SM or SR.
+
+    This class is also used for residents in HR and students in SA.
 
     Parameters
     ----------
@@ -14,16 +16,20 @@ class Player(BasePlayer):
     Attributes
     ----------
     prefs : list of Player
-        The player's preferences. Defaults to ``None`` and is updated using the
-        ``set_prefs`` method.
+        The player's preferences. Defaults to ``None`` and is updated
+        using the ``set_prefs`` method.
     pref_names : list
         A list of the names in ``prefs``. Updates with ``prefs`` via
         ``set_prefs`` method.
     matching : Player or None
-        The current match of the player. ``None`` if not currently matched.
+        The current match of the player. ``None`` if not currently
+        matched.
     _original_prefs : list of Player
         The original set of player preferences.
     """
+
+    def __init__(self, name):
+        super().__init__(name)
 
     def _match(self, other):
         """Assign the player to be matched to some other player."""
@@ -47,8 +53,11 @@ class Player(BasePlayer):
         return self.prefs[idx + 1 :]
 
     def check_if_match_is_unacceptable(self, unmatched_okay=False):
-        """Check the acceptability of the current match, with the stipulation
-        that being unmatched is okay (or not)."""
+        """Check the acceptability of the current match.
+
+        In some games, a player being unmatched does not invalidate the
+        game. The ``unmatched_okay`` parameter controls this behaviour.
+        """
 
         other = self.matching
 

@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: 'Matching: A library for solving matching games'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Henry
+    family-names: Wilde
+    email: henrydavidwilde@gmail.com
+    orcid: 'https://orcid.org/0000-0002-3788-7691'
+  - given-names: Vince
+    family-names: Knight
+    orcid: 'https://orcid.org/0000-0002-4245-0638'
+  - given-names: Jonathan
+    family-names: Gillard
+    orcid: 'https://orcid.org/0000-0001-9166-298X'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.2553125
+    description: Zenodo archive
+  - type: doi
+    value: 10.21105/joss.02169
+    description: JOSS paper
+repository-code: 'https://github.com/daffidwilde/matching'
+keywords:
+  - matching
+  - python
+  - game
+license: MIT

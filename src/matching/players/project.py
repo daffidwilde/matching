@@ -1,10 +1,10 @@
-""" The Project class for use in instances of SA. """
+"""The Project class for use in instances of SA."""
 
 from .hospital import Hospital
 
 
 class Project(Hospital):
-    """A class to represent a project in an instance of SA.
+    """Project player class for instances of SA.
 
     Parameters
     ----------
@@ -17,24 +17,25 @@ class Project(Hospital):
     ----------
     supervisor : Supervisor
         The supervisor that runs the project. Defaults to ``None``.
+        Controlled using the ``set_supervisor`` method.
     prefs : list of Player
-        The project's preferences. Inherited from ``supervisor``.
-    pref_names : list
-        A list of the names in ``prefs``. Updates with ``prefs`` via the
-        ``supervisor.set_prefs`` method.
+        The project's preferences. Inherited from ``supervisor`` and set
+        via the ``Supervisor.set_prefs`` method.
     matching : list of Player
         The current matches of the project. An empty list if currently
         unsubscribed.
     """
 
     def __init__(self, name, capacity):
-
         super().__init__(name, capacity)
         self.supervisor = None
 
     def _forget(self, student):
-        """Remove ``student`` from the preference list of the project and its
-        supervisor."""
+        """Remove a student from the project preference list.
+
+        This method also prompts the supervisor to attempt forgetting
+        the student.
+        """
 
         if student in self.prefs:
             prefs = self.prefs[:]
@@ -43,16 +44,22 @@ class Project(Hospital):
             self.supervisor._forget(student)
 
     def _match(self, student):
-        """Match the project to ``student``, and update the project
-        supervisor's matching to include ``student``, too."""
+        """Match the project to the student.
+
+        This method also updates the project supervisor's matching to
+        include the student.
+        """
 
         self.matching.append(student)
         self.matching.sort(key=self.prefs.index)
         self.supervisor._match(student)
 
     def _unmatch(self, student):
-        """Break the matching between the project and ``student``, and the
-        matching between ``student`` and the project supervisor."""
+        """Break the matching between the project and the student.
+
+        This method also breaks the matching between the student and the
+        project supervisor.
+        """
 
         matching = self.matching[:]
         matching.remove(student)
@@ -60,8 +67,10 @@ class Project(Hospital):
         self.supervisor._unmatch(student)
 
     def set_supervisor(self, supervisor):
-        """Set the project's supervisor and add the project to their list
-        of active projects."""
+        """Assign the supervisor to the project.
+
+        This method also update the supervisor's project list.
+        """
 
         self.supervisor = supervisor
         if self not in supervisor.projects:

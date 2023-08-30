@@ -1,13 +1,14 @@
-""" A collection of example tests. """
+"""A collection of example tests for SM."""
 
 from matching import Player
 from matching.algorithms import stable_marriage
 
 
 def test_pride_and_prejudice():
-    """Verify that the matching found is consistent with the one adapted from
-    Jane Austen's Pride and Prejudice. Also used in
-    `docs/discussion/stable_marriage/example.rst`."""
+    """Test the example from Jane Austen's Pride and Prejudice.
+
+    This example appears in the SM Discussion documentation.
+    """
 
     suitors = [
         Player(name="Bingley"),
@@ -46,7 +47,7 @@ def test_pride_and_prejudice():
 
 
 def test_readme_example():
-    """Verify the example used in the repo README."""
+    """Verify the example used in the README."""
 
     suitors = [Player(name="A"), Player(name="B"), Player(name="C")]
     reviewers = [Player(name="D"), Player(name="E"), Player(name="F")]

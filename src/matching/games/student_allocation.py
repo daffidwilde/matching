@@ -1,4 +1,5 @@
-""" The SA game class and supporting functions. """
+"""The SA game class and supporting functions."""
+
 import copy
 import warnings
 
@@ -15,23 +16,23 @@ from matching.players import Project, Supervisor
 
 
 class StudentAllocation(HospitalResident):
-    """A class for solving instances of the student-allocation problem (SA)
-    using an adapted Gale-Shapley algorithm.
+    """Solver for the student-allocation problem (SA).
 
-    In this case, a blocking pair is defined as any student-project pair that
+    In SA, a blocking pair is defined as any student-project pair that
     satisfies **all** of the following:
 
     1. The student has a preference of the project.
-    2. Either the student is unmatched, or they prefer the project to their
-       current project.
+    2. Either the student is unmatched, or they prefer the project to
+       their current project.
     3. At least one of the following:
 
        - The project or its supervisor is under-subscribed.
-       - The project is under-subscribed and the supervisor is at capacity, and
-         the student is matched to a project offered by the supervisor or the
-         supervisor prefers the student to its worst currently matched student.
-       - The project is at capacity and its supervisor prefers the student to
-         its worst currently matched student.
+       - The project is under-subscribed and the supervisor is at
+         capacity, and the student is matched to a project offered by
+         the supervisor or the supervisor prefers the student to its
+         worst currently matched student.
+       - The project is at capacity and its supervisor prefers the
+         student to its worst currently matched student.
 
     Parameters
     ----------
@@ -39,30 +40,29 @@ class StudentAllocation(HospitalResident):
         The students in the game. Each student must rank a subset of the
         projects.
     projects : list of Project
-        The projects in the game. Each project has a supervisor associated
-        with it that governs its preferences.
+        The projects in the game. Each project has a supervisor
+        associated with it that governs its preferences.
     supervisors : list of Supervisor
-        The supervisors in the game. Each supervisor oversees a unique subset
-        of ``projects`` and ranks all of those students that have ranked at
-        least one of its projects.
+        The supervisors in the game. Each supervisor oversees a unique
+        subset of ``projects`` and ranks all of those students that have
+        ranked at least one of its projects.
     clean : bool
-        An indicator as to whether the players passed to the game should be
-        cleaned in a reductive fashion. Defaults to :code:`False`.
+        An indicator as to whether the players passed to the game should
+        be cleaned in a reductive fashion. Defaults to ``False``.
 
     Attributes
     ----------
-    matching : Matching or None
-        Once the game is solved, a matching is available. This ``Matching``
-        object behaves much like a dictionary that uses the elements of
-        ``projects`` as keys and their student matches as values. Initialises as
-        ``None``.
+    matching : MultipleMatching or None
+        Once the game is solved, a matching is available. This
+        ``MultipleMatching`` object behaves much like a dictionary that
+        uses the elements of ``projects`` as keys and their student
+        matches as values. Initialises as ``None``.
     blocking_pairs : list of (Player, Project)
-        Initialises as None. Otherwise, a list of the student-project blocking
-        pairs.
+        Initialises as ``None``. Otherwise, a list of the
+        student-project blocking pairs.
     """
 
     def __init__(self, students, projects, supervisors, clean=False):
-
         students, projects, supervisors = copy.deepcopy(
             [students, projects, supervisors]
         )
@@ -80,8 +80,11 @@ class StudentAllocation(HospitalResident):
         self.check_inputs()
 
     def _remove_player(self, player, player_party, other_party=None):
-        """Remove players from the game normally unless the player is a
-        supervisor."""
+        """Remove a player from the game.
+
+        If the player is a supervisor, we must also remove all their
+        projects.
+        """
 
         if player_party == "supervisors":
             self.supervisors.remove(player)
@@ -104,8 +107,12 @@ class StudentAllocation(HospitalResident):
         supervisor_capacities,
         clean=False,
     ):
-        """Create an instance of SA from two preference dictionaries,
-        affiliations and capacities."""
+        """Create an instance of SA from a set of dictionaries.
+
+        SA requires preference dictionaries for students and
+        supervisors, a project-supervisor affiliation dictionary, and
+        a capacity dictionary for both the projects and supervisors.
+        """
 
         students, projects, supervisors = _make_players(
             student_prefs,
@@ -119,8 +126,12 @@ class StudentAllocation(HospitalResident):
         return game
 
     def solve(self, optimal="student"):
-        """Solve the instance of SA using either the student- or
-        supervisor-optimal algorithm."""
+        """Solve the instance of SA.
+
+        Party optimality can be controlled using the ``optimal``
+        parameter. Solutions can either be student-optimal or
+        supervisor-optimal.
+        """
 
         self.matching = MultipleMatching(
             student_allocation(
@@ -130,8 +141,7 @@ class StudentAllocation(HospitalResident):
         return self.matching
 
     def check_validity(self):
-        """Check whether the current matching is valid. Raise a `MatchingError`
-        detailing the issues if not."""
+        """Check whether the current matching is valid."""
 
         unacceptable_issues = (
             self._check_for_unacceptable_matches("students")
@@ -152,8 +162,7 @@ class StudentAllocation(HospitalResident):
         return True
 
     def check_stability(self):
-        """Check for the existence of any blocking pairs in the current
-        matching, thus determining the stability of the matching."""
+        """Check for the existence of any blocking pairs."""
 
         blocking_pairs = []
         for student in self.students:
@@ -169,9 +178,11 @@ class StudentAllocation(HospitalResident):
         return not any(blocking_pairs)
 
     def check_inputs(self):
-        """Give out warnings if any of the conditions of the game have been
-        broken. If the :code:`clean` attribute is :code:`True`, then remove any
-        such situations from the game."""
+        """Check if any rules of the game have been broken.
+
+        Any violations will be flagged as warnings. If the ``clean``
+        attribute is in use, then any violations will be removed.
+        """
 
         self._check_inputs_player_prefs_unique("students")
         self._check_inputs_player_prefs_unique("projects")
@@ -184,7 +195,9 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("projects")
-        self._check_inputs_player_reciprocated_all_prefs("projects", "students")
+        self._check_inputs_player_reciprocated_all_prefs(
+            "projects", "students"
+        )
         self._check_inputs_player_prefs_nonempty("projects", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("supervisors")
@@ -199,8 +212,11 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_supervisor_capacities_necessary()
 
     def _check_inputs_player_prefs_all_reciprocated(self, party):
-        """Check that each player in :code:`party` has ranked only those
-        players that have ranked it, directly or via a project."""
+        """Check everyone has only ranked players who ranked them.
+
+        In the case of supervisors, this means checking the students who
+        ranked at least one of their projects.
+        """
 
         if party == "supervisors":
             for supervisor in self.supervisors:
@@ -224,12 +240,14 @@ class StudentAllocation(HospitalResident):
             super()._check_inputs_player_prefs_all_reciprocated(party)
 
     def _check_inputs_player_reciprocated_all_prefs(self, party, other_party):
-        """Check that each player in :code:`party` has ranked all those players
-        in :code:`other_party` that ranked it, directly or via a project."""
+        """Check everyone has ranked all the players who ranked them.
+
+        In the case of supervisors, this means checking the students who
+        ranked at least one of their projects.
+        """
 
         if party == "supervisors":
             for supervisor in self.supervisors:
-
                 students_that_ranked = [
                     student
                     for student in self.students
@@ -260,11 +278,9 @@ class StudentAllocation(HospitalResident):
             )
 
     def _check_inputs_supervisor_capacities_sufficient(self):
-        """Check that each supervisor has the capacity to support its largest
-        project(s)."""
+        """Check each supervisor has space for its largest project."""
 
         for supervisor in self.supervisors:
-
             for project in supervisor.projects:
                 if project.capacity > supervisor.capacity:
                     warnings.warn(
@@ -279,11 +295,9 @@ class StudentAllocation(HospitalResident):
                         project.capacity = supervisor.capacity
 
     def _check_inputs_supervisor_capacities_necessary(self):
-        """Check that each supervisor has at most the necessary capacity for
-        all of their projects."""
+        """Check each supervisor has no surplus given their projects."""
 
         for supervisor in self.supervisors:
-
             total_project_capacity = sum(
                 p.capacity for p in supervisor.projects
             )
@@ -291,9 +305,9 @@ class StudentAllocation(HospitalResident):
             if supervisor.capacity > total_project_capacity:
                 warnings.warn(
                     CapacityChangedWarning(
-                        f"{supervisor} has a capacity of {supervisor.capacity} "
-                        "but their projects have a capacity of "
-                        f"{total_project_capacity}"
+                        f"{supervisor} has a capacity of "
+                        f"{supervisor.capacity} but their projects have a "
+                        f"capacity of {total_project_capacity}"
                     )
                 )
 
@@ -302,8 +316,11 @@ class StudentAllocation(HospitalResident):
 
 
 def _check_student_unhappy(student, project):
-    """Determine whether ``student`` is unhappy either because they are
-    unmatched or because they prefer ``project`` to their current matching."""
+    """Check whether a student is unhappy given a project.
+
+    An unhappy student is either unmatched or they prefer the project to
+    their current match.
+    """
 
     return student.matching is None or student.prefers(
         project, student.matching
@@ -311,13 +328,16 @@ def _check_student_unhappy(student, project):
 
 
 def _check_project_unhappy(project, student):
-    """Determine whether ``project`` is unhappy because either:
+    """Check whether a project is unhappy given a student.
+
+    A project is unhappy because either:
+
     - they and their supervisor are under-subscribed;
     - they are under-subscribed, their supervisor is full, and either
-      ``student`` is in the supervisor's matching or the supervisor prefers
-      ``student`` to their worst current matching;
-    - ``project`` is full and their supervisor prefers ``student`` to the
-      worst student in the matching of ``project``.
+      the student is in the supervisor's matching or the supervisor
+      prefers the student to their worst current matching;
+    - the project is full and their supervisor prefers the student to
+      the worst student in the project's matching.
     """
 
     supervisor = project.supervisor
@@ -354,9 +374,7 @@ def _make_players(
     project_capacities,
     supervisor_capacities,
 ):
-    """Make a set of ``Player``, ``Project`` and ``Supervisor`` instances,
-    respectively for the students, projects and supervisors from the
-    dictionaries given, and add their preferences."""
+    """Make a set of students, projects and supervisors."""
 
     student_dict, project_dict, supervisor_dict = _make_instances(
         student_prefs,
@@ -386,8 +404,7 @@ def _make_instances(
     project_capacities,
     supervisor_capacities,
 ):
-    """Create ``Player``, ``Project`` and ``Supervisor`` instances for the
-    names in each dictionary."""
+    """Make ``Player``, ``Project`` and ``Supervisor`` instances."""
 
     student_dict, project_dict, supervisor_dict = {}, {}, {}
 

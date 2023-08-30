@@ -1,4 +1,4 @@
-""" Top-level imports for the library. """
+"""Top-level imports for the library."""
 
 import sys
 
@@ -9,16 +9,20 @@ if not sys.warnoptions:
 
 from .base import BaseGame, BaseMatching, BasePlayer
 from .matchings import MultipleMatching, SingleMatching
-from .players import Player
-from .version import __version__
+from .players import Hospital, Player, Project, Supervisor
+
+__version__ = "1.4.1"
 
 __all__ = [
     "BaseGame",
     "BaseMatching",
     "BasePlayer",
+    "Hospital",
     "Matching",
     "MultipleMatching",
     "Player",
+    "Project",
     "SingleMatching",
+    "Supervisor",
     "__version__",
 ]

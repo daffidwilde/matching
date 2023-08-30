@@ -1,0 +1,8 @@
+---
+title: Bibliography
+nocite: |
+    @*
+---
+
+Here is a collection of the references cited
+throughout this set of documentation.

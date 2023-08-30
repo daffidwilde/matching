@@ -1,4 +1,4 @@
-""" Top-level imports for the `matching.games` subpackage. """
+"""Top-level imports for the `matching.games` subpackage."""
 
 from .hospital_resident import HospitalResident
 from .stable_marriage import StableMarriage

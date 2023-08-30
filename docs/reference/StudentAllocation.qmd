@@ -1,0 +1,88 @@
+# StudentAllocation { #matching.games.StudentAllocation }
+
+`games.StudentAllocation(self, students, projects, supervisors, clean=False)`
+
+Solver for the student-allocation problem (SA).
+
+In SA, a blocking pair is defined as any student-project pair that
+satisfies **all** of the following:
+
+1. The student has a preference of the project.
+2. Either the student is unmatched, or they prefer the project to
+   their current project.
+3. At least one of the following:
+
+   - The project or its supervisor is under-subscribed.
+   - The project is under-subscribed and the supervisor is at
+     capacity, and the student is matched to a project offered by
+     the supervisor or the supervisor prefers the student to its
+     worst currently matched student.
+   - The project is at capacity and its supervisor prefers the
+     student to its worst currently matched student.
+
+## Parameters
+
+| Name          | Type               | Description                                                                                                                                                          | Default    |
+|---------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| `students`    | list of Player     | The students in the game. Each student must rank a subset of the projects.                                                                                           | _required_ |
+| `projects`    | list of Project    | The projects in the game. Each project has a supervisor associated with it that governs its preferences.                                                             | _required_ |
+| `supervisors` | list of Supervisor | The supervisors in the game. Each supervisor oversees a unique subset of ``projects`` and ranks all of those students that have ranked at least one of its projects. | _required_ |
+| `clean`       | bool               | An indicator as to whether the players passed to the game should be cleaned in a reductive fashion. Defaults to ``False``.                                           | `False`    |
+
+## Attributes
+
+| Name           | Type                              | Description                                                                                                                                                                                                                    |
+|----------------|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| matching       | matching.MultipleMatching or None | Once the game is solved, a matching is available. This ``MultipleMatching`` object behaves much like a dictionary that uses the elements of ``projects`` as keys and their student matches as values. Initialises as ``None``. |
+| blocking_pairs | list of (Player, Project)         | Initialises as ``None``. Otherwise, a list of the student-project blocking pairs.                                                                                                                                              |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [check_inputs](#matching.games.StudentAllocation.check_inputs) | Check if any rules of the game have been broken. |
+| [check_stability](#matching.games.StudentAllocation.check_stability) | Check for the existence of any blocking pairs. |
+| [check_validity](#matching.games.StudentAllocation.check_validity) | Check whether the current matching is valid. |
+| [create_from_dictionaries](#matching.games.StudentAllocation.create_from_dictionaries) | Create an instance of SA from a set of dictionaries. |
+| [solve](#matching.games.StudentAllocation.solve) | Solve the instance of SA. |
+
+### check_inputs { #matching.games.StudentAllocation.check_inputs }
+
+`games.StudentAllocation.check_inputs(self)`
+
+Check if any rules of the game have been broken.
+
+Any violations will be flagged as warnings. If the ``clean``
+attribute is in use, then any violations will be removed.
+
+### check_stability { #matching.games.StudentAllocation.check_stability }
+
+`games.StudentAllocation.check_stability(self)`
+
+Check for the existence of any blocking pairs.
+
+### check_validity { #matching.games.StudentAllocation.check_validity }
+
+`games.StudentAllocation.check_validity(self)`
+
+Check whether the current matching is valid.
+
+### create_from_dictionaries { #matching.games.StudentAllocation.create_from_dictionaries }
+
+`games.StudentAllocation.create_from_dictionaries(cls, student_prefs, supervisor_prefs, project_supervisors, project_capacities, supervisor_capacities, clean=False)`
+
+Create an instance of SA from a set of dictionaries.
+
+SA requires preference dictionaries for students and
+supervisors, a project-supervisor affiliation dictionary, and
+a capacity dictionary for both the projects and supervisors.
+
+### solve { #matching.games.StudentAllocation.solve }
+
+`games.StudentAllocation.solve(self, optimal='student')`
+
+Solve the instance of SA.
+
+Party optimality can be controlled using the ``optimal``
+parameter. Solutions can either be student-optimal or
+supervisor-optimal.

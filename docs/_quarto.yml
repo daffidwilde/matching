@@ -1,0 +1,99 @@
+project:
+  type: website
+
+website:
+  title: "matching"
+  navbar:
+    left:
+      - href: tutorials/index.qmd
+        text: tutorials
+      - href: how-to/index.qmd
+        text: how-to guides
+      - href: discussion/index.qmd
+        text: discussion
+      - href: reference/index.qmd
+        text: reference
+    right:
+      - href: citation.qmd
+        text: citations
+      - href: contributing.qmd
+        text: contributing
+      - href: bibliography.qmd
+        text: bibliography
+      - icon: github
+        href: https://github.com/daffidwilde/matching
+      - icon: journal-text
+        href: https://doi.org/10.21105/joss.02169
+  sidebar:
+    - title: tutorials
+      style: docked
+      contents: tutorials
+    - title: how-to guides
+      contents: how-to
+    - title: discussion
+      contents: discussion
+    - title: reference
+      contents: reference
+      
+
+  page-footer:
+    left: >
+      Copyright, Henry Wilde 2023.
+      Powered by [Quarto](https://quarto.org/docs/websites)
+      and [Diátaxis](https://diataxis.fr).
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+    mainfont: Arial
+
+bibliography: assets/bibliography.bib
+
+toc: true
+
+metadata-files: 
+  - _sidebar.yml
+
+quartodoc:
+  title: API reference
+  package: matching
+  sidebar: _sidebar.yml
+  sections:
+    - title: Games
+      desc: Objects for handling game instances.
+      package: matching.games
+      contents:
+        - StableMarriage
+        - HospitalResident
+        - StudentAllocation
+        - StableRoommates
+    - title: Players
+      desc: Classes to represent the players who act in games.
+      package: matching.players
+      contents:
+        - Player
+        - Hospital
+        - Project
+        - Supervisor
+    - title: Algorithms
+      desc: Modules for the algorithms that solve matching games.
+      package: matching.algorithms
+      contents:
+        - stable_marriage
+        - hospital_resident
+        - student_allocation
+        - stable_roommates
+    - title: Matchings
+      desc: Dictionary-like objects for storing matchings.
+      package: matching.matchings
+      contents:
+        - SingleMatching
+        - MultipleMatching
+    - title: Auxiliary pieces
+      desc: Everything else exposed in the public API.
+      contents:
+        - exceptions
+        - base

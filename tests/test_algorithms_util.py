@@ -1,4 +1,4 @@
-""" Unit tests for the `matching.algorithms.util` functions. """
+"""Unit tests for the `matching.algorithms.util` functions."""
 
 from hypothesis import given
 from hypothesis.strategies import lists, text

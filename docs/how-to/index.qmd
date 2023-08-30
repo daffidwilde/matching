@@ -1,0 +1,14 @@
+---
+title: How-to Guides
+listing:
+    contents: "*.ipynb"
+    type: table
+    sort: title
+    sort-ui: false
+    filter-ui: false
+    fields: [title]
+    field-display-names:
+        title: " "
+---
+
+Each of these guides shows you how to do a specific task with `matching`.

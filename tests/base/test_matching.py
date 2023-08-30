@@ -1,4 +1,5 @@
-""" Tests for the BaseMatching class. """
+"""Tests for the BaseMatching class."""
+
 import pytest
 from hypothesis import given
 from hypothesis.strategies import dictionaries, text
@@ -64,15 +65,16 @@ def test_getitem(dictionary):
     """Check that you can access items in a matching correctly."""
 
     matching = BaseMatching(dictionary)
-    for (mkey, mval), (dkey, dval) in zip(matching.items(), dictionary.items()):
+    for (mkey, mval), (dkey, dval) in zip(
+        matching.items(), dictionary.items()
+    ):
         assert matching[mkey] == mval
         assert (mkey, mval) == (dkey, dval)
 
 
 @DICTIONARIES
 def test_setitem_check_player_in_keys(dictionary):
-    """Check that a `ValueError` is raised if trying to add a new item to a
-    matching."""
+    """Check for error when adding a new item to a matching."""
 
     key = list(dictionary.keys())[0]
     matching = BaseMatching(dictionary)
@@ -84,8 +86,7 @@ def test_setitem_check_player_in_keys(dictionary):
 
 @DICTIONARIES
 def test_setitem_check_new_valid_type(dictionary):
-    """Check that a `ValueError` is raised if a new match is not one of the
-    provided types."""
+    """Check for error if a new match is not one of correct type."""
 
     val = list(dictionary.values())[0]
     matching = BaseMatching(dictionary)

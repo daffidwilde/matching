@@ -1,24 +1,26 @@
-""" A collection of dictionary-like objects for storing matchings. """
+"""A collection of dictionary-like objects for storing matchings."""
+
 from matching import BaseMatching
 from matching.players import Player
 
 
 class SingleMatching(BaseMatching):
-    """A dictionary-like object for storing and updating a matching with
-    singular matches such as those in an instance of SM or SR.
+    """Matching class for games with singular matches like SM or SR.
 
     Parameters
     ----------
     dictionary
-        The dictionary of matches. Made up of :code:`Player, Optional[Player]`
-        key, value pairs.
+        A dictionary comprised of ``Player, Optional[Player]`` pairs.
     """
 
     def __init__(self, dictionary):
-
         super().__init__(dictionary)
 
     def __setitem__(self, player, new):
+        """Set a player's new match and match them to the player, too.
+
+        First check if the player and match are valid and present.
+        """
 
         self._check_player_in_keys(player)
         self._check_new_valid_type(new, (type(None), Player))
@@ -31,21 +33,23 @@ class SingleMatching(BaseMatching):
 
 
 class MultipleMatching(BaseMatching):
-    """A dictionary-like object for storing and updating a matching with
-    multiple matches such as those in an instance of HR or SA.
+    """Matching class for games with multiple matches like HR or SA.
 
     Parameters
     ----------
     dictionary
-        The dictionary of matches. Made up of :code:`Hospital, List[Player]`
-        key, value pairs.
+        A dictionary comprised of ``Hospital, List[Player]`` pairs.
     """
 
     def __init__(self, dictionary):
-
         super().__init__(dictionary)
 
     def __setitem__(self, player, new):
+        """Set a player's match and match each of them to the player.
+
+        First check if the player is present, and that the new match is
+        a valid collection of players.
+        """
 
         self._check_player_in_keys(player)
         self._check_new_valid_type(new, (list, tuple))

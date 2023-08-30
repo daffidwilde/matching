@@ -1,0 +1,52 @@
+# API reference
+
+## Games
+
+Objects for handling game instances.
+
+| | |
+| --- | --- |
+| [StableMarriage](StableMarriage.qmd#matching.games.StableMarriage) | Solver for the stable marriage problem (SM). |
+| [HospitalResident](HospitalResident.qmd#matching.games.HospitalResident) | Solver for the hospital-resident assignment problem (HR). |
+| [StudentAllocation](StudentAllocation.qmd#matching.games.StudentAllocation) | Solver for the student-allocation problem (SA). |
+| [StableRoommates](StableRoommates.qmd#matching.games.StableRoommates) | Solver for the stable roommates problem (SR). |
+
+## Players
+
+Classes to represent the players who act in games.
+
+| | |
+| --- | --- |
+| [Player](Player.qmd#matching.players.Player) | Generic single-match player class for instances of SM or SR. |
+| [Hospital](Hospital.qmd#matching.players.Hospital) | Hospital player class for instances of HR. |
+| [Project](Project.qmd#matching.players.Project) | Project player class for instances of SA. |
+| [Supervisor](Supervisor.qmd#matching.players.Supervisor) | Supervisor player class for instances of SA. |
+
+## Algorithms
+
+Modules for the algorithms that solve matching games.
+
+| | |
+| --- | --- |
+| [stable_marriage](stable_marriage.qmd#matching.algorithms.stable_marriage) | Functions for the SM algorithms. |
+| [hospital_resident](hospital_resident.qmd#matching.algorithms.hospital_resident) | Functions for the HR algorithms. |
+| [student_allocation](student_allocation.qmd#matching.algorithms.student_allocation) | Functions for the SA algorithm. |
+| [stable_roommates](stable_roommates.qmd#matching.algorithms.stable_roommates) | Functions for the SR algorithm. |
+
+## Matchings
+
+Dictionary-like objects for storing matchings.
+
+| | |
+| --- | --- |
+| [SingleMatching](SingleMatching.qmd#matching.matchings.SingleMatching) | Matching class for games with singular matches like SM or SR. |
+| [MultipleMatching](MultipleMatching.qmd#matching.matchings.MultipleMatching) | Matching class for games with multiple matches like HR or SA. |
+
+## Auxiliary pieces
+
+Everything else exposed in the public API.
+
+| | |
+| --- | --- |
+| [exceptions](exceptions.qmd#matching.exceptions) | Exceptions for game solver checks. |
+| [base](base.qmd#matching.base) | Abstract base classes for inheritance. |

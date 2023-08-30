@@ -1,0 +1,34 @@
+# Project { #matching.players.Project }
+
+`players.Project(self, name, capacity)`
+
+Project player class for instances of SA.
+
+## Parameters
+
+| Name       | Type   | Description                                           | Default    |
+|------------|--------|-------------------------------------------------------|------------|
+| `name`     | object | An identifier. This should be unique and descriptive. | _required_ |
+| `capacity` | int    | The maximum number of matches the project can have.   | _required_ |
+
+## Attributes
+
+| Name       | Type           | Description                                                                                                 |
+|------------|----------------|-------------------------------------------------------------------------------------------------------------|
+| supervisor | Supervisor     | The supervisor that runs the project. Defaults to ``None``. Controlled using the ``set_supervisor`` method. |
+| prefs      | list of Player | The project's preferences. Inherited from ``supervisor`` and set via the ``Supervisor.set_prefs`` method.   |
+| matching   | list of Player | The current matches of the project. An empty list if currently unsubscribed.                                |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [set_supervisor](#matching.players.Project.set_supervisor) | Assign the supervisor to the project. |
+
+### set_supervisor { #matching.players.Project.set_supervisor }
+
+`players.Project.set_supervisor(self, supervisor)`
+
+Assign the supervisor to the project.
+
+This method also update the supervisor's project list.

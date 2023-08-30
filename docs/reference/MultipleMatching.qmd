@@ -1,0 +1,11 @@
+# MultipleMatching { #matching.matchings.MultipleMatching }
+
+`matchings.MultipleMatching(self, dictionary)`
+
+Matching class for games with multiple matches like HR or SA.
+
+## Parameters
+
+| Name         | Type   | Description                                                 | Default    |
+|--------------|--------|-------------------------------------------------------------|------------|
+| `dictionary` |        | A dictionary comprised of ``Hospital, List[Player]`` pairs. | _required_ |

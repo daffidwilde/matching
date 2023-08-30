@@ -1,4 +1,5 @@
-""" The SR game class and supporting functions. """
+"""The SR game class and supporting functions."""
+
 import copy
 
 from matching import BaseGame, Player, SingleMatching
@@ -7,7 +8,7 @@ from matching.exceptions import MatchingError
 
 
 class StableRoommates(BaseGame):
-    """A class for solving instances of the stable roommates problem (SR).
+    """Solver for the stable roommates problem (SR).
 
     Parameters
     ----------
@@ -16,13 +17,13 @@ class StableRoommates(BaseGame):
 
     Attributes
     ----------
-    matching : Matching or None
-        Once the game is solved, a matching is available. This uses the players
-        as keys and values in a ``Matching`` object. Initialises as ``None``.
+    matching : SingleMatching or None
+        Once the game is solved, a matching is available. This uses the
+        players as keys and values in a ``SingleMatching`` object.
+        Initialises as ``None``.
     """
 
     def __init__(self, players):
-
         players = copy.deepcopy(players)
         self.players = players
 
@@ -39,15 +40,13 @@ class StableRoommates(BaseGame):
         return game
 
     def solve(self):
-        """Solve the instance of SR using Irving's algorithm. Return the
-        matching."""
+        """Attempt to solve the instance of SR. Return the matching."""
 
         self.matching = SingleMatching(stable_roommates(self.players))
         return self.matching
 
     def check_validity(self):
-        """Check whether the current matching is valid. Raise `MatchingError`
-        detailing the issues if not."""
+        """Check whether the current matching is valid."""
 
         issues = []
         for player in self.players:
@@ -61,9 +60,11 @@ class StableRoommates(BaseGame):
         return True
 
     def check_stability(self):
-        """Check for the existence of any blocking pairs in the current
-        matching. Then the stability of the matching holds when there are no
-        blocking pairs and all players have been matched."""
+        """Check for the stability of the current matching.
+
+        SM stability requires there to be no blocking pairs and all
+        players to be matched.
+        """
 
         if None in self.matching.values():
             return False
@@ -90,16 +91,15 @@ class StableRoommates(BaseGame):
             others = {p for p in self.players if p != player}
             if set(player.prefs) != others:
                 raise ValueError(
-                    "Every player must rank all other players. "
-                    f"{player}: {player.prefs} is not a permutation of {others}"
+                    f"Every player must rank all other players. {player}: "
+                    f"{player.prefs} is not a permutation of {others}"
                 )
 
         return True
 
 
 def _make_players(player_prefs):
-    """Make a set of ``Player`` instances from the dictionary given. Add their
-    preferences."""
+    """Make a set of ``Player`` instances from the dictionary."""
 
     player_dict = {}
     for player_name in player_prefs:

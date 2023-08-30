@@ -1,0 +1,62 @@
+# StableMarriage { #matching.games.StableMarriage }
+
+`games.StableMarriage(self, suitors, reviewers)`
+
+Solver for the stable marriage problem (SM).
+
+## Parameters
+
+| Name        | Type           | Description                                                                     | Default    |
+|-------------|----------------|---------------------------------------------------------------------------------|------------|
+| `suitors`   | list of Player | The suitors in the game. Each suitor must rank all elements in ``reviewers``.   | _required_ |
+| `reviewers` | list of Player | The reviewers in the game. Each reviewer must rank all elements in ``suitors``. | _required_ |
+
+## Attributes
+
+| Name           | Type                            | Description                                                                                                                                                                      |
+|----------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| matching       | matching.SingleMatching or None | Once the game is solved, a matching is available. This uses the suitors and reviewers as keys and values, respectively, in a ``SingleMatching`` object. Initialises as ``None``. |
+| blocking_pairs | list of (Player, Player)        | The suitor-reviewer pairs that both prefer one another to their current match. Initialises as ``None``.                                                                          |
+
+## Methods
+
+| Name | Description |
+| --- | --- |
+| [check_inputs](#matching.games.StableMarriage.check_inputs) | Raise an error if any of the game's rules do not hold. |
+| [check_stability](#matching.games.StableMarriage.check_stability) | Check for the existence of any blocking pairs. |
+| [check_validity](#matching.games.StableMarriage.check_validity) | Check whether the current matching is valid. |
+| [create_from_dictionaries](#matching.games.StableMarriage.create_from_dictionaries) | Create an instance of SM from two preference dictionaries. |
+| [solve](#matching.games.StableMarriage.solve) | Solve the instance of SM. Return the matching. |
+
+### check_inputs { #matching.games.StableMarriage.check_inputs }
+
+`games.StableMarriage.check_inputs(self)`
+
+Raise an error if any of the game's rules do not hold.
+
+### check_stability { #matching.games.StableMarriage.check_stability }
+
+`games.StableMarriage.check_stability(self)`
+
+Check for the existence of any blocking pairs.
+
+### check_validity { #matching.games.StableMarriage.check_validity }
+
+`games.StableMarriage.check_validity(self)`
+
+Check whether the current matching is valid.
+
+### create_from_dictionaries { #matching.games.StableMarriage.create_from_dictionaries }
+
+`games.StableMarriage.create_from_dictionaries(cls, suitor_prefs, reviewer_prefs)`
+
+Create an instance of SM from two preference dictionaries.
+
+### solve { #matching.games.StableMarriage.solve }
+
+`games.StableMarriage.solve(self, optimal='suitor')`
+
+Solve the instance of SM. Return the matching.
+
+The party optimality can be controlled using the ``optimal``
+parameter.
