@@ -1,0 +1,20 @@
+---
+title: Discussion
+listing:
+   contents:
+      - "stable_marriage.md"
+      - "hospital_resident.md"
+      - "student_allocation.md"
+      - "stable_roommates.md"
+      - "*.md"
+      - "*.qmd"
+   sort: false
+   fields: [title, description]
+   max-description-length: 500
+---
+
+In this section you can find some more detailed discussion around the problems
+implemented in `matching` as well as some context for the other packages out
+there.
+
+<br>

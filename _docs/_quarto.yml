@@ -7,11 +7,15 @@ website:
     left:
       - href: tutorials/index.qmd
         text: tutorials
+      - href: discussion/index.qmd
+        text: discussion
       - href: bibliography.qmd
         text: bibliography
     right:
       - icon: github
         href: https://github.com/daffidwilde/matching
+      - icon: journal-text
+        href: https://doi.org/10.21105/joss.02169
   page-footer:
     left: >
       Copyright, Henry Wilde 2023.
@@ -25,3 +29,7 @@ format:
       dark: darkly
     css: styles.css
     mainfont: Arial
+
+bibliography: assets/bibliography.bib
+
+toc: true
