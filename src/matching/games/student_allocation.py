@@ -89,10 +89,7 @@ class StudentAllocation(HospitalResident):
         if player_party == "supervisors":
             self.supervisors.remove(player)
             for project in player.projects:
-                try:
-                    super()._remove_player(project, "projects", "students")
-                except ValueError:
-                    pass
+                super()._remove_player(project, "projects", "students")
 
         else:
             super()._remove_player(player, player_party, other_party)
