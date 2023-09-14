@@ -16,6 +16,7 @@ htmlcov/
 
 
 !img/*.pdf
+!tests/**/data/*.json
 
 /.quarto/
 /_site/
