@@ -1,7 +1,7 @@
 """A collection of example tests for HR."""
 
-import os
 import json
+import os
 
 from matching.games import HospitalResident
 
