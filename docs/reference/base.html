@@ -358,7 +358,7 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td>matching</td>
-<td>matching.base.BaseMatching or None</td>
+<td>BaseMatching or None</td>
 <td>After solving the game, an object whose class inherits from <code>BaseMatching</code> is found here. Otherwise, <code>None</code>.</td>
 </tr>
 <tr class="even">
@@ -506,8 +506,8 @@ ul.task-list li input[type="checkbox"] {
 <table class="table">
 <colgroup>
 <col style="width: 9%">
-<col style="width: 24%">
-<col style="width: 66%">
+<col style="width: 18%">
+<col style="width: 71%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -519,12 +519,12 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td>prefs</td>
-<td>List[matching.base.BasePlayer]</td>
+<td>List[BasePlayer]</td>
 <td>The player’s preferences. Defaults to <code>None</code> and is updated using the <code>set_prefs</code> method.</td>
 </tr>
 <tr class="even">
 <td>matching</td>
-<td>Optional[matching.base.BasePlayer]</td>
+<td>Optional[BasePlayer]</td>
 <td>The current match of the player. <code>None</code> if not currently matched.</td>
 </tr>
 <tr class="odd">
@@ -534,7 +534,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>_original_prefs</td>
-<td>Optional[List[matching.base.BasePlayer]]</td>
+<td>Optional[List[BasePlayer]]</td>
 <td>The original set of player preferences. Defaults to <code>None</code> and does not update after the first <code>set_prefs</code> method call.</td>
 </tr>
 </tbody>
