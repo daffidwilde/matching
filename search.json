@@ -431,14 +431,21 @@
     "href": "CHANGES.html",
     "title": "matching",
     "section": "",
-    "text": "Restructure the project to use pyproject.toml and tox\nImprove the documentation (reformatted doc-strings, migrating to Quarto and GitHub Pages)\nMinor fixes to ensure CI"
+    "text": "Fix sort of murky processing when removing players\nUse a hypothesis settings profile for CI"
+  },
+  {
+    "objectID": "CHANGES.html#v1.4.2---2023-09-14",
+    "href": "CHANGES.html#v1.4.2---2023-09-14",
+    "title": "matching",
+    "section": "",
+    "text": "Fix sort of murky processing when removing players\nUse a hypothesis settings profile for CI"
   },
   {
     "objectID": "CHANGES.html#v1.4.1---2023-08-30",
     "href": "CHANGES.html#v1.4.1---2023-08-30",
     "title": "matching",
-    "section": "",
-    "text": "Restructure the project to use pyproject.toml and tox\nImprove the documentation (reformatted doc-strings, migrating to Quarto and GitHub Pages)\nMinor fixes to ensure CI"
+    "section": "v1.4.1 - 2023-08-30",
+    "text": "v1.4.1 - 2023-08-30\n\nRestructure the project to use pyproject.toml and tox\nImprove the documentation (reformatted doc-strings, migrating to Quarto and GitHub Pages)\nMinor fixes to ensure CI"
   },
   {
     "objectID": "CHANGES.html#v1.4---2020-11-04",
@@ -809,14 +816,21 @@
     "href": "docs/discussion/changes.html",
     "title": "CHANGES",
     "section": "",
-    "text": "Restructure the project to use pyproject.toml and tox\nImprove the documentation (reformatted doc-strings, migrating to Quarto and GitHub Pages)\nMinor fixes to ensure CI"
+    "text": "Fix sort of murky processing when removing players\nUse a hypothesis settings profile for CI"
+  },
+  {
+    "objectID": "docs/discussion/changes.html#v1.4.2---2023-09-14",
+    "href": "docs/discussion/changes.html#v1.4.2---2023-09-14",
+    "title": "CHANGES",
+    "section": "",
+    "text": "Fix sort of murky processing when removing players\nUse a hypothesis settings profile for CI"
   },
   {
     "objectID": "docs/discussion/changes.html#v1.4.1---2023-08-30",
     "href": "docs/discussion/changes.html#v1.4.1---2023-08-30",
     "title": "CHANGES",
-    "section": "",
-    "text": "Restructure the project to use pyproject.toml and tox\nImprove the documentation (reformatted doc-strings, migrating to Quarto and GitHub Pages)\nMinor fixes to ensure CI"
+    "section": "v1.4.1 - 2023-08-30",
+    "text": "v1.4.1 - 2023-08-30\n\nRestructure the project to use pyproject.toml and tox\nImprove the documentation (reformatted doc-strings, migrating to Quarto and GitHub Pages)\nMinor fixes to ensure CI"
   },
   {
     "objectID": "docs/discussion/changes.html#v1.4---2020-11-04",
