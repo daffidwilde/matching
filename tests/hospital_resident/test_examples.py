@@ -1,5 +1,8 @@
 """A collection of example tests for HR."""
 
+import json
+import os
+
 from matching.games import HospitalResident
 
 
@@ -31,7 +34,7 @@ def test_readme_example():
     assert matching == {M: [L, S], C: [D, A], G: [J]}
 
 
-def test_example_in_issue():
+def test_example_in_issue_67():
     """Test the example given in #67."""
 
     group_prefs = {
@@ -72,3 +75,31 @@ def test_resident_loses_all_preferences():
 
     matching = game.solve()
     assert matching == {X: [B], Y: []}
+
+
+def test_example_in_issue_159():
+    """Test the example given in #159.
+
+    The example in this is particularly large, so we've moved the
+    dictionaries to a test data directory.
+    """
+
+    here = os.path.join(os.path.dirname(__file__))
+    with open(os.path.join(here, "data", "issue_159.json"), "r") as f:
+        preferences = json.load(f)
+
+    resident_prefs = {
+        int(res): prefs for res, prefs in preferences["residents"].items()
+    }
+    hospital_prefs = {
+        int(hos): prefs for hos, prefs in preferences["hospitals"].items()
+    }
+
+    capacities = {hospital: 1 for hospital in hospital_prefs}
+
+    game = HospitalResident.create_from_dictionaries(
+        resident_prefs, hospital_prefs, capacities, clean=True
+    )
+
+    for player in game.residents + game.hospitals:
+        assert player.prefs

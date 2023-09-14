@@ -47,9 +47,7 @@ class BasePlayer:
         """Forget another player by removing them from the player's preference
         list."""
 
-        prefs = self.prefs[:]
-        prefs.remove(other)
-        self.prefs = prefs
+        self.prefs = [p for p in self.prefs if p != other]
 
     def unmatched_message(self):
         """Message to say the player is not matched."""
@@ -134,10 +132,9 @@ class BaseGame(metaclass=abc.ABCMeta):
         preference lists, removing their memory from the game.
         """
 
-        party = vars(self)[player_party][:]
-        party.remove(player)
-        vars(self)[player_party].remove(player)
-        for other in vars(self)[other_party]:
+        party = getattr(self, player_party)[:]
+        setattr(self, player_party, [p for p in party if p != player])
+        for other in getattr(self, other_party):
             if player in other.prefs:
                 other._forget(player)
 

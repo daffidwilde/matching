@@ -11,7 +11,7 @@ from .base import BaseGame, BaseMatching, BasePlayer
 from .matchings import MultipleMatching, SingleMatching
 from .players import Hospital, Player, Project, Supervisor
 
-__version__ = "1.4.1"
+__version__ = "1.4.2"
 
 __all__ = [
     "BaseGame",
