@@ -1,3 +1,8 @@
+## v1.4.2 - 2023-09-14
+
+- Fix sort of murky processing when removing players
+- Use a `hypothesis` settings profile for CI
+
 ## v1.4.1 - 2023-08-30
 
 - Restructure the project to use `pyproject.toml` and `tox`
