@@ -42,7 +42,7 @@ clone the GitHub repository:
 ## Documentation
 
 Full documentation (including tutorials and discussion material) is
-available here: <https://matching.readthedocs.io>
+available here: <https://daffidwilde.github.io/matching/>
 
 An academic paper on this library has been included in the Journal of
 Open Source Software (JOSS) and is available here:
