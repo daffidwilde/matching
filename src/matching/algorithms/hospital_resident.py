@@ -93,7 +93,7 @@ def resident_optimal(residents, hospitals):
             successors = hospital.get_successors()
             for successor in successors:
                 _delete_pair(hospital, successor)
-                if not successor.prefs:
+                if not successor.prefs and successor in free_residents:
                     free_residents.remove(successor)
 
     return {r: r.matching for r in hospitals}
