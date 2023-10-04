@@ -1,3 +1,8 @@
+## v1.4.3 - 2023-10-04
+
+- Fix bug when trying to remove a non-free successor from free residents in HR
+- Update link to documentation in README
+
 ## v1.4.2 - 2023-09-14
 
 - Fix sort of murky processing when removing players
