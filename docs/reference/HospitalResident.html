@@ -397,29 +397,29 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="matching.games.HospitalResident.check_inputs" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.HospitalResident.check_inputs">check_inputs</h3>
-<p><code>games.HospitalResident.check_inputs(self)</code></p>
+<p><code>games.HospitalResident.check_inputs()</code></p>
 <p>Check if any rules of the game have been broken.</p>
 <p>Any violations will be flagged as warnings. If the <code>clean</code> attribute is in use, then any violations will be removed.</p>
 </section>
 <section id="matching.games.HospitalResident.check_stability" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.HospitalResident.check_stability">check_stability</h3>
-<p><code>games.HospitalResident.check_stability(self)</code></p>
+<p><code>games.HospitalResident.check_stability()</code></p>
 <p>Check for the existence of any blocking pairs.</p>
 </section>
 <section id="matching.games.HospitalResident.check_validity" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.HospitalResident.check_validity">check_validity</h3>
-<p><code>games.HospitalResident.check_validity(self)</code></p>
+<p><code>games.HospitalResident.check_validity()</code></p>
 <p>Check whether the current matching is valid.</p>
 </section>
 <section id="matching.games.HospitalResident.create_from_dictionaries" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.HospitalResident.create_from_dictionaries">create_from_dictionaries</h3>
-<p><code>games.HospitalResident.create_from_dictionaries(cls, resident_prefs, hospital_prefs, capacities, clean=False)</code></p>
+<p><code>games.HospitalResident.create_from_dictionaries(resident_prefs, hospital_prefs, capacities, clean=False)</code></p>
 <p>Create an instance from a set of dictionaries.</p>
 <p>A preference dictionary for residents and hospitals is required, along with a dictionary detailing the hospital capacities. If <code>clean</code>, then remove players from the game and/or player preferences if they do not satisfy the conditions of the game.</p>
 </section>
 <section id="matching.games.HospitalResident.solve" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.HospitalResident.solve">solve</h3>
-<p><code>games.HospitalResident.solve(self, optimal='resident')</code></p>
+<p><code>games.HospitalResident.solve(optimal='resident')</code></p>
 <p>Solve the instance of HR. Return the matching.</p>
 <p>The party optimality can be controlled using the <code>optimal</code> parameter.</p>
 

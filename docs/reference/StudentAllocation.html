@@ -408,29 +408,29 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="matching.games.StudentAllocation.check_inputs" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.StudentAllocation.check_inputs">check_inputs</h3>
-<p><code>games.StudentAllocation.check_inputs(self)</code></p>
+<p><code>games.StudentAllocation.check_inputs()</code></p>
 <p>Check if any rules of the game have been broken.</p>
 <p>Any violations will be flagged as warnings. If the <code>clean</code> attribute is in use, then any violations will be removed.</p>
 </section>
 <section id="matching.games.StudentAllocation.check_stability" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.StudentAllocation.check_stability">check_stability</h3>
-<p><code>games.StudentAllocation.check_stability(self)</code></p>
+<p><code>games.StudentAllocation.check_stability()</code></p>
 <p>Check for the existence of any blocking pairs.</p>
 </section>
 <section id="matching.games.StudentAllocation.check_validity" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.StudentAllocation.check_validity">check_validity</h3>
-<p><code>games.StudentAllocation.check_validity(self)</code></p>
+<p><code>games.StudentAllocation.check_validity()</code></p>
 <p>Check whether the current matching is valid.</p>
 </section>
 <section id="matching.games.StudentAllocation.create_from_dictionaries" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.StudentAllocation.create_from_dictionaries">create_from_dictionaries</h3>
-<p><code>games.StudentAllocation.create_from_dictionaries(cls, student_prefs, supervisor_prefs, project_supervisors, project_capacities, supervisor_capacities, clean=False)</code></p>
+<p><code>games.StudentAllocation.create_from_dictionaries(student_prefs, supervisor_prefs, project_supervisors, project_capacities, supervisor_capacities, clean=False)</code></p>
 <p>Create an instance of SA from a set of dictionaries.</p>
 <p>SA requires preference dictionaries for students and supervisors, a project-supervisor affiliation dictionary, and a capacity dictionary for both the projects and supervisors.</p>
 </section>
 <section id="matching.games.StudentAllocation.solve" class="level3">
 <h3 class="anchored" data-anchor-id="matching.games.StudentAllocation.solve">solve</h3>
-<p><code>games.StudentAllocation.solve(self, optimal='student')</code></p>
+<p><code>games.StudentAllocation.solve(optimal='student')</code></p>
 <p>Solve the instance of SA.</p>
 <p>Party optimality can be controlled using the <code>optimal</code> parameter. Solutions can either be student-optimal or supervisor-optimal.</p>
 

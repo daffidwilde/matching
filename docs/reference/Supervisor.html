@@ -380,13 +380,13 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="matching.players.Supervisor.get_favourite" class="level3">
 <h3 class="anchored" data-anchor-id="matching.players.Supervisor.get_favourite">get_favourite</h3>
-<p><code>players.Supervisor.get_favourite(self)</code></p>
+<p><code>players.Supervisor.get_favourite()</code></p>
 <p>Get the supervisor’s favourite viable student.</p>
 <p>A student is viable if they are not currently matched to, but have a preference of, one of the supervisor’s under-subscribed projects. This method also returns the student’s favourite under-subscribed project. If no such student exists, return <code>None</code>.</p>
 </section>
 <section id="matching.players.Supervisor.set_prefs" class="level3">
 <h3 class="anchored" data-anchor-id="matching.players.Supervisor.set_prefs">set_prefs</h3>
-<p><code>players.Supervisor.set_prefs(self, students)</code></p>
+<p><code>players.Supervisor.set_prefs(students)</code></p>
 <p>Set the preference list for the supervisor.</p>
 <p>This method also passes the preferences on to its projects according to those students who ranked each project.</p>
 

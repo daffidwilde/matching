@@ -1,167 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/tutorials/student_allocation.html</loc>
-    <lastmod>2023-09-22T13:09:35.580Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/tutorials/stable_marriage.html</loc>
-    <lastmod>2023-09-22T13:09:33.596Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/tutorials/index.html</loc>
-    <lastmod>2023-09-22T13:09:32.648Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/discussion/stable_roommates.html</loc>
-    <lastmod>2023-09-22T13:09:31.328Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/discussion/stable_marriage.html</loc>
-    <lastmod>2023-09-22T13:09:29.900Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/discussion/hospital_resident.html</loc>
-    <lastmod>2023-09-22T13:09:28.252Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/Hospital.html</loc>
-    <lastmod>2023-09-22T13:09:26.908Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/StableMarriage.html</loc>
-    <lastmod>2023-09-22T13:09:25.732Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/stable_marriage.html</loc>
-    <lastmod>2023-09-22T13:09:24.820Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/hospital_resident.html</loc>
-    <lastmod>2023-09-22T13:09:23.828Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/Supervisor.html</loc>
-    <lastmod>2023-09-22T13:09:22.848Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/exceptions.html</loc>
-    <lastmod>2023-09-22T13:09:21.680Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/SingleMatching.html</loc>
-    <lastmod>2023-09-22T13:09:20.652Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/stable_roommates.html</loc>
-    <lastmod>2023-09-22T13:09:19.724Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/index.html</loc>
-    <lastmod>2023-09-22T13:09:18.728Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/citation.html</loc>
-    <lastmod>2023-09-22T13:09:17.764Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/how-to/check_matching_status.html</loc>
-    <lastmod>2023-09-22T13:09:16.672Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/how-to/choose_optimality.html</loc>
-    <lastmod>2023-09-22T13:09:15.788Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/how-to/create_from_instances.html</loc>
+    <lastmod>2023-10-04T14:28:43.139Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/how-to/index.html</loc>
-    <lastmod>2023-09-22T13:09:14.876Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/index.html</loc>
-    <lastmod>2023-09-22T13:09:14.020Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/CHANGES.html</loc>
-    <lastmod>2023-09-22T13:09:11.156Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/paper.html</loc>
-    <lastmod>2023-09-22T13:09:13.600Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/contributing.html</loc>
-    <lastmod>2023-09-22T13:09:14.432Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/how-to/create_from_dictionaries.html</loc>
-    <lastmod>2023-09-22T13:09:15.364Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/how-to/create_from_instances.html</loc>
-    <lastmod>2023-09-22T13:09:16.212Z</lastmod>
+    <lastmod>2023-10-04T14:28:42.267Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/how-to/remove_banned_pairs.html</loc>
-    <lastmod>2023-09-22T13:09:17.096Z</lastmod>
+    <lastmod>2023-10-04T14:28:41.403Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/bibliography.html</loc>
-    <lastmod>2023-09-22T13:09:18.216Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/contributing.html</loc>
+    <lastmod>2023-10-04T14:28:40.571Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/reference/Player.html</loc>
-    <lastmod>2023-09-22T13:09:19.204Z</lastmod>
+    <lastmod>2023-10-04T14:28:39.639Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/student_allocation.html</loc>
-    <lastmod>2023-09-22T13:09:20.232Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/HospitalResident.html</loc>
-    <lastmod>2023-09-22T13:09:21.196Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/Supervisor.html</loc>
+    <lastmod>2023-10-04T14:28:38.615Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/reference/base.html</loc>
-    <lastmod>2023-09-22T13:09:22.360Z</lastmod>
+    <lastmod>2023-10-04T14:28:37.683Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/Project.html</loc>
-    <lastmod>2023-09-22T13:09:23.344Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/stable_roommates.html</loc>
+    <lastmod>2023-10-04T14:28:36.547Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/StableRoommates.html</loc>
-    <lastmod>2023-09-22T13:09:24.312Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/Hospital.html</loc>
+    <lastmod>2023-10-04T14:28:35.535Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/reference/MultipleMatching.html</loc>
-    <lastmod>2023-09-22T13:09:25.228Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/SingleMatching.html</loc>
+    <lastmod>2023-10-04T14:28:34.571Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/exceptions.html</loc>
+    <lastmod>2023-10-04T14:28:33.655Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/reference/StudentAllocation.html</loc>
-    <lastmod>2023-09-22T13:09:26.288Z</lastmod>
+    <lastmod>2023-10-04T14:28:32.695Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/discussion/index.html</loc>
-    <lastmod>2023-09-22T13:09:27.396Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/tutorials/index.html</loc>
+    <lastmod>2023-10-04T14:28:31.671Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/discussion/student_allocation.html</loc>
-    <lastmod>2023-09-22T13:09:29.292Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/tutorials/student_allocation.html</loc>
+    <lastmod>2023-10-04T14:28:30.547Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/discussion/changes.html</loc>
-    <lastmod>2023-09-22T13:09:30.444Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/tutorials/stable_marriage.html</loc>
+    <lastmod>2023-10-04T14:28:28.635Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/discussion/other_packages/index.html</loc>
-    <lastmod>2023-09-22T13:09:32.088Z</lastmod>
+    <lastmod>2023-10-04T14:28:27.463Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/daffidwilde/matching/docs/tutorials/stable_roommates.html</loc>
-    <lastmod>2023-09-22T13:09:33.108Z</lastmod>
+    <loc>https://github.com/daffidwilde/matching/docs/discussion/index.html</loc>
+    <lastmod>2023-10-04T14:28:25.862Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/discussion/stable_marriage.html</loc>
+    <lastmod>2023-10-04T14:28:24.766Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/discussion/student_allocation.html</loc>
+    <lastmod>2023-10-04T14:28:23.350Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/index.html</loc>
+    <lastmod>2023-10-04T14:28:21.902Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/paper.html</loc>
+    <lastmod>2023-10-04T14:28:19.230Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/CHANGES.html</loc>
+    <lastmod>2023-10-04T14:28:21.470Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/bibliography.html</loc>
+    <lastmod>2023-10-04T14:28:22.334Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/discussion/stable_roommates.html</loc>
+    <lastmod>2023-10-04T14:28:24.150Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/discussion/changes.html</loc>
+    <lastmod>2023-10-04T14:28:25.322Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/discussion/hospital_resident.html</loc>
+    <lastmod>2023-10-04T14:28:26.731Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/citation.html</loc>
+    <lastmod>2023-10-04T14:28:28.151Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/daffidwilde/matching/docs/tutorials/hospital_resident.html</loc>
-    <lastmod>2023-09-22T13:09:34.148Z</lastmod>
+    <lastmod>2023-10-04T14:28:29.139Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/tutorials/stable_roommates.html</loc>
+    <lastmod>2023-10-04T14:28:31.075Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/StableRoommates.html</loc>
+    <lastmod>2023-10-04T14:28:32.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/StableMarriage.html</loc>
+    <lastmod>2023-10-04T14:28:33.223Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/hospital_resident.html</loc>
+    <lastmod>2023-10-04T14:28:34.163Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/MultipleMatching.html</loc>
+    <lastmod>2023-10-04T14:28:34.975Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/HospitalResident.html</loc>
+    <lastmod>2023-10-04T14:28:36.051Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/stable_marriage.html</loc>
+    <lastmod>2023-10-04T14:28:37.047Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/Project.html</loc>
+    <lastmod>2023-10-04T14:28:38.139Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/index.html</loc>
+    <lastmod>2023-10-04T14:28:39.159Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/reference/student_allocation.html</loc>
+    <lastmod>2023-10-04T14:28:40.139Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/how-to/check_matching_status.html</loc>
+    <lastmod>2023-10-04T14:28:40.991Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/how-to/create_from_dictionaries.html</loc>
+    <lastmod>2023-10-04T14:28:41.831Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/daffidwilde/matching/docs/how-to/choose_optimality.html</loc>
+    <lastmod>2023-10-04T14:28:42.715Z</lastmod>
   </url>
 </urlset>
