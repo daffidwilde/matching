@@ -10,7 +10,7 @@ from matching.exceptions import (
 
 
 class BasePlayer:
-    """An abstract base class to represent a player within a matching game.
+    """An abstract base class to represent a player in a matching game.
 
     Parameters
     ----------
@@ -20,16 +20,17 @@ class BasePlayer:
     Attributes
     ----------
     prefs : List[BasePlayer]
-        The player's preferences. Defaults to ``None`` and is updated using the
-        ``set_prefs`` method.
+        The player's preferences. Defaults to ``None`` and is updated
+        using the ``set_prefs`` method.
     matching : Optional[BasePlayer]
-        The current match of the player. ``None`` if not currently matched.
+        The current match of the player. ``None`` if not currently
+        matched.
     _pref_names : Optional[List]
         A list of the names in ``prefs``. Updates with ``prefs`` via
         ``set_prefs`` method.
     _original_prefs : Optional[List[BasePlayer]]
-        The original set of player preferences. Defaults to ``None`` and does
-        not update after the first ``set_prefs`` method call.
+        The original set of player preferences. Defaults to ``None``
+        and does not update after the first ``set_prefs`` method call.
     """
 
     def __init__(self, name):
@@ -44,8 +45,7 @@ class BasePlayer:
         return str(self.name)
 
     def _forget(self, other):
-        """Forget another player by removing them from the player's preference
-        list."""
+        """Remove another player from the player's preferences."""
 
         self.prefs = [p for p in self.prefs if p != other]
 
@@ -72,8 +72,7 @@ class BasePlayer:
             self._original_prefs = players[:]
 
     def prefers(self, player, other):
-        """Determines whether the player prefers a player over some other
-        player."""
+        """Check whether the player prefers one player over another."""
 
         prefs = self._original_prefs
         return prefs.index(player) < prefs.index(other)
@@ -244,7 +243,7 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def __setitem__(self, player, new_match):
-        """A placeholder function for how to update the matching."""
+        """Placeholder function for how to update the matching."""
 
     def _check_player_in_keys(self, player):
         """Raise an error if ``player`` is not in the dictionary."""

@@ -1,4 +1,4 @@
-""" Functions for the SA algorithm. """
+"""Functions for the SA algorithm."""
 
 from .util import _delete_pair, _match_pair
 

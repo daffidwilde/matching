@@ -1,4 +1,4 @@
-""" The base Player class for use in various games. """
+"""The base Player class for use in various games."""
 
 from matching import BasePlayer
 
