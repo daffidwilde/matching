@@ -59,7 +59,23 @@ Consider the following instance of SM which is represented on a
 bipartite graph where the suitors and reviewers are along the left and
 right respectively.
 
-![image](./tex/stable_marriage.png){.align-center width="10cm"}
+```mermaid
+graph LR
+
+    A("A: (D, E, F)")
+    B("B: (D, F, E)")
+    C("C: (F, D, E)")
+
+    Q(("?"))
+
+    D("D: (B, C, A)")
+    E("E: (A, C, B)")
+    F("F: (C, B, A)")
+
+    A & B & C --- Q
+    Q --- D & E & F
+
+```
 
 We can construct these preferences using dictionaries:
 
