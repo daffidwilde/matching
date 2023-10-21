@@ -7,9 +7,12 @@ on:
       - "dev*"
 
 jobs:
-  build:
+  ci:
 
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       max-parallel: 10
       matrix:
