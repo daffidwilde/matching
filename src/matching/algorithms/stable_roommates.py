@@ -1,4 +1,4 @@
-""" Functions for the SR algorithm. """
+"""Functions for the SR algorithm."""
 
 import warnings
 
@@ -33,7 +33,8 @@ def first_phase(players):
 def locate_all_or_nothing_cycle(player):
     """Locate a cycle of (least-preferable, second-choice) pairs.
 
-    Any such cycle will be removed from the game."""
+    Any such cycle will be removed from the game.
+    """
 
     lasts = [player]
     seconds = []
@@ -56,7 +57,7 @@ def locate_all_or_nothing_cycle(player):
 
 
 def get_pairs_to_delete(cycle):
-    """Find the set of pairs to remove given an all-or-nothing cycle.
+    r"""Find the set of pairs to remove given an all-or-nothing cycle.
 
     Based on an all-or-nothing cycle (also referred to as a "rotation")
     :math:`(x_1, y_1), \\ldots, (x_n, y_n)`, for each
@@ -71,7 +72,8 @@ def get_pairs_to_delete(cycle):
     :cite:`Irv85` is the removal of unpreferable pairs, identified using
     an all-or-nothing cycle, in addition to those contained in the
     cycle. Without doing so, tails of cycles can be removed rather than
-    whole cycles, leaving some conflicting pairs in the game."""
+    whole cycles, leaving some conflicting pairs in the game.
+    """
 
     pairs = []
     for i, (_, right) in enumerate(cycle):

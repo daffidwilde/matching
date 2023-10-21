@@ -1,9 +1,8 @@
-""" Useful functions for the running of the various core algorithms. """
+"""Useful functions for the running of the various core algorithms."""
 
 
 def _delete_pair(player, other):
-    """Make a player forget another (and vice versa), deleting the pair from
-    further consideration in the game."""
+    """Make two players forget each other."""
 
     player._forget(other)
     other._forget(player)

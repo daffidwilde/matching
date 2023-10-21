@@ -19,11 +19,13 @@ def _check_available(hospital):
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):
-    """Solve an instance of HR using an adapted Gale-Shapley algorithm
-    :cite:`Rot84`. A unique, stable and optimal matching is found for
-    the given set of residents and hospitals. The optimality of the
-    matching is found with respect to one party and is subsequently the
-    worst stable matching for the other.
+    """Solve an instance of HR.
+
+    This function uses an adapted Gale-Shapley algorithm :cite:`Rot84`.
+    A unique, stable and optimal matching is found for the given set of
+    residents and hospitals. The optimality of the matching is found
+    with respect to one party and is subsequently the worst stable
+    matching for the other.
 
     Parameters
     ----------
