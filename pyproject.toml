@@ -55,6 +55,7 @@ dev = [
     "interrogate>=1.5.0",
     "isort>=5.10.1",
     "matching[docs,test]",
+    "ruff>=0.1.1",
 ]
 
 [project.urls]
@@ -68,16 +69,23 @@ version = {attr = "matching.__version__"}
 [tool.black]
 line-length = 79
 
-[tool.isort]
-profile = "black"
-line_length = 79
-
-[tool.interrogate]
-ignore-init-method = true
-ignore-init-module = true
-ignore-magic = true
-fail-under = 100
-verbose = 1
-
 [tool.coverage.report]
 omit = ["src/**/__init__.py"]
+
+[tool.ruff]
+extend-include = ["*.ipynb"]
+extend-select = ["D", "I", "W"]
+ignore = ["D105", "D107", "D202"]
+line-length = 79
+
+[tool.ruff.isort]
+known-first-party = ["matching"]
+
+[tool.ruff.per-file-ignores]
+"docs/*" = ["D100", "D103", "E402"]
+"tests/**/*.py" = ["D104", "D401", "E741"]
+"src/**/*.py" = ["D105", "D107"]
+"src/matching/base.py" = ["D401"]
+
+[tool.ruff.pydocstyle]
+convention = "numpy"
