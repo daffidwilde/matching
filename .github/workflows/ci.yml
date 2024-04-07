@@ -48,5 +48,5 @@ jobs:
           matrix.os == 'ubuntu-latest'
         run: |
           python -m pip install ".[lint]"
-          python -m black --check .
           python -m ruff check .
+          python -m ruff format --check .

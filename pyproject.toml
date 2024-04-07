@@ -50,13 +50,8 @@ docs = [
     "PyYAML>=6",
     "quartodoc>=0.5.0; python_version>'3.8'",
 ]
-lint = [
-    "black[jupyter]>=22.6.0,<23",
-    "ruff>=0.1.1",
-]
-dev = [
-    "matching[docs,lint,test]",
-]
+lint = ["ruff<0.4"]
+dev = ["matching[docs,lint,test]"]
 
 [project.urls]
 homepage = "https://github.com/daffidwilde/matching"
@@ -65,9 +60,6 @@ changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.md"
 
 [tool.setuptools.dynamic]
 version = {attr = "matching.__version__"}
-
-[tool.black]
-line-length = 79
 
 [tool.coverage.report]
 omit = ["src/**/__init__.py"]
