@@ -10,14 +10,12 @@ from matching.matchings import SingleMatching
 def st_single_params(draw, min_size=2, max_size=5):
     """Create a parameter set for a SingleMatching instance."""
 
-    dictionary = draw(
-        st.one_of(
-            st.just(None),
-            st.dictionaries(
-                st.integers(), st.integers(), min_size=2, max_size=5
-            ),
-        )
-    )
+    size = draw(st.integers(min_size, max_size))
+    midpoint = size // 2
+    players = list(range(size))
+    keys, values = players[:midpoint], players[midpoint:]
+    dictionary = draw(st.sampled_from((None, dict(zip(keys, values)))))
+
     keys = draw(st.text())
     values = draw(st.text())
     valid = draw(st.sampled_from((None, False, True)))
@@ -84,8 +82,25 @@ def test_eq(params):
 
     assert matching1 == matching2
 
-    key = next(iter(params["dictionary"].keys()))
-    matching2[key] = None
+    if params["dictionary"] is not None:
+        key = next(iter(params["dictionary"].keys()))
+        matching2[key] = None
 
-    assert matching1 != matching2
-    assert vars(matching1) == vars(matching2)
+        assert matching1 != matching2
+        assert vars(matching1) == vars(matching2)
+
+
+@given(st_singles())
+def test_invert(matching):
+    """Check the matching inverter works as it should."""
+
+    inverted = matching.invert()
+
+    assert isinstance(inverted, SingleMatching)
+    assert set(inverted.items()) == set(
+        (val, key) for key, val in matching.items()
+    )
+    assert inverted.keys_ == matching.values_
+    assert inverted.values_ == matching.keys_
+    assert inverted.valid == matching.valid
+    assert inverted.stable == matching.stable
