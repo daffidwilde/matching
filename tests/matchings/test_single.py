@@ -73,3 +73,19 @@ def test_repr(matching):
     assert str(dict(matching)) in repr_
     assert matching.keys_ in repr_
     assert matching.values_ in repr_
+
+
+@given(st_single_params())
+def test_eq(params):
+    """Check the equivalence dunder works as expected."""
+
+    matching1 = SingleMatching(**params)
+    matching2 = SingleMatching(**params)
+
+    assert matching1 == matching2
+
+    key = next(iter(params["dictionary"].keys()))
+    matching2[key] = None
+
+    assert matching1 != matching2
+    assert vars(matching1) == vars(matching2)
