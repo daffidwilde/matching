@@ -70,5 +70,6 @@ def test_repr(matching):
 
     assert isinstance(repr_, str)
     assert repr_.startswith("SingleMatching")
-    assert str(matching.keys_) in repr_
-    assert str(matching.values_) in repr_
+    assert str(dict(matching)) in repr_
+    assert matching.keys_ in repr_
+    assert matching.values_ in repr_
