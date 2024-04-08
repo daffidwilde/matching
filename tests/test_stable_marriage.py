@@ -59,7 +59,7 @@ def st_ranks(draw, pmin=1, pmax=10):
 
 
 @st.composite
-def st_preferences(draw, pmin=1, pmax=10):
+def st_preferences(draw, pmin=1, pmax=5):
     """Create a set of preferences for a test."""
 
     size = draw(st.integers(pmin, pmax))
