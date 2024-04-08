@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 
 from matching import convert
+from matching.matchings import SingleMatching
 
 
 class StableMarriage:
@@ -168,3 +169,102 @@ class StableMarriage:
 
         for reviewer, ranks in enumerate(self.reviewer_ranks):
             self._check_player_ranks(reviewer, ranks, "reviewer")
+
+    def _invert_player_sets(self):
+        """
+        Invert the attributes associated with each set of players.
+
+        That is, `suitor_ranks` and `reviewer_ranks` switch. As do
+        `num_suitors` and `num_reviewers`.
+        """
+
+        self.suitor_ranks, self.reviewer_ranks = (
+            self.reviewer_ranks,
+            self.suitor_ranks,
+        )
+        self.num_suitors, self.num_reviewers = (
+            self.num_reviewers,
+            self.num_suitors,
+        )
+
+    def _stable_marriage(self):
+        """
+        Execute the algorithm for SM given some rankings.
+
+        Returns
+        -------
+        matching : dict
+            Solution to the game instance.
+        """
+
+        matching = {}
+        suitor_ranks = self.suitor_ranks.copy()
+        reviewer_ranks = self.reviewer_ranks.copy()
+        free_suitors = list(range(self.num_suitors))
+
+        while free_suitors:
+            suitor = free_suitors.pop()
+            reviewer = suitor_ranks[suitor].argmin()
+            reviewer_rank = reviewer_ranks[reviewer]
+
+            if reviewer in matching.keys():
+                match = matching[reviewer]
+                free_suitors.append(match)
+
+            matching[reviewer] = suitor
+
+            successors = np.where(reviewer_rank > reviewer_rank[suitor])
+            suitor_ranks[successors, reviewer] = self.num_reviewers
+            reviewer_rank[successors] = self.num_reviewers
+
+        return matching
+
+    def solve(self, optimal="suitor"):
+        """
+        Solve the instance of SM.
+
+        This method uses an extended version of the Gale-Shapley
+        algorithm that makes use of the inherent structures of SM
+        instances. The algorithm finds a unique, stable and optimal
+        matching is found for any valid set of suitors and reviewers.
+
+        The optimality of the matching is with respect to one party and
+        is subsequently the worst stable matching for the other party.
+
+        Parameters
+        ----------
+        optimal : {"suitor", "reviewer"}, default "suitor"
+            Party for whom to optimise the matching. Must be one of
+            `"suitor"` or `"reviewer"`. Default is `"suitor"`.
+
+        Raises
+        ------
+        ValueError
+            If `optimal` is anything other than the permitted values.
+
+        Returns
+        -------
+        matching : SingleMatching
+            A dictionary-like object containing the matching. The keys
+            correspond to the reviewers in the instance, while the
+            values are the suitors.
+        """
+
+        if optimal not in ("suitor", "reviewer"):
+            raise ValueError(
+                "Invalid choice for `optimal`. "
+                f'Must be "suitor" or "reviewer", not "{optimal}".'
+            )
+
+        if optimal == "reviewer":
+            self._invert_player_sets()
+
+        matching = SingleMatching(self._stable_marriage())
+
+        if optimal == "reviewer":
+            matching = matching.invert()
+            self._invert_player_sets()
+
+        self.matching = matching
+
+        return self.matching
