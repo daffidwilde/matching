@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        name: Check for files larger than 5 MB
+        args: [ "--maxkb=5120" ]
+      - id: end-of-file-fixer
+        name: Check for a blank line at the end of scripts (auto-fixes)
+        exclude: '\.Rd'
+      - id: trailing-whitespace
+        name: Check for trailing whitespaces (auto-fixes)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.5
+    hooks:
+      - id: ruff
+        args: [ --fix ]
+      - id: ruff-format
