@@ -52,6 +52,7 @@ def test_utility_to_rank(utility):
     assert isinstance(rank, np.ndarray)
     assert rank.shape == utility.shape
     assert (np.sort(rank) == np.arange(utility.shape[1])).all()
+    assert (rank == (-utility).argsort().argsort()).all()
 
 
 @given(preferences())

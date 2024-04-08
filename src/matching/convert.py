@@ -17,6 +17,6 @@ def preference_to_rank(preference, others):
 def utility_to_rank(utility):
     """Convert a utility array to a rank array."""
 
-    rank = rankdata(utility, method="ordinal", axis=1, nan_policy="omit")
+    rank = rankdata(-utility, method="ordinal", axis=1, nan_policy="omit")
 
     return rank - 1
