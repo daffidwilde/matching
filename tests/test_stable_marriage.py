@@ -129,3 +129,40 @@ def test_from_utilities(utilities):
         assert np.array_equal(arg, utility)
 
     validator.assert_called_once_with()
+
+
+@given(st_preferences())
+def test_from_preferences(preferences):
+    """Test the preference list builder."""
+
+    suitor_prefs, reviewer_prefs = preferences
+
+    with mock.patch(
+        "matching.games.StableMarriage.check_input_validity"
+    ) as validator, mock.patch(
+        "matching.convert.preference_to_rank"
+    ) as ranker:
+        effects = (
+            np.array(list(suitor_prefs.values())),
+            np.array(list(reviewer_prefs.values())),
+        )
+        ranker.side_effect = list(effects)
+        game = StableMarriage.from_preferences(suitor_prefs, reviewer_prefs)
+
+    assert isinstance(game, StableMarriage)
+    assert (game.suitor_ranks == effects[0]).all()
+    assert (game.reviewer_ranks == effects[1]).all()
+
+    assert game.num_suitors == len(suitor_prefs)
+    assert game.num_reviewers == len(reviewer_prefs)
+    assert game.matching is None
+
+    assert ranker.call_count == 2
+    for call, preference, others in zip(
+        ranker.call_args_list,
+        preferences,
+        (reviewer_prefs.keys(), suitor_prefs.keys()),
+    ):
+        assert call.args == (preference, tuple(others))
+
+    validator.assert_called_once_with()
