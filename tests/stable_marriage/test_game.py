@@ -1,4 +1,4 @@
-"""Unit tests for StableMarriage class."""
+"""Unit tests for the StableMarriage class."""
 
 import warnings
 from unittest import mock
@@ -189,3 +189,18 @@ def test_check_input_validity(ranks):
         assert (call_rank == rank).all()
 
         assert call_side == side
+
+
+@given(st_ranks())
+def test_invert_player_sets(ranks):
+    """Test that the player set attributes can be swapped."""
+
+    suitor_ranks, reviewer_ranks = ranks
+    game = mocked_game(*ranks)
+
+    game._invert_player_sets()
+
+    assert (game.suitor_ranks == reviewer_ranks).all()
+    assert (game.reviewer_ranks == suitor_ranks).all()
+    assert game.num_suitors == len(reviewer_ranks)
+    assert game.num_reviewers == len(suitor_ranks)
