@@ -13,9 +13,7 @@ def test_stable_marriage(ranks):
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(*ranks)
 
-    matching = game._stable_marriage(
-        suitor_ranks.copy(), reviewer_ranks.copy()
-    )
+    matching = game._stable_marriage()
 
     assert isinstance(matching, dict)
 
