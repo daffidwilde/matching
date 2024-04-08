@@ -6,8 +6,10 @@ from unittest import mock
 import numpy as np
 import pytest
 from hypothesis import given
+from hypothesis import strategies as st
 
 from matching.games import StableMarriage
+from matching.matchings import SingleMatching
 
 from .strategies import (
     mocked_game,
@@ -204,3 +206,60 @@ def test_invert_player_sets(ranks):
     assert (game.reviewer_ranks == suitor_ranks).all()
     assert game.num_suitors == len(reviewer_ranks)
     assert game.num_reviewers == len(suitor_ranks)
+
+
+@given(
+    st_ranks(),
+    st.sampled_from(("suitor", "reviewer")),
+    st.dictionaries(st.integers(), st.integers()),
+)
+def test_solve_valid_optimal(ranks, optimal, solution):
+    """Test the solver runs as it should with valid inputs."""
+
+    game = mocked_game(*ranks)
+
+    with mock.patch(
+        "matching.games.StableMarriage._invert_player_sets"
+    ) as player_set_inverter, mock.patch(
+        "matching.games.StableMarriage._stable_marriage"
+    ) as stable_marriage, mock.patch(
+        "matching.matchings.SingleMatching.invert"
+    ) as matching_inverter:
+        stable_marriage.return_value = solution
+        matching_inverter.return_value = "inverted_matching"
+        matching = game.solve(optimal)
+
+    assert matching == game.matching
+    stable_marriage.assert_called_once_with()
+
+    if optimal == "reviewer":
+        assert player_set_inverter.call_count == 2
+        assert [call.args for call in player_set_inverter.call_args_list] == [
+            (),
+            (),
+        ]
+        assert matching == "inverted_matching"
+    else:
+        assert isinstance(matching, SingleMatching)
+        assert dict(matching) == solution
+
+
+@given(st_ranks(), st.text())
+def test_solve_invalid_optimal_raises(ranks, optimal):
+    """Test the solver raises an error with invalid optimal."""
+
+    game = mocked_game(*ranks)
+
+    match = "^Invalid choice for `optimal`."
+    with mock.patch(
+        "matching.games.StableMarriage._invert_player_sets"
+    ) as player_set_inverter, mock.patch(
+        "matching.games.StableMarriage._stable_marriage"
+    ) as stable_marriage, mock.patch(
+        "matching.matchings.SingleMatching.invert"
+    ) as matching_inverter, pytest.raises(ValueError, match=match):
+        game.solve(optimal)
+
+    player_set_inverter.assert_not_called()
+    stable_marriage.assert_not_called()
+    matching_inverter.assert_not_called()
