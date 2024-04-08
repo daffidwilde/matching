@@ -5,8 +5,35 @@ from unittest import mock
 import numpy as np
 from hypothesis import given
 from hypothesis import strategies as st
+from hypothesis.extra import numpy as st_numpy
 
 from matching.games import StableMarriage
+
+
+@st.composite
+def st_single_utilities(draw, size):
+    """Create a single utility matrix."""
+
+    utility = draw(
+        st_numpy.arrays(
+            dtype=float,
+            elements=st.floats(0, 1, allow_nan=False),
+            shape=(size, size),
+        )
+    )
+
+    return utility
+
+
+@st.composite
+def st_utilities(draw, pmin=1, pmax=10):
+    """Create a set of utility matrices."""
+
+    size = draw(st.integers(pmin, pmax))
+    suitor_utility = draw(st_single_utilities(size))
+    reviewer_utility = draw(st_single_utilities(size))
+
+    return suitor_utility, reviewer_utility
 
 
 @st.composite
@@ -73,3 +100,32 @@ def test_init(ranks):
     assert game.num_suitors == len(suitor_ranks)
     assert game.num_reviewers == len(reviewer_ranks)
     assert game.matching is None
+
+
+@given(st_utilities())
+def test_from_utilities(utilities):
+    """Test the utility matrix builder."""
+
+    suitor_utility, reviewer_utility = utilities
+
+    with mock.patch(
+        "matching.games.StableMarriage.check_input_validity"
+    ) as validator, mock.patch("matching.convert.utility_to_rank") as ranker:
+        effects = (suitor_utility.argsort(), reviewer_utility.argsort())
+        ranker.side_effect = list(effects)
+        game = StableMarriage.from_utilities(suitor_utility, reviewer_utility)
+
+    assert isinstance(game, StableMarriage)
+    assert (game.suitor_ranks == effects[0]).all()
+    assert (game.reviewer_ranks == effects[1]).all()
+
+    assert game.num_suitors == len(suitor_utility)
+    assert game.num_reviewers == len(reviewer_utility)
+    assert game.matching is None
+
+    assert ranker.call_count == 2
+    for call, utility in zip(ranker.call_args_list, utilities):
+        arg, *_ = call.args
+        assert np.array_equal(arg, utility)
+
+    validator.assert_called_once_with()
