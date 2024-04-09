@@ -9,6 +9,19 @@ from hypothesis.extra import numpy as st_numpy
 from matching.games import StableMarriage
 
 
+def mocked_game(suitor_ranks, reviewer_ranks):
+    """Create an instance of SM that mocks the input validator."""
+
+    with mock.patch(
+        "matching.games.StableMarriage.check_input_validity"
+    ) as validator:
+        game = StableMarriage(suitor_ranks, reviewer_ranks)
+
+    validator.assert_called_once_with()
+
+    return game
+
+
 @st.composite
 def st_single_ranks(draw, size):
     """Create a single rank matrix."""
@@ -85,14 +98,16 @@ def st_preferences(draw, pmin=1, pmax=5):
     return suitor_prefs, reviewer_prefs
 
 
-def mocked_game(suitor_ranks, reviewer_ranks):
-    """Create an instance of SM that mocks the input validator."""
+@st.composite
+def st_preference_matchings(draw, pmin=1, pmax=5):
+    """Create a set of preferences and a matching to go with them."""
 
-    with mock.patch(
-        "matching.games.StableMarriage.check_input_validity"
-    ) as validator:
-        game = StableMarriage(suitor_ranks, reviewer_ranks)
+    suitor_prefs, reviewer_prefs = draw(st_preferences(pmin, pmax))
+    matching = dict(
+        zip(
+            range(len(reviewer_prefs)),
+            draw(st.permutations(list(range(len(suitor_prefs))))),
+        )
+    )
 
-    validator.assert_called_once_with()
-
-    return game
+    return suitor_prefs, reviewer_prefs, matching

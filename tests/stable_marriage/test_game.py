@@ -14,6 +14,7 @@ from matching.matchings import SingleMatching
 from .strategies import (
     mocked_game,
     st_player_ranks,
+    st_preference_matchings,
     st_preferences,
     st_ranks,
     st_utilities,
@@ -94,8 +95,8 @@ def test_from_preferences(preferences):
 
     assert isinstance(game._preference_lookup, dict)
     assert game._preference_lookup == {
-        "suitors": {i: s for i, s in enumerate(sorted(suitor_prefs))},
-        "reviewers": {i: r for i, r in enumerate(sorted(reviewer_prefs))},
+        "suitors": sorted(suitor_prefs),
+        "reviewers": sorted(reviewer_prefs),
     }
 
     assert ranker.call_count == 2
@@ -271,3 +272,29 @@ def test_solve_invalid_optimal_raises(ranks, optimal):
     player_set_inverter.assert_not_called()
     stable_marriage.assert_not_called()
     matching_inverter.assert_not_called()
+
+
+@given(st_preference_matchings())
+def test_convert_matching_to_preferences(preference_matchings):
+    """Test that a matching can use the terms from some preferences."""
+
+    suitor_prefs, reviewer_prefs, matching = preference_matchings
+
+    # the arrays here aren't used anywhere internally, just placeholders
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        game = StableMarriage.from_preferences(suitor_prefs, reviewer_prefs)
+
+    game.matching = SingleMatching(matching)
+
+    game._convert_matching_to_preferences()
+    converted = game.matching
+
+    assert isinstance(converted, SingleMatching)
+    assert converted.keys_ == "reviewers"
+    assert converted.values_ == "suitors"
+    assert converted.valid is None
+    assert converted.stable is None
+
+    assert set(converted.keys()) == set(reviewer_prefs)
+    assert set(converted.values()) == set(suitor_prefs)
