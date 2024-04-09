@@ -30,7 +30,7 @@ def test_pride_and_prejudice():
     )
     matching = game.solve()
 
-    assert dict(matching) == {2: 0, 0: 1, 1: 2, 3: 3}
+    assert dict(matching) == {"J": "B", "C": "C", "E": "D", "L": "W"}
 
 
 def test_readme_example():
@@ -52,7 +52,7 @@ def test_readme_example():
     )
     matching = game.solve()
 
-    assert dict(matching) == {1: 0, 0: 1, 2: 2}
+    assert dict(matching) == {"E": "A", "D": "B", "F": "C"}
 
 
 def test_matchingr_example():
