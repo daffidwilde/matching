@@ -1,7 +1,7 @@
 """Tests for the `matching.convert` module."""
 
 import numpy as np
-from hypothesis import given, settings
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
@@ -58,7 +58,7 @@ def test_preference_to_rank(preference):
     """Check that a preference dictionary can be converted to ranks."""
 
     others = sorted(set(o for prefs in preference.values() for o in prefs))
-    ranks = convert.preference_to_rank(dict(preference), others)
+    ranks = convert.preference_to_rank(preference, others)
 
     assert isinstance(ranks, np.ndarray)
     assert ranks.shape == (len(preference), len(others))
@@ -66,3 +66,17 @@ def test_preference_to_rank(preference):
     sorted_preference = sorted(preference.items(), key=lambda x: x[0])
     for rank, (_, pref) in zip(ranks, sorted_preference):
         assert [pref[idx] for idx in rank] == others
+
+
+@given(preferences())
+def test_preference_to_rank_incomplete(preference):
+    """Check the preference list converter assigns incomplete lists."""
+
+    others = sorted(set(o for prefs in preference.values() for o in prefs))
+    preference[1000] = others[:-1]
+    assume(len(others) > 1)
+
+    ranks = convert.preference_to_rank(preference, others)
+    idx = sorted(preference.keys()).index(1000)
+
+    assert ranks[idx, -1] == len(others)
