@@ -39,6 +39,7 @@ class StableMarriage:
         self.num_suitors = len(suitor_ranks)
         self.num_reviewers = len(reviewer_ranks)
         self.matching = None
+        self._preference_lookup = None
 
         self.check_input_validity()
 
@@ -91,13 +92,18 @@ class StableMarriage:
             matrices.
         """
 
-        suitors = tuple(suitor_prefs.keys())
-        reviewers = tuple(reviewer_prefs.keys())
+        suitors, reviewers = sorted(suitor_prefs), sorted(reviewer_prefs)
 
         suitor_ranks = convert.preference_to_rank(suitor_prefs, reviewers)
         reviewer_ranks = convert.preference_to_rank(reviewer_prefs, suitors)
 
-        return cls(suitor_ranks, reviewer_ranks)
+        game = cls(suitor_ranks, reviewer_ranks)
+        game._preference_lookup = {
+            "suitors": dict(enumerate(suitors)),
+            "reviewers": dict(enumerate(reviewers)),
+        }
+
+        return game
 
     def _check_number_of_players(self):
         """
@@ -198,8 +204,7 @@ class StableMarriage:
         """
 
         matching = {}
-        suitor_ranks = self.suitor_ranks.copy()
-        reviewer_ranks = self.reviewer_ranks.copy()
+        suitor_ranks, reviewer_ranks = self.suitor_ranks, self.reviewer_ranks
         free_suitors = list(range(self.num_suitors))
 
         while free_suitors:
@@ -207,9 +212,10 @@ class StableMarriage:
             reviewer = suitor_ranks[suitor].argmin()
             reviewer_rank = reviewer_ranks[reviewer]
 
-            if reviewer in matching.keys():
-                match = matching[reviewer]
-                free_suitors.append(match)
+            if (match := matching.get(reviewer)) is not None:
+                suitor_ranks[match, reviewer] = self.num_reviewers
+                if (suitor_ranks[match] < self.num_reviewers).any():
+                    free_suitors.append(match)
 
             matching[reviewer] = suitor
 
@@ -256,10 +262,14 @@ class StableMarriage:
                 f'Must be "suitor" or "reviewer", not "{optimal}".'
             )
 
+        keys, values = "reviewers", "suitors"
         if optimal == "reviewer":
             self._invert_player_sets()
+            keys, values = values, keys
 
-        matching = SingleMatching(self._stable_marriage())
+        matching = SingleMatching(
+            self._stable_marriage(), keys=keys, values=values
+        )
 
         if optimal == "reviewer":
             matching = matching.invert()
