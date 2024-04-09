@@ -1,7 +1,5 @@
 """Tests for the `matching.convert` module."""
 
-import itertools
-
 import numpy as np
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -59,14 +57,12 @@ def test_utility_to_rank(utility):
 def test_preference_to_rank(preference):
     """Check that a preference dictionary can be converted to ranks."""
 
-    others = list(itertools.chain(*preference.values()))
-    rank = convert.preference_to_rank(preference, others)
+    others = sorted(set(o for prefs in preference.values() for o in prefs))
+    ranks = convert.preference_to_rank(dict(preference), others)
 
-    assert isinstance(rank, np.ndarray)
-    assert rank.shape == (
-        len(preference.keys()),
-        len(list(preference.values())[0]),
-    )
+    assert isinstance(ranks, np.ndarray)
+    assert ranks.shape == (len(preference), len(others))
 
-    for row, pref in zip(rank, preference.values()):
-        assert [others[r] for r in row] == pref
+    sorted_preference = sorted(preference.items(), key=lambda x: x[0])
+    for rank, (_, pref) in zip(ranks, sorted_preference):
+        assert [pref[idx] for idx in rank] == others
