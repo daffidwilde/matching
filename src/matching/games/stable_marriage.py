@@ -98,10 +98,7 @@ class StableMarriage:
         reviewer_ranks = convert.preference_to_rank(reviewer_prefs, suitors)
 
         game = cls(suitor_ranks, reviewer_ranks)
-        game._preference_lookup = {
-            "suitors": dict(enumerate(suitors)),
-            "reviewers": dict(enumerate(reviewers)),
-        }
+        game._preference_lookup = {"suitors": suitors, "reviewers": reviewers}
 
         return game
 
@@ -225,6 +222,28 @@ class StableMarriage:
 
         return matching
 
+    def _convert_matching_to_preferences(self):
+        """
+        Replace the rank indices with preference terms in a matching.
+
+        This internal function is included for users who wish to create
+        a matching from a set of preference list dictionaries.
+
+        Attributes
+        ----------
+        matching : SingleMatching
+            The converted matching instance.
+        """
+
+        converted = {}
+        suitors, reviewers = self._preference_lookup.values()
+        for reviewer, suitor in self.matching.items():
+            converted[reviewers[reviewer]] = suitors[suitor]
+
+        self.matching = SingleMatching(
+            converted, valid=self.matching.valid, stable=self.matching.stable
+        )
+
     def solve(self, optimal="suitor"):
         """
         Solve the instance of SM.
@@ -263,6 +282,7 @@ class StableMarriage:
             )
 
         keys, values = "reviewers", "suitors"
+
         if optimal == "reviewer":
             self._invert_player_sets()
             keys, values = values, keys
@@ -276,5 +296,7 @@ class StableMarriage:
             self._invert_player_sets()
 
         self.matching = matching
+        if self._preference_lookup:
+            self._convert_matching_to_preferences()
 
         return self.matching
