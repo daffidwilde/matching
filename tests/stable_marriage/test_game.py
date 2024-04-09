@@ -33,6 +33,7 @@ def test_init(ranks):
     assert game.num_suitors == len(suitor_ranks)
     assert game.num_reviewers == len(reviewer_ranks)
     assert game.matching is None
+    assert game._preference_lookup is None
 
 
 @given(st_utilities())
@@ -55,6 +56,7 @@ def test_from_utilities(utilities):
     assert game.num_suitors == len(suitor_utility)
     assert game.num_reviewers == len(reviewer_utility)
     assert game.matching is None
+    assert game._preference_lookup is None
 
     assert ranker.call_count == 2
     for call, utility in zip(ranker.call_args_list, utilities):
@@ -90,13 +92,19 @@ def test_from_preferences(preferences):
     assert game.num_reviewers == len(reviewer_prefs)
     assert game.matching is None
 
+    assert isinstance(game._preference_lookup, dict)
+    assert game._preference_lookup == {
+        "suitors": {i: s for i, s in enumerate(sorted(suitor_prefs))},
+        "reviewers": {i: r for i, r in enumerate(sorted(reviewer_prefs))},
+    }
+
     assert ranker.call_count == 2
     for call, preference, others in zip(
         ranker.call_args_list,
         preferences,
-        (reviewer_prefs.keys(), suitor_prefs.keys()),
+        (reviewer_prefs, suitor_prefs),
     ):
-        assert call.args == (preference, tuple(others))
+        assert call.args == (preference, sorted(others))
 
     validator.assert_called_once_with()
 
