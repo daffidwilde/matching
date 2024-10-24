@@ -76,59 +76,41 @@ We can construct these preferences using dictionaries:
 Then to solve this matching game, we make use of the `StableMarriage`
 class, like so:
 
-
 ```python
 >>> from matching.games import StableMarriage
->>> game = StableMarriage.create_from_dictionaries(
+>>> game = StableMarriage.from_preferences(
 ...     suitor_preferences, reviewer_preferences
 ... )
->>> game.solve()
-{A: E, B: D, C: F}
+>>> matching = game.solve()
+>>> dict(matching)
+{'F': 'C', 'D': 'B', 'E': 'A'}
 
 ```
 
 ## The `Matching` object
 
-This matching is not a standard Python dictionary, though it does
+The matching itself is not a standard Python dictionary, though it does
 largely look and behave like one. It is in fact an instance of the
 `SingleMatching` class:
 
 ```python
->>> matching = game.matching
 >>> type(matching)
-<class 'matching.matchings.SingleMatching'>
+<class 'matching.matchings.single.SingleMatching'>
+>>> isinstance(matching, dict)
+True
+>>> matching
+SingleMatching({'F': 'C', 'D': 'B', 'E': 'A'}, keys="reviewers", values="suitors")
 
 ```
 
-This dictionary-like object is primarily useful as a teaching device
-that eases the process of manipulating a matching after a solution has
-been found.
-
-## `Player` classes
-
-Despite passing dictionaries of strings here, the matching displays
-instances of `matching.player.Player`:
+This object allows for straightforward manipulation of the underlying
+dictionary, for instance by inverting it:
 
 ```python
->>> matching = game.matching
->>> for suitor in matching:
-...     print(type(suitor))
-<class 'matching.players.player.Player'>
-<class 'matching.players.player.Player'>
-<class 'matching.players.player.Player'>
+>>> dict(matching.invert())
+{'C': 'F', 'B': 'D', 'A': 'E'}
 
 ```
-
-This is because `create_from_dictionaries` creates instances of the
-appropriate player classes first and passes them to the game class.
-Using dictionaries like this can be an efficient way of creating large
-games but it does require the names of the players in each party to be
-unique.
-
-With all games, Matching uses a `Player` class to represent the members
-of the "applying" party, i.e. residents and students. For HR and SA,
-there are specific classes to represent the roles of `Hospital`,
-`Project` and `Supervisor`.
 
 ## A note on performance
 
