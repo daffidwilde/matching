@@ -34,7 +34,7 @@ website:
       contents: docs/discussion
     - title: reference
       contents: docs/reference
-      
+
 
   page-footer:
     left: >
@@ -53,7 +53,7 @@ bibliography: docs/assets/bibliography.bib
 
 toc: true
 
-metadata-files: 
+metadata-files:
   - docs/_sidebar.yml
 
 quartodoc:
@@ -61,7 +61,7 @@ quartodoc:
   package: matching
   dir: docs/reference
   sidebar: docs/_sidebar.yml
-  
+
   sections:
     - title: Games
       desc: Objects for handling game instances.
