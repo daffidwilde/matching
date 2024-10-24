@@ -1,192 +1,304 @@
 """The SM game class and supporting functions."""
 
-import copy
+import warnings
 
-from matching import BaseGame, Player, SingleMatching
-from matching.algorithms import stable_marriage
-from matching.exceptions import MatchingError
+import numpy as np
+
+from matching import convert
+from matching.matchings import SingleMatching
 
 
-class StableMarriage(BaseGame):
-    """Solver for the stable marriage problem (SM).
+class StableMarriage:
+    """
+    Solver for the stable marriage problem (SM).
 
     Parameters
     ----------
-    suitors : list of Player
-        The suitors in the game. Each suitor must rank all elements in
-        ``reviewers``.
-    reviewers : list of Player
-        The reviewers in the game. Each reviewer must rank all elements
-        in ``suitors``.
+    suitor_ranks : np.ndarray
+        The rank matrix of all reviewers by the suitors.
+    reviewer_ranks : np.ndarray
+        The rank matrix of all suitors by the reviewers.
 
     Attributes
     ----------
+    num_suitors : int
+        Number of suitors.
+    num_reviewers : int
+        Number of reviewers.
     matching : SingleMatching or None
         Once the game is solved, a matching is available. This uses the
-        suitors and reviewers as keys and values, respectively, in a
-        ``SingleMatching`` object. Initialises as ``None``.
-    blocking_pairs : list of (Player, Player)
-        The suitor-reviewer pairs that both prefer one another to their
-        current match. Initialises as ``None``.
+        indices of the reviewer and suitor rank matrices as keys and
+        values, respectively, in a `SingleMatching` object.
+        Initialises as `None`.
     """
 
-    def __init__(self, suitors, reviewers):
-        suitors, reviewers = copy.deepcopy([suitors, reviewers])
-        self.suitors = suitors
-        self.reviewers = reviewers
+    def __init__(self, suitor_ranks, reviewer_ranks):
+        self.suitor_ranks = suitor_ranks.copy()
+        self.reviewer_ranks = reviewer_ranks.copy()
 
-        super().__init__()
-        self.check_inputs()
+        self.num_suitors = len(suitor_ranks)
+        self.num_reviewers = len(reviewer_ranks)
+        self.matching = None
+        self._preference_lookup = None
+
+        self.check_input_validity()
 
     @classmethod
-    def create_from_dictionaries(cls, suitor_prefs, reviewer_prefs):
-        """Create an instance of SM from two preference dictionaries."""
+    def from_utilities(cls, suitor_utils, reviewer_utils):
+        """
+        Create an instance of SM from utility matrices.
 
-        suitors, reviewers = _make_players(suitor_prefs, reviewer_prefs)
-        game = cls(suitors, reviewers)
+        Higher utilities indicate higher preferences. If there are any
+        ties, they are broken in order of appearance.
+
+        Parameters
+        ----------
+        suitor_utils : np.ndarray
+            Suitor utility matrix.
+        reviewer_utils : np.ndarray
+            Reviewer utility matrix.
+
+        Returns
+        -------
+        game : StableMarriage
+            An instance of SM with utilities resolved as rank matrices.
+        """
+
+        suitor_ranks = convert.utility_to_rank(suitor_utils)
+        reviewer_ranks = convert.utility_to_rank(reviewer_utils)
+
+        return cls(suitor_ranks, reviewer_ranks)
+
+    @classmethod
+    def from_preferences(cls, suitor_prefs, reviewer_prefs):
+        """
+        Create an instance of SM from preference list dictionaries.
+
+        Each dictionary contains a strict ordering of the other side by
+        each player. The ranking is taken by the order of the preference
+        list.
+
+        Parameters
+        ----------
+        suitor_prefs : dict
+            Suitor preference lists.
+        reviewer_prefs : dict
+            Reviewer preference lists.
+
+        Returns
+        -------
+        game : StableMarriage
+            An instance of SM with preference lists resolved as rank
+            matrices.
+        """
+
+        suitors, reviewers = sorted(suitor_prefs), sorted(reviewer_prefs)
+
+        suitor_ranks = convert.preference_to_rank(suitor_prefs, reviewers)
+        reviewer_ranks = convert.preference_to_rank(reviewer_prefs, suitors)
+
+        game = cls(suitor_ranks, reviewer_ranks)
+        game._preference_lookup = {"suitors": suitors, "reviewers": reviewers}
 
         return game
 
-    def solve(self, optimal="suitor"):
-        """Solve the instance of SM. Return the matching.
+    def _check_number_of_players(self):
+        """
+        Check whether the player sets are the same size.
 
-        The party optimality can be controlled using the ``optimal``
-        parameter.
+        Warns
+        -----
+        UserWarning
+            If the sizes of the player sets do not match.
         """
 
+        ns, nr = self.num_suitors, self.num_reviewers
+        if ns != nr:
+            warnings.warn(
+                f"Number of suitors ({ns}) and reviewers ({nr}) "
+                "do not match. Your matching will not be truly stable.",
+                UserWarning,
+            )
+
+    def _check_player_ranks(self, player, ranks, side):
+        """
+        Check that a player has made a strict ranking of the other side.
+
+        Parameters
+        ----------
+        player : int
+            Player to check.
+        ranks : np.ndarray
+            The player's ranking.
+        side : str
+            Name of the side to which the player belongs.
+
+        Warns
+        -----
+        UserWarning
+            If the player has not made a strict and unique ranking of
+            the other side in the game.
+        """
+
+        others = "suitors" if side == "reviewer" else "reviewers"
+        num_others = getattr(self, f"num_{others}")
+        if not np.array_equal(np.sort(ranks), np.arange(num_others)):
+            warnings.warn(
+                f"{side.title()} {player} has not strictly ranked "
+                f"all {num_others} {others}: {ranks}. "
+                "You may not be able to find a stable matching.",
+                UserWarning,
+            )
+
+    def check_input_validity(self):
+        """
+        Determine whether this game instance is valid or not.
+
+        Invalid games can still be solved, but the matching will not be
+        truly stable in the absence of blocking pairs.
+
+        Warns
+        -----
+        UserWarning
+            If (a) the player sets are not the same size; or (b) any
+            player has not made a strict, exhaustive, and unique ranking
+            of the players on the other side of the matching.
+        """
+
+        self._check_number_of_players()
+
+        for suitor, ranks in enumerate(self.suitor_ranks):
+            self._check_player_ranks(suitor, ranks, "suitor")
+
+        for reviewer, ranks in enumerate(self.reviewer_ranks):
+            self._check_player_ranks(reviewer, ranks, "reviewer")
+
+    def _invert_player_sets(self):
+        """
+        Invert the attributes associated with each set of players.
+
+        That is, `suitor_ranks` and `reviewer_ranks` switch. As do
+        `num_suitors` and `num_reviewers`.
+        """
+
+        self.suitor_ranks, self.reviewer_ranks = (
+            self.reviewer_ranks,
+            self.suitor_ranks,
+        )
+        self.num_suitors, self.num_reviewers = (
+            self.num_reviewers,
+            self.num_suitors,
+        )
+
+    def _stable_marriage(self):
+        """
+        Execute the algorithm for SM given some rankings.
+
+        Returns
+        -------
+        matching : dict
+            Solution to the game instance.
+        """
+
+        matching = {}
+        suitor_ranks, reviewer_ranks = self.suitor_ranks, self.reviewer_ranks
+        free_suitors = list(range(self.num_suitors))
+
+        while free_suitors:
+            suitor = free_suitors.pop()
+            reviewer = suitor_ranks[suitor].argmin()
+            reviewer_rank = reviewer_ranks[reviewer]
+
+            current = matching.get(reviewer)
+            if (
+                current is not None
+                and (suitor_ranks[current] < self.num_reviewers).any()
+            ):
+                free_suitors.append(current)
+
+            matching[reviewer] = suitor
+
+            successors = np.where(reviewer_rank > reviewer_rank[suitor])
+            suitor_ranks[successors, reviewer] = self.num_reviewers
+            reviewer_rank[successors] = self.num_reviewers
+
+        return matching
+
+    def _convert_matching_to_preferences(self):
+        """
+        Replace the rank indices with preference terms in a matching.
+
+        This internal function is included for users who wish to create
+        a matching from a set of preference list dictionaries.
+
+        Attributes
+        ----------
+        matching : SingleMatching
+            The converted matching instance.
+        """
+
+        converted = {}
+        suitors, reviewers = self._preference_lookup.values()
+        for reviewer, suitor in self.matching.items():
+            converted[reviewers[reviewer]] = suitors[suitor]
+
         self.matching = SingleMatching(
-            stable_marriage(self.suitors, self.reviewers, optimal)
+            converted, valid=self.matching.valid, stable=self.matching.stable
         )
+
+    def solve(self, optimal="suitor"):
+        """
+        Solve the instance of SM.
+
+        This method uses an extended version of the Gale-Shapley
+        algorithm that makes use of the inherent structures of SM
+        instances. The algorithm finds a unique, stable and optimal
+        matching for any valid set of suitors and reviewers.
+
+        The optimality of the matching is with respect to one party and
+        is subsequently the worst stable matching for the other party.
+
+        Parameters
+        ----------
+        optimal : {"suitor", "reviewer"}, default "suitor"
+            Party for whom to optimise the matching. Must be one of
+            `"suitor"` or `"reviewer"`. Default is `"suitor"`.
+
+        Raises
+        ------
+        ValueError
+            If `optimal` is anything other than the permitted values.
+
+        Returns
+        -------
+        matching : SingleMatching
+            A dictionary-like object containing the matching. The keys
+            correspond to the reviewers in the instance, while the
+            values are the suitors.
+        """
+
+        if optimal not in ("suitor", "reviewer"):
+            raise ValueError(
+                "Invalid choice for `optimal`. "
+                f'Must be "suitor" or "reviewer", not "{optimal}".'
+            )
+
+        keys, values = "reviewers", "suitors"
+
+        if optimal == "reviewer":
+            self._invert_player_sets()
+            keys, values = values, keys
+
+        matching = SingleMatching(
+            self._stable_marriage(), keys=keys, values=values
+        )
+
+        if optimal == "reviewer":
+            matching = matching.invert()
+            self._invert_player_sets()
+
+        self.matching = matching
+        if self._preference_lookup:
+            self._convert_matching_to_preferences()
+
         return self.matching
-
-    def check_validity(self):
-        """Check whether the current matching is valid."""
-
-        unmatched_issues = self._check_for_unmatched_players()
-        not_in_matching_issues = self._check_for_players_not_in_matching()
-        inconsistency_issues = self._check_for_inconsistent_matches()
-
-        if unmatched_issues or not_in_matching_issues or inconsistency_issues:
-            raise MatchingError(
-                unmatched_players=unmatched_issues,
-                players_not_in_matching=not_in_matching_issues,
-                inconsistent_matches=inconsistency_issues,
-            )
-
-        return True
-
-    def check_stability(self):
-        """Check for the existence of any blocking pairs."""
-
-        blocking_pairs = []
-        for suitor in self.suitors:
-            for reviewer in self.reviewers:
-                if suitor.prefers(
-                    reviewer, suitor.matching
-                ) and reviewer.prefers(suitor, reviewer.matching):
-                    blocking_pairs.append((suitor, reviewer))
-
-        self.blocking_pairs = blocking_pairs
-        return not any(blocking_pairs)
-
-    def _check_for_unmatched_players(self):
-        """Check everyone has a match."""
-
-        issues = []
-        for player in self.suitors + self.reviewers:
-            issue = player.check_if_match_is_unacceptable(unmatched_okay=False)
-            if issue:
-                issues.append(issue)
-
-        return issues
-
-    def _check_for_players_not_in_matching(self):
-        """Check that everyone appears in the matching."""
-
-        players_in_matching = set(self.matching.keys()) | set(
-            self.matching.values()
-        )
-
-        issues = []
-        for player in self.suitors + self.reviewers:
-            if player not in players_in_matching:
-                issues.append(f"{player} does not appear in matching.")
-
-        return issues
-
-    def _check_for_inconsistent_matches(self):
-        """Check the matching is consistent with the players'."""
-
-        issues = []
-        for suitor, reviewer in self.matching.items():
-            if suitor.matching != reviewer:
-                issues.append(
-                    f"{suitor} is matched to {suitor.matching} but the "
-                    f"matching says they should be matched to {reviewer}."
-                )
-
-        return issues
-
-    def check_inputs(self):
-        """Raise an error if any of the game's rules do not hold."""
-
-        self._check_num_players()
-        for suitor in self.suitors:
-            self._check_player_ranks(suitor)
-        for reviewer in self.reviewers:
-            self._check_player_ranks(reviewer)
-
-    def _check_num_players(self):
-        """Check that the number of suitors and reviewers are equal."""
-
-        if len(self.suitors) != len(self.reviewers):
-            raise ValueError(
-                "There must be an equal number of suitors and reviewers."
-            )
-
-        return True
-
-    def _check_player_ranks(self, player):
-        """Check that a player has ranked all of the other group."""
-
-        others = self.reviewers if player in self.suitors else self.suitors
-        if set(player.prefs) != set(others):
-            raise ValueError(
-                "Every player must rank each name from the other group. "
-                f"{player}: {player.prefs} != {others}"
-            )
-
-        return True
-
-
-def _make_players(suitor_prefs, reviewer_prefs):
-    """Make a set of suitors and reviewers from two dictionaries."""
-
-    suitor_dict, reviewer_dict = _make_instances(suitor_prefs, reviewer_prefs)
-
-    for suitor_name, suitor in suitor_dict.items():
-        prefs = [reviewer_dict[name] for name in suitor_prefs[suitor_name]]
-        suitor.set_prefs(prefs)
-
-    for reviewer_name, reviewer in reviewer_dict.items():
-        prefs = [suitor_dict[name] for name in reviewer_prefs[reviewer_name]]
-        reviewer.set_prefs(prefs)
-
-    suitors = list(suitor_dict.values())
-    reviewers = list(reviewer_dict.values())
-
-    return suitors, reviewers
-
-
-def _make_instances(suitor_prefs, reviewer_prefs):
-    """Create ``Player`` instances for the names in each dictionary."""
-
-    suitor_dict, reviewer_dict = {}, {}
-    for suitor_name in suitor_prefs:
-        suitor = Player(name=suitor_name)
-        suitor_dict[suitor_name] = suitor
-    for reviewer_name in reviewer_prefs:
-        reviewer = Player(name=reviewer_name)
-        reviewer_dict[reviewer_name] = reviewer
-
-    return suitor_dict, reviewer_dict

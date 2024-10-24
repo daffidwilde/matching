@@ -62,7 +62,7 @@ def test_hospital_optimal(players_):
     assert set(hospitals) == set(matching.keys())
 
     for hospital, matches in matching.items():
-        old_idx = -np.infty
+        old_idx = -np.inf
         for resident in matches:
             idx = hospital.prefs.index(resident)
             assert idx >= old_idx

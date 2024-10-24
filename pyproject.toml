@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A package for solving matching games"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = {text = "MIT License"}
 keywords = [
     "game-theory",
@@ -29,7 +29,8 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-    "numpy>=1.19.2"
+    "numpy>=1.21.6",
+    "scipy>=1.11.3",
 ]
 dynamic = ["version"]
 
@@ -49,13 +50,8 @@ docs = [
     "PyYAML>=6",
     "quartodoc>=0.5.0; python_version>'3.8'",
 ]
-lint = [
-    "black[jupyter]>=22.6.0,<23",
-    "ruff>=0.1.1",
-]
-dev = [
-    "matching[docs,lint,test]",
-]
+lint = ["ruff<1.0"]
+dev = ["matching[docs,lint,test]", "pre-commit"]
 
 [project.urls]
 homepage = "https://github.com/daffidwilde/matching"
@@ -65,26 +61,25 @@ changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.md"
 [tool.setuptools.dynamic]
 version = {attr = "matching.__version__"}
 
-[tool.black]
-line-length = 79
-
 [tool.coverage.report]
 omit = ["src/**/__init__.py"]
 
 [tool.ruff]
 extend-include = ["*.ipynb"]
-extend-select = ["D", "I", "W"]
-ignore = ["D105", "D107", "D202"]
 line-length = 79
 
-[tool.ruff.isort]
+[tool.ruff.lint]
+extend-select = ["D", "I", "W"]
+ignore = ["D105", "D107", "D202"]
+
+[tool.ruff.lint.isort]
 known-first-party = ["matching"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "docs/*" = ["D100", "D103", "E402"]
 "tests/**/*.py" = ["D104", "D401", "E741"]
 "src/**/*.py" = ["D105", "D107"]
 "src/matching/base.py" = ["D401"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "numpy"
