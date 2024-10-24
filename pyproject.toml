@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A package for solving matching games"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = {text = "MIT License"}
 keywords = [
     "game-theory",
@@ -30,7 +30,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.21.6",
-    "scipy>=1.11.3"
+    "scipy>=1.11.3",
 ]
 dynamic = ["version"]
 
