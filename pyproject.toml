@@ -50,7 +50,7 @@ docs = [
     "PyYAML>=6",
     "quartodoc>=0.5.0; python_version>'3.8'",
 ]
-lint = ["ruff<0.4"]
+lint = ["ruff<1.0"]
 dev = ["matching[docs,lint,test]", "pre-commit"]
 
 [project.urls]

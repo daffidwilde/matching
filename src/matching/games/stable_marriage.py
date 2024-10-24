@@ -251,7 +251,7 @@ class StableMarriage:
         This method uses an extended version of the Gale-Shapley
         algorithm that makes use of the inherent structures of SM
         instances. The algorithm finds a unique, stable and optimal
-        matching is found for any valid set of suitors and reviewers.
+        matching for any valid set of suitors and reviewers.
 
         The optimality of the matching is with respect to one party and
         is subsequently the worst stable matching for the other party.
