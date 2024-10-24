@@ -3,7 +3,10 @@
 import numpy as np
 from hypothesis import given
 
-from .strategies import mocked_game, st_ranks
+from matching.games import StableMarriage
+
+from ..common import mocked_game
+from .strategies import st_ranks
 
 
 def _assert_matching_is_valid_shape(matching, suitor_ranks, reviewer_ranks):
@@ -22,7 +25,7 @@ def test_stable_marriage_suitor_optimal(ranks):
     """Test that the SM algorithm is valid and suitor-optimal."""
 
     suitor_ranks, reviewer_ranks = ranks
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     matching = game._stable_marriage()
 
@@ -42,7 +45,7 @@ def test_stable_marriage_reviewer_pessimal(ranks):
     """Test that the SM algorithm is valid and reviewer-pessimal."""
 
     suitor_ranks, reviewer_ranks = ranks
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     matching = game._stable_marriage()
 

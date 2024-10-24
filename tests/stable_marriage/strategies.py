@@ -1,36 +1,21 @@
 """Composite strategies for SM unit tests."""
 
-from unittest import mock
-
-import numpy as np
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as st_numpy
 
-from matching.games import StableMarriage
+from ..common import st_single_ranks
 
+# def mocked_game(suitor_ranks, reviewer_ranks):
+#     """Create an instance of SM that mocks the input validator."""
 
-def mocked_game(suitor_ranks, reviewer_ranks):
-    """Create an instance of SM that mocks the input validator."""
+#     with mock.patch(
+#         "matching.games.StableMarriage.check_input_validity"
+#     ) as validator:
+#         game = StableMarriage(suitor_ranks, reviewer_ranks)
 
-    with mock.patch(
-        "matching.games.StableMarriage.check_input_validity"
-    ) as validator:
-        game = StableMarriage(suitor_ranks, reviewer_ranks)
+#     validator.assert_called_once_with()
 
-    validator.assert_called_once_with()
-
-    return game
-
-
-@st.composite
-def st_single_ranks(draw, size):
-    """Create a single rank matrix."""
-
-    rank = draw(
-        st.lists(st.permutations(range(size)), min_size=size, max_size=size)
-    )
-
-    return np.array(rank)
+#     return game
 
 
 @st.composite
@@ -38,8 +23,8 @@ def st_ranks(draw, pmin=1, pmax=5):
     """Create a set of rankings for a test."""
 
     size = draw(st.integers(pmin, pmax))
-    suitor_ranks = draw(st_single_ranks(size))
-    reviewer_ranks = draw(st_single_ranks(size))
+    suitor_ranks = draw(st_single_ranks(size, size))
+    reviewer_ranks = draw(st_single_ranks(size, size))
 
     return suitor_ranks, reviewer_ranks
 
