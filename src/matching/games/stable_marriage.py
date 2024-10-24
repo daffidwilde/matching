@@ -209,10 +209,12 @@ class StableMarriage:
             reviewer = suitor_ranks[suitor].argmin()
             reviewer_rank = reviewer_ranks[reviewer]
 
-            if (match := matching.get(reviewer)) is not None:
-                suitor_ranks[match, reviewer] = self.num_reviewers
-                if (suitor_ranks[match] < self.num_reviewers).any():
-                    free_suitors.append(match)
+            current = matching.get(reviewer)
+            if (
+                current is not None
+                and (suitor_ranks[current] < self.num_reviewers).any()
+            ):
+                free_suitors.append(current)
 
             matching[reviewer] = suitor
 
