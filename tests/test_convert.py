@@ -1,9 +1,7 @@
 """Tests for the `matching.convert` module."""
 
-import itertools
-
 import numpy as np
-from hypothesis import given, settings
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
@@ -52,20 +50,33 @@ def test_utility_to_rank(utility):
     assert isinstance(rank, np.ndarray)
     assert rank.shape == utility.shape
     assert (np.sort(rank) == np.arange(utility.shape[1])).all()
+    assert (rank == (-utility).argsort().argsort()).all()
 
 
 @given(preferences())
 def test_preference_to_rank(preference):
     """Check that a preference dictionary can be converted to ranks."""
 
-    others = list(itertools.chain(*preference.values()))
-    rank = convert.preference_to_rank(preference, others)
+    others = sorted(set(o for prefs in preference.values() for o in prefs))
+    ranks = convert.preference_to_rank(preference, others)
 
-    assert isinstance(rank, np.ndarray)
-    assert rank.shape == (
-        len(preference.keys()),
-        len(list(preference.values())[0]),
-    )
+    assert isinstance(ranks, np.ndarray)
+    assert ranks.shape == (len(preference), len(others))
 
-    for row, pref in zip(rank, preference.values()):
-        assert [others[r] for r in row] == pref
+    sorted_preference = sorted(preference.items(), key=lambda x: x[0])
+    for rank, (_, pref) in zip(ranks, sorted_preference):
+        assert [pref[idx] for idx in rank] == others
+
+
+@given(preferences())
+def test_preference_to_rank_incomplete(preference):
+    """Check the preference list converter assigns incomplete lists."""
+
+    others = sorted(set(o for prefs in preference.values() for o in prefs))
+    preference[1000] = others[:-1]
+    assume(len(others) > 1)
+
+    ranks = convert.preference_to_rank(preference, others)
+    idx = sorted(preference.keys()).index(1000)
+
+    assert ranks[idx, -1] == len(others)

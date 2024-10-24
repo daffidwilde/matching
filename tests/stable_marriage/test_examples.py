@@ -1,7 +1,9 @@
 """A collection of example tests for SM."""
 
-from matching import Player
-from matching.algorithms import stable_marriage
+import numpy as np
+import pytest
+
+from matching.games import StableMarriage
 
 
 def test_pride_and_prejudice():
@@ -10,56 +12,58 @@ def test_pride_and_prejudice():
     This example appears in the SM Discussion documentation.
     """
 
-    suitors = [
-        Player(name="Bingley"),
-        Player(name="Collins"),
-        Player(name="Darcy"),
-        Player(name="Wickham"),
-    ]
-
-    reviewers = [
-        Player(name="Charlotte"),
-        Player(name="Elizabeth"),
-        Player(name="Jane"),
-        Player(name="Lydia"),
-    ]
-
-    bingley, collins, darcy, wickham = suitors
-    charlotte, elizabeth, jane, lydia = reviewers
-
-    bingley.set_prefs([jane, elizabeth, lydia, charlotte])
-    collins.set_prefs([jane, elizabeth, lydia, charlotte])
-    darcy.set_prefs([elizabeth, jane, charlotte, lydia])
-    wickham.set_prefs([lydia, jane, elizabeth, charlotte])
-
-    charlotte.set_prefs([bingley, darcy, collins, wickham])
-    elizabeth.set_prefs([wickham, darcy, bingley, collins])
-    jane.set_prefs([bingley, wickham, darcy, collins])
-    lydia.set_prefs([bingley, wickham, darcy, collins])
-
-    matching = stable_marriage(suitors, reviewers)
-    assert matching == {
-        bingley: jane,
-        collins: charlotte,
-        darcy: elizabeth,
-        wickham: lydia,
+    suitor_preferences = {
+        "B": ("J", "E", "L", "C"),
+        "C": ("J", "E", "L", "C"),
+        "D": ("E", "J", "C", "L"),
+        "W": ("L", "J", "E", "C"),
     }
+    reviewer_preferences = {
+        "C": ("B", "D", "C", "W"),
+        "E": ("W", "D", "B", "C"),
+        "J": ("B", "W", "D", "C"),
+        "L": ("B", "W", "D", "C"),
+    }
+
+    game = StableMarriage.from_preferences(
+        suitor_preferences, reviewer_preferences
+    )
+    matching = game.solve()
+
+    assert dict(matching) == {"J": "B", "C": "C", "E": "D", "L": "W"}
 
 
 def test_readme_example():
     """Verify the example used in the README."""
 
-    suitors = [Player(name="A"), Player(name="B"), Player(name="C")]
-    reviewers = [Player(name="D"), Player(name="E"), Player(name="F")]
-    (A, B, C), (D, E, F) = suitors, reviewers
+    suitor_preferences = {
+        "A": ["D", "E", "F"],
+        "B": ["D", "F", "E"],
+        "C": ["F", "D", "E"],
+    }
+    reviewer_preferences = {
+        "D": ["B", "C", "A"],
+        "E": ["A", "C", "B"],
+        "F": ["C", "B", "A"],
+    }
 
-    A.set_prefs([D, E, F])
-    B.set_prefs([D, F, E])
-    C.set_prefs([F, D, E])
+    game = StableMarriage.from_preferences(
+        suitor_preferences, reviewer_preferences
+    )
+    matching = game.solve()
 
-    D.set_prefs([B, C, A])
-    E.set_prefs([A, C, B])
-    F.set_prefs([C, B, A])
+    assert dict(matching) == {"E": "A", "D": "B", "F": "C"}
 
-    matching = stable_marriage(suitors, reviewers)
-    assert matching == {A: E, B: D, C: F}
+
+def test_matchingr_example():
+    """Test the example from the MatchingR vignette."""
+
+    uM = np.array([[1.0, 0.5, 0.0], [0.5, 0.0, 0.5]])
+    uW = np.array([[0.0, 1.0], [0.5, 0.0], [1.0, 0.5]])
+
+    with pytest.warns(UserWarning, match="do not match"):
+        game = StableMarriage.from_utilities(uM, uW)
+
+    matching = game.solve()
+
+    assert dict(matching) == {0: 1, 1: 0}

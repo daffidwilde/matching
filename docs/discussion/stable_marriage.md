@@ -91,10 +91,10 @@ efficient, robust extension of the original algorithm, taken from
 @GI89, is given below.
 
 0.  Assign all suitors and reviewers to be unmatched.
-1.  Take any suitor $s$ that is not currently matched, and consider
-    their favourite reviewer $r$.
+1.  Take any suitor $s$ that is not currently matched but has a non-empty
+    preference list, and consider their favourite reviewer $r$.
 2.  If $r$ is matched, get their current match $s' = M^{-1}(r)$ and
-    unmatch the pair.
+    unmatch them.
 3.  Match $s$ and $r$, i.e. set $M(s) = r$.
 4.  For each successor, $t$, to $s$ in $g(r)$, delete the pair $(t, r)$
     from the game by removing $r$ from $f(t)$ and $t$ from $g(r)$.

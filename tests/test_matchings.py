@@ -9,22 +9,8 @@ from hypothesis.strategies import (
     text,
 )
 
-from matching import MultipleMatching, SingleMatching
+from matching import MultipleMatching
 from matching.players import Hospital, Player
-
-
-@composite
-def singles(draw, names_from=text(), min_size=2, max_size=5):
-    """A strategy for generating single-match matchings from players."""
-
-    size = draw(integers(min_value=min_size, max_value=max_size))
-    players = [Player(draw(names_from)) for _ in range(size)]
-
-    midpoint = size // 2
-    keys, values = players[:midpoint], players[midpoint:]
-    dictionary = dict(zip(keys, values))
-
-    return dictionary
 
 
 @composite
@@ -53,32 +39,6 @@ def multiples(
         dictionary[host] = matches
 
     return dictionary
-
-
-@given(dictionary=singles())
-def test_single_setitem_none(dictionary):
-    """Test that a player in a matching can have ``None`` as a match."""
-
-    matching = SingleMatching(dictionary)
-    key = list(dictionary.keys())[0]
-
-    matching[key] = None
-    assert matching[key] is None
-    assert key.matching is None
-
-
-@given(dictionary=singles())
-def test_single_setitem_player(dictionary):
-    """Test that a player in a matching instance can match a player."""
-
-    matching = SingleMatching(dictionary)
-    key = list(dictionary.keys())[0]
-    val = list(dictionary.values())[-1]
-
-    matching[key] = val
-    assert matching[key] == val
-    assert key.matching == val
-    assert val.matching == key
 
 
 @given(dictionary=multiples())

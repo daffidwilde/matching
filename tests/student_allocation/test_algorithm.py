@@ -83,7 +83,7 @@ def test_supervisor_optimal(
     )
 
     for supervisor in supervisors:
-        old_idx = -np.infty
+        old_idx = -np.inf
         for student in supervisor.matching:
             idx = supervisor.prefs.index(student)
             assert idx >= old_idx
