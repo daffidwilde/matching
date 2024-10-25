@@ -4,6 +4,7 @@ from unittest import mock
 
 import numpy as np
 from hypothesis import strategies as st
+from hypothesis.extra import numpy as st_numpy
 
 
 def mocked_game(game, *args):
@@ -32,3 +33,18 @@ def st_single_ranks(draw, num_rank: int, len_rank: int):
     )
 
     return np.array(rank)
+
+
+@st.composite
+def st_single_utilities(draw, nrows: int, ncols: int):
+    """Create a single utility matrix."""
+
+    utility = draw(
+        st_numpy.arrays(
+            dtype=float,
+            elements=st.floats(0, 1, allow_nan=False),
+            shape=(nrows, ncols),
+        )
+    )
+
+    return utility

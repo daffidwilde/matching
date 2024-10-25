@@ -28,6 +28,7 @@ def test_init(ranks):
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
+    assert isinstance(game, StableMarriage)
     assert (game.suitor_ranks == suitor_ranks).all()
     assert (game.reviewer_ranks == reviewer_ranks).all()
 
