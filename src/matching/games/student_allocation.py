@@ -11,8 +11,9 @@ from matching.exceptions import (
     MatchingError,
     PreferencesChangedWarning,
 )
-from matching.games import HospitalResident
 from matching.players import Project, Supervisor
+
+from ._old_hospital_resident import HospitalResident
 
 
 class StudentAllocation(HospitalResident):
