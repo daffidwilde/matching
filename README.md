@@ -122,7 +122,7 @@ of each has not yet been attained. For example, an instance of HR with
 second:
 
 ```python
->>> from matching.games import HospitalResident
+>>> from matching.games._old_hospital_resident import HospitalResident
 >>> import numpy as np
 >>> prng = np.random.default_rng(0)
 >>> num_residents, num_hospitals = 400, 20
