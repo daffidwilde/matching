@@ -43,9 +43,7 @@ def connections(
     resident_prefs = {}
     hospital_prefs = {h: [] for h in hospital_names}
     for resident in resident_names:
-        hospitals = draw(
-            lists(sampled_from(hospital_names), min_size=1, unique=True)
-        )
+        hospitals = draw(lists(sampled_from(hospital_names), min_size=1, unique=True))
         resident_prefs[resident] = hospitals
         for hospital in hospitals:
             hospital_prefs[hospital].append(resident)

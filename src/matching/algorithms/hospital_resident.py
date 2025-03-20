@@ -13,9 +13,9 @@ def _unmatch_pair(resident, hospital):
 def _check_available(hospital):
     """Check if a hospital is willing and able to take an applicant."""
 
-    return len(hospital.matching) < hospital.capacity and set(
-        hospital.prefs
-    ).difference(hospital.matching)
+    return len(hospital.matching) < hospital.capacity and set(hospital.prefs).difference(
+        hospital.matching
+    )
 
 
 def hospital_resident(residents, hospitals, optimal="resident"):

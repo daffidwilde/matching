@@ -54,9 +54,7 @@ class StableMarriage(BaseGame):
         parameter.
         """
 
-        self.matching = SingleMatching(
-            stable_marriage(self.suitors, self.reviewers, optimal)
-        )
+        self.matching = SingleMatching(stable_marriage(self.suitors, self.reviewers, optimal))
         return self.matching
 
     def check_validity(self):
@@ -81,9 +79,9 @@ class StableMarriage(BaseGame):
         blocking_pairs = []
         for suitor in self.suitors:
             for reviewer in self.reviewers:
-                if suitor.prefers(
-                    reviewer, suitor.matching
-                ) and reviewer.prefers(suitor, reviewer.matching):
+                if suitor.prefers(reviewer, suitor.matching) and reviewer.prefers(
+                    suitor, reviewer.matching
+                ):
                     blocking_pairs.append((suitor, reviewer))
 
         self.blocking_pairs = blocking_pairs
@@ -103,9 +101,7 @@ class StableMarriage(BaseGame):
     def _check_for_players_not_in_matching(self):
         """Check that everyone appears in the matching."""
 
-        players_in_matching = set(self.matching.keys()) | set(
-            self.matching.values()
-        )
+        players_in_matching = set(self.matching.keys()) | set(self.matching.values())
 
         issues = []
         for player in self.suitors + self.reviewers:
@@ -140,9 +136,7 @@ class StableMarriage(BaseGame):
         """Check that the number of suitors and reviewers are equal."""
 
         if len(self.suitors) != len(self.reviewers):
-            raise ValueError(
-                "There must be an equal number of suitors and reviewers."
-            )
+            raise ValueError("There must be an equal number of suitors and reviewers.")
 
         return True
 

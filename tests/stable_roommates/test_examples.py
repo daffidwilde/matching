@@ -84,10 +84,7 @@ def test_large_example_from_book():
 def test_example_in_issue_64():
     """Test the example provided in #64."""
 
-    players = [
-        Player(name)
-        for name in ("charlie", "peter", "elise", "paul", "kelly", "sam")
-    ]
+    players = [Player(name) for name in ("charlie", "peter", "elise", "paul", "kelly", "sam")]
     charlie, peter, elise, paul, kelly, sam = players
 
     charlie.set_prefs([peter, paul, sam, kelly, elise])

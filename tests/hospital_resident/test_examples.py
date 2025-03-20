@@ -25,9 +25,7 @@ def test_readme_example():
 
     capacities = {hosp: 2 for hosp in hospital_prefs}
 
-    game = HospitalResident.create_from_dictionaries(
-        resident_prefs, hospital_prefs, capacities
-    )
+    game = HospitalResident.create_from_dictionaries(resident_prefs, hospital_prefs, capacities)
     (A, S, D, J, L), (M, C, G) = game.residents, game.hospitals
 
     matching = game.solve()
@@ -52,9 +50,7 @@ def test_example_in_issue_67():
 
     capacities = {t: 2 for t in topic_hospital_prefs}
 
-    game = HospitalResident.create_from_dictionaries(
-        group_prefs, topic_hospital_prefs, capacities
-    )
+    game = HospitalResident.create_from_dictionaries(group_prefs, topic_hospital_prefs, capacities)
     (G1, G2, G3), (F, I, P, S) = game.residents, game.hospitals
 
     matching = game.solve()
@@ -68,9 +64,7 @@ def test_resident_loses_all_preferences():
     hospital_prefs = {"X": ["B", "A"], "Y": ["B"]}
     capacities = {"X": 1, "Y": 1}
 
-    game = HospitalResident.create_from_dictionaries(
-        resident_prefs, hospital_prefs, capacities
-    )
+    game = HospitalResident.create_from_dictionaries(resident_prefs, hospital_prefs, capacities)
     (_, B), (X, Y) = game.residents, game.hospitals
 
     matching = game.solve()
@@ -88,12 +82,8 @@ def test_example_in_issue_159():
     with open(os.path.join(here, "data", "issue_159.json"), "r") as f:
         preferences = json.load(f)
 
-    resident_prefs = {
-        int(res): prefs for res, prefs in preferences["residents"].items()
-    }
-    hospital_prefs = {
-        int(hos): prefs for hos, prefs in preferences["hospitals"].items()
-    }
+    resident_prefs = {int(res): prefs for res, prefs in preferences["residents"].items()}
+    hospital_prefs = {int(hos): prefs for hos, prefs in preferences["hospitals"].items()}
 
     capacities = {hospital: 1 for hospital in hospital_prefs}
 

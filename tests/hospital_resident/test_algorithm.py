@@ -41,9 +41,7 @@ def test_resident_optimal(players_):
     assert all(
         [
             r in set(residents)
-            for r in {
-                r_match for matches in matching.values() for r_match in matches
-            }
+            for r in {r_match for matches in matching.values() for r_match in matches}
         ]
     )
 
@@ -62,7 +60,7 @@ def test_hospital_optimal(players_):
     assert set(hospitals) == set(matching.keys())
 
     for hospital, matches in matching.items():
-        old_idx = -np.infty
+        old_idx = -np.inf
         for resident in matches:
             idx = hospital.prefs.index(resident)
             assert idx >= old_idx

@@ -16,15 +16,11 @@ def test_init(player_names, seed):
     suitors, reviewers = make_players(player_names, seed)
     game = StableMarriage(suitors, reviewers)
 
-    for player, game_player in zip(
-        suitors + reviewers, game.suitors + game.reviewers
-    ):
+    for player, game_player in zip(suitors + reviewers, game.suitors + game.reviewers):
         assert player.name == game_player.name
         assert player._pref_names == game_player._pref_names
 
-    assert all(
-        [player.matching is None for player in game.suitors + game.reviewers]
-    )
+    assert all([player.matching is None for player in game.suitors + game.reviewers])
     assert game.matching is None
 
 
@@ -33,9 +29,7 @@ def test_create_from_dictionaries(player_names, seed):
     """Test for correct instantiation given a set of dictionaries."""
 
     suitor_prefs, reviewer_prefs = make_prefs(player_names, seed)
-    game = StableMarriage.create_from_dictionaries(
-        suitor_prefs, reviewer_prefs
-    )
+    game = StableMarriage.create_from_dictionaries(suitor_prefs, reviewer_prefs)
 
     for suitor in game.suitors:
         assert suitor_prefs[suitor.name] == suitor._pref_names

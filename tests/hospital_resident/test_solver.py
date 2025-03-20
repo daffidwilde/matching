@@ -165,9 +165,7 @@ def test_check_inputs_hospital_reciprocated_all_prefs(game):
     hospital._forget(resident)
 
     with pytest.warns(PreferencesChangedWarning) as record:
-        game._check_inputs_player_reciprocated_all_prefs(
-            "hospitals", "residents"
-        )
+        game._check_inputs_player_reciprocated_all_prefs("hospitals", "residents")
 
     assert len(record) == 1
 
@@ -259,13 +257,9 @@ def test_solve(game, optimal):
         assert game_hospital._pref_names == hospital._pref_names
         assert game_hospital.capacity == hospital.capacity
 
-    matched_residents = [
-        resident for match in matching.values() for resident in match
-    ]
+    matched_residents = [resident for match in matching.values() for resident in match]
 
-    assert matched_residents != [] and set(matched_residents).issubset(
-        set(game.residents)
-    )
+    assert matched_residents != [] and set(matched_residents).issubset(set(game.residents))
 
     for resident in set(game.residents) - set(matched_residents):
         assert resident.matching is None
