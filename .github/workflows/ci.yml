@@ -32,8 +32,8 @@ jobs:
 
       - name: Run tests
         run: |
-          uv python -m doctest README.md
-          uv python -m doctest paper.md
+          uv run python -m doctest README.md
+          uv run python -m doctest paper.md
           uv run pytest docs --nbval --nbval-current-env -p no:randomly
           uv run pytest tests \
             --cov=matching --cov-fail-under=100 --hypothesis-profile=ci
