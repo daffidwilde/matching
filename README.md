@@ -21,22 +21,22 @@ In `matching`, we deal with four types of matching game:
 
 ## Installation
 
-Matching requires Python 3.5 or above, and relies only on
-[NumPy](http://www.numpy.org/) for general use.
+Matching requires Python 3.10 or above, and relies only on the scientific stack ([NumPy](http://www.numpy.org/) and
+[SciPy](https://scipy.org/)) for general use.
 
 The library is most easily installed using `pip`:
 
 ```bash
-    $ python -m pip install matching
+$ python -m pip install matching
 ```
 
 However, if you would like to install it from source then go ahead and
 clone the GitHub repository:
 
 ```bash
-    $ git clone https://github.com/daffidwilde/matching.git
-    $ cd matching
-    $ python -m pip install .
+$ git clone https://github.com/daffidwilde/matching.git
+$ cd matching
+$ python -m pip install .
 ```
 
 ## Documentation
@@ -135,7 +135,7 @@ second:
 ...     for h in range(num_hospitals)
 ... }
 >>> capacities = {h: num_hospitals for h in hospital_prefs}
->>> game = HospitalResident.create_from_dictionaries(
+>>> game = HospitalResident.from_preferences(
 ...     resident_prefs, hospital_prefs, capacities
 ... )
 >>> _ = game.solve() # 48.6 ms ± 963 µs per loop
