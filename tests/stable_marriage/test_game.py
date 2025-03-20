@@ -45,9 +45,7 @@ def test_from_utilities(utilities):
     suitor_utility, reviewer_utility = utilities
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage.check_input_validity"
-        ) as validator,
+        mock.patch("matching.games.StableMarriage.check_input_validity") as validator,
         mock.patch("matching.convert.utility_to_rank") as ranker,
     ):
         effects = (suitor_utility.argsort(), reviewer_utility.argsort())
@@ -78,9 +76,7 @@ def test_from_preferences(preferences):
     suitor_prefs, reviewer_prefs = preferences
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage.check_input_validity"
-        ) as validator,
+        mock.patch("matching.games.StableMarriage.check_input_validity") as validator,
         mock.patch("matching.convert.preference_to_rank") as ranker,
     ):
         effects = (
@@ -183,20 +179,14 @@ def test_check_input_validity(ranks):
     game = mocked_game(StableMarriage, *ranks)
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage._check_number_of_players"
-        ) as check_num_players,
-        mock.patch(
-            "matching.games.StableMarriage._check_player_ranks"
-        ) as check_player_ranks,
+        mock.patch("matching.games.StableMarriage._check_number_of_players") as check_num_players,
+        mock.patch("matching.games.StableMarriage._check_player_ranks") as check_player_ranks,
     ):
         game.check_input_validity()
 
     check_num_players.assert_called_once_with()
 
-    assert check_player_ranks.call_count == (
-        len(suitor_ranks) + len(reviewer_ranks)
-    )
+    assert check_player_ranks.call_count == (len(suitor_ranks) + len(reviewer_ranks))
 
     suitor_args = _zip_enumerated_ranks_with_side(suitor_ranks, "suitor")
     reviewer_args = _zip_enumerated_ranks_with_side(reviewer_ranks, "reviewer")
@@ -236,15 +226,9 @@ def test_solve_valid_optimal(ranks, optimal, solution):
     game = mocked_game(StableMarriage, *ranks)
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage._invert_player_sets"
-        ) as player_set_inverter,
-        mock.patch(
-            "matching.games.StableMarriage._stable_marriage"
-        ) as stable_marriage,
-        mock.patch(
-            "matching.matchings.SingleMatching.invert"
-        ) as matching_inverter,
+        mock.patch("matching.games.StableMarriage._invert_player_sets") as player_set_inverter,
+        mock.patch("matching.games.StableMarriage._stable_marriage") as stable_marriage,
+        mock.patch("matching.matchings.SingleMatching.invert") as matching_inverter,
     ):
         stable_marriage.return_value = solution
         matching_inverter.return_value = "inverted_matching"
@@ -273,15 +257,9 @@ def test_solve_invalid_optimal_raises(ranks, optimal):
 
     match = "^Invalid choice for `optimal`."
     with (
-        mock.patch(
-            "matching.games.StableMarriage._invert_player_sets"
-        ) as player_set_inverter,
-        mock.patch(
-            "matching.games.StableMarriage._stable_marriage"
-        ) as stable_marriage,
-        mock.patch(
-            "matching.matchings.SingleMatching.invert"
-        ) as matching_inverter,
+        mock.patch("matching.games.StableMarriage._invert_player_sets") as player_set_inverter,
+        mock.patch("matching.games.StableMarriage._stable_marriage") as stable_marriage,
+        mock.patch("matching.matchings.SingleMatching.invert") as matching_inverter,
         pytest.raises(ValueError, match=match),
     ):
         game.solve(optimal)

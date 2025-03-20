@@ -10,9 +10,7 @@ from hypothesis.extra import numpy as st_numpy
 def mocked_game(game, *args):
     """Create an instance of a game that mocks its input validator."""
 
-    with mock.patch(
-        f"matching.games.{game.__name__}.check_input_validity"
-    ) as validator:
+    with mock.patch(f"matching.games.{game.__name__}.check_input_validity") as validator:
         instance = game(*args)
 
     validator.assert_called_once_with()

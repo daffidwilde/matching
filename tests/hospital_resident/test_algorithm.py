@@ -41,9 +41,7 @@ def test_resident_optimal(players_):
     assert all(
         [
             r in set(residents)
-            for r in {
-                r_match for matches in matching.values() for r_match in matches
-            }
+            for r in {r_match for matches in matching.values() for r_match in matches}
         ]
     )
 

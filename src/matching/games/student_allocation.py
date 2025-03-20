@@ -64,9 +64,7 @@ class StudentAllocation(HospitalResident):
     """
 
     def __init__(self, students, projects, supervisors, clean=False):
-        students, projects, supervisors = copy.deepcopy(
-            [students, projects, supervisors]
-        )
+        students, projects, supervisors = copy.deepcopy([students, projects, supervisors])
         self.students = students
         self.projects = projects
         self.supervisors = supervisors
@@ -132,9 +130,7 @@ class StudentAllocation(HospitalResident):
         """
 
         self.matching = MultipleMatching(
-            student_allocation(
-                self.students, self.projects, self.supervisors, optimal
-            )
+            student_allocation(self.students, self.projects, self.supervisors, optimal)
         )
         return self.matching
 
@@ -193,15 +189,11 @@ class StudentAllocation(HospitalResident):
         self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("projects")
-        self._check_inputs_player_reciprocated_all_prefs(
-            "projects", "students"
-        )
+        self._check_inputs_player_reciprocated_all_prefs("projects", "students")
         self._check_inputs_player_prefs_nonempty("projects", "students")
 
         self._check_inputs_player_prefs_all_reciprocated("supervisors")
-        self._check_inputs_player_reciprocated_all_prefs(
-            "supervisors", "students"
-        )
+        self._check_inputs_player_reciprocated_all_prefs("supervisors", "students")
         self._check_inputs_player_prefs_nonempty("supervisors", "students")
 
         self._check_inputs_player_capacity("projects", "students")
@@ -219,9 +211,7 @@ class StudentAllocation(HospitalResident):
         if party == "supervisors":
             for supervisor in self.supervisors:
                 for student in supervisor.prefs:
-                    student_prefs_supervisors = {
-                        p.supervisor for p in student.prefs
-                    }
+                    student_prefs_supervisors = {p.supervisor for p in student.prefs}
                     if supervisor not in student_prefs_supervisors:
                         warnings.warn(
                             PreferencesChangedWarning(
@@ -249,10 +239,7 @@ class StudentAllocation(HospitalResident):
                 students_that_ranked = [
                     student
                     for student in self.students
-                    if any(
-                        project in student.prefs
-                        for project in supervisor.projects
-                    )
+                    if any(project in student.prefs for project in supervisor.projects)
                 ]
 
                 for student in students_that_ranked:
@@ -265,15 +252,11 @@ class StudentAllocation(HospitalResident):
                         )
 
                         if self.clean:
-                            for project in set(supervisor.projects) & set(
-                                student.prefs
-                            ):
+                            for project in set(supervisor.projects) & set(student.prefs):
                                 student._forget(project)
 
         else:
-            super()._check_inputs_player_reciprocated_all_prefs(
-                party, other_party
-            )
+            super()._check_inputs_player_reciprocated_all_prefs(party, other_party)
 
     def _check_inputs_supervisor_capacities_sufficient(self):
         """Check each supervisor has space for its largest project."""
@@ -296,9 +279,7 @@ class StudentAllocation(HospitalResident):
         """Check each supervisor has no surplus given their projects."""
 
         for supervisor in self.supervisors:
-            total_project_capacity = sum(
-                p.capacity for p in supervisor.projects
-            )
+            total_project_capacity = sum(p.capacity for p in supervisor.projects)
 
             if supervisor.capacity > total_project_capacity:
                 warnings.warn(
@@ -320,9 +301,7 @@ def _check_student_unhappy(student, project):
     their current match.
     """
 
-    return student.matching is None or student.prefers(
-        project, student.matching
-    )
+    return student.matching is None or student.prefers(project, student.matching)
 
 
 def _check_project_unhappy(project, student):
@@ -342,8 +321,7 @@ def _check_project_unhappy(project, student):
 
     project_undersubscribed = len(project.matching) < project.capacity
     both_undersubscribed = (
-        project_undersubscribed
-        and len(supervisor.matching) < supervisor.capacity
+        project_undersubscribed and len(supervisor.matching) < supervisor.capacity
     )
 
     supervisor_full = len(supervisor.matching) == supervisor.capacity
@@ -354,9 +332,7 @@ def _check_project_unhappy(project, student):
 
     project_upsetting_supervisor = len(
         project.matching
-    ) == project.capacity and supervisor.prefers(
-        student, project.get_worst_match()
-    )
+    ) == project.capacity and supervisor.prefers(student, project.get_worst_match())
 
     return (
         both_undersubscribed

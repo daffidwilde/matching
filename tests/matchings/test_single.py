@@ -97,9 +97,7 @@ def test_invert(matching):
     inverted = matching.invert()
 
     assert isinstance(inverted, SingleMatching)
-    assert set(inverted.items()) == set(
-        (val, key) for key, val in matching.items()
-    )
+    assert set(inverted.items()) == set((val, key) for key, val in matching.items())
     assert inverted.keys_ == matching.values_
     assert inverted.values_ == matching.keys_
     assert inverted.valid == matching.valid

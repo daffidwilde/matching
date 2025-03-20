@@ -64,9 +64,7 @@ class HospitalResident(BaseGame):
         self.check_inputs()
 
     @classmethod
-    def create_from_dictionaries(
-        cls, resident_prefs, hospital_prefs, capacities, clean=False
-    ):
+    def create_from_dictionaries(cls, resident_prefs, hospital_prefs, capacities, clean=False):
         """Create an instance from a set of dictionaries.
 
         A preference dictionary for residents and hospitals is required,
@@ -75,9 +73,7 @@ class HospitalResident(BaseGame):
         preferences if they do not satisfy the conditions of the game.
         """
 
-        residents, hospitals = _make_players(
-            resident_prefs, hospital_prefs, capacities
-        )
+        residents, hospitals = _make_players(resident_prefs, hospital_prefs, capacities)
         game = cls(residents, hospitals, clean)
 
         return game
@@ -101,9 +97,7 @@ class HospitalResident(BaseGame):
             "residents"
         ) + self._check_for_unacceptable_matches("hospitals")
 
-        oversubscribed_issues = self._check_for_oversubscribed_players(
-            "hospitals"
-        )
+        oversubscribed_issues = self._check_for_oversubscribed_players("hospitals")
 
         if unacceptable_issues or oversubscribed_issues:
             raise MatchingError(
@@ -167,9 +161,7 @@ class HospitalResident(BaseGame):
         self._check_inputs_player_prefs_all_in_party("hospitals", "residents")
 
         self._check_inputs_player_prefs_all_reciprocated("hospitals")
-        self._check_inputs_player_reciprocated_all_prefs(
-            "hospitals", "residents"
-        )
+        self._check_inputs_player_reciprocated_all_prefs("hospitals", "residents")
 
         self._check_inputs_player_prefs_nonempty("residents", "hospitals")
         self._check_inputs_player_prefs_nonempty("hospitals", "residents")
@@ -183,9 +175,7 @@ class HospitalResident(BaseGame):
             for other in player.prefs:
                 if player not in other.prefs:
                     warnings.warn(
-                        PreferencesChangedWarning(
-                            f"{player} ranked {other} but they did not."
-                        )
+                        PreferencesChangedWarning(f"{player} ranked {other} but they did not.")
                     )
                     if self.clean:
                         player._forget(other)
@@ -196,15 +186,11 @@ class HospitalResident(BaseGame):
         players = vars(self)[party]
         others = vars(self)[other_party]
         for player in players:
-            others_that_ranked = [
-                other for other in others if player in other.prefs
-            ]
+            others_that_ranked = [other for other in others if player in other.prefs]
             for other in others_that_ranked:
                 if other not in player.prefs:
                     warnings.warn(
-                        PreferencesChangedWarning(
-                            f"{other} ranked {player} but they did not."
-                        )
+                        PreferencesChangedWarning(f"{other} ranked {player} but they did not.")
                     )
                     if self.clean:
                         other._forget(player)
@@ -233,9 +219,7 @@ def _check_resident_unhappy(resident, hospital):
     to their current match.
     """
 
-    return resident.matching is None or resident.prefers(
-        hospital, resident.matching
-    )
+    return resident.matching is None or resident.prefers(hospital, resident.matching)
 
 
 def _check_hospital_unhappy(resident, hospital):
@@ -253,9 +237,7 @@ def _check_hospital_unhappy(resident, hospital):
 def _make_players(resident_prefs, hospital_prefs, capacities):
     """Make a set of residents and hospitals from the dictionaries."""
 
-    resident_dict, hospital_dict = _make_instances(
-        resident_prefs, hospital_prefs, capacities
-    )
+    resident_dict, hospital_dict = _make_instances(resident_prefs, hospital_prefs, capacities)
 
     for resident_name, resident in resident_dict.items():
         prefs = [hospital_dict[name] for name in resident_prefs[resident_name]]

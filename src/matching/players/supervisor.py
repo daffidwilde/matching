@@ -60,9 +60,7 @@ class Supervisor(Hospital):
         self._original_prefs = students[:]
 
         for project in self.projects:
-            acceptable = [
-                student for student in students if project in student.prefs
-            ]
+            acceptable = [student for student in students if project in student.prefs]
             project.set_prefs(acceptable)
 
     def get_favourite(self):

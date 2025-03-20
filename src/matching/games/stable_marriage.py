@@ -210,10 +210,7 @@ class StableMarriage:
             reviewer_rank = reviewer_ranks[reviewer]
 
             current = matching.get(reviewer)
-            if (
-                current is not None
-                and (suitor_ranks[current] < self.num_reviewers).any()
-            ):
+            if current is not None and (suitor_ranks[current] < self.num_reviewers).any():
                 free_suitors.append(current)
 
             matching[reviewer] = suitor
@@ -279,8 +276,7 @@ class StableMarriage:
 
         if optimal not in ("suitor", "reviewer"):
             raise ValueError(
-                "Invalid choice for `optimal`. "
-                f'Must be "suitor" or "reviewer", not "{optimal}".'
+                f'Invalid choice for `optimal`. Must be "suitor" or "reviewer", not "{optimal}".'
             )
 
         keys, values = "reviewers", "suitors"
@@ -289,9 +285,7 @@ class StableMarriage:
             self._invert_player_sets()
             keys, values = values, keys
 
-        matching = SingleMatching(
-            self._stable_marriage(), keys=keys, values=values
-        )
+        matching = SingleMatching(self._stable_marriage(), keys=keys, values=values)
 
         if optimal == "reviewer":
             matching = matching.invert()

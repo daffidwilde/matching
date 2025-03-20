@@ -25,9 +25,7 @@ def test_pride_and_prejudice():
         "L": ("B", "W", "D", "C"),
     }
 
-    game = StableMarriage.from_preferences(
-        suitor_preferences, reviewer_preferences
-    )
+    game = StableMarriage.from_preferences(suitor_preferences, reviewer_preferences)
     matching = game.solve()
 
     assert dict(matching) == {"J": "B", "C": "C", "E": "D", "L": "W"}
@@ -47,9 +45,7 @@ def test_readme_example():
         "F": ["C", "B", "A"],
     }
 
-    game = StableMarriage.from_preferences(
-        suitor_preferences, reviewer_preferences
-    )
+    game = StableMarriage.from_preferences(suitor_preferences, reviewer_preferences)
     matching = game.solve()
 
     assert dict(matching) == {"E": "A", "D": "B", "F": "C"}

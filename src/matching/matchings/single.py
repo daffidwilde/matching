@@ -37,8 +37,7 @@ class SingleMatching(dict):
 
     def __repr__(self):
         return (
-            f"SingleMatching({super().__repr__()}, "
-            f'keys="{self.keys_}", values="{self.values_}")'
+            f'SingleMatching({super().__repr__()}, keys="{self.keys_}", values="{self.values_}")'
         )
 
     def __eq__(self, other):

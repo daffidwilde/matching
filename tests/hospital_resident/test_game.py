@@ -41,16 +41,12 @@ def test_from_utilities(utilities_capacities):
     resident_utility, hospital_utility = utilities
 
     with (
-        mock.patch(
-            "matching.games.HospitalResident.check_input_validity"
-        ) as validator,
+        mock.patch("matching.games.HospitalResident.check_input_validity") as validator,
         mock.patch("matching.convert.utility_to_rank") as ranker,
     ):
         effects = (resident_utility.argsort(), hospital_utility.argsort())
         ranker.side_effect = list(effects)
-        game = HospitalResident.from_utilities(
-            resident_utility, hospital_utility, capacities
-        )
+        game = HospitalResident.from_utilities(resident_utility, hospital_utility, capacities)
 
     assert isinstance(game, HospitalResident)
     assert (game.resident_ranks == effects[0]).all()
@@ -78,9 +74,7 @@ def test_from_preferences(preferences_capacities):
     resident_preferences, hospital_preferences = preferences
 
     with (
-        mock.patch(
-            "matching.games.HospitalResident.check_input_validity"
-        ) as validator,
+        mock.patch("matching.games.HospitalResident.check_input_validity") as validator,
         mock.patch("matching.convert.preference_to_rank") as ranker,
     ):
         effects = (
@@ -108,9 +102,7 @@ def test_from_preferences(preferences_capacities):
 
     assert isinstance(game.capacities, np.ndarray)
     assert game.capacities.shape == (len(hospital_preferences),)
-    for cap, hospital in zip(
-        game.capacities, game._preference_lookup["hospitals"]
-    ):
+    for cap, hospital in zip(game.capacities, game._preference_lookup["hospitals"]):
         assert cap == capacities.get(hospital)
 
     assert ranker.call_count == 2

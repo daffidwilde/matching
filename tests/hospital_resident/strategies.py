@@ -20,9 +20,7 @@ def st_sizes(draw, hmin, hmax, rmin, rmax):
 def st_capacities(draw, size):
     """Create a capacity vector."""
 
-    capacities = draw(
-        st.lists(st.integers(1, 3), min_size=size, max_size=size)
-    )
+    capacities = draw(st.lists(st.integers(1, 3), min_size=size, max_size=size))
 
     return np.array(capacities)
 
@@ -59,19 +57,11 @@ def st_preferences_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 
     hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
 
-    residents = draw(
-        st.lists(st.integers(), min_size=rsize, max_size=rsize, unique=True)
-    )
-    hospitals = draw(
-        st.lists(st.text(), min_size=hsize, max_size=hsize, unique=True)
-    )
+    residents = draw(st.lists(st.integers(), min_size=rsize, max_size=rsize, unique=True))
+    hospitals = draw(st.lists(st.text(), min_size=hsize, max_size=hsize, unique=True))
 
-    resident_preferences = {
-        r: draw(st.permutations(hospitals)) for r in residents
-    }
-    hospital_preferences = {
-        h: draw(st.permutations(residents)) for h in hospitals
-    }
+    resident_preferences = {r: draw(st.permutations(hospitals)) for r in residents}
+    hospital_preferences = {h: draw(st.permutations(residents)) for h in hospitals}
     capacities = dict(zip(hospital_preferences, draw(st_capacities(hsize))))
 
     return resident_preferences, hospital_preferences, capacities
