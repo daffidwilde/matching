@@ -151,9 +151,7 @@ class BaseGame(metaclass=abc.ABCMeta):
                     unique_prefs.append(other)
                 else:
                     warnings.warn(
-                        PreferencesChangedWarning(
-                            f"{player} has ranked {other} multiple times."
-                        )
+                        PreferencesChangedWarning(f"{player} has ranked {other} multiple times.")
                     )
 
             if self.clean:
@@ -172,8 +170,7 @@ class BaseGame(metaclass=abc.ABCMeta):
                 if other not in others:
                     warnings.warn(
                         PreferencesChangedWarning(
-                            f"{player} has ranked a non-{other_party[:-1]}: "
-                            f"{other}."
+                            f"{player} has ranked a non-{other_party[:-1]}: {other}."
                         )
                     )
                     if self.clean:
@@ -187,11 +184,7 @@ class BaseGame(metaclass=abc.ABCMeta):
 
         for player in vars(self)[party]:
             if not player.prefs:
-                warnings.warn(
-                    PlayerExcludedWarning(
-                        f"{player} has an empty preference list."
-                    )
-                )
+                warnings.warn(PlayerExcludedWarning(f"{player} has an empty preference list."))
                 if self.clean:
                     self._remove_player(player, party, other_party)
 

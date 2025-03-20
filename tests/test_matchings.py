@@ -42,9 +42,7 @@ def multiples(
     num_hosts = draw(integers(min_value=min_hosts, max_value=max_hosts))
     num_players = draw(integers(min_value=min_players, max_value=max_players))
 
-    hosts = [
-        Hospital(draw(host_names_from), max_players) for _ in range(num_hosts)
-    ]
+    hosts = [Hospital(draw(host_names_from), max_players) for _ in range(num_hosts)]
     players = [Player(draw(player_names_from)) for _ in range(num_players)]
 
     dictionary = {}
@@ -87,9 +85,7 @@ def test_multiple_setitem(dictionary):
 
     matching = MultipleMatching(dictionary)
     host = list(dictionary.keys())[0]
-    players = list(
-        {player for players in dictionary.values() for player in players}
-    )[:-1]
+    players = list({player for players in dictionary.values() for player in players})[:-1]
 
     matching[host] = players
     assert matching[host] == players

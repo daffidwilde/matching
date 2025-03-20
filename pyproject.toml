@@ -7,7 +7,7 @@ authors = [
 description = "A package for solving matching games"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {text = "MIT License"}
+license = {text = "MIT Licence"}
 keywords = [
     "game-theory",
     "gale-shapley",
@@ -64,7 +64,7 @@ changelog = "https://github.com/daffidwilde/matching/blob/main/CHANGES.md"
 version = {attr = "matching.__version__"}
 
 [tool.ruff]
-line-length = 79
+line-length = 99
 extend-include = ["*.ipynb"]
 
 [tool.ruff.lint]

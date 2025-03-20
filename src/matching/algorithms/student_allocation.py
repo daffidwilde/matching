@@ -111,9 +111,7 @@ def student_optimal(students, projects):
             successors = supervisor.get_successors()
             for successor in successors:
                 supervisor_projects = [
-                    project
-                    for project in supervisor.projects
-                    if project in successor.prefs
+                    project for project in supervisor.projects if project in successor.prefs
                 ]
 
                 for project in supervisor_projects:
@@ -167,9 +165,7 @@ def supervisor_optimal(projects, supervisors):
             _delete_pair(student, successor)
 
         free_supervisors = [
-            supervisor
-            for supervisor in supervisors
-            if supervisor.get_favourite() is not None
+            supervisor for supervisor in supervisors if supervisor.get_favourite() is not None
         ]
 
     return {p: p.matching for p in projects}

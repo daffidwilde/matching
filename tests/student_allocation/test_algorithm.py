@@ -34,9 +34,7 @@ def test_student_allocation(
 
 
 @STUDENT_ALLOCATION
-def test_student_optimal(
-    student_names, project_names, supervisor_names, capacities, seed, clean
-):
+def test_student_optimal(student_names, project_names, supervisor_names, capacities, seed, clean):
     """Test that the student-optimal algorithm is student-optimal."""
 
     np.random.seed(seed)
@@ -47,12 +45,7 @@ def test_student_optimal(
 
     assert set(projects) == set(matching.keys())
     assert all(
-        [
-            s in set(students)
-            for s in {
-                match for matches in matching.values() for match in matches
-            }
-        ]
+        [s in set(students) for s in {match for matches in matching.values() for match in matches}]
     )
 
     for student in students:
@@ -74,16 +67,11 @@ def test_supervisor_optimal(
 
     assert set(projects) == set(matching.keys())
     assert all(
-        [
-            s in set(students)
-            for s in {
-                match for matches in matching.values() for match in matches
-            }
-        ]
+        [s in set(students) for s in {match for matches in matching.values() for match in matches}]
     )
 
     for supervisor in supervisors:
-        old_idx = -np.infty
+        old_idx = -np.inf
         for student in supervisor.matching:
             idx = supervisor.prefs.index(student)
             assert idx >= old_idx
