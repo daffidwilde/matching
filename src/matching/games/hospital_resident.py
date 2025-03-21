@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from matching import convert
+from matching import convert, matchings
 
 
 class HospitalResident:
@@ -62,7 +62,7 @@ class HospitalResident:
 
         Returns
         -------
-        game : HospitalResident
+        HospitalResident
             An instance of HR with utilities resolved as rank matrices.
         """
         resident_ranks = convert.utility_to_rank(resident_utils)
@@ -90,7 +90,7 @@ class HospitalResident:
 
         Returns
         -------
-        game : HospitalResident
+        HospitalResident
             An instance of HR with preference lists resolved as rank
             matrices.
         """
@@ -115,3 +115,203 @@ class HospitalResident:
         Invalid games can still be solved, but the matching will not be
         truly stable in the absence of blocking pairs.
         """
+
+    def _resident_optimal(self):
+        """
+        Execute the resident-optimal algorithm given some rankings.
+
+        Returns
+        -------
+        dict
+            Solution mapping hospitals to their matched residents.
+        """
+        resident_ranks = self.resident_ranks
+        hospital_ranks = self.hospital_ranks
+        capacities = self.capacities
+
+        matching = {h: [] for h in range(self.num_hospitals)}
+        free_residents = set(range(self.num_residents))
+
+        while free_residents:
+            resident = free_residents.pop()
+            resident_rank = resident_ranks[resident]
+            if np.min(resident_rank) == self.num_hospitals:
+                continue
+
+            hospital = resident_rank.argmin()
+            hospital_rank = hospital_ranks[hospital]
+            hospital_matches = matching[hospital]
+            capacity = capacities[hospital]
+
+            if len(hospital_matches) == capacity:
+                worst, idx = _get_worst_match(hospital_rank, hospital_matches)
+                del hospital_matches[idx]
+                free_residents.add(worst)
+
+            hospital_matches.append(resident)
+
+            if len(hospital_matches) == capacity:
+                worst, _ = _get_worst_match(hospital_rank, hospital_matches)
+                successors = np.where(hospital_rank > hospital_rank[worst])
+                resident_ranks[successors, hospital] = self.num_hospitals
+                hospital_rank[successors] = self.num_residents
+
+        return matching
+
+    def _hospital_optimal(self):
+        """
+        Execute the hospital-optimal algorithm given some rankings.
+
+        Returns
+        -------
+        dict
+            Solution mapping hospitals to their matched residents.
+        """
+        resident_ranks = self.resident_ranks.copy()
+        hospital_ranks = self.hospital_ranks.copy()
+        capacities = self.capacities
+
+        matching = {h: [] for h in range(self.num_hospitals)}
+        free_hospitals = set(range(self.num_hospitals))
+
+        while free_hospitals:
+            hospital = free_hospitals.pop()
+            hospital_rank = hospital_ranks[hospital]
+            hospital_matches = matching.get(hospital)
+            options = [
+                res if i not in hospital_matches else self.num_residents
+                for i, res in enumerate(hospital_rank)
+            ]
+
+            is_at_capacity = len(hospital_matches) == capacities[hospital]
+            has_no_options = np.min(options) == self.num_residents
+            has_no_ranking = np.min(hospital_rank) == self.num_residents
+            if is_at_capacity or has_no_options or has_no_ranking:
+                continue
+
+            resident = np.argmin(options)
+            resident_rank = resident_ranks[resident]
+
+            current_match, idx = _get_current_match(resident, matching)
+            if current_match is not None:
+                current_match_matches = matching[current_match]
+                del current_match_matches[idx]
+                free_hospitals.add(current_match)
+
+            hospital_matches.append(resident)
+            free_hospitals.add(hospital)
+
+            successors = np.where(resident_rank > resident_rank[hospital])
+            hospital_ranks[successors, resident] = self.num_residents
+            resident_rank[successors] = self.num_hospitals
+
+        return matching
+
+    def _convert_matching_to_preferences(self):
+        """
+        Replace the rank indices with preference terms in a matching.
+
+        This internal function is included for users who wish to create
+        a matching from a set of preference list dictionaries.
+
+        Attributes
+        ----------
+        HRMatching
+            The converted matching instance.
+        """
+        converted = {}
+        residents, hospitals = self._preference_lookup.values()
+        for hospital, resident_matches in self.matching.items():
+            converted[hospitals[hospital]] = [residents[resident] for resident in resident_matches]
+
+        self.matching = matchings.HRMatching(converted, keys="hospitals", values="residents")
+
+    def solve(self, optimal="resident"):
+        """
+        Solve the instance of HR.
+
+        This method uses the adapted Gale-Shapley algorithms introduced
+        by Alvin Roth in 1984 (https://doi.org/10.1086/261272). The
+        algorithms find a unique, stable and party-optimal matching for
+        any valid set of residents and hospitals.
+
+        The optimality of the matching is with respect to one party and
+        is subsequently the worst stable matching for the other party.
+
+        Parameters
+        ----------
+        optimal : {"resident", "hospital"}, default="resident"
+            Party for whom to optimise the matching.
+
+        Raises
+        ------
+        ValueError
+            If `optimal` is anything other than the permitted values.
+
+        Returns
+        -------
+        HRMatching
+            A dictionary-like object containing the matching. The keys
+            correspond to the hospitals in the instance, while the
+            values are lists of the residents matched to them.
+        """
+        if optimal == "resident":
+            matching = self._resident_optimal()
+        elif optimal == "hospital":
+            matching = self._hospital_optimal()
+        else:
+            raise ValueError(
+                f'Invalid choice for `optimal`. Must be "resident" or "hospital", not "{optimal}".'
+            )
+
+        self.matching = matchings.HRMatching(matching, keys="hospitals", values="residents")
+        if self._preference_lookup:
+            self._convert_matching_to_preferences()
+
+        return self.matching
+
+
+def _get_worst_match(ranking, matches):
+    """
+    Get the worst current match (and its index) for a hospital.
+
+    Parameters
+    ----------
+    ranking : np.ndarray
+        Hospital ranking to search.
+    matches : list[int]
+        Current matches as indices in the ranking.
+
+    Returns
+    -------
+    tuple[int, int]
+        The worst match and its position in `matches`.
+    """
+    idx = ranking[matches].argmax()
+    worst = matches[idx]
+
+    return worst, idx
+
+
+def _get_current_match(resident, matching):
+    """
+    Get the current match for a resident (and its position) if any.
+
+    Parameters
+    ----------
+    resident : int
+        Resident for whom to search.
+    matching : dict
+        Mapping of hospitals to their matched residents.
+
+    Returns
+    -------
+    tuple[int, int] | tuple[None, None]
+        Currently matched hospital or `None` if the resident is free.
+    """
+    for hospital, residents in matching.items():
+        for idx, res in enumerate(residents):
+            if res == resident:
+                return hospital, idx
+
+    return None, None

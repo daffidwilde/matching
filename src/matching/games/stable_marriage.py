@@ -4,8 +4,7 @@ import warnings
 
 import numpy as np
 
-from matching import convert
-from matching.matchings import SingleMatching
+from matching import convert, matchings
 
 
 class StableMarriage:
@@ -60,7 +59,7 @@ class StableMarriage:
 
         Returns
         -------
-        game : StableMarriage
+        StableMarriage
             An instance of SM with utilities resolved as rank matrices.
         """
 
@@ -87,7 +86,7 @@ class StableMarriage:
 
         Returns
         -------
-        game : StableMarriage
+        StableMarriage
             An instance of SM with preference lists resolved as rank
             matrices.
         """
@@ -196,7 +195,7 @@ class StableMarriage:
 
         Returns
         -------
-        matching : dict
+        dict
             Solution to the game instance.
         """
 
@@ -230,7 +229,7 @@ class StableMarriage:
 
         Attributes
         ----------
-        matching : SingleMatching
+        SMMatching
             The converted matching instance.
         """
 
@@ -239,9 +238,7 @@ class StableMarriage:
         for reviewer, suitor in self.matching.items():
             converted[reviewers[reviewer]] = suitors[suitor]
 
-        self.matching = SingleMatching(
-            converted, valid=self.matching.valid, stable=self.matching.stable
-        )
+        self.matching = matchings.SMMatching(converted)
 
     def solve(self, optimal="suitor"):
         """
@@ -257,9 +254,8 @@ class StableMarriage:
 
         Parameters
         ----------
-        optimal : {"suitor", "reviewer"}, default "suitor"
-            Party for whom to optimise the matching. Must be one of
-            `"suitor"` or `"reviewer"`. Default is `"suitor"`.
+        optimal : {"suitor", "reviewer"}, default="suitor"
+            Party for whom to optimise the matching.
 
         Raises
         ------
@@ -268,7 +264,7 @@ class StableMarriage:
 
         Returns
         -------
-        matching : SingleMatching
+        SMMatching
             A dictionary-like object containing the matching. The keys
             correspond to the reviewers in the instance, while the
             values are the suitors.
@@ -285,7 +281,7 @@ class StableMarriage:
             self._invert_player_sets()
             keys, values = values, keys
 
-        matching = SingleMatching(self._stable_marriage(), keys=keys, values=values)
+        matching = matchings.SMMatching(self._stable_marriage(), keys=keys, values=values)
 
         if optimal == "reviewer":
             matching = matching.invert()

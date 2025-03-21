@@ -1,54 +1,89 @@
-"""Tests for the matching classes."""
+"""Tests for the `matchings` module."""
 
 from hypothesis import given
-from hypothesis.strategies import (
-    composite,
-    integers,
-    lists,
-    sampled_from,
-    text,
-)
+from hypothesis import strategies as st
 
-from matching import MultipleMatching
-from matching.players import Hospital, Player
+from matching import matchings
 
 
-@composite
-def multiples(
-    draw,
-    host_names_from=text(),
-    player_names_from=text(),
-    min_hosts=2,
-    max_hosts=5,
-    min_players=10,
-    max_players=20,
-):
-    """A strategy for creating multiple-match matchings from players."""
+@st.composite
+def st_sm_params(draw, min_size=2, max_size=5):
+    """Create a parameter set for a SMMatching instance."""
 
-    num_hosts = draw(integers(min_value=min_hosts, max_value=max_hosts))
-    num_players = draw(integers(min_value=min_players, max_value=max_players))
+    size = draw(st.integers(min_size, max_size))
+    midpoint = size // 2
+    players = list(range(size))
+    keys, values = players[:midpoint], players[midpoint:]
+    dictionary = draw(st.sampled_from((None, dict(zip(keys, values)))))
 
-    hosts = [Hospital(draw(host_names_from), max_players) for _ in range(num_hosts)]
-    players = [Player(draw(player_names_from)) for _ in range(num_players)]
+    keys = draw(st.text(min_size=1))
+    values = draw(st.text(min_size=1))
 
-    dictionary = {}
-    for host in hosts:
-        matches = draw(lists(sampled_from(players), min_size=0, unique=True))
-        dictionary[host] = matches
+    params = dict(dictionary=dictionary, keys=keys, values=values)
 
-    return dictionary
+    return params
 
 
-@given(dictionary=multiples())
-def test_multiple_setitem(dictionary):
-    """Test that a host player in a matching can have a list match."""
+@st.composite
+def st_sms(draw, min_size=2, max_size=5):
+    """Create a SMMatching instance."""
 
-    matching = MultipleMatching(dictionary)
-    host = list(dictionary.keys())[0]
-    players = list({player for players in dictionary.values() for player in players})[:-1]
+    params = draw(st_sm_params(min_size, max_size))
 
-    matching[host] = players
-    assert matching[host] == players
-    assert host.matching == players
-    for player in players:
-        assert player.matching == host
+    return matchings.SMMatching(**params)
+
+
+@given(st_sm_params())
+def test_init(params):
+    """Check that a SMMatching can be created correctly."""
+
+    matching = matchings.SMMatching(**params)
+
+    assert isinstance(matching, matchings.SMMatching)
+    assert isinstance(matching, dict)
+
+    dictionary = params["dictionary"] or {}
+    assert matching.items() == dictionary.items()
+    assert vars(matching) == {"keys_": params["keys"], "values_": params["values"]}
+
+
+@given(st_sms())
+def test_repr(matching):
+    """Check that the string representation of a matching is correct."""
+
+    repr_ = repr(matching)
+
+    assert isinstance(repr_, str)
+    assert repr_.startswith("SMMatching")
+    assert str(dict(matching)) in repr_
+    assert matching.keys_ in repr_
+    assert matching.values_ in repr_
+
+
+@given(st_sm_params())
+def test_eq(params):
+    """Check the equivalence dunder works as expected."""
+
+    matching1 = matchings.SMMatching(**params)
+    matching2 = matchings.SMMatching(**params)
+
+    assert matching1 == matching2
+
+    if params["dictionary"] is not None:
+        key = next(iter(params["dictionary"].keys()))
+        matching2[key] = None
+
+        assert matching1 != matching2
+        assert vars(matching1) == vars(matching2)
+
+
+@given(st_sms())
+def test_invert(matching):
+    """Check the matching inverter works as it should."""
+
+    inverted = matching.invert()
+
+    assert isinstance(inverted, matchings.SMMatching)
+    assert set(inverted.items()) == set((val, key) for key, val in matching.items())
+    assert inverted.keys_ == matching.values_
+    assert inverted.values_ == matching.keys_

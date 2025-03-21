@@ -9,7 +9,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from matching.games import StableMarriage
-from matching.matchings import SingleMatching
+from matching.matchings import SMMatching
 
 from ..common import mocked_game
 from .strategies import (
@@ -228,7 +228,7 @@ def test_solve_valid_optimal(ranks, optimal, solution):
     with (
         mock.patch("matching.games.StableMarriage._invert_player_sets") as player_set_inverter,
         mock.patch("matching.games.StableMarriage._stable_marriage") as stable_marriage,
-        mock.patch("matching.matchings.SingleMatching.invert") as matching_inverter,
+        mock.patch("matching.matchings.SMMatching.invert") as matching_inverter,
     ):
         stable_marriage.return_value = solution
         matching_inverter.return_value = "inverted_matching"
@@ -245,7 +245,7 @@ def test_solve_valid_optimal(ranks, optimal, solution):
         ]
         assert matching == "inverted_matching"
     else:
-        assert isinstance(matching, SingleMatching)
+        assert isinstance(matching, SMMatching)
         assert dict(matching) == solution
 
 
@@ -259,7 +259,7 @@ def test_solve_invalid_optimal_raises(ranks, optimal):
     with (
         mock.patch("matching.games.StableMarriage._invert_player_sets") as player_set_inverter,
         mock.patch("matching.games.StableMarriage._stable_marriage") as stable_marriage,
-        mock.patch("matching.matchings.SingleMatching.invert") as matching_inverter,
+        mock.patch("matching.matchings.SMMatching.invert") as matching_inverter,
         pytest.raises(ValueError, match=match),
     ):
         game.solve(optimal)
@@ -280,16 +280,14 @@ def test_convert_matching_to_preferences(preference_matchings):
         warnings.simplefilter("ignore")
         game = StableMarriage.from_preferences(suitor_prefs, reviewer_prefs)
 
-    game.matching = SingleMatching(matching)
+    game.matching = SMMatching(matching)
 
     game._convert_matching_to_preferences()
     converted = game.matching
 
-    assert isinstance(converted, SingleMatching)
+    assert isinstance(converted, SMMatching)
     assert converted.keys_ == "reviewers"
     assert converted.values_ == "suitors"
-    assert converted.valid is None
-    assert converted.stable is None
 
     assert set(converted.keys()) == set(reviewer_prefs)
     assert set(converted.values()) == set(suitor_prefs)
