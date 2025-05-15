@@ -95,11 +95,11 @@ largely look and behave like one. It is in fact an instance of the
 
 ```python
 >>> type(matching)
-<class 'matching.matchings.single.SingleMatching'>
+<class 'matching.matchings.SMMatching'>
 >>> isinstance(matching, dict)
 True
 >>> matching
-SingleMatching({'F': 'C', 'D': 'B', 'E': 'A'}, keys="reviewers", values="suitors")
+SMMatching({'F': 'C', 'D': 'B', 'E': 'A'}, keys="reviewers", values="suitors")
 
 ```
 
@@ -118,27 +118,27 @@ One of the limitations of this library is the time complexities of the
 algorithm implementations. In practical terms, the running time of any
 of the algorithms in Matching is negligible but the theoretic complexity
 of each has not yet been attained. For example, an instance of HR with
-400 applicants and 20 hospitals is solved in less than one tenth of a
+400 applicants and 20 hospitals is solved in around one tenth of a
 second:
 
 ```python
->>> from matching.games._old_hospital_resident import HospitalResident
+>>> from matching.games import HospitalResident
 >>> import numpy as np
 >>> prng = np.random.default_rng(0)
 >>> num_residents, num_hospitals = 400, 20
 >>> resident_prefs = {
-...     r: np.argsort(prng.random(size=num_hospitals))
+...     r: list(np.argsort(prng.random(size=num_hospitals)))
 ...     for r in range(num_residents)
 ... }
 >>> hospital_prefs = {
-...     h: np.argsort(prng.random(size=num_residents))
+...     h: list(np.argsort(prng.random(size=num_residents)))
 ...     for h in range(num_hospitals)
 ... }
 >>> capacities = {h: num_hospitals for h in hospital_prefs}
 >>> game = HospitalResident.from_preferences(
 ...     resident_prefs, hospital_prefs, capacities
 ... )
->>> _ = game.solve() # 48.6 ms ± 963 µs per loop
+>>> _ = game.solve() # 118 ms ± 847 µs per loop
 
 ```
 
