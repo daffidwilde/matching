@@ -1,16 +1,18 @@
-"""Tests for the `matchings` module."""
+"""Tests for the `SMMatching` class."""
 
 from hypothesis import given
 from hypothesis import strategies as st
 
 from matching import matchings
 
+from ..common import st_sizes
+
 
 @st.composite
-def st_sm_params(draw, min_size=2, max_size=5):
+def st_params(draw, min_size=2, max_size=5):
     """Create a parameter set for a SMMatching instance."""
 
-    size = draw(st.integers(min_size, max_size))
+    size = draw(st_sizes(min_size, max_size))
     midpoint = size // 2
     players = list(range(size))
     keys, values = players[:midpoint], players[midpoint:]
@@ -25,15 +27,15 @@ def st_sm_params(draw, min_size=2, max_size=5):
 
 
 @st.composite
-def st_sms(draw, min_size=2, max_size=5):
+def st_matchings(draw, min_size=2, max_size=5):
     """Create a SMMatching instance."""
 
-    params = draw(st_sm_params(min_size, max_size))
+    params = draw(st_params(min_size, max_size))
 
     return matchings.SMMatching(**params)
 
 
-@given(st_sm_params())
+@given(st_params())
 def test_init(params):
     """Check that a SMMatching can be created correctly."""
 
@@ -47,7 +49,7 @@ def test_init(params):
     assert vars(matching) == {"keys_": params["keys"], "values_": params["values"]}
 
 
-@given(st_sms())
+@given(st_matchings())
 def test_repr(matching):
     """Check that the string representation of a matching is correct."""
 
@@ -60,7 +62,7 @@ def test_repr(matching):
     assert matching.values_ in repr_
 
 
-@given(st_sm_params())
+@given(st_params())
 def test_eq(params):
     """Check the equivalence dunder works as expected."""
 
@@ -68,6 +70,7 @@ def test_eq(params):
     matching2 = matchings.SMMatching(**params)
 
     assert matching1 == matching2
+    assert matching1 is not matching2
 
     if params["dictionary"] is not None:
         key = next(iter(params["dictionary"].keys()))
@@ -77,7 +80,7 @@ def test_eq(params):
         assert vars(matching1) == vars(matching2)
 
 
-@given(st_sms())
+@given(st_matchings())
 def test_invert(matching):
     """Check the matching inverter works as it should."""
 

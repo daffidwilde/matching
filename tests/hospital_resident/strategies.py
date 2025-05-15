@@ -3,24 +3,15 @@
 import numpy as np
 from hypothesis import strategies as st
 
-from ..common import st_single_ranks, st_single_utilities
-
-
-@st.composite
-def st_sizes(draw, hmin, hmax, rmin, rmax):
-    """Create sizes for the resident and hospital sets."""
-
-    hsize = draw(st.integers(hmin, hmax))
-    rsize = draw(st.integers(rmin, rmax))
-
-    return hsize, rsize
+from ..common import st_single_ranks, st_single_utilities, st_sizes
 
 
 @st.composite
 def st_ranks(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of rankings for a test."""
 
-    hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
+    hsize = draw(st_sizes(hmin, hmax))
+    rsize = draw(st_sizes(rmin, rmax))
 
     resident_ranks = draw(st_single_ranks(rsize, hsize))
     hospital_ranks = draw(st_single_ranks(hsize, rsize))
@@ -32,7 +23,7 @@ def st_ranks(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 def st_capacities(draw, hmin=1, hmax=3):
     """Create a capacity vector."""
 
-    size = draw(st.integers(hmin, hmax))
+    size = draw(st_sizes(hmin, hmax))
     capacities = draw(st.lists(st.integers(1, 2), min_size=size, max_size=size))
 
     return np.array(capacities)
@@ -42,7 +33,8 @@ def st_capacities(draw, hmin=1, hmax=3):
 def st_ranks_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of rankings and capacities for a test."""
 
-    hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
+    hsize = draw(st_sizes(hmin, hmax))
+    rsize = draw(st_sizes(rmin, rmax))
 
     resident_ranks, hospital_ranks = draw(st_ranks(hsize, hsize, rsize, rsize))
     capacities = draw(st_capacities(hsize, hsize))
@@ -54,11 +46,12 @@ def st_ranks_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 def st_utilities_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of utilities and capacities for a test."""
 
-    hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
+    hsize = draw(st_sizes(hmin, hmax))
+    rsize = draw(st_sizes(rmin, rmax))
 
     resident_utility = draw(st_single_utilities(rsize, hsize))
     hospital_utility = draw(st_single_utilities(hsize, rsize))
-    capacities = draw(st_capacities(hsize))
+    capacities = draw(st_capacities(hsize, hsize))
 
     return resident_utility, hospital_utility, capacities
 
@@ -67,14 +60,15 @@ def st_utilities_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 def st_preferences_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of preferences and capacities for a test."""
 
-    hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
+    hsize = draw(st_sizes(hmin, hmax))
+    rsize = draw(st_sizes(rmin, rmax))
 
     residents = draw(st.lists(st.integers(), min_size=rsize, max_size=rsize, unique=True))
     hospitals = draw(st.lists(st.text(), min_size=hsize, max_size=hsize, unique=True))
 
     resident_preferences = {r: draw(st.permutations(hospitals)) for r in residents}
     hospital_preferences = {h: draw(st.permutations(residents)) for h in hospitals}
-    capacities = dict(zip(hospital_preferences, draw(st_capacities(hsize))))
+    capacities = dict(zip(hospital_preferences, draw(st_capacities(hsize, hsize))))
 
     return resident_preferences, hospital_preferences, capacities
 

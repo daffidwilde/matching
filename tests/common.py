@@ -50,3 +50,9 @@ def st_single_utilities(draw, nrows: int, ncols: int | None = None):
     )
 
     return utility
+
+
+@st.composite
+def st_sizes(draw, nmin=1, nmax=5):
+    """Create a size for a side in a game."""
+    return draw(st.integers(nmin, nmax))
