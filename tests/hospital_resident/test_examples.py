@@ -2,6 +2,7 @@
 
 import json
 import os
+import warnings
 
 from matching.games import HospitalResident
 
@@ -81,7 +82,9 @@ def test_example_in_issue_159():
     hospital_prefs = {int(hos): prefs for hos, prefs in preferences["hospitals"].items()}
     capacities = {hospital: 1 for hospital in hospital_prefs}
 
-    game = HospitalResident.from_preferences(resident_prefs, hospital_prefs, capacities)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        game = HospitalResident.from_preferences(resident_prefs, hospital_prefs, capacities)
 
     for ranking, preferences in zip(game.resident_ranks, resident_prefs.values()):
         minimum, limit = min(ranking), game.num_hospitals

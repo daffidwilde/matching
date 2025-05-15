@@ -275,9 +275,7 @@ def test_convert_matching_to_preferences(preference_matchings):
 
     suitor_prefs, reviewer_prefs, matching = preference_matchings
 
-    # the arrays here aren't used anywhere internally, just placeholders
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with mock.patch.object(StableMarriage, "check_input_validity") as validator:
         game = StableMarriage.from_preferences(suitor_prefs, reviewer_prefs)
 
     game.matching = SMMatching(matching)
@@ -291,3 +289,5 @@ def test_convert_matching_to_preferences(preference_matchings):
 
     assert set(converted.keys()) == set(reviewer_prefs)
     assert set(converted.values()) == set(suitor_prefs)
+
+    validator.assert_called_once_with()
