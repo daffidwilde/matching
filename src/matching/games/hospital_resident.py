@@ -1,5 +1,7 @@
 """The HR game class and supporting functions."""
 
+import warnings
+
 import numpy as np
 
 from matching import convert, matchings
@@ -98,7 +100,7 @@ class HospitalResident:
 
         resident_ranks = convert.preference_to_rank(resident_prefs, hospitals)
         hospital_ranks = convert.preference_to_rank(hospital_prefs, residents)
-        capacity_array = np.array([capacities.get(h) for h in hospitals])
+        capacity_array = np.array([capacities.get(h, -1) for h in hospitals])
 
         game = cls(resident_ranks, hospital_ranks, capacity_array)
         game._preference_lookup = {
@@ -114,7 +116,69 @@ class HospitalResident:
 
         Invalid games can still be solved, but the matching will not be
         truly stable in the absence of blocking pairs.
+
+        Warns
+        -----
+        UserWarning
+            If (a) any player has not made a strict, exhaustive ranking
+            of the players who ranked them, or (b) any hospital has an
+            invalid capacity.
         """
+        for hospital, ranks in enumerate(self.hospital_ranks):
+            self._check_player_ranks(hospital, ranks, self.resident_ranks, "hospital")
+
+        for resident, ranks in enumerate(self.resident_ranks):
+            self._check_player_ranks(resident, ranks, self.hospital_ranks, "resident")
+
+        self._check_capacities()
+
+    @staticmethod
+    def _check_player_ranks(player, player_ranks, other_ranks, side):
+        """
+        Check whether a player has made a valid ranking.
+
+        Parameters
+        ----------
+        player : int
+            Player for whom to check the ranks.
+        player_ranks : np.ndarray
+            Ranking by the player.
+        other_ranks : np.ndarray
+            Rankings of the players on the other side.
+        side : {"resident", "hospital"}
+            Side of the matching for the player.
+
+        Warns
+        -----
+        UserWarning
+            If the player has not made a strict, exhaustive ranking of
+            the all the players who ranked them.
+        """
+        ranked_player = [other for other, ranks in enumerate(other_ranks) if player in ranks]
+        same_size = len(ranked_player) == len(player_ranks)
+        same_elements = set(ranked_player) == set(player_ranks)
+        if not same_size or not same_elements:
+            warnings.warn(
+                f"{side.title()} {player} has not made a strict, exhaustive ranking of "
+                f"the players who ranked them.",
+                UserWarning,
+            )
+
+    def _check_capacities(self):
+        """
+        Check whether the hospital capacities are valid.
+
+        Warns
+        -----
+        UserWarning
+            If any hospital has an invalid capacity.
+        """
+        for hospital, capacity in enumerate(self.capacities):
+            if capacity <= 0:
+                warnings.warn(
+                    f"Hospital {hospital} has a capacity of {capacity}.",
+                    UserWarning,
+                )
 
     def solve(self, optimal="resident"):
         """

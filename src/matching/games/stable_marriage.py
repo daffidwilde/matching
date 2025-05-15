@@ -101,6 +101,29 @@ class StableMarriage:
 
         return game
 
+    def check_input_validity(self):
+        """
+        Determine whether this game instance is valid or not.
+
+        Invalid games can still be solved, but the matching will not be
+        truly stable in the absence of blocking pairs.
+
+        Warns
+        -----
+        UserWarning
+            If (a) the player sets are not the same size; or (b) any
+            player has not made a strict, exhaustive, and unique ranking
+            of the players on the other side of the matching.
+        """
+
+        self._check_number_of_players()
+
+        for suitor, ranks in enumerate(self.suitor_ranks):
+            self._check_player_ranks(suitor, ranks, "suitor")
+
+        for reviewer, ranks in enumerate(self.reviewer_ranks):
+            self._check_player_ranks(reviewer, ranks, "reviewer")
+
     def _check_number_of_players(self):
         """
         Check whether the player sets are the same size.
@@ -148,29 +171,6 @@ class StableMarriage:
                 "You may not be able to find a stable matching.",
                 UserWarning,
             )
-
-    def check_input_validity(self):
-        """
-        Determine whether this game instance is valid or not.
-
-        Invalid games can still be solved, but the matching will not be
-        truly stable in the absence of blocking pairs.
-
-        Warns
-        -----
-        UserWarning
-            If (a) the player sets are not the same size; or (b) any
-            player has not made a strict, exhaustive, and unique ranking
-            of the players on the other side of the matching.
-        """
-
-        self._check_number_of_players()
-
-        for suitor, ranks in enumerate(self.suitor_ranks):
-            self._check_player_ranks(suitor, ranks, "suitor")
-
-        for reviewer, ranks in enumerate(self.reviewer_ranks):
-            self._check_player_ranks(reviewer, ranks, "reviewer")
 
     def solve(self, optimal="suitor"):
         """
