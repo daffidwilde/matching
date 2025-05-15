@@ -1,20 +1,8 @@
-"""Unit tests for the SA solver."""
+"""Unit tests for the StudentProject class."""
 
 import warnings
 
 import pytest
-
-from matching import MultipleMatching
-from matching import Player as Student
-from matching.exceptions import (
-    CapacityChangedWarning,
-    MatchingError,
-    PreferencesChangedWarning,
-)
-from matching.games import StudentAllocation
-from matching.players import Project, Supervisor
-
-from .util import STUDENT_ALLOCATION, make_connections, make_game
 
 
 @STUDENT_ALLOCATION

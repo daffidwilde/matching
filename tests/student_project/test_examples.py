@@ -1,7 +1,6 @@
 """A collection of example tests for SA."""
 
-from matching.algorithms import student_allocation
-from matching.games import StudentAllocation
+from matching.games import StudentProject
 
 
 def test_example_in_docs():
@@ -24,15 +23,13 @@ def test_example_in_docs():
     project_capacities = {p: 2 for p in project_supervisors}
     supervisor_capacities = {sup: 3 for sup in supervisor_prefs}
 
-    game = StudentAllocation.create_from_dictionaries(
+    game = StudentProject.from_preferences(
         student_prefs,
         supervisor_prefs,
         project_supervisors,
         project_capacities,
         supervisor_capacities,
     )
-    a, b, c, d, e = game.students
-    x1, x2, y1, y2 = game.projects
 
-    matching = student_allocation(game.students, game.projects, game.supervisors)
-    assert matching == {x1: [c, a], x2: [], y1: [d], y2: [b, e]}
+    matching = game.solve()
+    assert matching == {"X1": ["A", "C"], "X2": [], "Y1": ["D"], "Y2": ["B", "E"]}
