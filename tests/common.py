@@ -19,14 +19,16 @@ def mocked_game(game, *args):
 
 
 @st.composite
-def st_single_ranks(draw, num_rank: int, len_rank: int):
+def st_single_ranks(draw, nrows: int, ncols: int | None = None):
     """Create a single rank matrix."""
+    if ncols is None:
+        ncols = nrows
 
     rank = draw(
         st.lists(
-            st.permutations(range(len_rank)),
-            min_size=num_rank,
-            max_size=num_rank,
+            st.permutations(range(ncols)),
+            min_size=nrows,
+            max_size=nrows,
         )
     )
 
@@ -34,8 +36,10 @@ def st_single_ranks(draw, num_rank: int, len_rank: int):
 
 
 @st.composite
-def st_single_utilities(draw, nrows: int, ncols: int):
+def st_single_utilities(draw, nrows: int, ncols: int | None = None):
     """Create a single utility matrix."""
+    if ncols is None:
+        ncols = nrows
 
     utility = draw(
         st_numpy.arrays(

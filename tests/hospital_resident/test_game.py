@@ -3,9 +3,11 @@
 from unittest import mock
 
 import numpy as np
+import pytest
 from hypothesis import given
+from hypothesis import strategies as st
 
-from matching.games import HospitalResident
+from matching.games import HospitalResident, hospital_resident
 
 from ..common import mocked_game
 from .strategies import (
@@ -114,3 +116,55 @@ def test_from_preferences(preferences_capacities):
         assert call.args == (preference, sorted(others))
 
     validator.assert_called_once_with()
+
+
+@given(st_ranks_capacities(), st.sampled_from(["resident", "hospital"]), st.booleans())
+def test_solve(ranks_capacities, optimal, preference_lookup):
+    """
+    Check the solver works as it should.
+
+    This method wraps the algorithm functions for the HR game, as well
+    as the matching-preference conversion function. So, we mock all of
+    these and check they are called correctly.
+    """
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, *ranks_capacities)
+    game._preference_lookup = preference_lookup
+
+    with (
+        mock.patch.object(game, "_resident_optimal") as mock_resident_optimal,
+        mock.patch.object(game, "_hospital_optimal") as mock_hospital_optimal,
+        mock.patch.object(game, "_convert_matching_to_preferences") as mock_convert,
+        mock.patch.object(hospital_resident.matchings, "HRMatching") as mock_matching,
+    ):
+        matching = game.solve(optimal=optimal)
+
+    assert matching == game.matching == mock_matching.return_value
+
+    if optimal == "resident":
+        mock_resident_optimal.assert_called_once_with()
+        mock_hospital_optimal.assert_not_called()
+        mock_matching.assert_called_once_with(
+            mock_resident_optimal.return_value, keys="hospitals", values="residents"
+        )
+    if optimal == "hospital":
+        mock_hospital_optimal.assert_called_once_with()
+        mock_resident_optimal.assert_not_called()
+        mock_matching.assert_called_once_with(
+            mock_hospital_optimal.return_value, keys="hospitals", values="residents"
+        )
+
+    if preference_lookup:
+        mock_convert.assert_called_once_with()
+    else:
+        mock_convert.assert_not_called()
+
+
+@given(st_ranks_capacities(), st.text(min_size=1))
+def test_solve_raises_with_bad_optimal(ranks_capacities, optimal):
+    """Check that the solver raises an error with a bad optimal value."""
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, *ranks_capacities)
+
+    with pytest.raises(ValueError, match="Invalid choice for `optimal`"):
+        game.solve(optimal=optimal)

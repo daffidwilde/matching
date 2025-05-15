@@ -10,8 +10,8 @@ def st_ranks(draw, pmin=1, pmax=5):
     """Create a set of rankings for a test."""
 
     size = draw(st.integers(pmin, pmax))
-    suitor_ranks = draw(st_single_ranks(size, size))
-    reviewer_ranks = draw(st_single_ranks(size, size))
+    suitor_ranks = draw(st_single_ranks(size))
+    reviewer_ranks = draw(st_single_ranks(size))
 
     return suitor_ranks, reviewer_ranks
 
@@ -33,8 +33,8 @@ def st_utilities(draw, pmin=1, pmax=5):
     """Create a set of utility matrices."""
 
     size = draw(st.integers(pmin, pmax))
-    suitor_utility = draw(st_single_utilities(size, size))
-    reviewer_utility = draw(st_single_utilities(size, size))
+    suitor_utility = draw(st_single_utilities(size))
+    reviewer_utility = draw(st_single_utilities(size))
 
     return suitor_utility, reviewer_utility
 
