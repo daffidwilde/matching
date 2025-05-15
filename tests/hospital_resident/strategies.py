@@ -65,3 +65,33 @@ def st_preferences_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     capacities = dict(zip(hospital_preferences, draw(st_capacities(hsize))))
 
     return resident_preferences, hospital_preferences, capacities
+
+
+@st.composite
+def st_preference_matchings(draw, hmin=1, hmax=3, rmin=1, rmax=5):
+    """Create a set of preferences and a matching to go with them."""
+
+    resident_preferences, hospital_preferences, capacities = draw(
+        st_preferences_capacities(hmin, hmax, rmin, rmax)
+    )
+
+    matched_residents = draw(
+        st.lists(st.sampled_from(list(resident_preferences.keys())), unique=True)
+    )
+    resident_matching = {}
+    spaces = capacities.copy()
+    for resident in matched_residents:
+        resident_idx = list(resident_preferences.keys()).index(resident)
+        hospital = draw(st.sampled_from(resident_preferences[resident]))
+        hospital_idx = list(hospital_preferences.keys()).index(hospital)
+        if spaces[hospital]:
+            resident_matching[resident_idx] = hospital_idx
+            spaces[hospital] -= 1
+
+    matching = {
+        hospital: [r for r in resident_matching if resident_matching[r] == hospital]
+        for hospital, _ in enumerate(hospital_preferences)
+        if hospital in resident_matching.values()
+    }
+
+    return resident_preferences, hospital_preferences, capacities, matching

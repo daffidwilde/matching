@@ -115,7 +115,7 @@ def test_hospital_optimal_hospital_optimal(ranks_capacities):
             partner = next((h for h, rs in matching.items() if preferred in rs), None)
             if partner is None:
                 assert False
-            
+
             assert preferred_rank[partner] < preferred_rank[hospital]
 
 

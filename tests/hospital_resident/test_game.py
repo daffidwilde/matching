@@ -1,5 +1,6 @@
 """Unit tests for the HospitalResident class."""
 
+import warnings
 from unittest import mock
 
 import numpy as np
@@ -7,10 +8,12 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
+from matching import matchings
 from matching.games import HospitalResident, hospital_resident
 
 from ..common import mocked_game
 from .strategies import (
+    st_preference_matchings,
     st_preferences_capacities,
     st_ranks_capacities,
     st_utilities_capacities,
@@ -168,3 +171,27 @@ def test_solve_raises_with_bad_optimal(ranks_capacities, optimal):
 
     with pytest.raises(ValueError, match="Invalid choice for `optimal`"):
         game.solve(optimal=optimal)
+
+
+@given(st_preference_matchings())
+def test_convert_matching_to_preferences(preference_matchings):
+    """Test that a matching can use the terms from some preferences."""
+
+    resident_prefs, hospital_prefs, capacities, matching = preference_matchings
+
+    # the arrays here aren't used anywhere internally, just placeholders
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        game = HospitalResident.from_preferences(resident_prefs, hospital_prefs, capacities)
+
+    game.matching = matchings.HRMatching(matching)
+
+    game._convert_matching_to_preferences()
+    converted = game.matching
+
+    assert isinstance(converted, matchings.HRMatching)
+    assert converted.keys_ == "hospitals"
+    assert converted.values_ == "residents"
+
+    assert set(converted.keys()) <= set(hospital_prefs)
+    assert set([r for rs in converted.values() for r in rs]) <= set(resident_prefs)
