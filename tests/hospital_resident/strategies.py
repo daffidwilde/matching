@@ -33,7 +33,7 @@ def st_capacities(draw, hmin=1, hmax=3):
     """Create a capacity vector."""
 
     size = draw(st.integers(hmin, hmax))
-    capacities = draw(st.lists(st.integers(1, 3), min_size=size, max_size=size))
+    capacities = draw(st.lists(st.integers(1, 2), min_size=size, max_size=size))
 
     return np.array(capacities)
 

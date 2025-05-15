@@ -29,9 +29,9 @@ def test_resident_optimal_resident_optimal(ranks_capacities):
     """
     Check the resident-optimal algorithm is optimal for residents.
 
-    We affirm this by going through the matching and checking that
-    for each resident, if they prefer a hospital to their current match,
-    then the hospital prefers their matches to the resident.
+    We affirm this by going through the residents and checking that
+    either they are unmatched or they prefer their match to any other
+    hospital.
     """
     resident_ranks, hospital_ranks, capacities = ranks_capacities
     game = mocked_game(HospitalResident, *ranks_capacities)
@@ -40,15 +40,13 @@ def test_resident_optimal_resident_optimal(ranks_capacities):
 
     _assert_matching_is_valid_shape(matching, hospital_ranks, resident_ranks, capacities)
 
-    for hospital, residents in matching.items():
-        for resident in residents:
-            resident_rank = game.resident_ranks[resident]
-            preferred_hospitals, *_ = np.where(resident_rank < resident_rank[hospital])
-            for preferred in preferred_hospitals:
-                preferred_rank = game.hospital_ranks[preferred]
-                partners = matching[preferred]
-                for partner in partners:
-                    assert preferred_rank[resident] > preferred_rank[partner]
+    for resident, resident_rank in enumerate(game.resident_ranks):
+        hospital = next((h for h, rs in matching.items() if resident in rs), None)
+        if hospital is None:
+            continue
+
+        preferred_hospitals, *_ = np.where(resident_rank < resident_rank[hospital])
+        assert not preferred_hospitals.any()
 
 
 @given(st_ranks_capacities())
@@ -56,10 +54,10 @@ def test_resident_optimal_hospital_pessimal(ranks_capacities):
     """
     Check the resident-optimal algorithm is pessimal for hospitals.
 
-    We affirm this by going through the matching and checking that for
-    each hospital, if they prefer a resident to their worst current
-    match, then the resident matched to them already or prefers their
-    match to the hospital.
+    We affirm this by going through the hospitals and checking that if
+    they prefer a resident to their worst current match, then the
+    resident matched to them already or prefers their match to the
+    hospital.
     """
     resident_ranks, hospital_ranks, capacities = ranks_capacities
     game = mocked_game(HospitalResident, *ranks_capacities)
@@ -81,9 +79,8 @@ def test_resident_optimal_hospital_pessimal(ranks_capacities):
 
             preferred_rank = game.resident_ranks[preferred]
             partner = next((h for h, rs in matching.items() if preferred in rs), None)
-            if partner is None:
-                continue
 
+            assert partner is not None
             assert preferred_rank[partner] < preferred_rank[hospital]
 
 
@@ -113,9 +110,8 @@ def test_hospital_optimal_hospital_optimal(ranks_capacities):
         for preferred in preferred_residents:
             preferred_rank = game.resident_ranks[preferred]
             partner = next((h for h, rs in matching.items() if preferred in rs), None)
-            if partner is None:
-                assert False
 
+            assert partner is not None
             assert preferred_rank[partner] < preferred_rank[hospital]
 
 
@@ -142,9 +138,8 @@ def test_hospital_optimal_resident_pessimal(ranks_capacities):
 
         preferred_hospitals, *_ = np.where(resident_rank < resident_rank[hospital])
         for preferred in preferred_hospitals:
-            preferred_matches = matching[preferred]
-            if not preferred_matches:
-                assert False
+            preferred_matches = matching.get(preferred)
+            assert preferred_matches is not None
 
             preferred_rank = game.hospital_ranks[preferred]
             worst_match = preferred_rank[preferred_matches].max()
