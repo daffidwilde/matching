@@ -172,6 +172,59 @@ class StableMarriage:
         for reviewer, ranks in enumerate(self.reviewer_ranks):
             self._check_player_ranks(reviewer, ranks, "reviewer")
 
+    def solve(self, optimal="suitor"):
+        """
+        Solve the instance of SM.
+
+        This method uses an extended version of the Gale-Shapley
+        algorithm that makes use of the inherent structures of SM
+        instances. The algorithm finds a unique, stable and optimal
+        matching for any valid set of suitors and reviewers.
+
+        The optimality of the matching is with respect to one party and
+        is subsequently the worst stable matching for the other party.
+
+        Parameters
+        ----------
+        optimal : {"suitor", "reviewer"}, default="suitor"
+            Party for whom to optimise the matching.
+
+        Raises
+        ------
+        ValueError
+            If `optimal` is anything other than the permitted values.
+
+        Returns
+        -------
+        SMMatching
+            A dictionary-like object containing the matching. The keys
+            correspond to the reviewers in the instance, while the
+            values are the suitors.
+        """
+
+        if optimal not in ("suitor", "reviewer"):
+            raise ValueError(
+                f'Invalid choice for `optimal`. Must be "suitor" or "reviewer", not "{optimal}".'
+            )
+
+        keys, values = "reviewers", "suitors"
+
+        if optimal == "reviewer":
+            self._invert_player_sets()
+            keys, values = values, keys
+
+        matching = matchings.SMMatching(self._stable_marriage(), keys=keys, values=values)
+
+        if optimal == "reviewer":
+            matching = matching.invert()
+            self._invert_player_sets()
+
+        self.matching = matching
+        if self._preference_lookup:
+            self._convert_matching_to_preferences()
+
+        return self.matching
+
     def _invert_player_sets(self):
         """
         Invert the attributes associated with each set of players.
@@ -239,56 +292,3 @@ class StableMarriage:
             converted[reviewers[reviewer]] = suitors[suitor]
 
         self.matching = matchings.SMMatching(converted)
-
-    def solve(self, optimal="suitor"):
-        """
-        Solve the instance of SM.
-
-        This method uses an extended version of the Gale-Shapley
-        algorithm that makes use of the inherent structures of SM
-        instances. The algorithm finds a unique, stable and optimal
-        matching for any valid set of suitors and reviewers.
-
-        The optimality of the matching is with respect to one party and
-        is subsequently the worst stable matching for the other party.
-
-        Parameters
-        ----------
-        optimal : {"suitor", "reviewer"}, default="suitor"
-            Party for whom to optimise the matching.
-
-        Raises
-        ------
-        ValueError
-            If `optimal` is anything other than the permitted values.
-
-        Returns
-        -------
-        SMMatching
-            A dictionary-like object containing the matching. The keys
-            correspond to the reviewers in the instance, while the
-            values are the suitors.
-        """
-
-        if optimal not in ("suitor", "reviewer"):
-            raise ValueError(
-                f'Invalid choice for `optimal`. Must be "suitor" or "reviewer", not "{optimal}".'
-            )
-
-        keys, values = "reviewers", "suitors"
-
-        if optimal == "reviewer":
-            self._invert_player_sets()
-            keys, values = values, keys
-
-        matching = matchings.SMMatching(self._stable_marriage(), keys=keys, values=values)
-
-        if optimal == "reviewer":
-            matching = matching.invert()
-            self._invert_player_sets()
-
-        self.matching = matching
-        if self._preference_lookup:
-            self._convert_matching_to_preferences()
-
-        return self.matching
