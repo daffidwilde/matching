@@ -30,13 +30,6 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras
 
-      - name: Run tests
-        run: |
-          uv run python -m doctest README.md
-          uv run pytest docs --nbval --nbval-current-env -p no:randomly
-          uv run pytest tests \
-            --cov=matching --cov-fail-under=100 --hypothesis-profile=ci
-
       - name: Run linters (3.13-ubuntu only)
         if: |
           matrix.python-version == '3.13' &&
@@ -44,3 +37,12 @@ jobs:
         run: |
           uv run ruff format --check .
           uv run ruff check .
+
+      - name: Run documentation tests
+        run: |
+          uv run python -m doctest README.md
+          uv run pytest docs --nbval --nbval-current-env -p no:randomly
+
+      - name: Run unit tests
+        run: |
+          uv run pytest tests --cov --cov-fail-under=100 --hypothesis-profile=ci
