@@ -121,6 +121,86 @@ def test_from_preferences(preferences_capacities):
     validator.assert_called_once_with()
 
 
+@given(st_ranks_capacities())
+def test_check_input_validity(ranks_capacities):
+    """
+    Check that the input validator works as expected.
+
+    This method is not called in the constructor, so we need to call
+    it manually. We mock the stage functions this method wraps to
+    check that they are called correctly.
+    """
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, resident_ranks, hospital_ranks, capacities)
+
+    with (
+        mock.patch.object(game, "_check_player_ranks") as mock_check_ranks,
+        mock.patch.object(game, "_check_capacities") as mock_check_capacities,
+    ):
+        game.check_input_validity()
+
+    assert mock_check_ranks.call_count == len(resident_ranks) + len(hospital_ranks)
+
+    call_args = mock_check_ranks.call_args_list
+    for hospital, hospital_rank in enumerate(hospital_ranks):
+        call = call_args.pop(0)
+        assert call.kwargs == {}
+        for arg, item in zip(call.args, (hospital, hospital_rank, resident_ranks, "hospital")):
+            assert np.equal(arg, item).all()
+
+    for resident, resident_rank in enumerate(resident_ranks):
+        call = call_args.pop(0)
+        assert call.kwargs == {}
+        for arg, item in zip(call.args, (resident, resident_rank, hospital_ranks, "resident")):
+            assert np.equal(arg, item).all()
+
+    mock_check_capacities.assert_called_once_with()
+
+
+@given(st_ranks_capacities())
+def test_check_player_ranks_no_warning(ranks_capacities):
+    """Check that the player ranks check can not raise a warning."""
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, resident_ranks, hospital_ranks, capacities)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        game._check_player_ranks(0, resident_ranks[0], hospital_ranks, "resident")
+
+
+@given(st_ranks_capacities())
+def test_check_player_ranks_warns(ranks_capacities):
+    """Check that the player ranks check can raise a warning."""
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, resident_ranks, hospital_ranks, capacities)
+    hospital_ranks[0][-1] = 1000
+
+    with pytest.warns(UserWarning, match="Hospital 0 has not made a strict"):
+        game._check_player_ranks(0, hospital_ranks[0], resident_ranks, "hospital")
+
+
+@given(st_ranks_capacities())
+def test_check_capacities_no_warning(ranks_capacities):
+    """Check that the capacity check can not raise a warning."""
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, resident_ranks, hospital_ranks, capacities)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        game._check_capacities()
+
+
+@given(st_ranks_capacities())
+def test_check_capacities_warns(ranks_capacities):
+    """Check that the capacity check can raise a warning."""
+    resident_ranks, hospital_ranks, capacities = ranks_capacities
+    game = mocked_game(HospitalResident, resident_ranks, hospital_ranks, capacities)
+    game.capacities[0] = 0
+
+    with pytest.warns(UserWarning, match="Hospital 0 has a capacity of 0"):
+        game._check_capacities()
+
+
 @given(st_ranks_capacities(), st.sampled_from(["resident", "hospital"]), st.booleans())
 def test_solve(ranks_capacities, optimal, preference_lookup):
     """
@@ -179,9 +259,7 @@ def test_convert_matching_to_preferences(preference_matchings):
 
     resident_prefs, hospital_prefs, capacities, matching = preference_matchings
 
-    # the arrays here aren't used anywhere internally, just placeholders
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with mock.patch.object(HospitalResident, "check_input_validity") as validator:
         game = HospitalResident.from_preferences(resident_prefs, hospital_prefs, capacities)
 
     game.matching = matchings.HRMatching(matching)
@@ -195,3 +273,5 @@ def test_convert_matching_to_preferences(preference_matchings):
 
     assert set(converted.keys()) <= set(hospital_prefs)
     assert set([r for rs in converted.values() for r in rs]) <= set(resident_prefs)
+
+    validator.assert_called_once_with()

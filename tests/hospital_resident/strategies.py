@@ -17,9 +17,22 @@ def st_sizes(draw, hmin, hmax, rmin, rmax):
 
 
 @st.composite
-def st_capacities(draw, size):
+def st_ranks(draw, hmin=1, hmax=3, rmin=1, rmax=5):
+    """Create a set of rankings for a test."""
+
+    hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
+
+    resident_ranks = draw(st_single_ranks(rsize, hsize))
+    hospital_ranks = draw(st_single_ranks(hsize, rsize))
+
+    return resident_ranks, hospital_ranks
+
+
+@st.composite
+def st_capacities(draw, hmin=1, hmax=3):
     """Create a capacity vector."""
 
+    size = draw(st.integers(hmin, hmax))
     capacities = draw(st.lists(st.integers(1, 3), min_size=size, max_size=size))
 
     return np.array(capacities)
@@ -31,9 +44,8 @@ def st_ranks_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 
     hsize, rsize = draw(st_sizes(hmin, hmax, rmin, rmax))
 
-    resident_ranks = draw(st_single_ranks(rsize, hsize))
-    hospital_ranks = draw(st_single_ranks(hsize, rsize))
-    capacities = draw(st_capacities(hsize))
+    resident_ranks, hospital_ranks = draw(st_ranks(hsize, hsize, rsize, rsize))
+    capacities = draw(st_capacities(hsize, hsize))
 
     return resident_ranks, hospital_ranks, capacities
 
