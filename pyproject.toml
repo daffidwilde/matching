@@ -83,3 +83,6 @@ known-first-party = ["matching"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+[tool.coverage.run]
+branch = true
