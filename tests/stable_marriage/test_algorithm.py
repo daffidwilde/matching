@@ -1,4 +1,4 @@
-"""Integration tests for the Stable Marriage Problem algorithm."""
+"""Unit tests for the Stable Marriage algorithm."""
 
 import numpy as np
 from hypothesis import given
