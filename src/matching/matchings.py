@@ -108,3 +108,10 @@ class HRMatching(_MultipleMatching):
 
     KEYS = "hospitals"
     VALUES = "residents"
+
+
+class SPMatching(_MultipleMatching):
+    """Dictionary-like object for solutions to SP game instances."""
+
+    KEYS = "projects"
+    VALUES = "students"
