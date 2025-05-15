@@ -46,6 +46,7 @@ docs = [
     "ipython>=7.34.0",
     "matplotlib>=3.10.1",
     "nbsphinx>=0.9.7",
+    "pandas>=2.2.3",
     "pyyaml>=6.0.1",
     "quartodoc>=0.9.1",
 ]
