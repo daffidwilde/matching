@@ -100,13 +100,10 @@ class HospitalResident:
 
         resident_ranks = convert.preference_to_rank(resident_prefs, hospitals)
         hospital_ranks = convert.preference_to_rank(hospital_prefs, residents)
-        capacity_array = np.array([capacities.get(h, -1) for h in hospitals])
+        capacity_array = np.array([capacities.get(h, 0) for h in hospitals])
 
         game = cls(resident_ranks, hospital_ranks, capacity_array)
-        game._preference_lookup = {
-            "residents": residents,
-            "hospitals": hospitals,
-        }
+        game._preference_lookup = {"residents": residents, "hospitals": hospitals}
 
         return game
 
