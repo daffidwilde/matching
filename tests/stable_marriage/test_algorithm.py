@@ -32,10 +32,7 @@ def test_stable_marriage_suitor_optimal(ranks):
     for reviewer, suitor in matching.items():
         suitor_rank = game.suitor_ranks[suitor]
         preferred_reviewers, *_ = np.where(suitor_rank < suitor_rank[reviewer])
-        for preferred in preferred_reviewers:
-            preferred_rank = game.reviewer_ranks[preferred]
-            partner = matching[preferred]
-            assert preferred_rank[suitor] > preferred_rank[partner]
+        assert not preferred_reviewers.any()
 
 
 @given(st_ranks())
