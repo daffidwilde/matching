@@ -7,8 +7,10 @@ if not sys.warnoptions:
 
     warnings.simplefilter("always")
 
+from . import matchings
 from .base import BaseGame, BaseMatching, BasePlayer
-from .matchings import MultipleMatching, SingleMatching
+from .matchings import _MultipleMatching as MultipleMatching
+from .matchings import _SingleMatching as SingleMatching
 from .players import Hospital, Player, Project, Supervisor
 
 __version__ = "2.0.0"
@@ -18,11 +20,11 @@ __all__ = [
     "BaseMatching",
     "BasePlayer",
     "Hospital",
-    "Matching",
     "MultipleMatching",
     "Player",
     "Project",
     "SingleMatching",
     "Supervisor",
     "__version__",
+    "matchings",
 ]

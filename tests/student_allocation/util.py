@@ -15,15 +15,9 @@ from matching.players import Project, Supervisor
 def get_possible_prefs(players):
     """Get list of possible non-empty preferences from some players."""
 
-    all_ordered_subsets = {
-        tuple(set(sub)) for sub in it.product(players, repeat=len(players))
-    }
+    all_ordered_subsets = {tuple(set(sub)) for sub in it.product(players, repeat=len(players))}
 
-    possible_prefs = [
-        list(perm)
-        for sub in all_ordered_subsets
-        for perm in it.permutations(sub)
-    ]
+    possible_prefs = [list(perm) for sub in all_ordered_subsets for perm in it.permutations(sub)]
 
     return possible_prefs
 
@@ -32,12 +26,8 @@ def make_players(student_names, project_names, supervisor_names, capacities):
     """Given some names and capacities, make a set of players for SA."""
 
     students = [Student(name) for name in student_names]
-    projects = [
-        Project(name, cap) for name, cap in zip(project_names, capacities)
-    ]
-    supervisors = [
-        Supervisor(name, capacity=None) for name in supervisor_names
-    ]
+    projects = [Project(name, cap) for name, cap in zip(project_names, capacities)]
+    supervisors = [Supervisor(name, capacity=None) for name in supervisor_names]
 
     if len(students) > len(projects):
         students = students[: len(projects)]
@@ -45,9 +35,7 @@ def make_players(student_names, project_names, supervisor_names, capacities):
     for project in projects:
         project.set_supervisor(np.random.choice(supervisors))
 
-    supervisors = [
-        supervisor for supervisor in supervisors if supervisor.projects
-    ]
+    supervisors = [supervisor for supervisor in supervisors if supervisor.projects]
     for supervisor in supervisors:
         capacities = sorted([proj.capacity for proj in supervisor.projects])
         min_cap, max_cap = max(capacities), sum(capacities)
@@ -72,9 +60,7 @@ def make_players(student_names, project_names, supervisor_names, capacities):
     return students, projects, supervisors
 
 
-def make_game(
-    student_names, project_names, supervisor_names, capacities, seed, clean
-):
+def make_game(student_names, project_names, supervisor_names, capacities, seed, clean):
     """Make all of the players and the game itself."""
 
     np.random.seed(seed)
@@ -86,9 +72,7 @@ def make_game(
     return students, projects, supervisors, game
 
 
-def make_connections(
-    student_names, project_names, supervisor_names, capacities, seed
-):
+def make_connections(student_names, project_names, supervisor_names, capacities, seed):
     """Make a set of preferences and affiliations from some names."""
 
     np.random.seed(seed)
@@ -114,9 +98,7 @@ def make_connections(
             if student not in sup_prefs:
                 sup_prefs.append(student)
 
-    chosen_projects = {
-        p for projects in student_prefs.values() for p in projects
-    }
+    chosen_projects = {p for projects in student_prefs.values() for p in projects}
     for project in set(project_names) - chosen_projects:
         del project_supervisors[project]
         del project_capacities[project]
@@ -161,9 +143,7 @@ STUDENT_ALLOCATION = given(
         max_size=3,
         unique=True,
     ),
-    capacities=lists(
-        integers(min_value=1, max_value=2), min_size=5, max_size=5
-    ),
+    capacities=lists(integers(min_value=1, max_value=2), min_size=5, max_size=5),
     seed=integers(min_value=0, max_value=2**32 - 1),
     clean=booleans(),
 )

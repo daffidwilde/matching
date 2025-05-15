@@ -16,35 +16,33 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
 
-      - name: Update pip and install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install ".[docs,test]"
+      - name: Install the project
+        run: uv sync --all-extras
 
-      - name: Run tests
-        run: |
-          python -m doctest README.md
-          python -m pytest docs --nbval --nbval-current-env -p no:randomly
-          python -m pytest tests \
-            --cov=matching --cov-fail-under=100 --hypothesis-profile=ci
-
-      - name: Install and run linters (3.12-ubuntu only)
+      - name: Run linters (3.13-ubuntu only)
         if: |
-          matrix.python-version == '3.12' &&
+          matrix.python-version == '3.13' &&
           matrix.os == 'ubuntu-latest'
         run: |
-          python -m pip install ".[lint]"
-          python -m ruff check .
-          python -m ruff format --check .
+          uv run ruff format --check .
+          uv run ruff check .
+
+      - name: Run documentation tests
+        run: |
+          uv run python -m doctest README.md
+          uv run pytest docs --nbval --nbval-current-env -p no:randomly
+
+      - name: Run unit tests
+        run: |
+          uv run pytest tests --cov --cov-fail-under=100 --hypothesis-profile=ci

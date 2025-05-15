@@ -9,10 +9,10 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from matching.games import StableMarriage
-from matching.matchings import SingleMatching
+from matching.matchings import SMMatching
 
+from ..common import mocked_game
 from .strategies import (
-    mocked_game,
     st_player_ranks,
     st_preference_matchings,
     st_preferences,
@@ -26,8 +26,9 @@ def test_init(ranks):
     """Test for correct instantiation given some rankings."""
 
     suitor_ranks, reviewer_ranks = ranks
-    game = mocked_game(suitor_ranks, reviewer_ranks)
+    game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
+    assert isinstance(game, StableMarriage)
     assert (game.suitor_ranks == suitor_ranks).all()
     assert (game.reviewer_ranks == reviewer_ranks).all()
 
@@ -44,9 +45,7 @@ def test_from_utilities(utilities):
     suitor_utility, reviewer_utility = utilities
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage.check_input_validity"
-        ) as validator,
+        mock.patch("matching.games.StableMarriage.check_input_validity") as validator,
         mock.patch("matching.convert.utility_to_rank") as ranker,
     ):
         effects = (suitor_utility.argsort(), reviewer_utility.argsort())
@@ -77,9 +76,7 @@ def test_from_preferences(preferences):
     suitor_prefs, reviewer_prefs = preferences
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage.check_input_validity"
-        ) as validator,
+        mock.patch("matching.games.StableMarriage.check_input_validity") as validator,
         mock.patch("matching.convert.preference_to_rank") as ranker,
     ):
         effects = (
@@ -118,7 +115,7 @@ def test_from_preferences(preferences):
 def test_check_number_of_players_no_warning(ranks):
     """Test the number of players can be checked without warning."""
 
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
@@ -132,7 +129,7 @@ def test_check_number_of_players_warning(ranks):
     suitor_ranks, reviewer_ranks = ranks
     suitor_ranks = np.vstack((suitor_ranks, suitor_ranks[-1][::-1]))
 
-    game = mocked_game(suitor_ranks, reviewer_ranks)
+    game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
     match = (
         r"^Number of suitors \(\d{1,2}\) "
@@ -147,7 +144,7 @@ def test_check_player_ranks_no_warning(player_ranks):
     """Test the rank checker runs without warning for a valid set."""
 
     suitor_ranks, reviewer_ranks, player, ranks, side = player_ranks
-    game = mocked_game(suitor_ranks, reviewer_ranks)
+    game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
@@ -161,7 +158,7 @@ def test_check_player_ranks_warning(player_ranks):
     suitor_ranks, reviewer_ranks, player, ranks, side = player_ranks
     ranks[-1] = 1000
 
-    game = mocked_game(suitor_ranks, reviewer_ranks)
+    game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
     match = f"{side.title()} {player} has not strictly ranked"
     with pytest.warns(UserWarning, match=match):
@@ -179,23 +176,17 @@ def test_check_input_validity(ranks):
     """Test the logic of the input validator."""
 
     suitor_ranks, reviewer_ranks = ranks
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage._check_number_of_players"
-        ) as check_num_players,
-        mock.patch(
-            "matching.games.StableMarriage._check_player_ranks"
-        ) as check_player_ranks,
+        mock.patch("matching.games.StableMarriage._check_number_of_players") as check_num_players,
+        mock.patch("matching.games.StableMarriage._check_player_ranks") as check_player_ranks,
     ):
         game.check_input_validity()
 
     check_num_players.assert_called_once_with()
 
-    assert check_player_ranks.call_count == (
-        len(suitor_ranks) + len(reviewer_ranks)
-    )
+    assert check_player_ranks.call_count == (len(suitor_ranks) + len(reviewer_ranks))
 
     suitor_args = _zip_enumerated_ranks_with_side(suitor_ranks, "suitor")
     reviewer_args = _zip_enumerated_ranks_with_side(reviewer_ranks, "reviewer")
@@ -214,7 +205,7 @@ def test_invert_player_sets(ranks):
     """Test that the player set attributes can be swapped."""
 
     suitor_ranks, reviewer_ranks = ranks
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     game._invert_player_sets()
 
@@ -232,18 +223,12 @@ def test_invert_player_sets(ranks):
 def test_solve_valid_optimal(ranks, optimal, solution):
     """Test the solver runs as it should with valid inputs."""
 
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     with (
-        mock.patch(
-            "matching.games.StableMarriage._invert_player_sets"
-        ) as player_set_inverter,
-        mock.patch(
-            "matching.games.StableMarriage._stable_marriage"
-        ) as stable_marriage,
-        mock.patch(
-            "matching.matchings.SingleMatching.invert"
-        ) as matching_inverter,
+        mock.patch("matching.games.StableMarriage._invert_player_sets") as player_set_inverter,
+        mock.patch("matching.games.StableMarriage._stable_marriage") as stable_marriage,
+        mock.patch("matching.matchings.SMMatching.invert") as matching_inverter,
     ):
         stable_marriage.return_value = solution
         matching_inverter.return_value = "inverted_matching"
@@ -260,7 +245,7 @@ def test_solve_valid_optimal(ranks, optimal, solution):
         ]
         assert matching == "inverted_matching"
     else:
-        assert isinstance(matching, SingleMatching)
+        assert isinstance(matching, SMMatching)
         assert dict(matching) == solution
 
 
@@ -268,19 +253,13 @@ def test_solve_valid_optimal(ranks, optimal, solution):
 def test_solve_invalid_optimal_raises(ranks, optimal):
     """Test the solver raises an error with invalid optimal."""
 
-    game = mocked_game(*ranks)
+    game = mocked_game(StableMarriage, *ranks)
 
     match = "^Invalid choice for `optimal`."
     with (
-        mock.patch(
-            "matching.games.StableMarriage._invert_player_sets"
-        ) as player_set_inverter,
-        mock.patch(
-            "matching.games.StableMarriage._stable_marriage"
-        ) as stable_marriage,
-        mock.patch(
-            "matching.matchings.SingleMatching.invert"
-        ) as matching_inverter,
+        mock.patch("matching.games.StableMarriage._invert_player_sets") as player_set_inverter,
+        mock.patch("matching.games.StableMarriage._stable_marriage") as stable_marriage,
+        mock.patch("matching.matchings.SMMatching.invert") as matching_inverter,
         pytest.raises(ValueError, match=match),
     ):
         game.solve(optimal)
@@ -296,21 +275,19 @@ def test_convert_matching_to_preferences(preference_matchings):
 
     suitor_prefs, reviewer_prefs, matching = preference_matchings
 
-    # the arrays here aren't used anywhere internally, just placeholders
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with mock.patch.object(StableMarriage, "check_input_validity") as validator:
         game = StableMarriage.from_preferences(suitor_prefs, reviewer_prefs)
 
-    game.matching = SingleMatching(matching)
+    game.matching = SMMatching(matching)
 
     game._convert_matching_to_preferences()
     converted = game.matching
 
-    assert isinstance(converted, SingleMatching)
+    assert isinstance(converted, SMMatching)
     assert converted.keys_ == "reviewers"
     assert converted.values_ == "suitors"
-    assert converted.valid is None
-    assert converted.stable is None
 
     assert set(converted.keys()) == set(reviewer_prefs)
     assert set(converted.values()) == set(suitor_prefs)
+
+    validator.assert_called_once_with()

@@ -1,36 +1,8 @@
 """Composite strategies for SM unit tests."""
 
-from unittest import mock
-
-import numpy as np
 from hypothesis import strategies as st
-from hypothesis.extra import numpy as st_numpy
 
-from matching.games import StableMarriage
-
-
-def mocked_game(suitor_ranks, reviewer_ranks):
-    """Create an instance of SM that mocks the input validator."""
-
-    with mock.patch(
-        "matching.games.StableMarriage.check_input_validity"
-    ) as validator:
-        game = StableMarriage(suitor_ranks, reviewer_ranks)
-
-    validator.assert_called_once_with()
-
-    return game
-
-
-@st.composite
-def st_single_ranks(draw, size):
-    """Create a single rank matrix."""
-
-    rank = draw(
-        st.lists(st.permutations(range(size)), min_size=size, max_size=size)
-    )
-
-    return np.array(rank)
+from ..common import st_single_ranks, st_single_utilities
 
 
 @st.composite
@@ -54,21 +26,6 @@ def st_player_ranks(draw, pmin=1, pmax=5):
     player, ranks = draw(st.sampled_from(list(enumerate(side_ranks))))
 
     return suitor_ranks, reviewer_ranks, player, ranks, side
-
-
-@st.composite
-def st_single_utilities(draw, size):
-    """Create a single utility matrix."""
-
-    utility = draw(
-        st_numpy.arrays(
-            dtype=float,
-            elements=st.floats(0, 1, allow_nan=False),
-            shape=(size, size),
-        )
-    )
-
-    return utility
 
 
 @st.composite

@@ -75,9 +75,9 @@ class StableRoommates(BaseGame):
             for other in others:
                 if (other, player) not in blocking_pairs:
                     both_matched = player.matching and other.matching
-                    prefer_each_other = player.prefers(
-                        other, player.matching
-                    ) and other.prefers(player, other.matching)
+                    prefer_each_other = player.prefers(other, player.matching) and other.prefers(
+                        player, other.matching
+                    )
                     if both_matched and prefer_each_other:
                         blocking_pairs.append((player, other))
 

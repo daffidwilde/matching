@@ -34,7 +34,5 @@ def test_example_in_docs():
     a, b, c, d, e = game.students
     x1, x2, y1, y2 = game.projects
 
-    matching = student_allocation(
-        game.students, game.projects, game.supervisors
-    )
+    matching = student_allocation(game.students, game.projects, game.supervisors)
     assert matching == {x1: [c, a], x2: [], y1: [d], y2: [b, e]}

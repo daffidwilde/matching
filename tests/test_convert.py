@@ -13,9 +13,7 @@ def utilities(draw, smin=1, smax=10, unique=True):
     """Create a utility matrix for a test."""
 
     shape = draw(st.tuples(st.integers(smin, smax), st.integers(smin, smax)))
-    utilities = draw(
-        arrays(float, shape, elements=st.floats(0, 1), unique=unique)
-    )
+    utilities = draw(arrays(float, shape, elements=st.floats(0, 1), unique=unique))
 
     return utilities
 
@@ -24,12 +22,8 @@ def utilities(draw, smin=1, smax=10, unique=True):
 def preferences(draw, pmin=1, pmax=10):
     """Create a preference dictionary to test."""
 
-    players = draw(
-        st.lists(st.integers(), min_size=pmin, max_size=pmax, unique=True)
-    )
-    others = draw(
-        st.lists(st.text(), min_size=pmin, max_size=pmax, unique=True)
-    )
+    players = draw(st.lists(st.integers(), min_size=pmin, max_size=pmax, unique=True))
+    others = draw(st.lists(st.text(), min_size=pmin, max_size=pmax, unique=True))
 
     preference = {player: draw(st.permutations(others)) for player in players}
 
