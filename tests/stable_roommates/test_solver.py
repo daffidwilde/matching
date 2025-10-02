@@ -15,7 +15,6 @@ from .util import connections, games, players
 @given(players=players())
 def test_init(players):
     """Test for correct instantiation given a set of players."""
-
     game = StableRoommates(players)
 
     for player, game_player in zip(players, game.players):
@@ -28,7 +27,6 @@ def test_init(players):
 @given(preferences=connections())
 def test_create_from_dictionary(preferences):
     """Test for correct instantiation given a preference dictionary."""
-
     game = StableRoommates.create_from_dictionary(preferences)
 
     for player in game.players:
@@ -41,7 +39,6 @@ def test_create_from_dictionary(preferences):
 @given(players=players())
 def test_check_inputs(players):
     """Test for error if any player has not ranked all other players."""
-
     players[0].prefs = players[0].prefs[:-1]
 
     with pytest.raises(Exception):
@@ -51,7 +48,6 @@ def test_check_inputs(players):
 @given(game=games())
 def test_solve(game):
     """Test for a reasonable matching when solving."""
-
     with warnings.catch_warnings(record=True) as w:
         matching = game.solve()
 
@@ -76,7 +72,6 @@ def test_solve(game):
 @given(game=games())
 def test_check_validity(game):
     """Test for error if any players are left unmatched."""
-
     with warnings.catch_warnings(record=True) as w:
         matching = game.solve()
 
@@ -92,7 +87,6 @@ def test_check_validity(game):
 
 def test_stability():
     """Test for recognising a stable matching."""
-
     players = [Player("A"), Player("B"), Player("C"), Player("D")]
     a, b, c, d = players
 

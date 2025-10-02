@@ -62,7 +62,6 @@ class StableMarriage:
         StableMarriage
             An instance of SM with utilities resolved as rank matrices.
         """
-
         suitor_ranks = convert.utility_to_rank(suitor_utils)
         reviewer_ranks = convert.utility_to_rank(reviewer_utils)
 
@@ -90,7 +89,6 @@ class StableMarriage:
             An instance of SM with preference lists resolved as rank
             matrices.
         """
-
         suitors, reviewers = sorted(suitor_prefs), sorted(reviewer_prefs)
 
         suitor_ranks = convert.preference_to_rank(suitor_prefs, reviewers)
@@ -115,7 +113,6 @@ class StableMarriage:
             player has not made a strict, exhaustive, and unique ranking
             of the players on the other side of the matching.
         """
-
         self._check_number_of_players()
 
         for suitor, ranks in enumerate(self.suitor_ranks):
@@ -133,7 +130,6 @@ class StableMarriage:
         UserWarning
             If the sizes of the player sets do not match.
         """
-
         ns, nr = self.num_suitors, self.num_reviewers
         if ns != nr:
             warnings.warn(
@@ -161,7 +157,6 @@ class StableMarriage:
             If the player has not made a strict and unique ranking of
             the other side in the game.
         """
-
         others = "suitors" if side == "reviewer" else "reviewers"
         num_others = getattr(self, f"num_{others}")
         if not np.array_equal(np.sort(ranks), np.arange(num_others)):
@@ -201,7 +196,6 @@ class StableMarriage:
             correspond to the reviewers in the instance, while the
             values are the suitors.
         """
-
         if optimal not in ("suitor", "reviewer"):
             raise ValueError(
                 f'Invalid choice for `optimal`. Must be "suitor" or "reviewer", not "{optimal}".'
@@ -232,7 +226,6 @@ class StableMarriage:
         That is, `suitor_ranks` and `reviewer_ranks` switch. As do
         `num_suitors` and `num_reviewers`.
         """
-
         self.suitor_ranks, self.reviewer_ranks = (
             self.reviewer_ranks,
             self.suitor_ranks,
@@ -251,7 +244,6 @@ class StableMarriage:
         dict
             Solution to the game instance.
         """
-
         matching = {}
         suitor_ranks, reviewer_ranks = self.suitor_ranks, self.reviewer_ranks
         free_suitors = list(range(self.num_suitors))
@@ -285,7 +277,6 @@ class StableMarriage:
         SMMatching
             The converted matching instance.
         """
-
         converted = {}
         suitors, reviewers = self._preference_lookup.values()
         for reviewer, suitor in self.matching.items():

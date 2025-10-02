@@ -69,17 +69,16 @@ line-length = 99
 extend-include = ["*.ipynb"]
 
 [tool.ruff.lint]
-extend-select = ["D", "I", "W"]
-ignore = ["D105", "D107", "D202"]
+extend-select = ["D", "DOC", "I", "RUF", "W"]
+ignore = ["D105", "D107"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["matching"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = ["D100", "D103", "E402"]
-"tests/**/*.py" = ["D104", "D401", "E741"]
-"src/**/*.py" = ["D105", "D107"]
 "src/matching/base.py" = ["D401"]
+"tests/*.py" = ["D104", "D401"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

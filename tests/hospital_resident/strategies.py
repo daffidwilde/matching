@@ -9,7 +9,6 @@ from ..common import st_single_ranks, st_single_utilities, st_sizes
 @st.composite
 def st_ranks(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of rankings for a test."""
-
     hsize = draw(st_sizes(hmin, hmax))
     rsize = draw(st_sizes(rmin, rmax))
 
@@ -22,7 +21,6 @@ def st_ranks(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 @st.composite
 def st_capacities(draw, hmin=1, hmax=3):
     """Create a capacity vector."""
-
     size = draw(st_sizes(hmin, hmax))
     capacities = draw(st.lists(st.integers(1, 2), min_size=size, max_size=size))
 
@@ -32,7 +30,6 @@ def st_capacities(draw, hmin=1, hmax=3):
 @st.composite
 def st_ranks_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of rankings and capacities for a test."""
-
     hsize = draw(st_sizes(hmin, hmax))
     rsize = draw(st_sizes(rmin, rmax))
 
@@ -45,7 +42,6 @@ def st_ranks_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 @st.composite
 def st_utilities_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of utilities and capacities for a test."""
-
     hsize = draw(st_sizes(hmin, hmax))
     rsize = draw(st_sizes(rmin, rmax))
 
@@ -59,7 +55,6 @@ def st_utilities_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 @st.composite
 def st_preferences_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of preferences and capacities for a test."""
-
     hsize = draw(st_sizes(hmin, hmax))
     rsize = draw(st_sizes(rmin, rmax))
 
@@ -76,7 +71,6 @@ def st_preferences_capacities(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 @st.composite
 def st_preference_matchings(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a set of preferences and a matching to go with them."""
-
     resident_preferences, hospital_preferences, capacities = draw(
         st_preferences_capacities(hmin, hmax, rmin, rmax)
     )

@@ -10,7 +10,6 @@ from matching import Player
 @composite
 def get_player_names(draw, suitor_pool, reviewer_pool):
     """A strategy for drawing lists of suitor and reviewer names."""
-
     suitor_names = draw(
         lists(
             sampled_from(suitor_pool),
@@ -34,7 +33,6 @@ def get_player_names(draw, suitor_pool, reviewer_pool):
 
 def make_players(player_names, seed):
     """Make valid sets of suitors and reviewers from some names."""
-
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names
     suitors = [Player(name) for name in suitor_names]
@@ -50,7 +48,6 @@ def make_players(player_names, seed):
 
 def make_prefs(player_names, seed):
     """Make valid preferences for the suitors and reviewers."""
-
     np.random.seed(seed)
     suitor_names, reviewer_names = player_names
     suitor_prefs = {name: np.random.permutation(reviewer_names).tolist() for name in suitor_names}

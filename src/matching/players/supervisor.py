@@ -40,7 +40,6 @@ class Supervisor(Hospital):
         A student is only removed if it is not ranked by any of the
         supervisor's projects.
         """
-
         if student in self.prefs and not any(
             [student in project.prefs for project in self.projects]
         ):
@@ -54,7 +53,6 @@ class Supervisor(Hospital):
         This method also passes the preferences on to its projects
         according to those students who ranked each project.
         """
-
         self.prefs = students
         self._pref_names = [student.name for student in students]
         self._original_prefs = students[:]
@@ -72,7 +70,6 @@ class Supervisor(Hospital):
         under-subscribed project. If no such student exists, return
         ``None``.
         """
-
         if len(self.matching) < self.capacity:
             for student in self.prefs:
                 for project in student.prefs:

@@ -9,7 +9,6 @@ from .util import _delete_pair
 
 def first_phase(players):
     """Make one-way proposals and forget unpreferable pairs."""
-
     free_players = players[:]
     while free_players:
         player = free_players.pop()
@@ -35,7 +34,6 @@ def locate_all_or_nothing_cycle(player):
 
     Any such cycle will be removed from the game.
     """
-
     lasts = [player]
     seconds = []
     while True:
@@ -74,7 +72,6 @@ def get_pairs_to_delete(cycle):
     cycle. Without doing so, tails of cycles can be removed rather than
     whole cycles, leaving some conflicting pairs in the game.
     """
-
     pairs = []
     for i, (_, right) in enumerate(cycle):
         left = cycle[(i - 1) % len(cycle)][0]
@@ -89,7 +86,6 @@ def get_pairs_to_delete(cycle):
 
 def second_phase(players):
     """Locate and remove all-or-nothing cycles from the game."""
-
     player = next(p for p in players if len(p.prefs) > 1)
     while True:
         cycle = locate_all_or_nothing_cycle(player)
@@ -136,7 +132,6 @@ def stable_roommates(players):
         A dictionary of matches where the keys and values are given by
         the members of ``players``.
     """
-
     players = first_phase(players)
 
     if any(p.prefs == [] for p in players):

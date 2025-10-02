@@ -12,7 +12,6 @@ from matching.games.stable_roommates import _make_players
 
 def test_original_paper_stable():
     """Test the example from the original paper."""
-
     players = [Player(name) for name in ("A", "B", "C", "D", "E", "F")]
     a, b, c, d, e, f = players
 
@@ -30,7 +29,6 @@ def test_original_paper_stable():
 @given(last_player_prefs=permutations([1, 2, 3]))
 def test_gale_shapley_no_stable_matching(last_player_prefs):
     """Test the example from [GS62] says there is no stable matching."""
-
     preferences = {
         1: [2, 3, 4],
         2: [3, 1, 4],
@@ -48,7 +46,6 @@ def test_gale_shapley_no_stable_matching(last_player_prefs):
 
 def test_large_example_from_book():
     """Test the example of size ten in [GI89] (Section 4.2.3)."""
-
     preferences = {
         1: [8, 2, 9, 3, 6, 4, 5, 7, 10],
         2: [4, 3, 8, 9, 5, 1, 10, 6, 7],
@@ -83,7 +80,6 @@ def test_large_example_from_book():
 
 def test_example_in_issue_64():
     """Test the example provided in #64."""
-
     players = [Player(name) for name in ("charlie", "peter", "elise", "paul", "kelly", "sam")]
     charlie, peter, elise, paul, kelly, sam = players
 
@@ -107,7 +103,6 @@ def test_example_in_issue_64():
 
 def test_examples_in_issue_124():
     """Test the examples provided in #124."""
-
     a, b, c, d = players = [Player(name) for name in ("a", "b", "c", "d")]
 
     a.set_prefs([b, c, d])
@@ -132,7 +127,6 @@ def test_examples_in_issue_124():
 
 def test_trivial_case():
     """Test that a matching is given when there are only two players."""
-
     p1, p2 = players = [Player(1), Player(2)]
 
     p1.set_prefs([p2])

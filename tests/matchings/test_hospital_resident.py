@@ -11,7 +11,6 @@ from ..common import st_sizes
 @st.composite
 def st_params(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a parameter set for a HRMatching instance."""
-
     hsize = draw(st_sizes(hmin, hmax))
     rsize = draw(st_sizes(rmin, rmax))
     capacities = draw(st.lists(st.integers(1, 2), min_size=hsize, max_size=hsize))
@@ -43,7 +42,6 @@ def st_params(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 @st.composite
 def st_matchings(draw, hmin=1, hmax=3, rmin=1, rmax=5):
     """Create a HRMatching instance."""
-
     params = draw(st_params(hmin, hmax, rmin, rmax))
 
     return matchings.HRMatching(**params)
@@ -52,7 +50,6 @@ def st_matchings(draw, hmin=1, hmax=3, rmin=1, rmax=5):
 @given(st_params())
 def test_init(params):
     """Check that a HRMatching can be created correctly."""
-
     matching = matchings.HRMatching(**params)
 
     assert isinstance(matching, matchings.HRMatching)
@@ -66,7 +63,6 @@ def test_init(params):
 @given(st_matchings())
 def test_repr(matching):
     """Check that the string representation of a matching is correct."""
-
     repr_ = repr(matching)
 
     assert isinstance(repr_, str)
@@ -79,7 +75,6 @@ def test_repr(matching):
 @given(st_params())
 def test_eq(params):
     """Check that two HRMatchings are equal."""
-
     matching1 = matchings.HRMatching(**params)
     matching2 = matchings.HRMatching(**params)
 
@@ -97,7 +92,6 @@ def test_eq(params):
 @given(st_matchings())
 def test_invert(matching):
     """Check that the invert method works correctly."""
-
     inverted = matching.invert()
 
     assert isinstance(inverted, matchings.HRMatching)

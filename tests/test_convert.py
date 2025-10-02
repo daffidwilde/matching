@@ -11,7 +11,6 @@ from matching import convert
 @st.composite
 def utilities(draw, smin=1, smax=10, unique=True):
     """Create a utility matrix for a test."""
-
     shape = draw(st.tuples(st.integers(smin, smax), st.integers(smin, smax)))
     utilities = draw(arrays(float, shape, elements=st.floats(0, 1), unique=unique))
 
@@ -21,7 +20,6 @@ def utilities(draw, smin=1, smax=10, unique=True):
 @st.composite
 def preferences(draw, pmin=1, pmax=10):
     """Create a preference dictionary to test."""
-
     players = draw(st.lists(st.integers(), min_size=pmin, max_size=pmax, unique=True))
     others = draw(st.lists(st.text(), min_size=pmin, max_size=pmax, unique=True))
 
@@ -38,7 +36,6 @@ def test_utility_to_rank(utility):
     We choose not to check that the ranking is correct because the
     function is a wrapper for `scipy.stats.rankdata()`.
     """
-
     rank = convert.utility_to_rank(utility)
 
     assert isinstance(rank, np.ndarray)
@@ -50,7 +47,6 @@ def test_utility_to_rank(utility):
 @given(preferences())
 def test_preference_to_rank(preference):
     """Check that a preference dictionary can be converted to ranks."""
-
     others = sorted(set(o for prefs in preference.values() for o in prefs))
     ranks = convert.preference_to_rank(preference, others)
 
@@ -65,7 +61,6 @@ def test_preference_to_rank(preference):
 @given(preferences())
 def test_preference_to_rank_incomplete(preference):
     """Check the preference list converter assigns incomplete lists."""
-
     others = sorted(set(o for prefs in preference.values() for o in prefs))
     preference[1000] = others[:-1]
     assume(len(others) > 1)

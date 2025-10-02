@@ -5,14 +5,12 @@ from .util import _delete_pair, _match_pair
 
 def _unmatch_pair(resident, hospital):
     """Unmatch a (resident, hospital)-pair."""
-
     resident._unmatch()
     hospital._unmatch(resident)
 
 
 def _check_available(hospital):
     """Check if a hospital is willing and able to take an applicant."""
-
     return len(hospital.matching) < hospital.capacity and set(hospital.prefs).difference(
         hospital.matching
     )
@@ -46,7 +44,6 @@ def hospital_resident(residents, hospitals, optimal="resident"):
         ``hospitals``, and the values are their matches ranked by
         preference.
     """
-
     if optimal == "resident":
         return resident_optimal(residents, hospitals)
     if optimal == "hospital":
@@ -78,7 +75,6 @@ def resident_optimal(residents, hospitals):
 
         4. Go to 1 until there are no such residents left, then end.
     """
-
     free_residents = residents[:]
     while free_residents:
         resident = free_residents.pop()
@@ -124,7 +120,6 @@ def hospital_optimal(hospitals):
 
         4. Go to 1 until there are no such hospitals left, then end.
     """
-
     free_hospitals = hospitals[:]
     while free_hospitals:
         hospital = free_hospitals.pop()

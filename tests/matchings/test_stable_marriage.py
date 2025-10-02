@@ -11,7 +11,6 @@ from ..common import st_sizes
 @st.composite
 def st_params(draw, min_size=2, max_size=5):
     """Create a parameter set for a SMMatching instance."""
-
     size = draw(st_sizes(min_size, max_size))
     midpoint = size // 2
     players = list(range(size))
@@ -29,7 +28,6 @@ def st_params(draw, min_size=2, max_size=5):
 @st.composite
 def st_matchings(draw, min_size=2, max_size=5):
     """Create a SMMatching instance."""
-
     params = draw(st_params(min_size, max_size))
 
     return matchings.SMMatching(**params)
@@ -38,7 +36,6 @@ def st_matchings(draw, min_size=2, max_size=5):
 @given(st_params())
 def test_init(params):
     """Check that a SMMatching can be created correctly."""
-
     matching = matchings.SMMatching(**params)
 
     assert isinstance(matching, matchings.SMMatching)
@@ -52,7 +49,6 @@ def test_init(params):
 @given(st_matchings())
 def test_repr(matching):
     """Check that the string representation of a matching is correct."""
-
     repr_ = repr(matching)
 
     assert isinstance(repr_, str)
@@ -65,7 +61,6 @@ def test_repr(matching):
 @given(st_params())
 def test_eq(params):
     """Check the equivalence dunder works as expected."""
-
     matching1 = matchings.SMMatching(**params)
     matching2 = matchings.SMMatching(**params)
 
@@ -83,7 +78,6 @@ def test_eq(params):
 @given(st_matchings())
 def test_invert(matching):
     """Check the matching inverter works as it should."""
-
     inverted = matching.invert()
 
     assert isinstance(inverted, matchings.SMMatching)

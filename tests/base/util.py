@@ -18,7 +18,6 @@ def player_others(
     Returns a single player and the other players, all of whom are
     `BasePlayer` instances.
     """
-
     size = draw(integers(min_value=min_size, max_value=max_size))
     player = BasePlayer(draw(player_name_from))
     others = [BasePlayer(draw(other_names_from)) for _ in range(size)]

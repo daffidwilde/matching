@@ -10,7 +10,6 @@ from matching.players import Project, Supervisor
 @given(name=text(), capacity=integers())
 def test_init(name, capacity):
     """Test for correct supervisor instantiation."""
-
     supervisor = Supervisor(name, capacity)
 
     assert supervisor.name == name
@@ -29,7 +28,6 @@ def test_set_prefs(name, capacity, pref_names):
     This also means passing on their preferences to the correct
     project(s).
     """
-
     supervisor = Supervisor(name, capacity)
     projects = [Project(i, capacity) for i in range(3)]
     students = []

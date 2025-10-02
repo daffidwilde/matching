@@ -23,7 +23,6 @@ from .strategies import (
 @given(st_ranks_capacities())
 def test_init(ranks_capacities):
     """Check instantiation given some rankings and capacities."""
-
     resident_ranks, hospital_ranks, capacities = ranks_capacities
     game = mocked_game(HospitalResident, *ranks_capacities)
 
@@ -41,7 +40,6 @@ def test_init(ranks_capacities):
 @given(st_utilities_capacities())
 def test_from_utilities(utilities_capacities):
     """Check instantiation from utility matrices."""
-
     *utilities, capacities = utilities_capacities
     resident_utility, hospital_utility = utilities
 
@@ -74,7 +72,6 @@ def test_from_utilities(utilities_capacities):
 @given(st_preferences_capacities())
 def test_from_preferences(preferences_capacities):
     """Check instantiation from preference list dictionaries."""
-
     *preferences, capacities = preferences_capacities
     resident_preferences, hospital_preferences = preferences
 
@@ -256,7 +253,6 @@ def test_solve_raises_with_bad_optimal(ranks_capacities, optimal):
 @given(st_preference_matchings())
 def test_convert_matching_to_preferences(preference_matchings):
     """Test that a matching can use the terms from some preferences."""
-
     resident_prefs, hospital_prefs, capacities, matching = preference_matchings
 
     with mock.patch.object(HospitalResident, "check_input_validity") as validator:

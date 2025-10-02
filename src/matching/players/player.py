@@ -33,22 +33,18 @@ class Player(BasePlayer):
 
     def _match(self, other):
         """Assign the player to be matched to some other player."""
-
         self.matching = other
 
     def _unmatch(self):
         """Set the player to be unmatched."""
-
         self.matching = None
 
     def get_favourite(self):
         """Get the player's favourite player."""
-
         return self.prefs[0]
 
     def get_successors(self):
         """Get all the successors to the current match of the player."""
-
         idx = self.prefs.index(self.matching)
         return self.prefs[idx + 1 :]
 
@@ -58,7 +54,6 @@ class Player(BasePlayer):
         In some games, a player being unmatched does not invalidate the
         game. The ``unmatched_okay`` parameter controls this behaviour.
         """
-
         other = self.matching
 
         if other is None and unmatched_okay is False:

@@ -11,7 +11,6 @@ from .strategies import st_ranks_capacities
 
 def _assert_matching_is_valid_shape(matching, hospital_ranks, resident_ranks, capacities):
     """Assert that the matching has the right shape and elements."""
-
     assert isinstance(matching, dict)
 
     matched_hospitals = set(matching.keys())

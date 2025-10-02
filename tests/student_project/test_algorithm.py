@@ -16,7 +16,6 @@ def test_student_allocation(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
     """Test for a valid output from the student allocation algorithm."""
-
     np.random.seed(seed)
     students, projects, supervisors = make_players(
         student_names, project_names, supervisor_names, capacities
@@ -36,7 +35,6 @@ def test_student_allocation(
 @STUDENT_ALLOCATION
 def test_student_optimal(student_names, project_names, supervisor_names, capacities, seed, clean):
     """Test that the student-optimal algorithm is student-optimal."""
-
     np.random.seed(seed)
     students, projects, _ = make_players(
         student_names, project_names, supervisor_names, capacities
@@ -58,7 +56,6 @@ def test_supervisor_optimal(
     student_names, project_names, supervisor_names, capacities, seed, clean
 ):
     """Test the supervisor-optimal algorithm is supervisor-optimal."""
-
     np.random.seed(seed)
     students, projects, supervisors = make_players(
         student_names, project_names, supervisor_names, capacities

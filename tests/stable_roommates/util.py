@@ -9,7 +9,6 @@ from matching.games import StableRoommates
 @composite
 def connections(draw, players_from=integers(), min_players=4, max_players=10):
     """A strategy for making a set of connections between players."""
-
     num_players = draw(integers(min_players, max_players))
 
     players = draw(
@@ -33,7 +32,6 @@ def connections(draw, players_from=integers(), min_players=4, max_players=10):
 @composite
 def players(draw, **kwargs):
     """A strategy for making a set of players."""
-
     preferences = draw(connections(**kwargs))
 
     players_ = [Player(name) for name in preferences]
@@ -54,6 +52,5 @@ def players(draw, **kwargs):
 @composite
 def games(draw, **kwargs):
     """A strategy for making an instance of SR."""
-
     players_ = draw(players(**kwargs))
     return StableRoommates(players_)

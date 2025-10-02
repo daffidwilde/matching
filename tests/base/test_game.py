@@ -29,7 +29,6 @@ class DummyGame(BaseGame):
 @given(clean=booleans())
 def test_init(clean):
     """Make an instance and test it has the correct attributes."""
-
     game = DummyGame(clean)
 
     assert isinstance(game, BaseGame)
@@ -41,7 +40,6 @@ def test_init(clean):
 @given(player_others=player_others())
 def test_remove_player(player_others):
     """Test that a player can be removed from a game and its players."""
-
     player, others = player_others
 
     player.set_prefs(others)
@@ -61,7 +59,6 @@ def test_remove_player(player_others):
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_unique(player_others, clean):
     """Test that players have unique preferences."""
-
     player, others = player_others
 
     player.set_prefs(others + others[:1])
@@ -86,7 +83,6 @@ def test_check_inputs_player_prefs_unique(player_others, clean):
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_all_in_party(player_others, clean):
     """Test that players' preferences are subsets of the other party."""
-
     player, others = player_others
 
     outsider = Player("foo")
@@ -114,7 +110,6 @@ def test_check_inputs_player_prefs_all_in_party(player_others, clean):
 @given(player_others=player_others(), clean=booleans())
 def test_check_inputs_player_prefs_nonempty(player_others, clean):
     """Test that players have got nonempty preference lists."""
-
     player, others = player_others
 
     player.set_prefs(others)

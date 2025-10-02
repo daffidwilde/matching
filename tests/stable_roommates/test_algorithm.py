@@ -19,7 +19,6 @@ from .util import players
 @given(players=players())
 def test_first_phase(players):
     """Test the first phase gives a valid set of reduced preferences."""
-
     players = first_phase(players)
 
     player_matched = {player: player.matching is not None for player in players}
@@ -37,7 +36,6 @@ def test_first_phase(players):
 @given(players=players())
 def test_locate_all_or_nothing_cycle(players):
     """Test that a cycle of players can be identified."""
-
     player = players[-1]
     cycle = locate_all_or_nothing_cycle(player)
 
@@ -49,7 +47,6 @@ def test_locate_all_or_nothing_cycle(players):
 @given(players=players())
 def test_get_pairs_to_delete(players):
     """Test that all pairs to remove are identified from a cycle."""
-
     assert get_pairs_to_delete([]) == []
 
     players = first_phase(players)
@@ -77,7 +74,6 @@ def test_second_phase(players):
     These players will either be matched to their favourite player or
     a warning that no stable matching exists will occur.
     """
-
     players = first_phase(players)
     assume(any(len(p.prefs) > 1 for p in players))
 
@@ -98,7 +94,6 @@ def test_second_phase(players):
 @given(players=players())
 def test_stable_roommates(players):
     """Test that the algorithm can terminate with a valid matching."""
-
     with warnings.catch_warnings(record=True) as w:
         matching = stable_roommates(players)
 

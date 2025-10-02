@@ -11,7 +11,6 @@ def test_pride_and_prejudice():
 
     This example appears in the SM Discussion documentation.
     """
-
     suitor_preferences = {
         "B": ("J", "E", "L", "C"),
         "C": ("J", "E", "L", "C"),
@@ -33,7 +32,6 @@ def test_pride_and_prejudice():
 
 def test_readme_example():
     """Verify the example used in the README."""
-
     suitor_preferences = {
         "A": ["D", "E", "F"],
         "B": ["D", "F", "E"],
@@ -53,7 +51,6 @@ def test_readme_example():
 
 def test_matchingr_example():
     """Test the example from the MatchingR vignette."""
-
     uM = np.array([[1.0, 0.5, 0.0], [0.5, 0.0, 0.5]])
     uW = np.array([[0.0, 1.0], [0.5, 0.0], [1.0, 0.5]])
 

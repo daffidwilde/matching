@@ -36,7 +36,6 @@ class Project(Hospital):
         This method also prompts the supervisor to attempt forgetting
         the student.
         """
-
         if student in self.prefs:
             prefs = self.prefs[:]
             prefs.remove(student)
@@ -49,7 +48,6 @@ class Project(Hospital):
         This method also updates the project supervisor's matching to
         include the student.
         """
-
         self.matching.append(student)
         self.matching.sort(key=self.prefs.index)
         self.supervisor._match(student)
@@ -60,7 +58,6 @@ class Project(Hospital):
         This method also breaks the matching between the student and the
         project supervisor.
         """
-
         matching = self.matching[:]
         matching.remove(student)
         self.matching = matching
@@ -71,7 +68,6 @@ class Project(Hospital):
 
         This method also update the supervisor's project list.
         """
-
         self.supervisor = supervisor
         if self not in supervisor.projects:
             supervisor.projects.append(self)

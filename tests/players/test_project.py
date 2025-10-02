@@ -10,7 +10,6 @@ from matching.players import Project, Supervisor
 @given(name=text(), capacity=integers())
 def test_init(name, capacity):
     """Test for correct project instantiation."""
-
     project = Project(name, capacity)
 
     assert project.name == name
@@ -25,7 +24,6 @@ def test_init(name, capacity):
 @given(name=text(), capacity=integers())
 def test_set_supervisor(name, capacity):
     """Test that a project can set its supervisor and their projects."""
-
     project = Project(name, capacity)
     supervisor = Supervisor("foo", capacity)
 
@@ -40,7 +38,6 @@ def test_match(name, capacity, pref_names):
 
     This also means matching its supervisor to the student.
     """
-
     project = Project(name, capacity)
     supervisor = Supervisor("foo", capacity)
     project.supervisor = supervisor
@@ -65,7 +62,6 @@ def test_unmatch(name, capacity, pref_names):
     This also means potentially breaking that matching for their
     supervisor.
     """
-
     project = Project(name, capacity)
     supervisor = Supervisor("foo", capacity)
     project.supervisor = supervisor

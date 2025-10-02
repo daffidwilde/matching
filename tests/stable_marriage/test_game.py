@@ -24,7 +24,6 @@ from .strategies import (
 @given(st_ranks())
 def test_init(ranks):
     """Test for correct instantiation given some rankings."""
-
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
@@ -41,7 +40,6 @@ def test_init(ranks):
 @given(st_utilities())
 def test_from_utilities(utilities):
     """Test the utility matrix builder."""
-
     suitor_utility, reviewer_utility = utilities
 
     with (
@@ -72,7 +70,6 @@ def test_from_utilities(utilities):
 @given(st_preferences())
 def test_from_preferences(preferences):
     """Test the preference list builder."""
-
     suitor_prefs, reviewer_prefs = preferences
 
     with (
@@ -114,7 +111,6 @@ def test_from_preferences(preferences):
 @given(st_ranks())
 def test_check_number_of_players_no_warning(ranks):
     """Test the number of players can be checked without warning."""
-
     game = mocked_game(StableMarriage, *ranks)
 
     with warnings.catch_warnings():
@@ -125,7 +121,6 @@ def test_check_number_of_players_no_warning(ranks):
 @given(st_ranks())
 def test_check_number_of_players_warning(ranks):
     """Test for a warning when the player sets are not the same size."""
-
     suitor_ranks, reviewer_ranks = ranks
     suitor_ranks = np.vstack((suitor_ranks, suitor_ranks[-1][::-1]))
 
@@ -142,7 +137,6 @@ def test_check_number_of_players_warning(ranks):
 @given(st_player_ranks())
 def test_check_player_ranks_no_warning(player_ranks):
     """Test the rank checker runs without warning for a valid set."""
-
     suitor_ranks, reviewer_ranks, player, ranks, side = player_ranks
     game = mocked_game(StableMarriage, suitor_ranks, reviewer_ranks)
 
@@ -154,7 +148,6 @@ def test_check_player_ranks_no_warning(player_ranks):
 @given(st_player_ranks())
 def test_check_player_ranks_warning(player_ranks):
     """Test the rank checker gives a warning for an invalid set."""
-
     suitor_ranks, reviewer_ranks, player, ranks, side = player_ranks
     ranks[-1] = 1000
 
@@ -167,14 +160,12 @@ def test_check_player_ranks_warning(player_ranks):
 
 def _zip_enumerated_ranks_with_side(ranks, side):
     """Attach the side to a list of enumerated rankings."""
-
     return ((i, rank, side) for i, rank in enumerate(ranks))
 
 
 @given(st_ranks())
 def test_check_input_validity(ranks):
     """Test the logic of the input validator."""
-
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(StableMarriage, *ranks)
 
@@ -203,7 +194,6 @@ def test_check_input_validity(ranks):
 @given(st_ranks())
 def test_invert_player_sets(ranks):
     """Test that the player set attributes can be swapped."""
-
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(StableMarriage, *ranks)
 
@@ -222,7 +212,6 @@ def test_invert_player_sets(ranks):
 )
 def test_solve_valid_optimal(ranks, optimal, solution):
     """Test the solver runs as it should with valid inputs."""
-
     game = mocked_game(StableMarriage, *ranks)
 
     with (
@@ -252,7 +241,6 @@ def test_solve_valid_optimal(ranks, optimal, solution):
 @given(st_ranks(), st.text())
 def test_solve_invalid_optimal_raises(ranks, optimal):
     """Test the solver raises an error with invalid optimal."""
-
     game = mocked_game(StableMarriage, *ranks)
 
     match = "^Invalid choice for `optimal`."
@@ -272,7 +260,6 @@ def test_solve_invalid_optimal_raises(ranks, optimal):
 @given(st_preference_matchings())
 def test_convert_matching_to_preferences(preference_matchings):
     """Test that a matching can use the terms from some preferences."""
-
     suitor_prefs, reviewer_prefs, matching = preference_matchings
 
     with mock.patch.object(StableMarriage, "check_input_validity") as validator:

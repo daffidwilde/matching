@@ -11,7 +11,6 @@ from .strategies import st_ranks
 
 def _assert_matching_is_valid_shape(matching, suitor_ranks, reviewer_ranks):
     """Assert that the matching has the right shape and elements."""
-
     assert isinstance(matching, dict)
 
     assert (np.sort(list(matching.keys())) == np.unique(suitor_ranks)).all()
@@ -21,7 +20,6 @@ def _assert_matching_is_valid_shape(matching, suitor_ranks, reviewer_ranks):
 @given(st_ranks())
 def test_stable_marriage_suitor_optimal(ranks):
     """Test that the SM algorithm is valid and suitor-optimal."""
-
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(StableMarriage, *ranks)
 
@@ -38,7 +36,6 @@ def test_stable_marriage_suitor_optimal(ranks):
 @given(st_ranks())
 def test_stable_marriage_reviewer_pessimal(ranks):
     """Test that the SM algorithm is valid and reviewer-pessimal."""
-
     suitor_ranks, reviewer_ranks = ranks
     game = mocked_game(StableMarriage, *ranks)
 

@@ -46,17 +46,14 @@ class BasePlayer:
 
     def _forget(self, other):
         """Remove another player from the player's preferences."""
-
         self.prefs = [p for p in self.prefs if p != other]
 
     def unmatched_message(self):
         """Message to say the player is not matched."""
-
         return f"{self} is unmatched."
 
     def not_in_preferences_message(self, other):
         """Message to say another player is an unacceptable match."""
-
         return (
             f"{self} is matched to {other} but they do not appear in their "
             f"preference list: {self.prefs}."
@@ -64,7 +61,6 @@ class BasePlayer:
 
     def set_prefs(self, players):
         """Set the player's preferences to be a list of players."""
-
         self.prefs = players
         self._pref_names = [player.name for player in players]
 
@@ -73,7 +69,6 @@ class BasePlayer:
 
     def prefers(self, player, other):
         """Check whether the player prefers one player over another."""
-
         prefs = self._original_prefs
         return prefs.index(player) < prefs.index(other)
 
@@ -130,7 +125,6 @@ class BaseGame(metaclass=abc.ABCMeta):
         This method also removes the player from any relevant player
         preference lists, removing their memory from the game.
         """
-
         party = getattr(self, player_party)[:]
         setattr(self, player_party, [p for p in party if p != player])
         for other in getattr(self, other_party):
@@ -143,7 +137,6 @@ class BaseGame(metaclass=abc.ABCMeta):
         If so, and ``clean`` is ``True``, then take the first instance
         they appear in the preference list.
         """
-
         for player in vars(self)[party]:
             unique_prefs = []
             for other in player.prefs:
@@ -162,7 +155,6 @@ class BaseGame(metaclass=abc.ABCMeta):
 
         If ``clean`` is ``True``, then forget any extra preferences.
         """
-
         players = vars(self)[party]
         others = vars(self)[other_party]
         for player in players:
@@ -181,7 +173,6 @@ class BaseGame(metaclass=abc.ABCMeta):
 
         If ``clean`` is ``True``, remove any player with an empty list.
         """
-
         for player in vars(self)[party]:
             if not player.prefs:
                 warnings.warn(PlayerExcludedWarning(f"{player} has an empty preference list."))
@@ -223,12 +214,10 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
 
     def keys(self):
         """Get the underlying dictionary keys."""
-
         return self._data.keys()
 
     def values(self):
         """Get the underlying dictionary values."""
-
         return self._data.values()
 
     def __getitem__(self, player):
@@ -240,12 +229,10 @@ class BaseMatching(dict, metaclass=abc.ABCMeta):
 
     def _check_player_in_keys(self, player):
         """Raise an error if ``player`` is not in the dictionary."""
-
         if player not in self._data.keys():
             raise ValueError(f"{player} is not a key in this matching.")
 
     def _check_new_valid_type(self, new, types):
         """Ensure ``new`` is an instance of one of ``types``."""
-
         if not isinstance(new, types):
             raise ValueError(f"{new} is not one of {types} and is not valid.")

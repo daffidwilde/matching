@@ -11,7 +11,6 @@ from .util import player_others
 @given(name=text())
 def test_init(name):
     """Make a player and test that their attributes are correct."""
-
     player = BasePlayer(name)
     assert player.name == name
     assert player.prefs == []
@@ -23,7 +22,6 @@ def test_init(name):
 @given(name=text())
 def test_repr(name):
     """Test the string representation of a player."""
-
     player = BasePlayer(name)
     assert repr(player) == name
 
@@ -34,7 +32,6 @@ def test_repr(name):
 @given(name=text())
 def test_unmatched_message(name):
     """Test that a player can say they are unmatched (true or nay)."""
-
     player = BasePlayer(name)
 
     message = player.unmatched_message()
@@ -49,7 +46,6 @@ def test_not_in_preferences_message(player_others):
     An invalid match is one that does not appear in the player's
     preference list. This could be a lie.
     """
-
     player, others = player_others
 
     other = others.pop()
@@ -63,7 +59,6 @@ def test_not_in_preferences_message(player_others):
 @given(player_others=player_others())
 def test_set_prefs(player_others):
     """Test that a player can set its preferences correctly."""
-
     player, others = player_others
 
     player.set_prefs(others)
@@ -78,7 +73,6 @@ def test_keep_original_prefs(player_others):
 
     Also ensure this record holds even when updating their preferences.
     """
-
     player, others = player_others
 
     player.set_prefs(others)
@@ -91,7 +85,6 @@ def test_keep_original_prefs(player_others):
 @given(player_others=player_others())
 def test_forget(player_others):
     """Test that a player can forget another player."""
-
     player, others = player_others
     player.set_prefs(others)
 
@@ -107,7 +100,6 @@ def test_forget(player_others):
 @given(player_others=player_others())
 def test_prefers(player_others):
     """Test that a player can compare a set of players."""
-
     player, others = player_others
 
     player.set_prefs(others)

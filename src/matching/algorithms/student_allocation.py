@@ -5,7 +5,6 @@ from .util import _delete_pair, _match_pair
 
 def unmatch_pair(student, project):
     """Unmatch a student-project pair."""
-
     student._unmatch()
     project._unmatch(student)
 
@@ -40,7 +39,6 @@ def student_allocation(students, projects, supervisors, optimal="student"):
         A dictionary-like object where the keys are the members of
         ``projects`` and their student matches are the values.
     """
-
     if optimal == "student":
         return student_optimal(students, projects)
     if optimal == "supervisor":
@@ -80,7 +78,6 @@ def student_optimal(students, projects):
 
         5. Go to 1 until there are no such students left, then end.
     """
-
     free_students = students[:]
     while free_students:
         student = free_students.pop()
@@ -148,7 +145,6 @@ def supervisor_optimal(projects, supervisors):
 
         4. Go to 1 until there are no such supervisors, then end.
     """
-
     free_supervisors = supervisors[:]
     while free_supervisors:
         supervisor = free_supervisors.pop()

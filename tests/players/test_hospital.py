@@ -13,7 +13,6 @@ pref_names = lists(text(), min_size=1)
 @given(name=text(), capacity=capacity)
 def test_init(name, capacity):
     """Test for correct hospital instantiation."""
-
     hospital = Hospital(name, capacity)
 
     assert hospital.name == name
@@ -28,7 +27,6 @@ def test_init(name, capacity):
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_favourite(name, capacity, pref_names):
     """Test for finding a hospital's favourite feasible resident."""
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
@@ -42,7 +40,6 @@ def test_get_favourite(name, capacity, pref_names):
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_match(name, capacity, pref_names):
     """Test that a hospital can match to a player correctly."""
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
@@ -58,7 +55,6 @@ def test_match(name, capacity, pref_names):
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_unmatch(name, capacity, pref_names):
     """Test that a hospital can unmatch from a player correctly."""
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
@@ -74,7 +70,6 @@ def test_unmatch(name, capacity, pref_names):
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_get_worst_match(name, capacity, pref_names):
     """Test that a hospital can return its worst match."""
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
@@ -93,7 +88,6 @@ def test_get_successors(name, capacity, pref_names):
     worst current match. If no such successors exist, check for an empty
     list.
     """
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
@@ -108,7 +102,6 @@ def test_get_successors(name, capacity, pref_names):
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_check_if_match_is_unacceptable(name, capacity, pref_names):
     """Test for the acceptability of a hospital's matches."""
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 
@@ -123,7 +116,6 @@ def test_check_if_match_is_unacceptable(name, capacity, pref_names):
 @given(name=text(), capacity=capacity, pref_names=pref_names)
 def test_check_if_oversubscribed(name, capacity, pref_names):
     """Test that a hospital can verify whether it is oversubscribed."""
-
     hospital = Hospital(name, capacity)
     others = [Resident(other) for other in pref_names]
 

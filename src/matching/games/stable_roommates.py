@@ -33,7 +33,6 @@ class StableRoommates(BaseGame):
     @classmethod
     def create_from_dictionary(cls, player_prefs):
         """Create an instance of SR from a preference dictionary."""
-
         players = _make_players(player_prefs)
         game = cls(players)
 
@@ -41,13 +40,11 @@ class StableRoommates(BaseGame):
 
     def solve(self):
         """Attempt to solve the instance of SR. Return the matching."""
-
         self.matching = SingleMatching(stable_roommates(self.players))
         return self.matching
 
     def check_validity(self):
         """Check whether the current matching is valid."""
-
         issues = []
         for player in self.players:
             issue = player.check_if_match_is_unacceptable(unmatched_okay=False)
@@ -65,7 +62,6 @@ class StableRoommates(BaseGame):
         SM stability requires there to be no blocking pairs and all
         players to be matched.
         """
-
         if None in self.matching.values():
             return False
 
@@ -86,7 +82,6 @@ class StableRoommates(BaseGame):
 
     def check_inputs(self):
         """Check that all players have ranked all other players."""
-
         for player in self.players:
             others = {p for p in self.players if p != player}
             if set(player.prefs) != others:
@@ -100,7 +95,6 @@ class StableRoommates(BaseGame):
 
 def _make_players(player_prefs):
     """Make a set of ``Player`` instances from the dictionary."""
-
     player_dict = {}
     for player_name in player_prefs:
         player = Player(name=player_name)
