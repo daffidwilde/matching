@@ -86,6 +86,9 @@ def test_paper_student_optimal_example():
         "P3": ["S7"],
         "P4": ["S3"],
         "P5": ["S2"],
+        "P6": [],
+        "P7": [],
+        "P8": [],
     }
 
 
@@ -105,7 +108,7 @@ def test_paper_supervisor_optimal_example():
     supervisor_prefs = {"L1": ["S1", "S2", "S3", "S4"], "L2": ["S2", "S1", "S4", "S3"]}
     project_supervisors = {"P1": "L1", "P2": "L1", "P3": "L2", "P4": "L2"}
     project_capacities = {p: 1 for p in project_supervisors}
-    supervisor_capacities = {l: 2 for l in supervisor_prefs}
+    supervisor_capacities = {s: 2 for s in supervisor_prefs}
 
     game = StudentProject.from_preferences(
         student_prefs,

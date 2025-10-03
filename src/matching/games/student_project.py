@@ -96,8 +96,8 @@ class StudentProject:
         projects = sorted(project_supervisors)
         supervisors = sorted(supervisor_prefs)
 
-        student_ranks = convert.preference_to_rank(student_prefs, projects)
-        supervisor_ranks = convert.preference_to_rank(supervisor_prefs, students)
+        student_ranks = convert.preference_to_rank(student_prefs, projects).astype(float)
+        supervisor_ranks = convert.preference_to_rank(supervisor_prefs, students).astype(float)
         project_supervisor_array = np.array(
             [supervisors.index(project_supervisors[project]) for project in projects]
         )
@@ -107,6 +107,9 @@ class StudentProject:
         supervisor_capacity_array = np.array(
             [supervisor_capacities.get(supervisor, 0) for supervisor in supervisors]
         )
+
+        student_ranks[student_ranks == len(project_capacity_array)] = np.nan
+        supervisor_ranks[supervisor_ranks == len(student_ranks)] = np.nan
 
         game = cls(
             student_ranks,
@@ -156,12 +159,12 @@ class StudentProject:
                 f'Must be "student" or "supervisor", not "{optimal}".'
             )
 
-        if optimal == "student":
-            matching = self._student_optimal()
-        if optimal == "supervisor":
-            matching = self._supervisor_optimal()
+        algorithm_lookup = {
+            "student": self._student_optimal,
+            "supervisor": self._supervisor_optimal,
+        }
+        self.matching = matchings.SPMatching(algorithm_lookup[optimal]())
 
-        self.matching = matchings.SPMatching(matching, keys="projects", values="students")
         if self._preference_lookup:
             self._convert_matching_to_preferences()
 
@@ -199,125 +202,113 @@ class StudentProject:
         """
         student_ranks = self.student_ranks.copy()
         supervisor_ranks = self.supervisor_ranks.copy()
+        project_ranks = self._get_project_ranks()
 
         self._project_matching = {p: [] for p in range(self.num_projects)}
         self._supervisor_matching = {s: [] for s in range(self.num_supervisors)}
+        self._student_matching = {s: None for s in range(self.num_students)}
         self._free_students = set(range(self.num_students))
 
         while self._free_students:
             student = self._free_students.pop()
             student_rank = student_ranks[student]
-            if student_rank.min() == self.num_projects:
+            if np.isnan(student_rank).all():
                 continue
 
-            project = student_rank.argmin()
-            supervisor, supervisor_rank, project_rank = self._get_faculty_details(
-                project, student_ranks, supervisor_ranks
-            )
+            project = np.nanargmin(student_rank)
+            supervisor = self.project_supervisors[project]
 
+            supervisor_rank = supervisor_ranks[supervisor]
+            project_rank = project_ranks[project]
             project_matches = self._project_matching[project]
             supervisor_matches = self._supervisor_matching[supervisor]
 
             project_matches.append(student)
             supervisor_matches.append(student)
+            self._student_matching[student] = project
 
             if len(project_matches) > self.project_capacities[project]:
-                self._handle_project_over_subscription(
+                self._handle_over_subscribed_project(
                     project_rank, project_matches, supervisor_matches
                 )
             elif len(supervisor_matches) > self.supervisor_capacities[supervisor]:
-                self._handle_supervisor_over_subscription(
-                    supervisor, supervisor_rank, supervisor_matches
-                )
+                self._handle_over_subscribed_supervisor(supervisor_rank, supervisor_matches)
 
             if len(project_matches) == self.project_capacities[project]:
-                self._handle_full_subscription(
-                    project_matches, project_rank, [project], student_ranks, supervisor_rank
-                )
+                self._handle_full_project(project, project_rank, project_matches, student_ranks)
 
             if len(supervisor_matches) == self.supervisor_capacities[supervisor]:
-                projects = np.flatnonzero(self.project_supervisors == supervisor)
-                self._handle_full_subscription(
-                    supervisor_matches, supervisor_rank, projects, student_ranks, supervisor_rank
+                self._handle_full_supervisor(
+                    supervisor, supervisor_rank, supervisor_matches, student_ranks, project_ranks
                 )
 
         return self._project_matching
 
-    def _get_faculty_details(self, project, student_ranks, supervisor_ranks):
+    def _get_project_ranks(self):
         """
-        Return the supervisor of a project and their rank arrays.
+        Create a rank array for all the projects.
 
-        A project's rank array is a projection of their supervisor's
-        rank array, ranking only the students who ranked the project.
+        Each project's ranking is a projection of their supervisor's
+        ranking of the students who ranked them.
         """
-        supervisor = self.project_supervisors[project]
-        supervisor_rank = supervisor_ranks[supervisor]
+        mask = ~np.isnan(self.student_ranks)
 
-        mask = student_ranks[:, project] != self.num_projects
-        project_rank = np.full(self.num_students, self.num_students, dtype=int)
-        project_rank[mask] = supervisor_rank[mask]
-
-        return supervisor, supervisor_rank, project_rank
-
-    def _handle_project_over_subscription(self, project_rank, project_matches, supervisor_matches):
-        """
-        Handle an over-subscribed project.
-
-        We ensure the project is no longer over-subscribed by finding its
-        worst-ranked match and unmatching them.
-        """
-        worst = project_matches.pop(project_rank[project_matches].argmax())
-        supervisor_matches.remove(worst)
-        self._free_students.add(worst)
-
-    def _handle_supervisor_over_subscription(
-        self, supervisor, supervisor_rank, supervisor_matches
-    ):
-        """
-        Handle an over-subscribed supervisor.
-
-        We ensure the supervisor is no longer over-subscribed by finding
-        its worst-ranked match and the project to whom they are matched.
-        Then unmatch them.
-        """
-        worst = supervisor_matches.pop(supervisor_rank[supervisor_matches].argmax())
-        worst_project = self._get_project_of_student(worst, supervisor)
-        self._project_matching[worst_project].remove(worst)
-        self._free_students.add(worst)
-
-    def _get_project_of_student(self, student, supervisor):
-        """
-        Get the supervisor project to which a student has been assigned.
-
-        If the student has been assigned to a project under another
-        supervisor or if they have not been assigned at all, we raise an
-        error.
-        """
-        for proj, studs in self._project_matching.items():
-            if self.project_supervisors[proj] == supervisor and student in studs:
-                return proj
-
-        raise RuntimeError(
-            f"Student {student} not assigned to a project of supervisor {supervisor}."
+        return np.where(
+            mask.T,
+            self.supervisor_ranks[self.project_supervisors[:, None], np.arange(self.num_students)],
+            np.nan,
         )
 
-    def _handle_full_subscription(
-        self, player_matches, player_rank, projects, student_ranks, supervisor_rank
-    ):
-        """
-        Handle a fully subscribed project or supervisor.
+    def _handle_over_subscribed_project(self, project_rank, project_matches, supervisor_matches):
+        """Remove the worst match from an over-subscribed project."""
+        worst = project_matches.pop(np.nanargmax(project_rank[project_matches]))
+        supervisor_matches.remove(worst)
+        self._student_matching[worst] = None
+        self._free_students.add(worst)
 
-        If the player is a project, then we remove the project from any
-        successive student rankings. For a supervisor, we remove all
-        their projects from the successive students.
+    def _handle_over_subscribed_supervisor(self, supervisor_rank, supervisor_matches):
         """
-        worst_match_rank = player_rank[player_matches].max()
-        successors = np.flatnonzero(player_rank > worst_match_rank)
+        Remove the worst match from an over-subscribed supervisor.
+
+        We find the worst-ranked student matched to one of the
+        supervisor's projects, and the project to whom they are matched.
+        Then unmatch them.
+        """
+        worst = supervisor_matches.pop(np.nanargmax(supervisor_rank[supervisor_matches]))
+        worst_project = self._student_matching[worst]
+        self._project_matching[worst_project].remove(worst)
+        self._student_matching[worst] = None
+        self._free_students.add(worst)
+
+    def _handle_full_project(self, project, project_rank, project_matches, student_ranks):
+        """Remove successors to a full project's worst match."""
+        worst_match_rank = np.nanmax(project_rank[project_matches])
+        successors = np.flatnonzero(project_rank > worst_match_rank)
         if not successors.size:
             return
 
-        student_ranks[successors, projects] = self.num_projects
-        supervisor_rank[successors] = self.num_students
+        student_ranks[successors, project] = np.nan
+        project_rank[successors] = np.nan
+
+    def _handle_full_supervisor(
+        self, supervisor, supervisor_rank, supervisor_matches, student_ranks, project_ranks
+    ):
+        """
+        Remove successors to a full supervisor's worst match.
+
+        When removing students from a supervisor's ranking, we also
+        remove the students from the supervisor's projects' rankings
+        (and likewise for the student rankings).
+        """
+        worst_match_rank = np.nanmax(supervisor_rank[supervisor_matches])
+        successors = np.flatnonzero(supervisor_rank > worst_match_rank)
+        if not successors.size:
+            return
+
+        projects = np.flatnonzero(self.project_supervisors == supervisor)
+        student_ranks[np.ix_(successors, projects)] = np.nan
+        supervisor_rank[successors] = np.nan
+        project_ranks[np.ix_(projects, successors)] = np.nan
 
     def _supervisor_optimal(self):
         """
@@ -367,7 +358,7 @@ class StudentProject:
 
             student_rank = student_ranks[student]
             successors = np.flatnonzero(student_rank > student_rank[project])
-            student_ranks[student, successors] = self.num_projects
+            student_ranks[student, successors] = np.nan
 
             supervisor_matches = self._get_supervisor_matches(supervisor)
             if len(supervisor_matches) < self.supervisor_capacities[supervisor]:
@@ -388,7 +379,7 @@ class StudentProject:
             student_rank = student_ranks[student]
             for project in student_rank.argsort():
                 if (
-                    student_rank[project] < self.num_projects
+                    ~np.isnan(student_rank[project])
                     and self.project_supervisors[project] == supervisor
                     and len(self._project_matching[project]) < self.project_capacities[project]
                 ):
