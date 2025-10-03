@@ -59,6 +59,44 @@ class StudentProject:
         self.check_input_validity()
 
     @classmethod
+    def from_utilities(
+        cls,
+        student_utils,
+        supervisor_utils,
+        project_supervisors,
+        project_capacities,
+        supervisor_capacities,
+    ):
+        """
+        Create an instance of SP from utility matrices.
+
+        Higher utilities indicate higher preferences. If there are any
+        ties, they are broken in order of appearance.
+
+        Parameters
+        ----------
+        student_utils : np.ndarray
+            Student utility matrix.
+        supervisor_utils : np.ndarray
+            Supervisor utility matrix.
+        project_supervisors : np.ndarray
+            Project supervisor affiliation vector.
+        project_capacities : np.ndarray
+            Project capacity vector.
+        supervisor_capacities : np.ndarray
+            Supervisor capacity vector.
+
+        Returns
+        -------
+        StudentProject
+            An instance of SP with utilities resolved as rank matrices.
+        """
+        student_ranks = convert.utility_to_rank(student_utils)
+        supervisor_ranks = convert.utility_to_rank(supervisor_utils)
+
+        return cls(student_ranks, supervisor_ranks, project_supervisors, project_capacities, supervisor_capacities)
+
+    @classmethod
     def from_preferences(
         cls,
         student_prefs,
